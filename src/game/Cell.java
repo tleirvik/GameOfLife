@@ -1,11 +1,11 @@
-package Game;
+package game;
 
 import javafx.scene.paint.Color;
 
 public class Cell {
 	
 	int x, y;
-	boolean isAlive;
+	public boolean isAlive;
 	Color color;
 	
 	public Cell (int x,int y,boolean isAlive,Color color) {

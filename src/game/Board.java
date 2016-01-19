@@ -1,4 +1,4 @@
-package Game;
+package game;
 
 import javafx.scene.paint.Color;
 
@@ -22,5 +22,12 @@ public class Board {
 				boardGrid[i][j] = new Cell(i,j,GameLogic.seedGenerator(),Color.BLACK);
 			}
 		}
+		//For å lage første generasjon så må alle de 4 reglene iverksettes for alle cellene
+		//Kjør derfor nextGeneration() her før denne metoden avsluttes
+		
+	}
+	
+	public void nextGeneration(){
+		//Implementer alle de 4 reglene
 	}
 }
