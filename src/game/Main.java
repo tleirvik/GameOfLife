@@ -10,14 +10,35 @@ public class Main {
 		for(int i = 0; i < 10; i++) {
 			for(int j = 0; j < 10; j++) {
 				if(brett.boardGrid[i][j].isAlive == true) {
-					System.out.print("o");
+					System.out.print("O ");
 				} else {
-					System.out.print("x");
+					System.out.print("X ");
 				}
 				
 			}
 			System.out.println("");
 		}
+		
+		while(true) {
+			brett.nextGeneration();
+			
+			for(int i = 0; i < 10; i++) {
+				for(int j = 0; j < 10; j++) {
+					if(brett.boardGrid[i][j].isAlive == true) {
+						System.out.print("O ");
+					} else {
+						System.out.print("X ");
+					}
+					
+				}
+				System.out.println("");
+			}
+			
+			System.out.println("");
+			System.out.println("");
+		}
+		
+		
 	}
 
 	public static void drawBoard() {

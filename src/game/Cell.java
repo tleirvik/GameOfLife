@@ -4,6 +4,9 @@ import javafx.scene.paint.Color;
 
 public class Cell {
 	
+	//GET SET isAlive dekrementerer eller inkrementerer
+	//static int numberOfCellsAlive = 0;
+	
 	int x, y;
 	public boolean isAlive;
 	Color color;

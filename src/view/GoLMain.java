@@ -17,9 +17,6 @@ public class GoLMain extends Application {
 		    AnchorPane gameRoot = FXMLLoader.load( fxmlUrl );
 			Scene scene = new Scene( gameRoot, 600, 550 );
 			primaryStage.setScene( scene );
-			primaryStage.setMaxHeight(550);
-			primaryStage.setMaxWidth(600);
-			primaryStage.setResizable(false);
 			primaryStage.setTitle("Game Of Life");
 			primaryStage.show();
 			

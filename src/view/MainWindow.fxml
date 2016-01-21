@@ -8,10 +8,15 @@
 
 <AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
    <children>
-      <Canvas fx:id="gameCanvas" height="349.0" layoutY="100.0" width="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
+      <Canvas fx:id="gameCanvas" height="340.0" layoutY="100.0" width="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
       <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="600.0">
          <children>
             <Button mnemonicParsing="false" onAction="#startGoL" text="Start" textAlignment="CENTER" />
+            <Button mnemonicParsing="false" onAction="#stepGoL" text="Step Forward">
+               <HBox.margin>
+                  <Insets left="25.0" />
+               </HBox.margin>
+            </Button>
          </children>
          <opaqueInsets>
             <Insets />
