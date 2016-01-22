@@ -2,7 +2,7 @@ package game;
 
 import javafx.scene.paint.Color;
 
-public class StaticBoard {
+public class StaticBoard extends Board{
 
 	private int columns;
 	private int rows;

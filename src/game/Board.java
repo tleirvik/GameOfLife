@@ -14,12 +14,13 @@ public abstract class Board {
 	
 	public Cell[][] boardGrid = null;
 	
-	public Board(int columns, int rows) {
+	/*
+	
 		this.columns = columns;
 		this.rows = rows;
-		
 		boardGrid = new Cell[this.rows][this.columns];
 	}
+	*/
 	
 	
 	public abstract void populateBoard();
