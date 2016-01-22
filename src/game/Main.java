@@ -4,7 +4,7 @@ public class Main {
 
 	public static void main(String[] args) {
 		
-		Board brett = new Board(10,10);
+		StaticBoard brett = new StaticBoard(10,10);
 		brett.populateBoard();
 		
 		for(int i = 0; i < 10; i++) {
@@ -44,7 +44,7 @@ public class Main {
 	public static void drawBoard() {
 		/* Les antall rows & columns fra board,
 		 * lag en grid av x * y antall rektangler
-		 * og iterer igjennom den for å tegne om cellen lever eller ikke gjør det.
+		 * og iterer igjennom den for ï¿½ tegne om cellen lever eller ikke gjï¿½r det.
 		 */
 	}
 	

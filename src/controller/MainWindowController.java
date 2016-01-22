@@ -2,7 +2,7 @@ package controller;
 
 import com.sun.prism.paint.Color;
 
-import game.Board;
+import game.StaticBoard;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,14 +17,14 @@ public class MainWindowController {
 	
 	private GraphicsContext gc;
 	
-	private Board board;
+	private StaticBoard board;
 	
     @FXML
     void startGoL(ActionEvent event) {
     	
     	int columns = 50, rows = 50;
     	
-    	board = new Board(columns,rows);
+    	board = new StaticBoard(columns,rows);
     	board.populateBoard();
     	
     	
@@ -36,27 +36,27 @@ public class MainWindowController {
     	for(int i = 0; i < columns; i++) {
 			for(int j = 0; j < rows; j++) {
 				if(board.boardGrid[i][j].isAlive == true) {
-					//Set fargen til grønn om cellen lever
+					//Set fargen til grï¿½nn om cellen lever
 					gc.setFill(Paint.valueOf("BLACK"));
 					//Lag en firkant
 					gc.fillRect(xPos, yPos, width, height);
-					//Øk x-verdien med bredden + en marg
+					//ï¿½k x-verdien med bredden + en marg
 					xPos+=width + 2;
 					
 					System.out.print("O ");
 					
 				} else {
-					//Set fargen til rød om cellen lever
+					//Set fargen til rï¿½d om cellen lever
 					gc.setFill(Paint.valueOf("WHITE"));
 					//Lag en firkant
 					gc.fillRect(xPos, yPos, width, height);
-					//Øk x-verdien med bredden + en marg
+					//ï¿½k x-verdien med bredden + en marg
 					xPos+=width + 2;
 					
 					System.out.print("X ");
 				}
 			}
-			//Øk y-verdien med høyden + en marg for å starte neste linje
+			//ï¿½k y-verdien med hï¿½yden + en marg for ï¿½ starte neste linje
 			xPos=0;
 			yPos+= height + 2;
 			
@@ -65,7 +65,7 @@ public class MainWindowController {
     	
     	/* Les antall rows & columns fra board,
 		 * lag en grid av x * y antall rektangler
-		 * og iterer igjennom den for å tegne om cellen lever eller ikke gjør det.
+		 * og iterer igjennom den for ï¿½ tegne om cellen lever eller ikke gjï¿½r det.
 		 */
     	
     }
@@ -80,27 +80,27 @@ public class MainWindowController {
     	for(int i = 0; i < 50; i++) {
 			for(int j = 0; j < 50; j++) {
 				if(board.boardGrid[i][j].isAlive == true) {
-					//Set fargen til grønn om cellen lever
+					//Set fargen til grï¿½nn om cellen lever
 					gc.setFill(Paint.valueOf("BLACK"));
 					//Lag en firkant
 					gc.fillRect(xPos, yPos, width, height);
-					//Øk x-verdien med bredden + en marg
+					//ï¿½k x-verdien med bredden + en marg
 					xPos+=width + 2;
 					
 					System.out.print("O ");
 					
 				} else {
-					//Set fargen til rød om cellen lever
+					//Set fargen til rï¿½d om cellen lever
 					gc.setFill(Paint.valueOf("WHITE"));
 					//Lag en firkant
 					gc.fillRect(xPos, yPos, width, height);
-					//Øk x-verdien med bredden + en marg
+					//ï¿½k x-verdien med bredden + en marg
 					xPos+=width + 2;
 					
 					System.out.print("X ");
 				}
 			}
-			//Øk y-verdien med høyden + en marg for å starte neste linje
+			//ï¿½k y-verdien med hï¿½yden + en marg for ï¿½ starte neste linje
 			xPos=0;
 			yPos+= height + 2;
 			
