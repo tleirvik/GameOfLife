@@ -20,6 +20,7 @@ public class StaticBoard extends Board{
 		return this.boardGrid;
 		
 	}
+	@Override
 	public void populateBoard(){
 		
 		boolean[][] seed = this.seedGenerator(rows, columns);
@@ -33,7 +34,7 @@ public class StaticBoard extends Board{
 		//Kj�r derfor nextGeneration() her f�r denne metoden avsluttes
 		
 	}
-	
+	@Override
 	public int nearestNeighbour(Cell cell) {
 		int count = 0;
 		
@@ -56,7 +57,7 @@ public class StaticBoard extends Board{
 		}
 		return count;
 	}
-	
+	@Override
 	public void nextGeneration(){
 		Cell[][] tempBoardGrid = new Cell[rows][columns];
 		
