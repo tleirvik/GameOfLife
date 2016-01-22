@@ -4,17 +4,44 @@ import javafx.scene.paint.Color;
 
 public class Cell {
 	
-	//GET SET isAlive dekrementerer eller inkrementerer
-	//static int numberOfCellsAlive = 0;
+	static private int numberOfCellsAlive = 0;
 	
-	int x, y;
-	public boolean isAlive;
-	Color color;
+	private int x, y;
+	private boolean isAlive;
+	//private Color color; //Vurder å slette, fjernet fra UML
 	
 	public Cell (int x,int y,boolean isAlive,Color color) {
 		this.x			= x;
 		this.y			= y;
 		this.isAlive	= isAlive;
-		this.color		= color;
+		//this.color		= color; //Vurder å slette, fjernet fra UML
+	}
+	
+	public boolean getIsAlive() {
+		return isAlive;
+	}
+	
+	public void setIsAlive(boolean isAlive) {
+		if(isAlive = true) {
+			isAlive = true;
+			numberOfCellsAlive++;
+		} else {
+			isAlive = false;
+			numberOfCellsAlive--;
+		}
+	}
+	
+	/* Vurder å slette, fjernet fra UML
+	public Color getColor() {
+		return color;
+	}
+	
+	public void setColor(Color color) {
+		this.color = color;
+	}
+	*/
+	
+	public int getNumberOfCellsAlive() {
+		return numberOfCellsAlive;
 	}
 }

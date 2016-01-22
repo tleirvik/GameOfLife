@@ -4,22 +4,25 @@ import javafx.scene.paint.Color;
 
 public class StaticBoard extends Board{
 
-	private int columns;
 	private int rows;
+	private int columns;
 	
-	public Cell[][] boardGrid = null;
+	private Cell[][] boardGrid = null;
 	
-	public StaticBoard(int columns, int rows) {
-		this.columns = columns;
+	public StaticBoard(int rows, int columns) {
 		this.rows = rows;
+		this.columns = columns;
 		
 		boardGrid = new Cell[this.rows][this.columns];
 	}
 	
 	public void populateBoard(){
+		
+		boolean[][] seed = this.seedGenerator(rows, columns);
+		
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
-				boardGrid[i][j] = new Cell(j,i,GameLogic.seedGenerator(),Color.BLACK);
+				boardGrid[i][j] = new Cell(j,i,seed[i][j],Color.BLACK);
 			}
 		}
 		//For � lage f�rste generasjon s� m� alle de 4 reglene iverksettes for alle cellene
@@ -27,7 +30,7 @@ public class StaticBoard extends Board{
 		
 	}
 	
-	public int nearestNeighbour(Cell celle) {
+	public int nearestNeighbour(Cell cell) {
 		int count = 0;
 		
 		int xPos, yPos;
@@ -37,8 +40,8 @@ public class StaticBoard extends Board{
 		
 		//position.length = 8 fordi det bare er 8 celler rundt
 		for(int i = 0; i < position.length; i++) {
-			xPos = celle.x+position[i][0];
-			yPos = celle.y+position[i][1];
+			xPos = cell.x+position[i][0];
+			yPos = cell.y+position[i][1];
 			
 			//Hindrer verdier under 0 og over gridst�rrelsen, som gir Arrays Out Of Bounds Exception
 			if(xPos > -1 && yPos > -1 && xPos < boardGrid.length && yPos < boardGrid.length) {

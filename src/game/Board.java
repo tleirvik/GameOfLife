@@ -4,13 +4,11 @@
 package game;
 
 import java.util.Random;
-import javafx.scene.paint.Color;
 
 public abstract class Board {
 	
 	
-    //Returnerer et et array med boolske verdier (bit 0 1) like langt som antall celler i et brett
-    //Eksempel: 10x10 grid = 100 celler
+    //Returnerer et todimensjonelt array med boolske verdier for om en celle lever eller er død
     //Tidligere kalt en gang for hver celle via populateBoard()
     boolean[][] seedGenerator(int rows, int columns) {
 
