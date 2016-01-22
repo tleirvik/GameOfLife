@@ -17,16 +17,24 @@ public class Cell {
 		//this.color		= color; //Vurder å slette, fjernet fra UML
 	}
 	
+	public int getXpos() {
+		return x;
+	}
+	
+	public int getYpos() {
+		return y;
+	}
+	
 	public boolean getIsAlive() {
 		return isAlive;
 	}
 	
 	public void setIsAlive(boolean isAlive) {
 		if(isAlive = true) {
-			isAlive = true;
+			this.isAlive = true;
 			numberOfCellsAlive++;
 		} else {
-			isAlive = false;
+			this.isAlive = false;
 			numberOfCellsAlive--;
 		}
 	}
