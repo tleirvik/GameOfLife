@@ -15,7 +15,11 @@ public class StaticBoard extends Board{
 		
 		boardGrid = new Cell[this.rows][this.columns];
 	}
-	
+	public Cell[][] getBoardGrid() {
+		
+		return this.boardGrid;
+		
+	}
 	public void populateBoard(){
 		
 		boolean[][] seed = this.seedGenerator(rows, columns);
@@ -40,12 +44,12 @@ public class StaticBoard extends Board{
 		
 		//position.length = 8 fordi det bare er 8 celler rundt
 		for(int i = 0; i < position.length; i++) {
-			xPos = cell.x+position[i][0];
-			yPos = cell.y+position[i][1];
+			xPos = cell.getXpos() + position[i][0];
+			yPos = cell.getYpos() + position[i][1];
 			
 			//Hindrer verdier under 0 og over gridst�rrelsen, som gir Arrays Out Of Bounds Exception
 			if(xPos > -1 && yPos > -1 && xPos < boardGrid.length && yPos < boardGrid.length) {
-				if(boardGrid[yPos][xPos].isAlive) {
+				if(boardGrid[yPos][xPos].getIsAlive()) {
 				count++;
 				}	
 			}
@@ -63,16 +67,16 @@ public class StaticBoard extends Board{
 				tempBoardGrid[i][j] = boardGrid[i][j];
 				
 				//Hvis cellen lever, kj�r de f�rste 3 reglene
-				if(boardGrid[i][j].isAlive) {
+				if(boardGrid[i][j].getIsAlive()) {
 					
 					//Any live cell with fewer than two live neighbours dies, as if by needs caused by underpopulation.
 					if(this.nearestNeighbour(boardGrid[i][j]) < 2) {
-						tempBoardGrid[i][j].isAlive = false;
+						tempBoardGrid[i][j].setIsAlive(false);
 					} else
 					
 					//Any live cell with more than three live neighbours dies, as if by overcrowding.
 					if(this.nearestNeighbour(boardGrid[i][j]) > 3) {
-						tempBoardGrid[i][j].isAlive = false;
+						tempBoardGrid[i][j].setIsAlive(false);
 					}
 					
 					//Any live cell with two or three live neighbours lives, unchanged, to the next generation.
@@ -80,7 +84,7 @@ public class StaticBoard extends Board{
 				} else {
 					//Any dead cell with exactly three live neighbours will come to life.
 					if(this.nearestNeighbour(boardGrid[i][j]) == 3) {
-						tempBoardGrid[i][j].isAlive = true;
+						tempBoardGrid[i][j].setIsAlive(true);
 					}
 					
 				}

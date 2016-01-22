@@ -1,7 +1,5 @@
 package controller;
 
-import com.sun.prism.paint.Color;
-
 import game.StaticBoard;
 
 import javafx.event.ActionEvent;
@@ -35,7 +33,7 @@ public class MainWindowController {
     	
     	for(int i = 0; i < columns; i++) {
 			for(int j = 0; j < rows; j++) {
-				if(board.boardGrid[i][j].isAlive == true) {
+				if(board.getBoardGrid()[i][j].getIsAlive() == true) {
 					//Set fargen til gr�nn om cellen lever
 					gc.setFill(Paint.valueOf("BLACK"));
 					//Lag en firkant
@@ -79,7 +77,7 @@ public class MainWindowController {
     	board.nextGeneration();
     	for(int i = 0; i < 50; i++) {
 			for(int j = 0; j < 50; j++) {
-				if(board.boardGrid[i][j].isAlive == true) {
+				if(board.getBoardGrid()[i][j].getIsAlive() == true) {
 					//Set fargen til gr�nn om cellen lever
 					gc.setFill(Paint.valueOf("BLACK"));
 					//Lag en firkant
