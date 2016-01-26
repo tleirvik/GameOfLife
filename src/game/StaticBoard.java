@@ -1,6 +1,7 @@
 package game;
 
 import javafx.scene.paint.Color;
+import javafx.scene.paint.Paint;
 
 public class StaticBoard extends Board{
 
@@ -16,13 +17,17 @@ public class StaticBoard extends Board{
 		boardGrid = new Cell[this.rows][this.columns];
 	}
 	
+	public Cell[][] getBoardGrid() {
+		return boardGrid;
+	}
+
 	public void populateBoard(){
 		
 		boolean[][] seed = this.seedGenerator(rows, columns);
 		
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
-				boardGrid[i][j] = new Cell(j,i,seed[i][j],Color.BLACK);
+				getBoardGrid()[i][j] = new Cell(j,i,seed[i][j],Color.BLACK);
 			}
 		}
 		//For � lage f�rste generasjon s� m� alle de 4 reglene iverksettes for alle cellene
@@ -40,14 +45,16 @@ public class StaticBoard extends Board{
 		
 		//position.length = 8 fordi det bare er 8 celler rundt
 		for(int i = 0; i < position.length; i++) {
-			xPos = cell.x+position[i][0];
-			yPos = cell.y+position[i][1];
+			xPos = cell.getXpos()+position[i][0];
+			yPos = cell.getYpos()+position[i][1];
 			
-			//Hindrer verdier under 0 og over gridst�rrelsen, som gir Arrays Out Of Bounds Exception
-			if(xPos > -1 && yPos > -1 && xPos < boardGrid.length && yPos < boardGrid.length) {
-				if(boardGrid[yPos][xPos].isAlive) {
-				count++;
-				}	
+			System.out.println(xPos + " " + yPos);
+			
+			//TEST OM CELLEN LEVER
+			if(xPos >= 0 && xPos < this.rows && yPos >= 0 && yPos < this.columns) {
+				if(this.boardGrid[yPos][xPos].getIsAlive()) {
+					count++;
+				}
 			}
 		}
 		return count;
@@ -59,40 +66,36 @@ public class StaticBoard extends Board{
 		for(int i = 0; i < rows; i++) {
 			for(int j = 0; j < columns; j++) {
 				
-				//Kopier cellen til et midlertidig array
-				tempBoardGrid[i][j] = boardGrid[i][j];
+					//Kopier cellen til et midlertidig array
+					tempBoardGrid[i][j] = this.boardGrid[i][j];
 				
-				//Hvis cellen lever, kj�r de f�rste 3 reglene
-				if(boardGrid[i][j].isAlive) {
-					
-					//Any live cell with fewer than two live neighbours dies, as if by needs caused by underpopulation.
-					if(this.nearestNeighbour(boardGrid[i][j]) < 2) {
-						tempBoardGrid[i][j].isAlive = false;
-					} else
-					
-					//Any live cell with more than three live neighbours dies, as if by overcrowding.
-					if(this.nearestNeighbour(boardGrid[i][j]) > 3) {
-						tempBoardGrid[i][j].isAlive = false;
+					//Dead and has exactly 3 neighbours
+					if(!tempBoardGrid[i][j].getIsAlive() && nearestNeighbour(tempBoardGrid[i][j]) == 3) {
+						tempBoardGrid[i][j].setIsAlive(true);
 					}
 					
-					//Any live cell with two or three live neighbours lives, unchanged, to the next generation.
-					
-				} else {
-					//Any dead cell with exactly three live neighbours will come to life.
-					if(this.nearestNeighbour(boardGrid[i][j]) == 3) {
-						tempBoardGrid[i][j].isAlive = true;
+					//Alive and has less than 2 neighbours
+					if(tempBoardGrid[i][j].getIsAlive() && nearestNeighbour(tempBoardGrid[i][j]) < 2) {
+						tempBoardGrid[i][j].setIsAlive(false);
 					}
 					
+					//Alive and has exactly 2 or 3 neighbours
+					if(tempBoardGrid[i][j].getIsAlive() && nearestNeighbour(tempBoardGrid[i][j]) == 2 && nearestNeighbour(tempBoardGrid[i][j]) == 3) {
+						tempBoardGrid[i][j].setIsAlive(true);
+					}
+					
+					//Alive and has more than 3 neighbours
+					if(tempBoardGrid[i][j].getIsAlive() && nearestNeighbour(tempBoardGrid[i][j]) > 3) {
+						tempBoardGrid[i][j].setIsAlive(false);
+					}
+				
 				}
 			}
-		}
-		
-		for(int i = 0; i < rows; i++) {
-			for(int j = 0; j < columns; j++) {
-				boardGrid[i][j] = tempBoardGrid[i][j];
+			for(int i = 0; i < rows; i++) {
+				for(int j = 0; j < columns; j++) {
+					this.boardGrid[i][j] = tempBoardGrid[i][j];
+				}
 			}
+		
 		}
 	}
-	
-	
-}
