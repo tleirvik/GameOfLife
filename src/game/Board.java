@@ -19,7 +19,12 @@ public abstract class Board {
 
         for(int i = 0; i < rows; i++) {
             for(int j = 0; j < columns; j++) {
-                seed[i][j] = rand.nextBoolean();
+            	
+            	if(rand.nextInt(5) == 1) {
+            		seed[i][j] = true;
+            	}
+            	
+                
             }
         }
 

@@ -1,7 +1,5 @@
 package controller;
 
-import com.sun.prism.paint.Color;
-
 import game.StaticBoard;
 import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
