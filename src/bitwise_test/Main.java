@@ -73,6 +73,9 @@ public class Main {
 class game_Logic {
 	
 		static void nextGeneration(byte[][] grid) {
+			
+				//Debug-kommentarer er kommentert ut
+				
 				byte[][] tempBoardGrid = new byte[grid.length][grid.length];
 				
 				for(int i = 0; i < grid.length; i++) {
@@ -82,26 +85,26 @@ class game_Logic {
 				tempBoardGrid[i][j] = grid[i][j];
 		
 				//Dead and has exactly 3 neighbours
-				if(!bitWise_Logic.getIsAlive(i, j, tempBoardGrid) && bitWise_Logic.nearestNeighbour(i, j, tempBoardGrid) == 3) {
-					System.out.println("Celle på row " + i + " column " + j + " er død og har 3 naboer");
+				if(!bitWise_Logic.getIsAlive(i, j, tempBoardGrid) && bitWise_Logic.nearestNeighbour(i, j, grid) == 3) {
+					/*System.out.println("Celle på row " + i + " column " + j + " er død og har 3 naboer");*/
 					bitWise_Logic.setIsAlive(i, j, tempBoardGrid, true);
 				}
 		
 				//Alive and has less than 2 neighbours
-				if(bitWise_Logic.getIsAlive(i, j, tempBoardGrid) && bitWise_Logic.nearestNeighbour(i, j, tempBoardGrid) < 2) {
-					System.out.println("Celle på row " + i + " column " + j + " lever og har mindre enn 2 naboer naboer");
+				if(bitWise_Logic.getIsAlive(i, j, tempBoardGrid) && bitWise_Logic.nearestNeighbour(i, j, grid) < 2) {
+					/*System.out.println("Celle på row " + i + " column " + j + " lever og har mindre enn 2 naboer naboer");*/
 					bitWise_Logic.setIsAlive(i, j, tempBoardGrid, false);
 				}
 		
 				//Alive and has exactly 2 or 3 neighbours
-				if(bitWise_Logic.getIsAlive(i, j, tempBoardGrid) && bitWise_Logic.nearestNeighbour(i, j, tempBoardGrid) == 2 || bitWise_Logic.nearestNeighbour(i, j, tempBoardGrid) == 3) {
-					System.out.println("Celle på row " + i + " column " + j + " lever og har eksakt 2 eller 3 naboer");
+				if(bitWise_Logic.getIsAlive(i, j, tempBoardGrid) && bitWise_Logic.nearestNeighbour(i, j, grid) == 2 || bitWise_Logic.nearestNeighbour(i, j, grid) == 3) {
+					/*System.out.println("Celle på row " + i + " column " + j + " lever og har eksakt 2 eller 3 naboer");*/
 					bitWise_Logic.setIsAlive(i, j, tempBoardGrid, true);
 				}
 				
 				//Alive and has more than 3 neighbours
-				if(bitWise_Logic.getIsAlive(i, j, tempBoardGrid) && bitWise_Logic.nearestNeighbour(i, j, tempBoardGrid) > 3) {
-					System.out.println("Celle på row " + i + " column " + j + " lever og har mer enn 3 naboer");
+				if(bitWise_Logic.getIsAlive(i, j, tempBoardGrid) && bitWise_Logic.nearestNeighbour(i, j, grid) > 3) {
+					/*System.out.println("Celle på row " + i + " column " + j + " lever og har mer enn 3 naboer");*/
 					bitWise_Logic.setIsAlive(i, j, tempBoardGrid, false);
 				}
 				
@@ -157,7 +160,8 @@ class bitWise_Logic {
 	public static int nearestNeighbour(int row, int column, byte[][] grid) {
 		int count = 0;
 		
-		System.out.println("Sjekker: Row " + row + ". Column " + column );
+		//Debug-kommentarer er kommentert ut
+		/*System.out.println("Sjekker: Row " + row + ". Column " + column );*/
 		
 		int[][] position = {
 				{ -1,-1 }, { -1,0 }, { -1,+1 },
@@ -179,8 +183,7 @@ class bitWise_Logic {
 				if(bitWise_Logic.getIsAlive(yPos, xPos, grid)) {
 					count++;
 					
-					System.out.println(yPos + " Lever " + xPos);
-				} else {System.out.println(yPos + " Lever ikke " + xPos);}
+				} /*else {System.out.println(yPos + " Lever ikke " + xPos);}*/
 			}
 		}
 		System.out.println("Antall levende celler rundt = " + count);

@@ -49,9 +49,6 @@ public class StaticBoard extends Board{
 		//position.length = 8 fordi det bare er 8 celler rundt
 		for(int i = 0; i < position.length; i++) {
 
-			xPos = cell.getXpos()+position[i][0];
-			yPos = cell.getYpos()+position[i][1];
-
 			xPos = cell.getXpos() + position[i][0];
 			yPos = cell.getYpos() + position[i][1];
 
