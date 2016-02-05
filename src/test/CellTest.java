@@ -1,9 +1,10 @@
-package game;
+package test;
 
 import static org.junit.Assert.*;
 
 import org.junit.Test;
 
+import game.Cell;
 import javafx.scene.paint.Color;
 
 
