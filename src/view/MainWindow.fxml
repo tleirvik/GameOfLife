@@ -1,29 +1,75 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.geometry.Insets?>
-<?import javafx.scene.canvas.Canvas?>
-<?import javafx.scene.control.Button?>
-<?import javafx.scene.layout.AnchorPane?>
-<?import javafx.scene.layout.HBox?>
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.canvas.*?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
-   <children>
-      <Canvas fx:id="gameCanvas" height="340.0" layoutY="100.0" width="600.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="60.0" />
-      <HBox alignment="CENTER_LEFT" prefHeight="60.0" prefWidth="600.0">
-         <children>
-            <Button mnemonicParsing="false" onAction="#startGoL" text="Start" textAlignment="CENTER" />
-            <Button mnemonicParsing="false" onAction="#stepGoL" text="Step Forward">
-               <HBox.margin>
-                  <Insets left="25.0" />
-               </HBox.margin>
-            </Button>
-         </children>
-         <opaqueInsets>
-            <Insets />
-         </opaqueInsets>
-         <padding>
-            <Insets left="25.0" />
-         </padding>
-      </HBox>
-   </children>
-</AnchorPane>
+<GridPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="rutenett04.Controller"
+        vgap="5">
+    <children>
+        <MenuBar GridPane.columnIndex="0" GridPane.rowIndex="0" prefHeight="20">
+            <menus>
+                <Menu text="File">
+                    <items>
+                        <MenuItem text="New"></MenuItem>
+                        <MenuItem text="Save"></MenuItem>
+                        <MenuItem text="Save as"></MenuItem>
+                        <MenuItem text="Quit"></MenuItem>
+                    </items>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <MenuBar GridPane.columnIndex="1" GridPane.rowIndex="0" prefHeight="20">
+            <menus>
+                <Menu text="Edit">
+                    <MenuItem text="Cell Size"></MenuItem>
+                    <MenuItem text="Grid Size"></MenuItem>
+                </Menu>
+            </menus>
+        </MenuBar>
+        <MenuBar GridPane.columnIndex="2" GridPane.rowIndex="0" prefHeight="20">
+            <menus>
+                <Menu text="Help">
+                    <MenuItem text="Game Rules"></MenuItem>
+                    <MenuItem text="Manual"></MenuItem>
+                    <MenuItem text="Creators"></MenuItem>
+                </Menu>
+            </menus>
+        </MenuBar>
+
+        <!-- her er canvas for å tegner spillbrettet -->
+        <HBox GridPane.columnIndex="0" GridPane.columnSpan="4"
+              GridPane.rowIndex="1" GridPane.rowSpan="4" >
+
+            <Canvas fx:id="canvas" focusTraversable="true" width="800"
+                    height="500" onMouseClicked="#handleMouseClick" >
+            </Canvas>
+        </HBox>
+
+        <!-- her legges knapper og annet -->
+        <HBox GridPane.columnIndex="0" GridPane.columnSpan="4"  GridPane.rowIndex="5" spacing="15"
+            prefHeight="100"  alignment="CENTER"   >
+            <children>
+
+                <Button textAlignment="CENTER" text="Play" fx:id="playButton"
+                    onAction="#handlePlayButton" prefHeight="30"
+                        prefWidth="70">
+                </Button>
+                <Button text="Pause" textAlignment="CENTER" prefHeight="30"
+                        prefWidth="70" onMouseClicked="#handlePauseButton" >
+                </Button>
+                <Button text="New Board" textAlignment="CENTER" prefHeight="30"
+                        prefWidth="100" onAction="#resetGrid" >
+                </Button>
+
+                <Label text="Grid color" fx:id="backClr"></Label>
+                <ColorPicker fx:id="colorPicker" onMouseClicked="#handleColorPicker"></ColorPicker>
+
+            </children>
+        </HBox>
+
+    </children>
+</GridPane>
