@@ -1,75 +1,157 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.scene.paint.*?>
+<?import javafx.scene.effect.*?>
 <?import javafx.scene.canvas.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.layout.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
 
-<GridPane xmlns:fx="http://javafx.com/fxml/1" fx:controller="rutenett04.Controller"
-        vgap="5">
-    <children>
-        <MenuBar GridPane.columnIndex="0" GridPane.rowIndex="0" prefHeight="20">
-            <menus>
-                <Menu text="File">
-                    <items>
-                        <MenuItem text="New"></MenuItem>
-                        <MenuItem text="Save"></MenuItem>
-                        <MenuItem text="Save as"></MenuItem>
-                        <MenuItem text="Quit"></MenuItem>
-                    </items>
-                </Menu>
-            </menus>
-        </MenuBar>
-        <MenuBar GridPane.columnIndex="1" GridPane.rowIndex="0" prefHeight="20">
-            <menus>
-                <Menu text="Edit">
-                    <MenuItem text="Cell Size"></MenuItem>
-                    <MenuItem text="Grid Size"></MenuItem>
-                </Menu>
-            </menus>
-        </MenuBar>
-        <MenuBar GridPane.columnIndex="2" GridPane.rowIndex="0" prefHeight="20">
-            <menus>
-                <Menu text="Help">
-                    <MenuItem text="Game Rules"></MenuItem>
-                    <MenuItem text="Manual"></MenuItem>
-                    <MenuItem text="Creators"></MenuItem>
-                </Menu>
-            </menus>
-        </MenuBar>
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity"
+            minWidth="-Infinity" nodeOrientation="LEFT_TO_RIGHT" prefHeight="727.0"
+            prefWidth="1000.0" xmlns="http://javafx.com/javafx/8"
+            xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.MainWindowController">
 
-        <!-- her er canvas for å tegner spillbrettet -->
-        <HBox GridPane.columnIndex="0" GridPane.columnSpan="4"
-              GridPane.rowIndex="1" GridPane.rowSpan="4" >
+   <bottom>
+      <HBox id="bottom" alignment="CENTER" prefHeight="94.0" prefWidth="990.0"
+            spacing="10.0" BorderPane.alignment="TOP_CENTER">
 
-            <Canvas fx:id="canvas" focusTraversable="true" width="800"
-                    height="500" onMouseClicked="#handleMouseClick" >
-            </Canvas>
-        </HBox>
+          <children>
 
-        <!-- her legges knapper og annet -->
-        <HBox GridPane.columnIndex="0" GridPane.columnSpan="4"  GridPane.rowIndex="5" spacing="15"
-            prefHeight="100"  alignment="CENTER"   >
-            <children>
+            <Button alignment="CENTER" defaultButton="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#handlePlayButton" prefHeight="40.0" prefWidth="100.0" text="Play" textFill="#2610f2" textOverrun="CENTER_WORD_ELLIPSIS">
+               <HBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </HBox.margin>
+               <font>
+                  <Font name="Comic Sans MS" size="13.0" />
+               </font>
+            </Button>
 
-                <Button textAlignment="CENTER" text="Play" fx:id="playButton"
-                    onAction="#handlePlayButton" prefHeight="30"
-                        prefWidth="70">
-                </Button>
-                <Button text="Pause" textAlignment="CENTER" prefHeight="30"
-                        prefWidth="70" onMouseClicked="#handlePauseButton" >
-                </Button>
-                <Button text="New Board" textAlignment="CENTER" prefHeight="30"
-                        prefWidth="100" onAction="#resetGrid" >
-                </Button>
 
-                <Label text="Grid color" fx:id="backClr"></Label>
-                <ColorPicker fx:id="colorPicker" onMouseClicked="#handleColorPicker"></ColorPicker>
+            <Button fx:id="stopButton" defaultButton="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" text="Stop" textFill="#2610f2">
+               <HBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </HBox.margin>
+               <font>
+                  <Font name="Comic Sans MS" size="13.0" />
+               </font>
+            </Button>
 
-            </children>
-        </HBox>
 
-    </children>
-</GridPane>
+            <Button fx:id="clearBoard" defaultButton="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" text="Clear Board" textFill="#2610f2">
+               <HBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </HBox.margin>
+               <font>
+                  <Font name="Comic Sans MS" size="13.0" />
+               </font>
+            </Button>
+
+
+            <ComboBox id="combobox" minHeight="20.0" minWidth="100.0" prefHeight="40.0" prefWidth="100.0" promptText="Pattern">
+               <HBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </HBox.margin>
+            </ComboBox>
+
+
+            <Button minHeight="20.0" minWidth="100.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" text="Options">
+               <HBox.margin>
+                  <Insets left="10.0" top="10.0" />
+               </HBox.margin>
+            </Button>
+
+
+         </children>
+
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </HBox>
+   </bottom>
+
+   <right>
+      <VBox id="vboxRight" alignment="TOP_CENTER" prefHeight="538.0" prefWidth="142.0" spacing="20.0" BorderPane.alignment="CENTER">
+         <children>
+            <Label id="text" text="Background color:">
+               <VBox.margin>
+                  <Insets top="5.0" />
+               </VBox.margin>
+            </Label>
+            <ColorPicker id="picker" fx:id="colorPicker" onMouseClicked="#handleColorPicker" prefHeight="26.0" prefWidth="100.0">
+               <VBox.margin>
+                  <Insets top="-10.0" />
+               </VBox.margin>
+            </ColorPicker>
+
+               <Label id="text" text="Cell Color:" />
+            <ColorPicker id="picker" fx:id="cellColor" onAction="#handleCellColor" prefHeight="26.0" prefWidth="100.0">
+               <VBox.margin>
+                  <Insets top="-10.0" />
+               </VBox.margin>
+            </ColorPicker>
+
+            <Label id="text" text="Grid Color:" />
+            <ColorPicker id="picker" fx:id="gridColor" onAction="#handleGridColor" prefWidth="100.0">
+               <VBox.margin>
+                  <Insets top="-10.0" />
+               </VBox.margin>
+               <effect>
+                  <Blend mode="BLUE" />
+               </effect></ColorPicker>
+            <Label id="text" text="60">
+               <VBox.margin>
+                  <Insets />
+               </VBox.margin>
+            </Label>
+            <Slider orientation="VERTICAL" prefHeight="156.0" prefWidth="16.0">
+               <effect>
+                  <Lighting>
+                     <bumpInput>
+                        <Shadow />
+                     </bumpInput>
+                     <light>
+
+                     </light>
+                  </Lighting>
+               </effect></Slider>
+            <Label text="10" />
+            <CheckBox id="text" mnemonicParsing="false" text="Grid On/Off" />
+         </children>
+         <BorderPane.margin>
+            <Insets />
+         </BorderPane.margin>
+      </VBox>
+   </right>
+
+   <top>
+      <MenuBar id="menuBar" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Close" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
+
+   <center>
+      <Canvas id="gameCanvas" fx:id="canvas" height="606.0" onMouseClicked="#handleMouseClick" width="859.0" BorderPane.alignment="CENTER" />
+   </center>
+   <effect>
+      <Blend opacity="0.99" />
+   </effect>
+</BorderPane>
