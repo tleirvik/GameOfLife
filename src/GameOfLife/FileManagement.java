@@ -1,4 +1,4 @@
-package model;
+package GameOfLife;
 
 import java.io.File;
 /**

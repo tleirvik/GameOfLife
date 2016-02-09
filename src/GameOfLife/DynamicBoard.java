@@ -1,4 +1,4 @@
-package model;
+package GameOfLife;
 
 public class DynamicBoard extends Board{
 

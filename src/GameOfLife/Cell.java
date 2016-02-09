@@ -1,4 +1,4 @@
-package model;
+package GameOfLife;
 
 import javafx.scene.paint.Color;
 /**

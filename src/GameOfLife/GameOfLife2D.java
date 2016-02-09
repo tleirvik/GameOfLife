@@ -1,4 +1,4 @@
-package model;
+package GameOfLife;
 
 public class GameOfLife2D extends GameOfLife{
 

@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 
 import org.junit.Test;
 
-import model.Board;
+import GameOfLife.Board;
 
 /**
  * 
@@ -16,7 +16,7 @@ import model.Board;
 public class BoardTest {
 
 	/**
-	 * Test method for {@link model.Board#Board(int, int)}.
+	 * Test method for {@link GameOfLife.Board#Board(int, int)}.
 	 */
 	@Test
 	public void testBoard() {
@@ -24,7 +24,7 @@ public class BoardTest {
 	}
 
 	/**
-	 * Test method for {@link model.Board#getRow()}.
+	 * Test method for {@link GameOfLife.Board#getRow()}.
 	 */
 	@Test
 	public void testGetRow() {
@@ -32,7 +32,7 @@ public class BoardTest {
 	}
 
 	/**
-	 * Test method for {@link model.Board#getColumn()}.
+	 * Test method for {@link GameOfLife.Board#getColumn()}.
 	 */
 	@Test
 	public void testGetColumn() {
@@ -40,7 +40,7 @@ public class BoardTest {
 	}
 
 	/**
-	 * Test method for {@link model.Board#getBoard()}.
+	 * Test method for {@link GameOfLife.Board#getBoard()}.
 	 */
 	@Test
 	public void testGetBoard() {
@@ -48,7 +48,7 @@ public class BoardTest {
 	}
 
 	/**
-	 * Test method for {@link model.Board#setBoard()}.
+	 * Test method for {@link GameOfLife.Board#setBoard()}.
 	 */
 	@Test
 	public void testSetBoard() {
@@ -56,7 +56,7 @@ public class BoardTest {
 	}
 
 	/**
-	 * Test method for {@link model.Board#toString()}.
+	 * Test method for {@link GameOfLife.Board#toString()}.
 	 */
 	@Test
 	public void testToString() {

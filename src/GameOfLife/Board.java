@@ -1,41 +1,51 @@
-/**
- *
- */
-package model;
-
+package GameOfLife;
 
 /**
- * @author
+ *
+ *
  *
  */
-public class FixedBoard extends Board{
+public abstract class Board {
 
-	public FixedBoard(int rows, int columns) {
-		super(rows, columns);
+	private int rows;
+	private int columns;
 
+	public Board(int rows, int columns) {
+
+		this.rows = rows;
+		this.columns = columns;
 	}
-	private Cell[][] cell;
 
 	/**
 	 * @return the rows
 	 */
 	public int getRow() {
-		return 0;
+		return rows;
 	}
 
 	/**
 	 * @return the columns
 	 */
 	public int getColumn() {
-		return 0;
+		return columns;
 	}
+	/**
+	 *
+	 *
+	 */
 	public Board getBoard() {
 		return null;
 
 	}
+	/**
+	 *
+	 */
 	public void setBoard() {
 
 	}
+	/**
+	 *
+	 */
 	@Override
 	public String toString() {
 		return "A";
