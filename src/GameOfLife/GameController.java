@@ -23,17 +23,27 @@ public class GameController extends Application {
 	 *
 	 */
 	public void newGame() {
-            // hardkoder input (hest en dialogboks for input)
+            // hardkoder input (helst en dialogboks for input)
             gol = new GameOfLife2D(!true, 0, 0);
 	}
         
-        /**
+    /**
 	 *
 	 */
 	public void play() {
-            if(gol.getIsBoardEmpty()) {
-                gol.populateBoard();
-            }
+
+		if(gol.getIsBoardEmpty()) {
+        	System.out.println("Board Empty");
+            gol.populateBoard();
+        }
+        
+		//Hent brettet
+		boolean[][] grid = gol.convertBoardToBoolean();
+		
+		//Tegn brett på skjerm
+		ViewController.draw(grid);
+            
+            
 	}
         
 	/**
@@ -74,7 +84,7 @@ public class GameController extends Application {
             stage.show();
 	}
         
-        public static void main(String[] args) {
-            launch(args);
-        }
+    public static void main(String[] args) {
+        launch(args);
+    }
 }

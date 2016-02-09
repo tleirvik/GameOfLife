@@ -11,6 +11,10 @@ public class Cell {
 	private boolean isAlive;
 	private Color color;
 
+	public Cell() {
+		isAlive = false;
+	}
+	
 	/**
 	 *
 	 * @return
@@ -22,7 +26,7 @@ public class Cell {
 	 *
 	 */
 	public void setIsAlive(boolean isAlive) {
-
+		this.isAlive = isAlive;
 	}
 	/**
 	 *

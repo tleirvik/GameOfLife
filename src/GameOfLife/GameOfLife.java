@@ -9,22 +9,25 @@ public abstract class GameOfLife {
 
 	private int state;
 	private int currentState;
-        private boolean isBoardEmpty; // er false hvis alle celler på brettet er døde.
+    private boolean isBoardEmpty; // er true hvis alle celler på brettet er døde.
         
-        public GameOfLife(int state, int curState) {
+        /*public GameOfLife(int state, int curState) {
             this.state = state;
             currentState = curState;
-            isBoardEmpty = false; // strengt tatt ikke nødvendig (?)
-        }
+            isBoardEmpty = true; // strengt tatt ikke nødvendig (?)
+        }*/
         
-        public void setIsBoardEmpty(boolean isEmpty) {
+        /*public void setIsBoardEmpty(boolean isEmpty) {
             isBoardEmpty = isEmpty;
-        }
+        }*/
         
-        public boolean getIsBoardEmpty() {
+        /*public boolean getIsBoardEmpty() {
             return isBoardEmpty;
-        }
+        }*/
 
+    public abstract void setIsBoardEmpty(boolean boardEmpty);
+    public abstract boolean getIsBoardEmpty();
+    
 	public abstract void populateBoard();
 	public int seedGeneration() {
 
@@ -33,4 +36,6 @@ public abstract class GameOfLife {
         
 	public abstract void nextGeneration();
 	public abstract int countNeighbours();
+	public abstract boolean[][] convertBoardToBoolean();
+
 }
