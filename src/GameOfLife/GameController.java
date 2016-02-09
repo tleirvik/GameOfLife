@@ -30,7 +30,7 @@ public class GameController extends Application {
     /**
 	 *
 	 */
-	//BØR VÆRE VOID, "JUKSER" MED Å RETURNERE GRID-EN
+	//Bï¿½R Vï¿½RE VOID, "JUKSER" MED Ã… RETURNERE GRID-EN
 	public boolean[][] play() {
 
 		if(gol.getIsBoardEmpty()) {
@@ -41,7 +41,7 @@ public class GameController extends Application {
 		//returner brettet
 		return  gol.convertBoardToBoolean();
 		
-		//Tegn brett på skjerm
+		//Tegn brett pï¿½ skjerm
             
 	}
         

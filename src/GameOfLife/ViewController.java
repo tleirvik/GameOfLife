@@ -7,7 +7,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 /**
- *Denne klassen lytter på hendelser i .fxml
+ *Denne klassen lytter pÃ¥ hendelser i .fxml
  *
  */
 public class ViewController {
@@ -45,7 +45,7 @@ public class ViewController {
     
     
     /**
-     * DRAW-METODER BURDE VÆRE STATIC (?) SÅ DE KAN KALLES FRA GAMECONTROLLER
+     * DRAW-METODER BURDE VÃ†RE STATIC (?) SÃ… DE KAN KALLES FRA GAMECONTROLLER
      */
     public void draw(boolean[][] grid) {
         gc.clearRect(0, 0, gameCanvas.widthProperty().intValue(),
