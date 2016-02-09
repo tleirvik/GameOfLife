@@ -13,12 +13,12 @@ import javafx.scene.paint.Color;
 public class ViewController {
 
     @FXML
-    private static Canvas gameCanvas;
+    private Canvas gameCanvas;
     private final GameController gController = new GameController();
-    private static GraphicsContext gc;
+    private GraphicsContext gc;
     
-    private static int row = 10;
-    private static int column = 10;
+    private int row = 10;
+    private int column = 10;
 
     /*
      *		v LISTENERS v
@@ -33,7 +33,9 @@ public class ViewController {
 
     @FXML
     public void play() {
-        gController.play();
+        boolean [][] grid = gController.play();
+        
+        draw(grid);
     }
     
     
@@ -45,14 +47,20 @@ public class ViewController {
     /**
      * DRAW-METODER BURDE VÆRE STATIC (?) SÅ DE KAN KALLES FRA GAMECONTROLLER
      */
-    public static void draw(boolean[][] grid) {
+    public void draw(boolean[][] grid) {
         gc.clearRect(0, 0, gameCanvas.widthProperty().intValue(),
         gameCanvas.heightProperty().intValue());
         
         
         for(int row = 0; row < grid.length; row++) {
     		for(int col = 0; col < grid[row].length; col++) {
-                grid[row][col];
+                if(grid[row][col]) {
+                	int x = row * (int) (gameCanvas.getWidth() / 10);
+                	int y = col * (int) (gameCanvas.getWidth() / 10);
+                	
+                	gc.setFill(Color.WHITE);
+                	gc.fillRect(x, y,(int) (gameCanvas.getWidth() / 10),(int) (gameCanvas.getWidth() / 10));
+                }
     		}
     	}
         
@@ -65,7 +73,7 @@ public class ViewController {
      *
      * @param gc
      */
-    public static void draw(GraphicsContext gc) {
+    public void draw(GraphicsContext gc) {
         
         for(int x = 0; x <= row; x++) {
             int xPos = x * (int) gameCanvas.getWidth() / row;
