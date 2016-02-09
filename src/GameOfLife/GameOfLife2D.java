@@ -46,7 +46,8 @@ public class GameOfLife2D extends GameOfLife{
 	public void populateBoard() {
 		System.out.println("Populate");
 		
-		boolean[][] grid = { //Hardkodet for øyeblikket, må byttes ut med noe dynamisk
+		//Hardkodet for Ã¸yeblikket, mÃ¥ byttes ut med noe dynamisk
+		boolean[][] grid = { 
                     {true, false, false, true, false, true, false, false, true, false},
                     {true, false, false, true, false, true, false, false, true, false},
                     {true, false, false, true, false, true, false, false, true, false},
