@@ -38,7 +38,7 @@ public class FixedBoard extends Board{
     }
     
     /**
-     * Returnerer cellen på gitt posisjon
+     * Returnerer cellen pÃ¥ gitt posisjon
      * 
      * @param row
      * @param column
