@@ -29,20 +29,14 @@ public abstract class Board {
 	public int getColumn() {
 		return columns;
 	}
-	/**
-	 *
-	 *
-	 */
-	public Board getBoard() {
-		return null;
-
-	}
+	
+	public abstract Cell getCell(int row, int column);
+	
 	/**
 	 *
 	 */
-	public void setBoard() {
-
-	}
+	
+	public abstract void setBoard(boolean[][] grid);
 	/**
 	 *
 	 */

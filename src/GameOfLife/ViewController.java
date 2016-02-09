@@ -7,37 +7,55 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 
 /**
- *Denne klassen lytter pÃ¥ hendelser i .fxml
+ *Denne klassen lytter på hendelser i .fxml
  *
  */
 public class ViewController {
 
     @FXML
-    private Canvas gameCanvas;
+    private static Canvas gameCanvas;
     private final GameController gController = new GameController();
-    private GraphicsContext gc;
+    private static GraphicsContext gc;
     
-    private int row = 10;
-    private int column = 10;
+    private static int row = 10;
+    private static int column = 10;
 
+    /*
+     *		v LISTENERS v
+     */
 
     @FXML
     public void newGame() {
-        gController.newGame();
+    	//Lag pop-up-box der brukeren kan velge parametre til spillet
+        gController.newGame(); //send parametrene videre
         gc = gameCanvas.getGraphicsContext2D();
     }
 
     @FXML
     public void play() {
         gController.play();
-        draw();
     }
-    /**
-     *
+    
+    
+    /*
+     *		^ LISTENERS ^
      */
-    public void draw() {
+    
+    
+    /**
+     * DRAW-METODER BURDE VÆRE STATIC (?) SÅ DE KAN KALLES FRA GAMECONTROLLER
+     */
+    public static void draw(boolean[][] grid) {
         gc.clearRect(0, 0, gameCanvas.widthProperty().intValue(),
-                gameCanvas.heightProperty().intValue());
+        gameCanvas.heightProperty().intValue());
+        
+        
+        for(int row = 0; row < grid.length; row++) {
+    		for(int col = 0; col < grid[row].length; col++) {
+                grid[row][col];
+    		}
+    	}
+        
         gc.setStroke(Color.RED);
         gc.setLineWidth(2.0);
         draw(gc);
@@ -47,7 +65,7 @@ public class ViewController {
      *
      * @param gc
      */
-    public void draw(GraphicsContext gc) {
+    public static void draw(GraphicsContext gc) {
         
         for(int x = 0; x <= row; x++) {
             int xPos = x * (int) gameCanvas.getWidth() / row;
