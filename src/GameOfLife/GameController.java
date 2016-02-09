@@ -30,19 +30,18 @@ public class GameController extends Application {
     /**
 	 *
 	 */
-	public void play() {
+	//BØR VÆRE VOID, "JUKSER" MED Å RETURNERE GRID-EN
+	public boolean[][] play() {
 
 		if(gol.getIsBoardEmpty()) {
         	System.out.println("Board Empty");
             gol.populateBoard();
         }
-        
-		//Hent brettet
-		boolean[][] grid = gol.convertBoardToBoolean();
+		
+		//returner brettet
+		return  gol.convertBoardToBoolean();
 		
 		//Tegn brett på skjerm
-		ViewController.draw(grid);
-            
             
 	}
         
