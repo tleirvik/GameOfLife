@@ -5,8 +5,6 @@
 .button {
     -fx-color: #4169E1;
     -fx-text-fill: #202020;
-    -fx-font: sans-serif;
-    /*-fx-border-color: #0000FF;*/
 }
 
 #menuBar {
