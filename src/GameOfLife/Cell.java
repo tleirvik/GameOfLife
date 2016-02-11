@@ -1,9 +1,11 @@
 package GameOfLife;
 
 import javafx.scene.paint.Color;
+
+
 /**
  *
- *
+ * The Cell class.
  *
  */
 public class Cell {
@@ -11,16 +13,22 @@ public class Cell {
 	private boolean isAlive;
 	private Color color;
 
+
+	/**
+	 *
+	 * Constructor : sets isAlive to false;
+	 *
+	 */
 	public Cell() {
 		isAlive = false;
 	}
-	
+
 	/**
 	 *
-	 * @return
+	 * @return boolean isAlive
 	 */
 	public boolean getIsAlive() {
-		return true;
+		return this.isAlive;
 	}
 	/**
 	 *
@@ -30,17 +38,20 @@ public class Cell {
 	}
 	/**
 	 *
-	 * @return
+	 * @return Color color
 	 */
 	public Color getColor() {
-		return Color.BLACK;
+		return this.color;
+	}
+	public void setColor(Color color) {
+		this.color = color;
 	}
 	/**
-	 *
+	 * Har laget en enkel toString() . Denne bør bygges ut.
 	 */
 	@Override
 	public String toString() {
-		return "A";
+		return "Cell status: " + this.getIsAlive() + " Color: " + this.getColor();
 	}
 
 }
