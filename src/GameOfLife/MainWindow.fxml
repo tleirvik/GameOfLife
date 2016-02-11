@@ -15,7 +15,7 @@
       <HBox id="bottom" alignment="CENTER" prefHeight="94.0" prefWidth="990.0" spacing="10.0" BorderPane.alignment="TOP_CENTER">
 
           <children>
-            <Button minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#newGame" prefHeight="40.0" 
+            <Button minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#newGame" prefHeight="40.0"
                     prefWidth="100.0" text="New Game">
                <HBox.margin>
                   <Insets left="10.0" top="10.0" />
