@@ -11,7 +11,7 @@ import javafx.stage.Stage;
  *
  *
  */
-public class GameController extends Application {
+public class GameController {
 
     
 	private GameOfLife gol;
@@ -30,19 +30,18 @@ public class GameController extends Application {
     /**
 	 *
 	 */
-	//B�R V�RE VOID, "JUKSER" MED Å RETURNERE GRID-EN
-	public boolean[][] play() {
+	public void play() {
 
 		if(gol.getIsBoardEmpty()) {
         	System.out.println("Board Empty");
             gol.populateBoard();
         }
 		
-		//returner brettet
-		return  gol.convertBoardToBoolean();
-		
-		//Tegn brett p� skjerm
             
+	}
+	
+	public boolean[][] getBooleanGrid() {
+		return gol.convertBoardToBoolean();
 	}
         
 	/**
@@ -69,21 +68,4 @@ public class GameController extends Application {
 	/**
 	 *
 	 */
-	@Override
-	public void start(Stage stage) throws Exception {
-            BorderPane root = (BorderPane) FXMLLoader.load(getClass().
-                getResource("MainWindow.fxml"));
-            
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("grafikk.css").
-                toExternalForm());
-            
-            stage.setTitle("Game Of Life");
-            stage.setScene(scene);
-            stage.show();
-	}
-        
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

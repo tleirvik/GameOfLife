@@ -1,54 +1,52 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.paint.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.canvas.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.layout.*?>
-<?import java.lang.*?>
-<?import javafx.scene.control.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.CheckBox?>
+<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.Slider?>
+<?import javafx.scene.effect.Blend?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.ViewController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.ViewController">
 
    <bottom>
       <HBox id="bottom" alignment="CENTER" prefHeight="94.0" prefWidth="990.0" spacing="10.0" BorderPane.alignment="TOP_CENTER">
 
           <children>
-            <Button minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#newGame" prefHeight="40.0" 
-                    prefWidth="100.0" text="New Game">
+            <Button minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#newGame" prefHeight="40.0" prefWidth="100.0" text="New Game">
                <HBox.margin>
                   <Insets left="10.0" top="10.0" />
                </HBox.margin>
             </Button>
 
-            <Button alignment="CENTER" defaultButton="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="100.0" text="Play" textFill="#2610f2" textOverrun="CENTER_WORD_ELLIPSIS">
+            <Button alignment="CENTER" defaultButton="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="100.0" text="Play" textOverrun="CENTER_WORD_ELLIPSIS">
                <HBox.margin>
                   <Insets left="10.0" top="10.0" />
                </HBox.margin>
-               <font>
-                  <Font name="Comic Sans MS" size="13.0" />
-               </font>
             </Button>
 
 
-            <Button fx:id="stopButton" defaultButton="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" text="Stop" textFill="#2610f2">
+            <Button fx:id="stopButton" defaultButton="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" text="Stop">
                <HBox.margin>
                   <Insets left="10.0" top="10.0" />
                </HBox.margin>
-               <font>
-                  <Font name="Comic Sans MS" size="13.0" />
-               </font>
             </Button>
 
 
-            <Button fx:id="clearBoard" defaultButton="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" text="Clear Board" textFill="#2610f2">
+            <Button fx:id="clearBoard" defaultButton="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" text="Clear Board">
                <HBox.margin>
                   <Insets left="10.0" top="10.0" />
                </HBox.margin>
-               <font>
-                  <Font name="Comic Sans MS" size="13.0" />
-               </font>
             </Button>
 
 
@@ -75,56 +73,64 @@
    </bottom>
 
    <right>
-      <VBox id="vboxRight" alignment="TOP_CENTER" prefHeight="538.0" prefWidth="142.0" spacing="20.0" BorderPane.alignment="CENTER">
+      <VBox alignment="TOP_CENTER" spacing="15.0">
          <children>
-            <Label id="text" text="Background color:">
-               <VBox.margin>
-                  <Insets top="5.0" />
-               </VBox.margin>
-            </Label>
-            <ColorPicker id="picker" fx:id="colorPicker" prefHeight="26.0" prefWidth="100.0">
+            <Label id="text" text="Grid Color:" />
+            <ColorPicker id="picker" fx:id="gridColor" prefHeight="26.0" prefWidth="100.0">
                <VBox.margin>
                   <Insets top="-10.0" />
                </VBox.margin>
             </ColorPicker>
 
-               <Label id="text" text="Cell Color:" />
+                     <Label id="text" text="Cell Color:" />
             <ColorPicker id="picker" fx:id="cellColor" prefHeight="26.0" prefWidth="100.0">
                <VBox.margin>
                   <Insets top="-10.0" />
                </VBox.margin>
             </ColorPicker>
 
-            <Label id="text" text="Grid Color:" />
+                  <Label id="text" text="Grid Color:" />
             <ColorPicker id="picker" fx:id="gridColor" prefWidth="100.0">
                <VBox.margin>
                   <Insets top="-10.0" />
                </VBox.margin>
                <effect>
                   <Blend mode="BLUE" />
-               </effect></ColorPicker>
-            <Label id="text" text="60">
-               <VBox.margin>
-                  <Insets />
-               </VBox.margin>
-            </Label>
-            <Slider orientation="VERTICAL" prefHeight="156.0" prefWidth="16.0">
-               <effect>
-                  <Lighting>
-                     <bumpInput>
-                        <Shadow />
-                     </bumpInput>
-                     <light>
-
-                     </light>
-                  </Lighting>
-               </effect></Slider>
-            <Label text="10" />
-            <CheckBox id="text" mnemonicParsing="false" text="Grid On/Off" />
+               </effect>
+            </ColorPicker>
+            <VBox alignment="TOP_CENTER">
+               <children>
+                  <Label text="Cell Size">
+                     <font>
+                        <Font name="System Bold" size="12.0" />
+                     </font>
+                  </Label>
+                  <HBox prefHeight="185.0" prefWidth="188.0">
+                     <children>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
+                           <children>
+                              <Label text="Width" />
+                              <Slider fx:id="cellWidthSlider" orientation="VERTICAL" />
+                              <Label fx:id="cellWidthLabel" text="0" />
+                           </children>
+                        </VBox>
+                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="94.0">
+                           <children>
+                              <Label text="Height" />
+                              <Slider fx:id="cellHeightSlider" orientation="VERTICAL" />
+                              <Label fx:id="cellHeightLabel" text="0" />
+                           </children>
+                        </VBox>
+                     </children>
+                  </HBox>
+                  <CheckBox id="text" fx:id="toggleGrid1" mnemonicParsing="false" text="Bind size" />
+               </children>
+            </VBox>
+            <CheckBox id="text" fx:id="toggleGrid" mnemonicParsing="false" text="Grid On/Off" />
          </children>
-         <BorderPane.margin>
-            <Insets />
-         </BorderPane.margin>
+         <padding>
+            <Insets top="10.0" />
+         </padding>
       </VBox>
    </right>
 
@@ -151,7 +157,11 @@
    </top>
 
    <center>
-      <Canvas id="gameCanvas" fx:id="gameCanvas" height="606.0" width="859.0" BorderPane.alignment="CENTER" />
+      <VBox fx:id="canvasParent" style="-fx-border-width: 1px; -fx-border-color: black;" BorderPane.alignment="CENTER">
+         <children>
+            <Canvas id="gameCanvas" fx:id="gameCanvas" height="606.0" onMouseDragOver="#moveGrid" width="859.0" />
+         </children>
+      </VBox>
    </center>
    <effect>
       <Blend opacity="0.99" />
