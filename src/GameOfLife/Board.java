@@ -36,7 +36,8 @@ public abstract class Board {
 	 *
 	 */
 	
-	public abstract void setBoard(boolean[][] grid);
+	public abstract void setBoard(Cell[][] inputBoard);
+	public abstract Cell[][] getBoard();
 	/**
 	 *
 	 */

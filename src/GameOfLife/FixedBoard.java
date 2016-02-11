@@ -39,6 +39,7 @@ public class FixedBoard extends Board{
             return cell[0].length;
     }
 
+    
     /**
      * Returnerer cellen på gitt posisjon
      *
@@ -50,6 +51,8 @@ public class FixedBoard extends Board{
     public Cell getCell(int row, int column) {
     	return cell[row][column];
     }
+    
+    
 	/**
 	 * The purpose of this method is to set the setIsAalive value of the entire grid
 	 *
@@ -57,18 +60,21 @@ public class FixedBoard extends Board{
 	 *
 	 */
     //Tidligere setBoard-metoden
-    public void setBoard(boolean[][] grid) {
-
-    	for(int row = 0; row < grid.length; row++) {
-    		for(int col = 0; col < grid[row].length; col++) {
-    			System.out.println(cell[row][col]);
-    			System.out.println(grid[row][col]);
-                cell[row][col].setIsAlive( grid[row][col] );
+    public void setBoard(Cell[][] inputBoard) {
+    	for(int row = 0; row < inputBoard.length; row++) {
+    		for(int col = 0; col < inputBoard[row].length; col++) {
+                cell[row][col].setIsAlive( inputBoard[row][col].getIsAlive() );
     		}
     	}
     }
+    
+    public Cell[][] getBoard() {
+    	return cell;
+    }
+    
+    
     /**
-     *  This' class toString()-method
+     *  This class toString()-method
      *  @return String The size of the board(x,y aka rows and columns)
      */
     @Override

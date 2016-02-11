@@ -15,7 +15,7 @@ public class GameController extends Application {
 
     
 	private GameOfLife gol;
-	private FileManagement fileManagement;
+	//private FileManagement fileManagement;
 
 	
         
@@ -24,24 +24,21 @@ public class GameController extends Application {
 	 */
 	public void newGame() {
             // hardkoder input (helst en dialogboks for input)
-            gol = new GameOfLife2D(!true, 0, 0);
+            gol = new GameOfLife2D(false, 0, 0);
 	}
         
     /**
 	 *
 	 */
-	//B�R V�RE VOID, "JUKSER" MED Å RETURNERE GRID-EN
 	public boolean[][] play() {
 
 		if(gol.getIsBoardEmpty()) {
         	System.out.println("Board Empty");
-            gol.populateBoard();
+            gol.populateRandomBoard();
         }
 		
 		//returner brettet
 		return  gol.convertBoardToBoolean();
-		
-		//Tegn brett p� skjerm
             
 	}
         
