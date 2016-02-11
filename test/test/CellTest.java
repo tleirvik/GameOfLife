@@ -60,7 +60,7 @@ public class CellTest {
 	public void testGetColor() {
 		Cell cell = new Cell();
 
-		assertEquals(cell.getColor(), null);
+		assertEquals(cell.getColor(), null); /* Sjekk denne! Står som deprecated */
 		cell.setColor(Color.WHEAT);
 		assertEquals(cell.getColor(), Color.WHEAT);
 	}
