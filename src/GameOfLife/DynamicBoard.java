@@ -60,4 +60,20 @@ public class DynamicBoard extends Board{
 	public int getColumn() {
 		return 1;
 	}
+	/**
+	 *  Too be implemented
+	 */
+	@Override
+	public Cell getCell(int row, int column) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	/**
+	 * Too be implemented
+	 */
+	@Override
+	public void setBoard(boolean[][] grid) {
+		// TODO Auto-generated method stub
+
+	}
 }
