@@ -13,12 +13,12 @@ import javafx.stage.Stage;
  */
 public class GameController {
 
-    
+
 	private GameOfLife gol;
 	private FileManagement fileManagement;
 
-	
-        
+
+
 	/**
 	 *
 	 */
@@ -26,7 +26,7 @@ public class GameController {
             // hardkoder input (helst en dialogboks for input)
             gol = new GameOfLife2D(!true, 0, 0);
 	}
-        
+
     /**
 	 *
 	 */
@@ -36,10 +36,10 @@ public class GameController {
         	System.out.println("Board Empty");
             gol.populateRandomBoard();
         }
-		
-            
+
+
 	}
-	
+
 	public boolean[][] getBooleanGrid() {
 		boolean [][] tempgrid = gol.convertBoardToBoolean();
 		for(int i = 0; i < 10; i++) {
@@ -49,21 +49,21 @@ public class GameController {
 		}
 		return gol.convertBoardToBoolean();
 	}
-        
+
 	/**
 	 *
 	 */
 	public void saveGame() {
 
 	}
-        
+
 	/**
 	 *
 	 */
 	public void loadGame() {
 
 	}
-        
+
 	/**
 	 *
 	 */
@@ -71,10 +71,23 @@ public class GameController {
 
 	}
 
-	public Cell setCellAliveStatus(boolean isAlive) {
+/*	public Cell setCellAliveStatus(boolean isAlive) {
 		gol.setCellAliveStatus(isAlive);
+	} */
+	public int countNeighboursTransport(int row, int column) {
+
+		int temp = gol.countNeighbours(row, column);
+
+		return temp;
+
 	}
-        
+	public void setNextGenerationStrategyTransport() {
+
+		System.out.println(gol.toString());
+		gol.setNextGenerationStrategy(new BitwiseStrategy());
+	}
+
+
 	/**
 	 *
 	 */
