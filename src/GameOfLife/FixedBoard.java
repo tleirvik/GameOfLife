@@ -41,7 +41,18 @@ public class FixedBoard extends Board{
     }
 
     public Cell[][] getCells() {
-    	return cells;
+    	
+    	Cell[][] copy = new Cell[cells.length][cells[0].length];
+    	
+    	for(int row = 0; row < cells.length; row++) {
+    		for(int col = 0; col < cells[row].length; col++) {
+    			
+                copy[row][col] = copy[row][col];
+                
+    		}
+    	}
+    	
+    	return copy;
     }
     
     

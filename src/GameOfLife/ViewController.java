@@ -56,12 +56,12 @@ public class ViewController {
     //Hentet fra modellen
     private boolean[][] grid;
     
-    private int rows = 50; //Bør hentes fra gController (?)
-    private int columns = 50; //Bør hentes fra gController (?)
+    private int rows = 10; //Bør hentes fra gController (?)
+    private int columns = 10; //Bør hentes fra gController (?)
     
     //Slidere kan manipulere disse verdiene
-    private int cellWidth = 50;
-    private int cellHeight = 50;
+    private int cellWidth = 20;
+    private int cellHeight = 20;
     
     //Variabler trengt for å kalkulere differansen
     //mellom start og slutt for å finne ut hvor langt brukeren har dratt brettet
@@ -135,15 +135,15 @@ public class ViewController {
 				   //Sjekk om brukeren trykket utenfor grid-en ved å 
 				   //plusse center-verdien av grid-en med halvparten av dens størrelse
 				   //både i bredden og i høyden
-				   if(	bClick_X >= ( ( ( gameCanvas.getWidth() ) / 2 ) - offset_X) - ( ( cellWidth * columns ) / 2 ) && 
-						bClick_X <= ( ( ( gameCanvas.getWidth() ) / 2 ) - offset_X) + ( ( cellWidth * columns ) / 2 ))
+				   if(	bClick_X >= ( ( gameCanvas.getWidth() / 2 ) - offset_X) - ( ( cellWidth * columns ) / 2 ) && 
+						bClick_X <= ( ( gameCanvas.getWidth() / 2 ) - offset_X) + ( ( cellWidth * columns ) / 2 ))
 				   {
 					   System.out.println("Innenfor kolonnene");//Debug
 				   
 				   
 				   
-					   if(	bClick_Y >= ( ( ( gameCanvas.getHeight() ) / 2 ) - offset_Y) - ( ( cellHeight * rows ) / 2 ) && 
-							bClick_Y <= ( ( ( gameCanvas.getHeight() ) / 2 ) - offset_Y) + ( ( cellHeight * rows ) / 2 ))
+					   if(	bClick_Y >= ( ( gameCanvas.getHeight() / 2 ) - offset_Y) - ( ( cellHeight * rows ) / 2 ) && 
+							bClick_Y <= ( ( gameCanvas.getHeight() / 2 ) - offset_Y) + ( ( cellHeight * rows ) / 2 ))
 					   {
 						   System.out.println("Innenfor radene");//Debug
 					   
@@ -152,10 +152,14 @@ public class ViewController {
 						   //celleraden tror jeg må være lik hvor mange ganger man kan dele bClick_Y i cellHeight (i heltall)
 						   //RETTELSE: Tror ikke man bør hente celle for å opprettholde en viss form for immutability (eller noe?)
 						   //Heller lage en slags "gController.setCellAliveStatus(!gController.
-							   
-							   int row = (int) (bClick_Y - offset_Y) / cellHeight;
-							   int column = (int) (bClick_X - offset_X) / cellWidth;
-							   System.out.println(row + " " + column);
+						   
+						   int row = (int) (bClick_Y - ( ( ( gameCanvas.getHeight() / 2 ) - offset_Y ) - ( ( cellHeight * rows ) / 2 ) ) ) / cellHeight;
+						   int column = (int) (bClick_X - ( ( ( gameCanvas.getWidth() / 2 ) - offset_X ) - ( ( cellWidth * rows ) / 2 ) ) ) / cellWidth;
+						   
+						   gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
+						   
+						   grid = gController.getBooleanGrid();
+						   draw();
 								   
 					   }
 						   
