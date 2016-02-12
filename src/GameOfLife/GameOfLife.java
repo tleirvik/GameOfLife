@@ -29,8 +29,8 @@ public abstract class GameOfLife {
 	public boolean seedGeneration(int limit) {
 
 		Random random = new Random();
-
-		if (random.nextInt() != 1)
+		
+		if (random.nextInt(limit) != 1)
 			return false;
 		else
 			return true;

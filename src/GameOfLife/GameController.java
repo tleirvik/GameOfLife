@@ -11,11 +11,11 @@ import javafx.stage.Stage;
  *
  *
  */
-public class GameController extends Application {
+public class GameController {
 
     
 	private GameOfLife gol;
-	//private FileManagement fileManagement;
+	private FileManagement fileManagement;
 
 	
         
@@ -24,22 +24,30 @@ public class GameController extends Application {
 	 */
 	public void newGame() {
             // hardkoder input (helst en dialogboks for input)
-            gol = new GameOfLife2D(false, 0, 0);
+            gol = new GameOfLife2D(!true, 0, 0);
 	}
         
     /**
 	 *
 	 */
-	public boolean[][] play() {
+	public void play() {
 
 		if(gol.getIsBoardEmpty()) {
         	System.out.println("Board Empty");
             gol.populateRandomBoard();
         }
 		
-		//returner brettet
-		return  gol.convertBoardToBoolean();
             
+	}
+	
+	public boolean[][] getBooleanGrid() {
+		boolean [][] tempgrid = gol.convertBoardToBoolean();
+		for(int i = 0; i < 10; i++) {
+			for(int j = 0; j < 10; j++) {
+				System.out.println(tempgrid[i][j]);
+			}
+		}
+		return gol.convertBoardToBoolean();
 	}
         
 	/**
@@ -62,25 +70,12 @@ public class GameController extends Application {
 	public void exportGame() {
 
 	}
+
+	public Cell setCellAliveStatus(boolean isAlive) {
+		gol.setCellAliveStatus(isAlive);
+	}
         
 	/**
 	 *
 	 */
-	@Override
-	public void start(Stage stage) throws Exception {
-            BorderPane root = (BorderPane) FXMLLoader.load(getClass().
-                getResource("MainWindow.fxml"));
-            
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource("grafikk.css").
-                toExternalForm());
-            
-            stage.setTitle("Game Of Life");
-            stage.setScene(scene);
-            stage.show();
-	}
-        
-    public static void main(String[] args) {
-        launch(args);
-    }
 }

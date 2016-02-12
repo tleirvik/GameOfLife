@@ -15,6 +15,7 @@ public class GameOfLife2D extends GameOfLife{
     public GameOfLife2D(boolean isDynamic, int rows, int columns) {
 
         this.isDynamic = isDynamic;
+        this.isBoardEmpty = true;
 
         // sjekker at vi ikke får et tomt array eller 1 x 1 grid
         // Lager 10x10 array
