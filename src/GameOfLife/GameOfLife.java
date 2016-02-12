@@ -35,4 +35,8 @@ public abstract class GameOfLife {
 		else
 			return true;
 	}
+	
+	public abstract boolean getCellAliveStatus(int row, int column);
+	public abstract void setCellAliveStatus(int row, int column, boolean isAlive);
+	
 }

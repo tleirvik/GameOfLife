@@ -11,15 +11,15 @@ package GameOfLife;
  */
 public class FixedBoard extends Board{
 
-	private Cell[][] cell;
+	private Cell[][] cells;
 
     public FixedBoard(int rows, int columns) {
         super(rows, columns);
-        cell = new Cell[rows][columns];
+        cells = new Cell[rows][columns];
 
-        for(int row = 0; row < cell.length; row++) {
-    		for(int col = 0; col < cell[row].length; col++) {
-    			cell[row][col] = new Cell();
+        for(int row = 0; row < cells.length; row++) {
+    		for(int col = 0; col < cells[row].length; col++) {
+    			cells[row][col] = new Cell();
     		}
     	}
     }
@@ -27,18 +27,38 @@ public class FixedBoard extends Board{
     /**
      * @return the rows
      */
-    public int getRow() {
-            return cell.length;
+    @Override
+    public int getRows() {
+            return cells.length;
     }
 
     /**
      * @return the columns
      */
     @Override
-    public int getColumn() {
-            return cell[0].length;
+    public int getColumns() {
+            return cells[0].length;
     }
 
+    public Cell[][] getCells() {
+    	return cells;
+    }
+    
+    
+    /**
+	 * The purpose of this method is to set the setIsAalive value of the entire grid
+	 *
+	 * @param boolean[][] grid
+	 *
+	 */
+    //Tidligere setBoard-metoden
+    public void setCells(Cell[][] inputBoard) {
+    	for(int row = 0; row < inputBoard.length; row++) {
+    		for(int col = 0; col < inputBoard[row].length; col++) {
+                cells[row][col].setIsAlive( inputBoard[row][col].getIsAlive() );
+    		}
+    	}
+    }
     
     /**
      * Returnerer cellen på gitt posisjon
@@ -49,27 +69,7 @@ public class FixedBoard extends Board{
      */
     @Override
     public Cell getCell(int row, int column) {
-    	return cell[row][column];
-    }
-    
-    
-	/**
-	 * The purpose of this method is to set the setIsAalive value of the entire grid
-	 *
-	 * @param boolean[][] grid
-	 *
-	 */
-    //Tidligere setBoard-metoden
-    public void setBoard(Cell[][] inputBoard) {
-    	for(int row = 0; row < inputBoard.length; row++) {
-    		for(int col = 0; col < inputBoard[row].length; col++) {
-                cell[row][col].setIsAlive( inputBoard[row][col].getIsAlive() );
-    		}
-    	}
-    }
-    
-    public Cell[][] getBoard() {
-    	return cell;
+    	return cells[row][column];
     }
     
     

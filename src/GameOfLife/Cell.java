@@ -43,12 +43,11 @@ public class Cell {
 	public Color getColor() {
 		return this.color;
 	}
+	
 	public void setColor(Color color) {
 		this.color = color;
 	}
-	/**
-	 * Har laget en enkel toString() . Denne bør bygges ut.
-	 */
+
 	@Override
 	public String toString() {
 		return "Cell status: " + this.getIsAlive() + " Color: " + this.getColor();

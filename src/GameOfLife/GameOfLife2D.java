@@ -35,63 +35,28 @@ public class GameOfLife2D extends GameOfLife{
     
     @Override
 	public void populateRandomBoard() {
-    	for(int row = 0; row < boardGrid.getRow(); row++) {
-    		for(int col = 0; col < boardGrid.getColumn(); col++) {
+    	this.isBoardEmpty = false;
+    	for(int row = 0; row < boardGrid.getRows(); row++) {
+    		for(int col = 0; col < boardGrid.getColumns(); col++) {
                 Cell cell = boardGrid.getCell(row,col);
                 cell.setIsAlive(super.seedGeneration(5));// Hardkoder inputveriden til 5
     		}
     	}
     }
     
-	@Override
-	public void nextGeneration() {
-		
-		Cell[][] tempBoard = boardGrid.getBoard();
-		
-		for(int row = 0; row < boardGrid.getRow(); row++) {
-    		for(int col = 0; col < boardGrid.getColumn(); col++) {
-    			
-    			//Dead and has exactly 3 neighbours
-                if(!tempBoard[row][col].getIsAlive() && countNeighbours(row,col) == 3) {
-                    tempBoard[row][col].setIsAlive(true);
-                }
- 
-                //Alive and has less than 2 neighbours
-                if(tempBoard[row][col].getIsAlive() && countNeighbours(row,col) < 2) {
-                    tempBoard[row][col].setIsAlive(false);
-                }
- 
-                //Alive and has exactly 2 or 3 neighbours
-                if(tempBoard[row][col].getIsAlive() && countNeighbours(row,col) == 2 && countNeighbours(row,col) == 3) {
-                    tempBoard[row][col].setIsAlive(true);
-                }
-                 
-                //Alive and has more than 3 neighbours
-                if(tempBoard[row][col].getIsAlive() && countNeighbours(row,col) > 3) {
-                    tempBoard[row][col].setIsAlive(false);
-                }
-    		}
-    	}
-		
-		boardGrid.setBoard(tempBoard);
-	}
-	
     @Override
 	public void setIsBoardEmpty(boolean boardEmpty) {
 		isBoardEmpty = boardEmpty;
 	}
+    
 	@Override
 	public boolean getIsBoardEmpty() {
 		return isBoardEmpty;
 	}
 
-
-
-
-	// Konverterer brettet til et todimensjonalt boolsk array
 	public boolean[][] convertBoardToBoolean() {
 
-		boolean[][] grid = new boolean[boardGrid.getRow()][boardGrid.getColumn()];
+		boolean[][] grid = new boolean[boardGrid.getRows()][boardGrid.getColumns()];
 
 		for(int row = 0; row < grid.length; row++) {
     		for(int col = 0; col < grid[row].length; col++) {
@@ -104,23 +69,49 @@ public class GameOfLife2D extends GameOfLife{
 	}
 
 	@Override
-	public int countNeighbours(int row, int column) {
+	public void nextGeneration() {
 		
-		Cell[][] tempBoard = boardGrid.getBoard();
+		Cell[][] tempBoard = boardGrid.getCells();
+		
+		for(int row = 0; row < boardGrid.getRows(); row++) {
+    		for(int col = 0; col < boardGrid.getColumns(); col++) {
+    			
+    			//Dead and has exactly 3 neighbours
+                if(!tempBoard[row][col].getIsAlive() && countNeighbours(row,col) == 3) {
+                    tempBoard[row][col].setIsAlive(true);
+                }
+ 
+                //Alive and has less than 2 neighbours
+                if(tempBoard[row][col].getIsAlive() && countNeighbours(row,col) < 2) {
+                    tempBoard[row][col].setIsAlive(false);
+                }
+ 
+                //Alive and has exactly 2 or 3 neighbours UNØDVENDIG??
+                /*if(tempBoard[row][col].getIsAlive() && countNeighbours(row,col) == 2 && countNeighbours(row,col) == 3) {
+                    tempBoard[row][col].setIsAlive(true);
+                }*/
+                 
+                //Alive and has more than 3 neighbours
+                if(tempBoard[row][col].getIsAlive() && countNeighbours(row,col) > 3) {
+                    tempBoard[row][col].setIsAlive(false);
+                }
+    		}
+    	}
+		
+		boardGrid.setCells(tempBoard);
+	}
+	
+	@Override
+	public int countNeighbours(int row, int column) {
 		
 		int neighbours = 0;
         
         int rowPos, columnPos;
          
         //Et array for hver offset-verdi nødvendig for å finne de 8 cellene omkring en celle
-        int[][] position = { {0,-1}, 
-        					{-1,-1}, 
-    						{-1,0}, 
-    						{-1,+1}, 
-    						{0,+1}, 
-    						{+1,+1}, 
-    						{+1,0}, 
-    						{+1,-1} 
+        int[][] position = { {0,-1}, {-1,-1}, {-1,0}, 
+    						{-1,+1}, /* CELLE HER*/	{0,+1}, 
+    						{+1,+1}, {+1,0},  {+1,-1} 
     					};
          
         //position.length = 8 fordi det bare er 8 celler rundt
@@ -130,7 +121,7 @@ public class GameOfLife2D extends GameOfLife{
             columnPos = column + position[i][1];
              
             //TEST OM CELLEN LEVER
-            if(rowPos >= 0 && rowPos < boardGrid.getRow() && columnPos >= 0 && columnPos < boardGrid.getColumn()) {
+            if(rowPos >= 0 && rowPos < boardGrid.getRows() && columnPos >= 0 && columnPos < boardGrid.getColumns()) {
                 if(boardGrid.getCell(rowPos, columnPos).getIsAlive()) {
                     neighbours++;
                 }
@@ -138,5 +129,13 @@ public class GameOfLife2D extends GameOfLife{
         }
         return neighbours;
 	}
-
+	
+	public boolean getCellAliveStatus(int row, int column) {
+		return boardGrid.getCell(row, column).getIsAlive();
+	}
+	
+	public void setCellAliveStatus(int row, int column, boolean isAlive) {
+		boardGrid.getCell(row, column).setIsAlive(isAlive);
+	}
+	
 }

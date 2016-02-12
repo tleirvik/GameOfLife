@@ -1,11 +1,5 @@
 package GameOfLife;
 
-import javafx.application.Application;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
-import javafx.scene.layout.BorderPane;
-import javafx.stage.Stage;
-
 /**
  *
  *
@@ -15,21 +9,17 @@ public class GameController {
 
     
 	private GameOfLife gol;
-	private FileManagement fileManagement;
+	//private FileManagement fileManagement;
 
 	
         
 	/**
 	 *
 	 */
-	public void newGame() {
-            // hardkoder input (helst en dialogboks for input)
-            gol = new GameOfLife2D(!true, 0, 0);
+	public void newGame(boolean isDynamic, int rows, int columns) {
+            gol = new GameOfLife2D(isDynamic, rows, columns);
 	}
         
-    /**
-	 *
-	 */
 	public void play() {
 
 		if(gol.getIsBoardEmpty()) {
@@ -37,45 +27,31 @@ public class GameController {
             gol.populateRandomBoard();
         }
 		
-            
+		gol.nextGeneration();
 	}
 	
 	public boolean[][] getBooleanGrid() {
-		boolean [][] tempgrid = gol.convertBoardToBoolean();
-		for(int i = 0; i < 10; i++) {
-			for(int j = 0; j < 10; j++) {
-				System.out.println(tempgrid[i][j]);
-			}
-		}
 		return gol.convertBoardToBoolean();
 	}
         
-	/**
-	 *
-	 */
 	public void saveGame() {
 
 	}
-        
-	/**
-	 *
-	 */
+       
 	public void loadGame() {
 
 	}
         
-	/**
-	 *
-	 */
 	public void exportGame() {
 
 	}
 
-	public Cell setCellAliveStatus(boolean isAlive) {
-		gol.setCellAliveStatus(isAlive);
+	public boolean getCellAliveStatus(int row, int column) {
+		return gol.getCellAliveStatus(row, column);
 	}
-        
-	/**
-	 *
-	 */
+	
+	public void setCellAliveStatus(int row, int column, boolean isAlive) {
+		gol.setCellAliveStatus(row, column, isAlive);
+	}
+	
 }

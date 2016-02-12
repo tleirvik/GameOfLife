@@ -1,7 +1,5 @@
 package GameOfLife;
 
-import java.util.Random;
-
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -17,7 +15,6 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 
@@ -59,8 +56,8 @@ public class ViewController {
     //Hentet fra modellen
     private boolean[][] grid;
     
-    private int rows = 10; //Bør hentes fra gController (?)
-    private int columns = 10; //Bør hentes fra gController (?)
+    private int rows = 50; //Bør hentes fra gController (?)
+    private int columns = 50; //Bør hentes fra gController (?)
     
     //Slidere kan manipulere disse verdiene
     private int cellWidth = 50;
@@ -156,7 +153,9 @@ public class ViewController {
 						   //RETTELSE: Tror ikke man bør hente celle for å opprettholde en viss form for immutability (eller noe?)
 						   //Heller lage en slags "gController.setCellAliveStatus(!gController.
 							   
-							   
+							   int row = (int) (bClick_Y - offset_Y) / cellHeight;
+							   int column = (int) (bClick_X - offset_X) / cellWidth;
+							   System.out.println(row + " " + column);
 								   
 					   }
 						   
@@ -183,7 +182,7 @@ public class ViewController {
 		       public void handle(MouseEvent e) {
 		    	   if(drawMoveMode) {
 		    		   
-		    	   } else {
+		    	   } else {//FLYTTEFUNKSJON
 			           offset_X = offsetBegin_X - e.getX();
 			           offset_Y = offsetBegin_Y - e.getY();
 			           draw();
@@ -195,7 +194,7 @@ public class ViewController {
     @FXML
     public void newGame() {
     	//Lag pop-up-box der brukeren kan velge parametre til spillet
-        gController.newGame(); //send parametrene videre
+        gController.newGame(false, rows, columns); //send parametrene videre
         gc = gameCanvas.getGraphicsContext2D();
         
         

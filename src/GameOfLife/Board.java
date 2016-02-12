@@ -16,33 +16,16 @@ public abstract class Board {
 		this.columns = columns;
 	}
 
-	/**
-	 * @return the rows
-	 */
-	public int getRow() {
+	public int getRows() {
 		return rows;
 	}
 
-	/**
-	 * @return the columns
-	 */
-	public int getColumn() {
+	public int getColumns() {
 		return columns;
 	}
 	
+	public abstract Cell[][] getCells();
+	public abstract void setCells(Cell[][] inputBoard);
 	public abstract Cell getCell(int row, int column);
-	
-	/**
-	 *
-	 */
-	
-	public abstract void setBoard(Cell[][] inputBoard);
-	public abstract Cell[][] getBoard();
-	/**
-	 *
-	 */
-	@Override
-	public String toString() {
-		return "A";
-	}
+
 }
