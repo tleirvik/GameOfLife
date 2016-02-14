@@ -55,7 +55,7 @@ public class GameOfLife2D extends GameOfLife{
 	}
 
 	public boolean[][] convertBoardToBoolean() {
-
+		System.out.println("Henter brettet (convertBoardToBoolean)");
 		boolean[][] grid = new boolean[boardGrid.getRows()][boardGrid.getColumns()];
 
 		for(int row = 0; row < grid.length; row++) {
@@ -67,7 +67,85 @@ public class GameOfLife2D extends GameOfLife{
 		return grid;
 
 	}
-
+	
+	@Override
+	public void nextGeneration() {
+		System.out.println("Kjører nextGeneration");
+            Cell[][] tempBoard = new Cell[boardGrid.getRows()][boardGrid.getColumns()];
+            
+            for(int i = 0; i < tempBoard.length; i++) {
+                for(int j = 0; j < tempBoard[i].length; j++) {
+                    
+                    tempBoard[i][j] = boardGrid.getCell(i, j).copy();
+                    
+                    tempBoard[i][j].setIsAlive(countNeighbours(i, j));
+                    
+                    System.out.print(boardGrid.getCell(i, j).getIsAlive());
+                }
+                System.out.println();
+            }
+            
+            
+            boardGrid.setCells(tempBoard);
+            
+            
+            
+            for(int i = 0; i < tempBoard.length; i++) {
+                for(int j = 0; j < tempBoard[i].length; j++) {
+                    System.out.print(boardGrid.getCell(i, j).getIsAlive());
+                }
+                System.out.println();
+            }
+            
+	}
+	
+	@Override
+	public boolean countNeighbours(int i, int j) {
+            int neighbors = 0;
+            
+            if(j > 0) {
+                if(boardGrid.getCell(i, (j - 1)).getIsAlive())
+                        neighbors++;
+                if( i > 0) {
+                    if(boardGrid.getCell((i - 1), (j - 1)).getIsAlive())
+                        neighbors++;
+                }
+                if(i < boardGrid.getRows() - 1) {
+                    if(boardGrid.getCell((i + 1), (j - 1)).getIsAlive())
+                        neighbors++;
+                }
+            }
+            
+            if(j < boardGrid.getColumns() - 1) {
+                if(boardGrid.getCell(i, (j + 1)).getIsAlive())
+                    neighbors++;
+                if(i > 0) {
+                    if(boardGrid.getCell((i - 1), (j + 1)).getIsAlive())
+                        neighbors++;
+                }
+                if(i < boardGrid.getRows() - 1) {
+                    if(boardGrid.getCell((i + 1), (j + 1)).getIsAlive())
+                        neighbors++;
+                }
+            }
+            
+            if(i > 0) {
+                if(boardGrid.getCell((i - 1), j).getIsAlive())
+                    neighbors++;
+            }
+            if( i < boardGrid.getRows() - 1) {
+                if(boardGrid.getCell((i + 1), j).getIsAlive())
+                    neighbors++;
+            }
+            
+            if(neighbors == 3) 
+                return true; 
+            
+            return ( boardGrid.getCell(i, j).getIsAlive() && neighbors == 2 );
+	}
+	
+	/*
+	
 	@Override
 	public void nextGeneration() {
 		
@@ -89,7 +167,7 @@ public class GameOfLife2D extends GameOfLife{
                 //Alive and has exactly 2 or 3 neighbours UNØDVENDIG??
                 /*if(tempBoard[row][col].getIsAlive() && countNeighbours(row,col) == 2 && countNeighbours(row,col) == 3) {
                     tempBoard[row][col].setIsAlive(true);
-                }*/
+                }
                  
                 //Alive and has more than 3 neighbours
                 if(tempBoard[row][col].getIsAlive() && countNeighbours(row,col) > 3) {
@@ -110,7 +188,7 @@ public class GameOfLife2D extends GameOfLife{
          
         //Et array for hver offset-verdi nødvendig for å finne de 8 cellene omkring en celle
         int[][] position = { {0,-1}, {-1,-1}, {-1,0}, 
-    						{-1,+1}, /* CELLE HER*/	{0,+1}, 
+    						{-1,+1}, /* CELLE HER	{0,+1}, 
     						{+1,+1}, {+1,0},  {+1,-1} 
     					};
          
@@ -128,7 +206,7 @@ public class GameOfLife2D extends GameOfLife{
             }
         }
         return neighbours;
-	}
+	}*/
 	
 	public boolean getCellAliveStatus(int row, int column) {
 		return boardGrid.getCell(row, column).getIsAlive();

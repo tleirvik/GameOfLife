@@ -41,13 +41,26 @@ public class Cell {
 	 * @return Color color
 	 */
 	public Color getColor() {
-		return this.color;
+		if(this.color != null)
+			return this.color;
+		else return null;
 	}
 	
 	public void setColor(Color color) {
 		this.color = color;
 	}
-
+	
+	public Cell copy() {
+		
+		Cell cellCopy = new Cell();
+		
+		cellCopy.setIsAlive(this.getIsAlive());
+		cellCopy.setColor(this.getColor());
+		
+		return cellCopy;
+		
+	}
+	
 	@Override
 	public String toString() {
 		return "Cell status: " + this.getIsAlive() + " Color: " + this.getColor();

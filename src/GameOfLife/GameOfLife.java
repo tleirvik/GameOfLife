@@ -16,7 +16,7 @@ public abstract class GameOfLife {
     public abstract boolean getIsBoardEmpty();
 	public abstract void populateRandomBoard();
 	public abstract void nextGeneration();
-	public abstract int countNeighbours(int row, int column);
+	public abstract boolean countNeighbours(int row, int column);
 	public abstract boolean[][] convertBoardToBoolean();
 
 

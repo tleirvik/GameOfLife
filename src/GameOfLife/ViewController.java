@@ -56,12 +56,23 @@ public class ViewController {
     //Hentet fra modellen
     private boolean[][] grid;
     
-    private int rows = 10; //Bør hentes fra gController (?)
-    private int columns = 10; //Bør hentes fra gController (?)
+    private int rows = 20; //Bør hentes fra gController (?)
+    private int columns = 20; //Bør hentes fra gController (?)
     
     //Slidere kan manipulere disse verdiene
     private int cellWidth = 20;
     private int cellHeight = 20;
+    
+    //Standard farger (Om ikke annet er spesifisert)
+    private Color stdAliveCellColor	= Color.BLACK;
+    private Color stdDeadCellColor	= Color.GHOSTWHITE;
+    
+    private Color stdBgColor	= Color.LIGHTGREY; //Rundt grid
+    
+    private Color stdGridColor	= Color.GREY;
+    
+    //Gridtykkelse
+    private double stdGridLineWidth = 1;
     
     //Variabler trengt for å kalkulere differansen
     //mellom start og slutt for å finne ut hvor langt brukeren har dratt brettet
@@ -73,8 +84,9 @@ public class ViewController {
     private double offset_X = 0;
     private double offset_Y = 0;
     
-    private boolean drawMoveMode = false; //False for move, true for draw
-    private boolean listenersInitialized = false; //Enkel sjekk så initiateListeners ikke kjører mer enn en gang
+    private boolean drawGrid				= true;
+    private boolean drawMoveMode 			= false; //False for move, true for draw
+    private boolean listenersInitialized 	= false; //Enkel sjekk så initiateListeners ikke kjører mer enn en gang
     
 
     /*
@@ -256,6 +268,10 @@ public class ViewController {
         gc.clearRect(0, 0, gameCanvas.widthProperty().intValue(),
         gameCanvas.heightProperty().intValue());
         
+        gc.setFill(stdBgColor);
+        gc.fillRect(0, 0, gameCanvas.widthProperty().intValue(),
+                gameCanvas.heightProperty().intValue());
+        
         //Midtpunkter av Canvas
         double center_X = ( gameCanvas.getWidth()  / 2 );
         double center_Y = ( gameCanvas.getHeight() / 2 );
@@ -275,13 +291,13 @@ public class ViewController {
         for(int row = 0; row < grid.length; row++) {
     		for(int col = 0; col < grid[row].length; col++) {
                 if(grid[row][col]) { //Hvis cellen lever, tegn den hvit
-                	gc.setFill(Color.WHITE);
+                	gc.setFill(stdAliveCellColor);
                 	gc.fillRect( /* xPos */ x, /* yPos */ y, /* Bredde */ cellWidth, /* Høyde */ cellHeight);
                 	
                 	x+=cellWidth; //Plusser på for neste kolonne
                 	
                 } else { //Gjør det samme, bare i svart hvis den er død
-                	gc.setFill(Color.BLACK);
+                	gc.setFill(stdDeadCellColor);
                 	gc.fillRect( /* xPos */ x, /* yPos */ y, /* Bredde */ cellWidth, /* Høyde */ cellHeight);
                 	
                 	x+=cellWidth; //Plusser på for neste kolonne
@@ -291,9 +307,8 @@ public class ViewController {
     		y+=cellHeight; //Plusser på for neste rad
     	}
         
-        gc.setStroke(Color.RED);
-        gc.setLineWidth(2.0);
-        drawGridLines();
+        //Bruker kan bestemme om grid skal tegnes
+        if(drawGrid) drawGridLines();
     }
 
     /**
@@ -302,6 +317,9 @@ public class ViewController {
      */
     public void drawGridLines() {
         
+    	gc.setLineWidth(stdGridLineWidth);
+    	gc.setStroke(stdGridColor);
+    	
         //Midtpunkter av Canvas
         double center_X = ( gameCanvas.getWidth()  / 2 );
         double center_Y = ( gameCanvas.getHeight() / 2 );

@@ -47,7 +47,7 @@ public class FixedBoard extends Board{
     	for(int row = 0; row < cells.length; row++) {
     		for(int col = 0; col < cells[row].length; col++) {
     			
-                copy[row][col] = copy[row][col];
+                copy[row][col] = cells[row][col].copy();
                 
     		}
     	}
@@ -64,9 +64,10 @@ public class FixedBoard extends Board{
 	 */
     //Tidligere setBoard-metoden
     public void setCells(Cell[][] inputBoard) {
+    	System.out.println("Setter brettet");
     	for(int row = 0; row < inputBoard.length; row++) {
     		for(int col = 0; col < inputBoard[row].length; col++) {
-                cells[row][col].setIsAlive( inputBoard[row][col].getIsAlive() );
+                cells[row][col] = inputBoard[row][col].copy();
     		}
     	}
     }
