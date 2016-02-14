@@ -7,25 +7,25 @@ package GameOfLife;
  */
 public class GameController {
 
-    
+
 	private GameOfLife gol;
 	//private FileManagement fileManagement;
 
-	
-        
+
+
 	/**
 	 *
 	 */
 	public void newGame(boolean isDynamic, int rows, int columns) {
             gol = new GameOfLife2D(isDynamic, rows, columns);
 	}
-        
+
 	public void play() {
 
 		if(gol.getIsBoardEmpty()) {
         	System.out.println("Board Empty");
             //gol.populateRandomBoard();
-        	
+
         	gol.setIsBoardEmpty(false);
         	/*
         	//{true, false, false, true}
@@ -33,19 +33,19 @@ public class GameController {
         	gol.setCellAliveStatus(0,1,false);
         	gol.setCellAliveStatus(0,2,false);
         	gol.setCellAliveStatus(0,3,true);
-        	
+
         	//{false, true, true, false}
         	gol.setCellAliveStatus(1,0,false);
         	gol.setCellAliveStatus(1,1,true);
         	gol.setCellAliveStatus(1,2,true);
         	gol.setCellAliveStatus(1,3,false);
-        	
+
         	//{false, true, true, false}
         	gol.setCellAliveStatus(2,0,false);
         	gol.setCellAliveStatus(2,1,true);
         	gol.setCellAliveStatus(2,2,true);
         	gol.setCellAliveStatus(2,3,false);
-        	
+
         	//{true, false, false, true}
         	gol.setCellAliveStatus(3,0,true);
         	gol.setCellAliveStatus(3,1,false);
@@ -55,21 +55,21 @@ public class GameController {
         } else {
         	gol.nextGeneration();
         }
-		
+
 	}
-	
+
 	public boolean[][] getBooleanGrid() {
 		return gol.convertBoardToBoolean();
 	}
-        
+
 	public void saveGame() {
 
 	}
-       
+
 	public void loadGame() {
 
 	}
-        
+
 	public void exportGame() {
 
 	}
@@ -77,9 +77,13 @@ public class GameController {
 	public boolean getCellAliveStatus(int row, int column) {
 		return gol.getCellAliveStatus(row, column);
 	}
-	
+
 	public void setCellAliveStatus(int row, int column, boolean isAlive) {
 		gol.setCellAliveStatus(row, column, isAlive);
 	}
-	
+	public int getNextGenerationCounter() {
+		System.out.println("GC:" + gol.getNextGenerationCounter());
+		return gol.getNextGenerationCounter();
+	}
+
 }

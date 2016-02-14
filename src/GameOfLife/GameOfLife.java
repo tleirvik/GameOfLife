@@ -29,14 +29,15 @@ public abstract class GameOfLife {
 	public boolean seedGeneration(int limit) {
 
 		Random random = new Random();
-		
+
 		if (random.nextInt(limit) != 1)
 			return false;
 		else
 			return true;
 	}
-	
+
 	public abstract boolean getCellAliveStatus(int row, int column);
 	public abstract void setCellAliveStatus(int row, int column, boolean isAlive);
-	
+	public abstract int getNextGenerationCounter();
+
 }

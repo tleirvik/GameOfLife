@@ -20,6 +20,7 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Text;
 import javafx.util.Duration;
 
 /**
@@ -28,7 +29,9 @@ import javafx.util.Duration;
  */
 public class ViewController {
 
-    @FXML private Button stopButton;
+	@FXML private Button stopButton;
+
+	@FXML private Button playButton;
 
     @FXML private Button clearBoard;
 
@@ -53,6 +56,8 @@ public class ViewController {
     @FXML private Canvas gameCanvas;
 
     @FXML private ToggleButton toggleDrawMove;
+
+    @FXML private Text textNextGeneration;
 
     private Timeline timeline;
 
@@ -91,9 +96,8 @@ public class ViewController {
     private double offset_Y = 0;
 
     private boolean drawGrid				= true;
-    private boolean drawMoveMode 			= false; //False for move, true for draw
+    private boolean drawMoveMode 			= true; //False for move, true for draw
     private boolean listenersInitialized 	= false; //Enkel sjekk så initiateListeners ikke kjører mer enn en gang
-
 
     /*
      *		v LISTENERS v
@@ -221,6 +225,7 @@ public class ViewController {
 
 
         if(!listenersInitialized) initiateListeners();
+
         if(drawGrid) drawGridLines();
     }
 
@@ -236,6 +241,7 @@ public class ViewController {
             Duration duration = Duration.millis(130);
             KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
                    gController.play();
+                   textNextGeneration.setText(Integer.toString(gController.getNextGenerationCounter()));
                    grid = gController.getBooleanGrid();
                    draw();
                 });
