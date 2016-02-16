@@ -2,6 +2,8 @@ package GameOfLife;
 
 import java.util.Random;
 
+import com.sun.prism.paint.Color;
+
 /**
  *
  * @author stianreistadrogeberg

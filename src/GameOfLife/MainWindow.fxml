@@ -65,7 +65,7 @@
             </ComboBox>
 
 
-            <Button minHeight="20.0" minWidth="100.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" text="Options">
+            <Button minHeight="20.0" minWidth="100.0" mnemonicParsing="false" prefHeight="40.0" prefWidth="100.0" onAction="#options" text="Options">
                <HBox.margin>
                   <Insets left="10.0" top="10.0" />
                </HBox.margin>

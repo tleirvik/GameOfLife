@@ -98,6 +98,7 @@ public class ViewController {
     private boolean drawGrid				= true;
     private boolean drawMoveMode 			= true; //False for move, true for draw
     private boolean listenersInitialized 	= false; //Enkel sjekk så initiateListeners ikke kjører mer enn en gang
+    private boolean holdingPattern			= false;
 
     /*
      *		v LISTENERS v
@@ -169,20 +170,41 @@ public class ViewController {
 					   {
 						   System.out.println("Innenfor radene");//Debug
 
+						   int row = (int) (bClick_Y - ( ( ( gameCanvas.getHeight() / 2 ) - offset_Y ) - ( ( cellHeight * rows ) / 2 ) ) ) / cellHeight;
+						   int column = (int) (bClick_X - ( ( ( gameCanvas.getWidth() / 2 ) - offset_X ) - ( ( cellWidth * rows ) / 2 ) ) ) / cellWidth;
+
+						   if (holdingPattern) {
+							   	// drawObject(row, column, pattern)
+
+							   	  boolean[][] testArray = new boolean[][]{
+							   		  {false, true, false},
+							   		  {false, false, true},
+							   		  {true, true, true}
+							   	  };
+
+
+						        int mid = (0 + testArray.length - 1) / 2;
+
+							   	for(int i = 0; i < testArray.length; i++) {
+						    		for(int j = 0; j < testArray[i].length; j++) {
+						    			gController.setCellAliveStatus(row + i -mid, column + j -mid, testArray[i][j]);
+
+						    		}
+
+							   	}
+
+
+								  // holdingPattern = false;
+						   } else {
+							   gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
+						   }
+						   grid = gController.getBooleanGrid();
+						   draw();
 						   //Finn rad og kolonne til celle, getCell() og setIsAlive() til !getIsAlive();
 						   //Cellekolonnen tror jeg må være lik hvor mange ganger man kan dele bClick_X i cellWidth (i heltall) og
 						   //celleraden tror jeg må være lik hvor mange ganger man kan dele bClick_Y i cellHeight (i heltall)
 						   //RETTELSE: Tror ikke man bør hente celle for å opprettholde en viss form for immutability (eller noe?)
 						   //Heller lage en slags "gController.setCellAliveStatus(!gController.
-
-						   int row = (int) (bClick_Y - ( ( ( gameCanvas.getHeight() / 2 ) - offset_Y ) - ( ( cellHeight * rows ) / 2 ) ) ) / cellHeight;
-						   int column = (int) (bClick_X - ( ( ( gameCanvas.getWidth() / 2 ) - offset_X ) - ( ( cellWidth * rows ) / 2 ) ) ) / cellWidth;
-
-						   gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
-
-						   grid = gController.getBooleanGrid();
-						   draw();
-
 					   }
 
 				   }
@@ -231,6 +253,13 @@ public class ViewController {
 
         if(drawGrid) drawGridLines();
     }
+
+    @FXML
+    public void options() {
+
+    	holdingPattern = !holdingPattern;
+
+      }
 
     @FXML
     public void play() {
