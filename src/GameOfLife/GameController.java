@@ -81,9 +81,6 @@ public class GameController {
 	public void setCellAliveStatus(int row, int column, boolean isAlive) {
 		gol.setCellAliveStatus(row, column, isAlive);
 	}
-	public int getNextGenerationCounter() {
-		System.out.println("GC:" + gol.getNextGenerationCounter());
-		return gol.getNextGenerationCounter();
-	}
+
 
 }

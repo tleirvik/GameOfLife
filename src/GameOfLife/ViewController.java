@@ -67,12 +67,12 @@ public class ViewController {
     //Hentet fra modellen
     private boolean[][] grid;
 
-    private int rows = 20; //Bør hentes fra gController (?)
-    private int columns = 20; //Bør hentes fra gController (?)
+    private int rows = 50; //Bør hentes fra gController (?)
+    private int columns = 50; //Bør hentes fra gController (?)
 
     //Slidere kan manipulere disse verdiene
-    private int cellWidth = 20;
-    private int cellHeight = 20;
+    private int cellWidth = 15;
+    private int cellHeight = 15;
 
     //Standard farger (Om ikke annet er spesifisert)
     private Color stdAliveCellColor	= Color.BLACK;
@@ -223,6 +223,9 @@ public class ViewController {
         gController.newGame(false, rows, columns); //send parametrene videre
         gc = gameCanvas.getGraphicsContext2D();
 
+        cellWidth  = gameCanvas.widthProperty().intValue() / columns;
+        cellHeight = gameCanvas.heightProperty().intValue() / rows;
+
 
         if(!listenersInitialized) initiateListeners();
 
@@ -232,8 +235,6 @@ public class ViewController {
     @FXML
     public void play() {
 
-    	if(drawMoveMode) {
-
     		gController.play();
 
         	timeline = new Timeline();
@@ -241,7 +242,6 @@ public class ViewController {
             Duration duration = Duration.millis(130);
             KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
                    gController.play();
-                   textNextGeneration.setText(Integer.toString(gController.getNextGenerationCounter()));
                    grid = gController.getBooleanGrid();
                    draw();
                 });
@@ -258,9 +258,6 @@ public class ViewController {
 
 
             draw();
-
-
-    	}
 
     }
 
