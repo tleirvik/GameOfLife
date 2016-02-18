@@ -182,7 +182,6 @@ public class ViewController {
 							   		  {true, true, true}
 							   	  };
 
-
 						        int mid = (0 + testArray.length - 1) / 2;
 
 							   	for(int i = 0; i < testArray.length; i++) {
@@ -251,7 +250,7 @@ public class ViewController {
 
         if(!listenersInitialized) initiateListeners();
 
-        if(drawGrid) drawGridLines();
+
     }
 
     @FXML
