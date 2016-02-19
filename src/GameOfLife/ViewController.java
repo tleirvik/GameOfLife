@@ -1,5 +1,9 @@
 package GameOfLife;
 
+import java.io.File;
+import java.io.IOException;
+
+import FileManagement.RLEDecoder;
 import javafx.animation.Animation;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
@@ -14,6 +18,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseDragEvent;
@@ -21,6 +26,9 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.FileChooser;
+import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 
 /**
@@ -59,10 +67,11 @@ public class ViewController {
 
     @FXML private Text textNextGeneration;
 
+    @FXML private MenuItem filePicker;
+
     private Timeline timeline;
 
     private final GameController gController = new GameController();
-    private GraphicsContext gc;
 
     //Hentet fra modellen
     private boolean[][] grid;
@@ -208,8 +217,8 @@ public class ViewController {
 
 				   }
 
-			   int row		= 0;
-			   int column	= 0;
+			   int row		= 11;
+			   int column	= 12;
 
 		   } else {//FLYTTEFUNKSJON
 
@@ -242,17 +251,44 @@ public class ViewController {
     public void newGame() {
     	//Lag pop-up-box der brukeren kan velge parametre til spillet
         gController.newGame(false, rows, columns); //send parametrene videre
-        gc = gameCanvas.getGraphicsContext2D();
 
         cellWidth  = gameCanvas.widthProperty().intValue() / columns;
         cellHeight = gameCanvas.heightProperty().intValue() / rows;
-
 
         if(!listenersInitialized) initiateListeners();
 
 
     }
+    @FXML
+    public void loadRLE() {
 
+    	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
+
+    	//Er dette en billig hack???
+    	Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
+
+    	FileChooser fileChooser = new FileChooser();
+    	 fileChooser.setTitle("Open Resource File");
+    	 fileChooser.getExtensionFilters().addAll(
+    	         new ExtensionFilter("RLE files", "*.rle"),
+    	         new ExtensionFilter("All Files", "*.*"));
+
+    	 File selectedFile = fileChooser.showOpenDialog(mainStage);
+    	 if (selectedFile != null) {
+    	    	System.out.println(selectedFile.exists());
+
+    	    	try {
+    				RLEDecoder rledec = new RLEDecoder(selectedFile);
+    				rledec.beginDecoding();
+    				gController.newGame(rledec.getBoard(), isDynamic);
+    			} catch (IOException e) {
+    				// TODO Auto-generated catch block
+    				e.printStackTrace();
+    			}
+    	    	grid = gController.getBooleanGrid();
+    	    	draw();
+    	 }
+    }
     @FXML
     public void options() {
 
@@ -321,6 +357,9 @@ public class ViewController {
      * DRAW-METODER BURDE VÆRE STATIC (?) SÅ DE KAN KALLES FRA GAMECONTROLLER
      */
     public void draw() {
+
+    	GraphicsContext gc = gameCanvas.getGraphicsContext2D();
+
         gc.clearRect(0, 0, gameCanvas.widthProperty().intValue(),
         gameCanvas.heightProperty().intValue());
 
@@ -364,14 +403,14 @@ public class ViewController {
     	}
 
         //Bruker kan bestemme om grid skal tegnes
-        if(drawGrid) drawGridLines();
+        if(drawGrid) drawGridLines(gc);
     }
 
     /**
      *
      * @param gc
      */
-    public void drawGridLines() {
+    public void drawGridLines(GraphicsContext gc) {
 
     	gc.setLineWidth(stdGridLineWidth);
     	gc.setStroke(stdGridColor);
@@ -410,4 +449,5 @@ public class ViewController {
 
         }
     }
+
 }

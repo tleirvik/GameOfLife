@@ -1,8 +1,6 @@
 package GameOfLife;
 
-import java.sql.Time;
 import java.util.Timer;
-
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -27,6 +25,7 @@ public class Main extends Application {
 	}
 
     public static void main(String[] args) {
+
 
     	/*
     	GameOfLife2D gol = new GameOfLife2D(false, 10000, 10000);

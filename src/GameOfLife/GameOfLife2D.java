@@ -3,7 +3,7 @@ package GameOfLife;
 public class GameOfLife2D extends GameOfLife{
 
 	private Board board;
-    private boolean isBoardEmpty;
+    private boolean isBoardEmpty = false;
 
     /**
      * a
@@ -12,7 +12,7 @@ public class GameOfLife2D extends GameOfLife{
      * @param c
      */
     public GameOfLife2D(boolean isDynamic, int rows, int columns) {
-        this.isBoardEmpty = true;
+    	this.isBoardEmpty = true;
 
         // sjekker at vi ikke får et tomt array eller 1 x 1 grid
         // Lager 10x10 array
@@ -28,10 +28,25 @@ public class GameOfLife2D extends GameOfLife{
             board = new DynamicBoard(rows, columns);
         else
             board = new FixedBoard(rows, columns);
+
     }
 
 
-    /**
+    public GameOfLife2D(boolean[][] board, boolean isDynamic) {
+
+    	int rows = board.length;
+    	int columns = board[0].length;
+
+    	if(isDynamic)
+            this.board = new DynamicBoard(rows, columns);
+        else
+            this.board = new FixedBoard(rows, columns);
+
+    	this.board.setCellArray(board);
+	}
+
+
+	/**
      *
      */
     @Override

@@ -37,14 +37,16 @@ public class FixedBoard extends Board{
      *
      * @param board
      */
-    public FixedBoard(byte[][] board) {
+    public FixedBoard(boolean[][] board) {
         super(board.length, board[0].length);
 
         currentCells = new byte[board.length][board[0].length];
 
         for(int row = 0; row < board.length; row++) {
     		for(int col = 0; col < board[row].length; col++) {
-    			currentCells[row][col] = board[row][col];
+    			if (board[row][col]) currentCells[row][col] = 1;
+    			else currentCells[row][col] = 0;
+
     		}
     	}
     }

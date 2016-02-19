@@ -17,7 +17,11 @@ public class GameController {
 	 *
 	 */
 	public void newGame(boolean isDynamic, int rows, int columns) {
-            gol = new GameOfLife2D(isDynamic, rows, columns);
+        gol = new GameOfLife2D(isDynamic, rows, columns);
+    }
+
+	public void newGame(boolean[][] board, boolean isDynamic) {
+        gol = new GameOfLife2D(board, isDynamic);
 	}
 
 	public void play() {
