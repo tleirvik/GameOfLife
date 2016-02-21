@@ -21,6 +21,8 @@ import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.VBox;
@@ -260,7 +262,7 @@ public class ViewController {
 
     }
     @FXML
-    public void loadRLE() {
+    public void loadRLE() throws PatternFormatException {
 
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
 
@@ -284,6 +286,14 @@ public class ViewController {
     			} catch (IOException e) {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
+    			} catch (PatternFormatException e) {
+    				// Testing
+    				Alert alert = new Alert(AlertType.ERROR);
+    				alert.setTitle("Feil!");
+    				alert.setHeaderText("Feil ved lesning av fil");
+    				alert.setContentText("Feil RLE blablabla");
+
+    				alert.showAndWait();
     			}
     	    	grid = gController.getBooleanGrid();
     	    	draw();
@@ -448,6 +458,14 @@ public class ViewController {
         	gc.strokeLine(start_X + (cellWidth * x), start_Y, start_X + (cellWidth * x), end_Y);
 
         }
+    }
+    public static void infoBox(String infoMessage, String titleBar, String headerMessage)
+    {
+        Alert alert = new Alert(AlertType.INFORMATION);
+        alert.setTitle(titleBar);
+        alert.setHeaderText(headerMessage);
+        alert.setContentText(infoMessage);
+        alert.showAndWait();
     }
 
 }

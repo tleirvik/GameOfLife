@@ -8,6 +8,9 @@ import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import GameOfLife.PatternFormatException;
+import GameOfLife.ViewController;
+
 public class RLEDecoder {
 
 	private File file;
@@ -19,7 +22,7 @@ public class RLEDecoder {
 		this.file = file;
 	}
 
-	public boolean beginDecoding() throws IOException {
+	public boolean beginDecoding() throws IOException, PatternFormatException {
 
 		if(!readFile(file)) {
 			System.out.println("Filen ble ikke lest.");
@@ -66,24 +69,44 @@ public class RLEDecoder {
 
 		return false;
 	}
-	private boolean getBoardSize() {
+	private boolean getBoardSize() throws PatternFormatException {
 		boolean error = false;
 
 	    Pattern RLEpatternX = Pattern.compile("[xX][\\s][=][\\s][\\d]+");
 	    Matcher RLEMatcherX = RLEpatternX.matcher(RLEString);
 
-	    if(!RLEMatcherX.find()) error = true;
+	    try {
+	    	if(!RLEMatcherX.find()) {
+	    		error = true;
+	    		throw new PatternFormatException();
+	    	}
+	    } catch (PatternFormatException pfe) {
+	    	System.out.println("catch pfe - X");
+			ViewController.infoBox("Feil ved innlesning av fil:" + pfe.getMessage(),"Feil ved innlesning av fil", "Feil ved innlesning av fil");
+	    } finally {
+	    	System.out.println("finally - X");
+	    }
 
 	    Pattern RLEpatternY = Pattern.compile("y = \\d+");
 	    Matcher RLEMatcherY = RLEpatternY.matcher(RLEString);
 
-	    if(!RLEMatcherY.find()) error = true;
+	    try {
+	    	if(!RLEMatcherY.find()) {
+	    		error = true;
+	    		throw new PatternFormatException();
+	    	}
+	    } catch (PatternFormatException pfe) {
+	    	System.out.println("catch pfe - Y");
+			ViewController.infoBox("Feil ved innlesning av fil:" + pfe.getMessage(),"Feil ved innlesning av fil", "Feil ved innlesning av fil");
+	    } finally {
+	    	System.out.println("finally - Y");
+	    }
 
 	    if (error) return false;
 
 	    int column = Integer.parseInt(RLEMatcherX.group().replaceAll("[\\D]", ""));
 	    int row = Integer.parseInt(RLEMatcherY.group().replaceAll("[\\D]", ""));
-
+    	System.out.println("x: "+column + "y: "+ row);
 	    board = new boolean[row][column];
 	    return true;
 
