@@ -34,7 +34,7 @@ public class RLEDecoder {
 			return false;
 		}
 
-		getMetaData();
+		getMetaData(); /* Too be implemented */
 
 		// Setting the board to default false
 		for(int row = 0; row < board.length; row++) {
@@ -47,24 +47,32 @@ public class RLEDecoder {
 
 		return true;
 	}
-	private boolean readFile(File file) throws FileNotFoundException {
+	private boolean readFile(File file) throws FileNotFoundException, IOException {
 
 		StringBuilder sb = new StringBuilder();
 		String line = null;
 
-		try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
+BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
 
+		try {
 			while ((line = reader.readLine() ) != null) {
 				sb.append(line);
 			}
-			reader.close();
+			//reader.close();
 			RLEString = sb.toString();
 			return true;
 
 		} catch (FileNotFoundException io) {
 			System.out.println(io.getMessage());
+			ViewController.infoBox(io.getMessage(), io.getMessage(), io.getMessage());
 		} catch (IOException ioe) {
 			System.out.println(ioe.getMessage());
+		} finally {
+			try {
+				reader.close();
+			} catch (IOException e) {
+				System.out.println("Unable to close file");
+			}
 		}
 
 		return false;
