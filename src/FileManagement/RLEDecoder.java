@@ -17,6 +17,15 @@ public class RLEDecoder {
 	private boolean[][] board;
 	private String RLEString;
 
+	/**
+	 * Constructs a RLEDecoder with file as input
+	 *
+	 * @param  file
+	 *         File to be read and interpreted
+	 * @throws IOException
+	 *         Throws an IOException if file cannot be read, found or other
+	 * 		   IO related exception
+	 */
 	public RLEDecoder(File file) throws IOException {
 
 		this.file = file;
@@ -59,17 +68,19 @@ public class RLEDecoder {
 
 		getMetaData(); /* Too be implemented */
 
-		// Setting the board to default false
-		for(int row = 0; row < board.length; row++) {
-    		for(int col = 0; col < board[0].length; col++) {
-                board[row][col] = false;
-    		}
-		}
+
 
     	parseBoard();
 
 		return true;
 	}
+	/**
+	 * Method that reads a File and .....
+	 * @param file
+	 * @return
+	 * @throws FileNotFoundException
+	 * @throws IOException
+	 */
 	private boolean readFile(File file) throws FileNotFoundException, IOException {
 
 		StringBuilder sb = new StringBuilder();
@@ -199,8 +210,27 @@ BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()
 
 	}
 
+	/**
+	 * Method that returns the board contained in this class
+	 * @return board Method that returns the boolean[][] board
+	 * contained in this class
+	 */
 	public boolean[][] getBoard() {
 		return this.board;
 	}
 
+	/**
+	 * Method that iterates the boolean[][] board and
+	 * sets every position to false. This solves the "problem"
+	 * that in the RLE format dead cells doesn't necessairly
+	 * have to be specified.
+	 * @return void
+	 */
+	void setBoardFalse() {
+		for(int row = 0; row < board.length; row++) {
+    		for(int col = 0; col < board[0].length; col++) {
+                board[row][col] = false;
+    		}
+		}
+	}
 }
