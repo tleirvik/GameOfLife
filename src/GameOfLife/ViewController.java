@@ -387,13 +387,7 @@ public class ViewController {
     				// TODO Auto-generated catch block
     				e.printStackTrace();
     			} catch (PatternFormatException e) {
-    				// Testing
-    				Alert alert = new Alert(AlertType.ERROR);
-    				alert.setTitle("Feil!");
-    				alert.setHeaderText("Feil ved lesning av fil");
-    				alert.setContentText("Feil RLE blablabla");
-
-    				alert.showAndWait();
+    				ViewController.infoBox("Error", "Feil ved lesning av fil", "Feil RLE blablabla");
     			}
     	    	grid = gController.getBooleanGrid();
     	    	draw();
@@ -420,21 +414,45 @@ public class ViewController {
 
     }
 
+    /**
+     *  Method that changes the background color according to
+     *  the value selected from the ColorPicker
+     *
+     *  @return void
+     */
     @FXML
     public void changeBackgroundColor() {
 		stdBackgroundColor = backgroundColorPicker.getValue();
     }
 
+    /**
+     *  Method that changes the board color according to
+     *  the value selected from the ColorPicker
+     *
+     *  @return void
+     */
     @FXML
     public void changeBoardColor() {
     	stdBoardColor = boardColorPicker.getValue();
     }
 
+    /**
+     *  Method that changes the cell color according to
+     *  the value selected from the ColorPicker
+     *
+     *  @return void
+     */
     @FXML
     public void changeCellColor() {
 		stdAliveCellColor = cellColorPicker.getValue();
     }
 
+    /**
+     *  Method that changes the grid color according to
+     *  the value selected from the ColorPicker
+     *
+     *  @return void
+     */
     @FXML
     public void changeGridColor() {
 		stdGridColor = gridColorPicker.getValue();
@@ -668,5 +686,20 @@ public class ViewController {
     	result.ifPresent(usernamePassword -> {
     	    System.out.println("Username=" + usernamePassword.getKey() + ", Password=" + usernamePassword.getValue());
     	});
+    }
+
+    /**
+     * Static function with the purpose of "throwing" dialog boxes
+     * @param title The title of the dialog box
+     * @param headerText The header text of the dialog box
+     * @param contentText The content text of the dialog box
+     */
+    public static void infoBox(String title, String headerText, String contentText) {
+    	Alert alert = new Alert(AlertType.WARNING);
+    	alert.setTitle(title);
+    	alert.setHeaderText(headerText);
+    	alert.setContentText(contentText);
+
+    	alert.showAndWait();
     }
 }

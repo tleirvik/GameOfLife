@@ -22,6 +22,29 @@ public class RLEDecoder {
 		this.file = file;
 	}
 
+	/**
+	 * "Samlemetode" that controls the flow of the RLE file parsing
+	 * This method calls other methods in this class with the purpose of
+	 * doing the following:
+	 *
+	 * 1. Open a file via FileChooser and read the file to a String
+	 * 2. Read the x and y value from the String and create a board with those
+	 * values.
+	 * 3. Read the file meta data(creator, name etc.) and do something
+	 * with it(Too be implemented)
+	 * 4. Interpret the RLE String char by char and convert to a board
+	 * consisting of dead and alive cells(We create an empty board with
+	 * dead cells and iterate the board and setting alive cells to
+	 * true according to the RLE file read)
+	 *
+	 *
+	 * @return boolean Returns true if the method parses the board with causing an
+	 * Exception
+	 * @throws IOException Throws IOException if file cannot be read, found or other
+	 * IO related exception
+	 * @throws PatternFormatException Throws an exception if the method is unable to
+	 * parse the RLE file
+	 */
 	public boolean beginDecoding() throws IOException, PatternFormatException {
 
 		if(!readFile(file)) {
@@ -120,6 +143,9 @@ BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()
 
 	}
 
+	/**
+	 *  too bee implemented
+	 */
 	private void getMetaData() {
 
 	}
