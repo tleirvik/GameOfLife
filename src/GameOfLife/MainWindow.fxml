@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -19,7 +26,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.ViewController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.ViewController">
 
    <bottom>
       <VBox BorderPane.alignment="TOP_CENTER">
@@ -28,24 +35,24 @@
          </BorderPane.margin>
          <children>
             <HBox id="bottom" alignment="CENTER" prefHeight="76.0" prefWidth="1000.0" spacing="10.0">
-      
+
                 <children>
-      
+
                   <Button fx:id="playButton" alignment="CENTER" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="100.0" text="Play" textOverrun="CENTER_WORD_ELLIPSIS">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </Button>
-      
-      
+
+
                   <Button fx:id="pauseButton" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#pause" prefHeight="40.0" prefWidth="100.0" text="Pause">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </Button>
                   <Button fx:id="restartButton" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#restart" prefHeight="40.0" prefWidth="100.0" text="Restart" />
-      
-      
+
+
                   <ComboBox id="combobox" fx:id="patternList" minHeight="20.0" minWidth="100.0" prefHeight="40.0" prefWidth="100.0" promptText="Pattern">
                      <HBox.margin>
                         <Insets left="10.0" />
@@ -69,8 +76,8 @@
                         <Insets />
                      </HBox.margin>
                   </VBox>
-      
-      
+
+
                </children>
             </HBox>
             <VBox prefHeight="20.0" prefWidth="1000.0">
@@ -89,57 +96,55 @@
    </bottom>
 
    <right>
-      <VBox alignment="TOP_CENTER" prefHeight="609.0" prefWidth="188.0" spacing="15.0">
+      <VBox alignment="TOP_CENTER" prefHeight="592.0" prefWidth="165.0" spacing="15.0">
          <children>
-            <Label id="text" text="Background Color" />
-            <ColorPicker id="picker" fx:id="bgColorPicker" onAction="#changeBgColor" prefHeight="26.0" prefWidth="100.0">
-               <VBox.margin>
-                  <Insets top="-10.0" />
-               </VBox.margin>
-            </ColorPicker>
+            <VBox alignment="TOP_CENTER" spacing="3.0">
+               <children>
+                  <Label text="Colors:">
+                     <font>
+                        <Font name="System Bold" size="13.0" />
+                     </font>
+                     <VBox.margin>
+                        <Insets bottom="4.0" />
+                     </VBox.margin>
+                  </Label>
+                  <Label id="text" text="Background:" />
+                  <ColorPicker id="picker" fx:id="backgroundColorPicker" onAction="#changeBackgroundColor" prefHeight="25.0" prefWidth="50.0">
+                     <VBox.margin>
+                        <Insets bottom="4.0" />
+                     </VBox.margin>
+                  </ColorPicker>
 
-                     <Label id="text" text="Cell Color:" />
-            <ColorPicker id="picker" fx:id="cellColorPicker" onAction="#changeCellColor" prefHeight="26.0" prefWidth="100.0">
-               <VBox.margin>
-                  <Insets top="-10.0" />
-               </VBox.margin>
-            </ColorPicker>
+                           <Label id="text" text="Board:" />
+                  <ColorPicker id="picker" fx:id="boardColorPicker" onAction="#changeBoardColor" prefHeight="25.0" prefWidth="50.0">
+                     <VBox.margin>
+                        <Insets bottom="4.0" />
+                     </VBox.margin>
+                  </ColorPicker>
+                  <Label id="text" text="Cell:" />
+                  <ColorPicker id="picker" fx:id="cellColorPicker" onAction="#changeCellColor" prefHeight="25.0" prefWidth="50.0">
+                     <VBox.margin>
+                        <Insets bottom="4.0" />
+                     </VBox.margin>
+                  </ColorPicker>
 
-                  <Label id="text" text="Grid Color:" />
-            <ColorPicker id="picker" fx:id="gridColorPicker" onAction="#changeGridColor" prefWidth="100.0">
-               <VBox.margin>
-                  <Insets top="-10.0" />
-               </VBox.margin>
-               <effect>
-                  <Blend mode="BLUE" />
-               </effect>
-            </ColorPicker>
-            <VBox alignment="TOP_CENTER">
+                        <Label id="text" text="Grid:" />
+                  <ColorPicker id="picker" fx:id="gridColorPicker" onAction="#changeGridColor" prefHeight="25.0" prefWidth="50.0">
+                     <effect>
+                        <Blend mode="BLUE" />
+                     </effect>
+                  </ColorPicker>
+               </children>
+            </VBox>
+            <VBox alignment="TOP_CENTER" spacing="5.0">
                <children>
                   <Label text="Cell Size">
                      <font>
-                        <Font name="System Bold" size="12.0" />
+                        <Font name="System Bold" size="13.0" />
                      </font>
                   </Label>
-                  <HBox prefHeight="185.0" prefWidth="188.0">
-                     <children>
-                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="100.0">
-                           <children>
-                              <Label text="Width" />
-                              <Slider fx:id="cellWidthSlider" orientation="VERTICAL" />
-                              <Label fx:id="cellWidthLabel" />
-                           </children>
-                        </VBox>
-                        <VBox alignment="CENTER" prefHeight="200.0" prefWidth="94.0">
-                           <children>
-                              <Label text="Height" />
-                              <Slider fx:id="cellHeightSlider" orientation="VERTICAL" />
-                              <Label fx:id="cellHeightLabel" />
-                           </children>
-                        </VBox>
-                     </children>
-                  </HBox>
-                  <CheckBox id="text" fx:id="bindSizeSliders" mnemonicParsing="false" selected="true" text="Bind size" />
+                  <Slider fx:id="cellSizeSlider" orientation="VERTICAL" />
+                  <Label fx:id="cellSizeLabel" text="Cell Size"/>
                   <CheckBox fx:id="fitToView" mnemonicParsing="false" text="Fit to view">
                      <VBox.margin>
                         <Insets top="5.0" />
@@ -161,14 +166,14 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-                  <MenuItem mnemonicParsing="false" onAction="#openNewGameDialog" text="New game..." />
+                  <MenuItem mnemonicParsing="false" onAction="#openNewGame" text="New game..." />
               <MenuItem mnemonicParsing="false" text="Close" />
                   <MenuItem fx:id="filePicker" mnemonicParsing="false" onAction="#loadRLE" text="Load RLE..." />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-              <MenuItem mnemonicParsing="false" onAction="#openOptionsDialog" text="Options..." />
+              <MenuItem mnemonicParsing="false" onAction="#openOptions" text="Options..." />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Help">
