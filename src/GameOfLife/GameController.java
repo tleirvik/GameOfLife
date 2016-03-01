@@ -28,7 +28,7 @@ public class GameController {
 
 		if(gol.getIsBoardEmpty()) {
         	System.out.println("Board Empty");
-            //gol.populateRandomBoard();
+            gol.populateRandomBoard();
 
         	gol.setIsBoardEmpty(false);
         	/*

@@ -78,7 +78,7 @@ public abstract class GameOfLife {
 	 * @param column
 	 * @return
 	 */
-	public abstract boolean countNeighbours(int row, int column);
+	public abstract int countNeighbours(int row, int column);
 
 	public abstract boolean[][] convertBoardToBoolean();
 
