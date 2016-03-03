@@ -5,17 +5,24 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.StringReader;
+import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import GameOfLife.MetaData;
 import GameOfLife.PatternFormatException;
 import GameOfLife.ViewController;
 
 public class RLEDecoder {
 
 	private File file;
+
+	private MetaData metadata;
 	private boolean[][] board;
-	private String RLEString;
+	private ArrayList<String> RLEString = new ArrayList<String>();
+
 
 	/**
 	 * Constructs a RLEDecoder with file as input
@@ -26,7 +33,7 @@ public class RLEDecoder {
 	 *         Throws an IOException if file cannot be read, found or other
 	 * 		   IO related exception
 	 */
-	public RLEDecoder(File file) throws IOException {
+	public RLEDecoder(File file) {
 
 		this.file = file;
 	}
@@ -54,28 +61,45 @@ public class RLEDecoder {
 	 * @throws PatternFormatException Throws an exception if the method is unable to
 	 * parse the RLE file
 	 */
-	public boolean beginDecoding() throws IOException, PatternFormatException {
+	public boolean decode() {
 
-		if(!readFile(file)) {
-			System.out.println("Filen ble ikke lest.");
+		try {
+			readFile(file);
+		} catch (FileNotFoundException fnfE) {
+			ViewController.infoBox("Error!", "File was not found", fnfE.getMessage());
+			return false;
+		} catch (IOException ioE) {
+			ViewController.infoBox("Error!", "An unknown Input/Output error occured", ioE.getMessage());
 			return false;
 		}
 
-		if(!getBoardSize()) {
-			System.out.println("Kunne finne finne brettstørrelsen");
+		try {
+			getMetaData();
+		} catch (PatternFormatException pfE) {
+			ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occured trying to interpret metadata: " + pfE.getMessage());
 			return false;
 		}
 
-		getMetaData(); /* Too be implemented */
+		try {
+			getBoardSize();
+		} catch (PatternFormatException pfE) {
+			ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occured trying to interpret board size: " + pfE.getMessage());
+			return false;
+		}
 
+		try {
+			parseBoard();
+		} catch (PatternFormatException pfE) {
+			ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occured trying to interpret board content " + pfE.getMessage());
+			return false;
+		}
 
-
-    	parseBoard();
 
 		return true;
 	}
 	/**
-	 * Method that reads a File and .....
+	 * Method that reads a fiel and converts it to a String
+	 *
 	 * @param file
 	 * @return
 	 * @throws FileNotFoundException
@@ -86,14 +110,15 @@ public class RLEDecoder {
 		StringBuilder sb = new StringBuilder();
 		String line = null;
 
-BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
+		BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
 
 		try {
 			while ((line = reader.readLine() ) != null) {
-				sb.append(line);
+				RLEString.add(line);
 			}
-			//reader.close();
-			RLEString = sb.toString();
+
+
+			System.out.println(sb.toString());
 			return true;
 
 		} catch (FileNotFoundException io) {
@@ -105,33 +130,130 @@ BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()
 			try {
 				reader.close();
 			} catch (IOException e) {
-				System.out.println("Unable to close file");
+				throw new IOException(e.getMessage());
 			}
 		}
 
 		return false;
 	}
+	/**
+	 *  too bee implemented
+	 */
+	private void getMetaData() throws PatternFormatException {
+
+		metadata = new MetaData();
+		StringBuilder name = new StringBuilder();
+		StringBuilder comment = new StringBuilder();
+		StringBuilder author = new StringBuilder();
+
+		for (int i = 0; i < RLEString.size(); i++) {
+			String line = RLEString.get(i);
+			System.out.println(line);
+
+			if (line.contains("#N")) {
+				String tempString = line.replaceAll("[#N]", "");
+				name.append(tempString);
+				RLEString.remove(i);
+			} else if (line.contains("#C")) {
+				String tempString = line.replaceAll("[#C]", "");
+				comment.append(tempString);
+				comment.append("\n");
+				RLEString.remove(i);
+			} else if (line.contains("#c")) {
+				String tempString = line.replaceAll("[#c]", "");
+				comment.append(tempString);
+				comment.append("\n");
+				RLEString.remove(i);
+			} else if (line.contains("#O")) {
+				String tempString = line.replaceAll("[#O]", "");
+				author.append(tempString);
+				RLEString.remove(i);
+			}
+		}
+/*
+		metadata.setAuthor(author.toString());
+		metadata.setComment(comment.toString());
+		metadata.setName(name.toString());
+		System.out.println(metadata.getAuthor());
+		System.out.println(metadata.getName());
+		System.out.println(metadata.getComment());
+		System.out.println("METADATA END");
+
+		for (String temp : RLEString) {
+			System.out.println(temp);
+		}
+*/
+
+		/*
+
+		StringBuilder tempRLEString = new StringBuilder();
+
+		Scanner scanner = new Scanner(RLEString);
+		while (scanner.hasNextLine()) {
+			String line = scanner.nextLine();
+
+
+			if (line.contains("#N")) {
+				String tempString = line.replaceAll("[#N]", "");
+				name.append(tempString);
+			} else if (line.contains("#C")) {
+				String tempString = line.replaceAll("[#C]", "");
+				comment.append(tempString);
+				comment.append("\n");
+			} else if (line.contains("#c")) {
+				String tempString = line.replaceAll("[#c]", "");
+				comment.append(tempString);
+				comment.append("\n");
+			} else if (line.contains("#O")) {
+				String tempString = line.replaceAll("[#O]", "");
+				author.append(tempString);
+			} else {
+				tempRLEString.append(line + "\n");
+			}
+		}
+		scanner.close();
+		metadata.setAuthor(author.toString());
+		metadata.setComment(comment.toString());
+		metadata.setName(name.toString());
+		System.out.println(metadata.getAuthor());
+		System.out.println(metadata.getName());
+		System.out.println(metadata.getComment());
+		System.out.println("METADATA END");
+
+		RLEString = tempRLEString.toString();
+
+		System.out.println(RLEString);
+		*/
+
+	}
 	private boolean getBoardSize() throws PatternFormatException {
 		boolean error = false;
 
 	    Pattern RLEpatternX = Pattern.compile("[xX][\\s][=][\\s][\\d]+");
-	    Matcher RLEMatcherX = RLEpatternX.matcher(RLEString);
+	    Matcher RLEMatcherX = null;
+	    Matcher RLEMatcherY = null;
 
-	    try {
-	    	if(!RLEMatcherX.find()) {
-	    		error = true;
-	    		throw new PatternFormatException();
-	    	}
-	    } catch (PatternFormatException pfe) {
-	    	System.out.println("catch pfe - X");
-			ViewController.infoBox("Feil ved innlesning av fil:" + pfe.getMessage(),"Feil ved innlesning av fil", "Feil ved innlesning av fil");
-	    } finally {
-	    	System.out.println("finally - X");
-	    }
+
+	    for (String temp : RLEString) {
+	    	RLEMatcherX = RLEpatternX.matcher(temp);
+	    	try {
+		    	if(!RLEMatcherX.find()) {
+		    		error = true;
+		    		throw new PatternFormatException();
+		    	}
+		    } catch (PatternFormatException pfe) {
+		    	System.out.println("catch pfe - BoardSize");
+				// ViewController.infoBox("Feil ved innlesning av fil:" + pfe.getMessage(),"Feil ved innlesning av fil", "Feil ved innlesning av fil");
+				throw new PatternFormatException(pfe);
+		    } finally {
+		    	System.out.println("finally - BoardSize");
+		    }
+		}
 
 	    Pattern RLEpatternY = Pattern.compile("y = \\d+");
-	    Matcher RLEMatcherY = RLEpatternY.matcher(RLEString);
 
+	    for (String temp : RLEString) {
+	    	RLEMatcherY = RLEpatternY.matcher(temp);
 	    try {
 	    	if(!RLEMatcherY.find()) {
 	    		error = true;
@@ -148,20 +270,17 @@ BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()
 
 	    int column = Integer.parseInt(RLEMatcherX.group().replaceAll("[\\D]", ""));
 	    int row = Integer.parseInt(RLEMatcherY.group().replaceAll("[\\D]", ""));
-    	System.out.println("x: "+column + "y: "+ row);
+
 	    board = new boolean[row][column];
+
+
+	    }
 	    return true;
-
 	}
 
-	/**
-	 *  too bee implemented
-	 */
-	private void getMetaData() {
 
-	}
 
-	public void parseBoard() {
+	public void parseBoard() throws PatternFormatException{
 
 		//Splitter arrayet på dollartegn for å markere linjeskift
 		String[] tempRLEString = RLEString.split("[$]");

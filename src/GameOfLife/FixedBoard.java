@@ -11,10 +11,9 @@ package GameOfLife;
  */
 public class FixedBoard extends Board{
 
+	private MetaData metadata;
 	private byte[][] currentCells;
 	// private boolean isBoardEmpty; // er true hvis alle celler på brettet er døde.
-
-
 
 	/**
 	 *
@@ -112,7 +111,8 @@ public class FixedBoard extends Board{
      *
      * @param row
      * @param column
-     * @return Cell-object
+     * @return boolean Returns the boolean value of a cell on the
+     * given position
      */
     @Override
     public boolean getCellAliveState(int row, int column) {
@@ -140,6 +140,9 @@ public class FixedBoard extends Board{
     		currentCells[row][column] = 1;
     	else
     		currentCells[row][column] = 0;
+    }
+    public MetaData getMetaData() {
+    	return metadata;
     }
 
 

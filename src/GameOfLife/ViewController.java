@@ -129,6 +129,31 @@ public class ViewController {
     //================================================================================
 
     public void initialize() {
+    	timeline = new Timeline();
+		timeline.setCycleCount(Animation.INDEFINITE);
+		Duration duration = Duration.millis(100);
+
+		KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
+			long startTime = System.nanoTime();
+			gController.play();
+			long endTime = System.nanoTime();
+			long duration2 = (endTime - startTime) / 100000;
+			System.out.println("Next Generation: " +duration2);
+
+			startTime = System.nanoTime();
+			grid = gController.getBooleanGrid();
+			endTime = System.nanoTime();
+			duration2 = (endTime - startTime) / 100000;
+			System.out.println("Get grid: " +duration2);
+
+			startTime = System.nanoTime();
+			draw();
+			endTime = System.nanoTime();
+			duration2 = (endTime - startTime) / 100000;
+			System.out.println("Draw: " +duration2);
+		});
+		timeline.getKeyFrames().add(keyFrame);
+
     	cellSizeSlider.setMin(1);
     	cellSizeSlider.setMax(150);
     	cellSizeSlider.setValue(cellSize);
@@ -157,6 +182,7 @@ public class ViewController {
     			draw();
     		}
 		});
+
 
         //Finn posisjonen til musen når det zoomes inn
     	//Kalkuler differansen fra musen til canvasen sitt midtpunkt
@@ -322,47 +348,28 @@ public class ViewController {
     @FXML
     public void openNewGame() {
     	openNewGameDialog();
-
-    	System.out.println("Rows: " + rows + " Columns: " + columns);
-
-    	centerBoard();
+       	centerBoard();
 
 		//Turn off grid if size is under 8
 		if(cellSize < 8)
-			drawGrid = false;
+			toggleGrid.setSelected(true);
 
-		timeline = new Timeline();
-		timeline.setCycleCount(Animation.INDEFINITE);
-		Duration duration = Duration.millis(100);
-
-		KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-			long startTime = System.nanoTime();
-			gController.play();
-			long endTime = System.nanoTime();
-			long duration2 = (endTime - startTime) / 100000;
-			System.out.println("Next Generation: " +duration2);
-
-			startTime = System.nanoTime();
-			grid = gController.getBooleanGrid();
-			endTime = System.nanoTime();
-			duration2 = (endTime - startTime) / 100000;
-			System.out.println("Get grid: " +duration2);
-
-			startTime = System.nanoTime();
-			draw();
-			endTime = System.nanoTime();
-			duration2 = (endTime - startTime) / 100000;
-			System.out.println("Draw: " +duration2);
-		});
-
-		timeline.getKeyFrames().add(keyFrame);
 		gController.newGame(false, rows, columns); //send parametrene videre
 		grid = gController.getBooleanGrid();
 		draw();
     }
 
+    /**
+     * This method launches a FileChooser and lets the user select a file.
+     * If the file is not null it creates an object of type RLEDecoder and
+     * calls the method decode(). And starts a new game with the the selected
+     * pattern from file.
+     *
+     * @return void
+     * @see RLEDecoder.java
+     */
     @FXML
-    public void loadRLE() throws PatternFormatException {
+    public void loadRLE() {
 
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
 
@@ -377,20 +384,14 @@ public class ViewController {
 
     	 File selectedFile = fileChooser.showOpenDialog(mainStage);
     	 if (selectedFile != null) {
-    	    	System.out.println(selectedFile.exists());
-
-    	    	try {
-    				RLEDecoder rledec = new RLEDecoder(selectedFile);
-    				rledec.beginDecoding();
-    				gController.newGame(rledec.getBoard(), isDynamic);
-    			} catch (IOException e) {
-    				// TODO Auto-generated catch block
-    				e.printStackTrace();
-    			} catch (PatternFormatException e) {
-    				ViewController.infoBox("Error", "Feil ved lesning av fil", "Feil RLE blablabla");
-    			}
-    	    	grid = gController.getBooleanGrid();
-    	    	draw();
+    		 RLEDecoder rledec = new RLEDecoder(selectedFile);
+			 if (!rledec.decode()) {
+				 statusBar.setText("An error occured trying to read the file");
+				 return;
+			 }
+			 gController.newGame(rledec.getBoard(), isDynamic);
+			 grid = gController.getBooleanGrid();
+			 draw();
     	 }
     }
 
