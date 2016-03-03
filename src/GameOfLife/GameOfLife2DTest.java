@@ -7,6 +7,8 @@ import org.junit.Test;
 
 public class GameOfLife2DTest {
 
+	GameOfLife2D gol = new GameOfLife2D(false, 10, 10);
+
 	@Before
 	public void setUp() throws Exception {
 	}
