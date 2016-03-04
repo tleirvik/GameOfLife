@@ -102,6 +102,7 @@ public class RLEDecoder {
 
         return !true;
     }
+    
     /**
      * Reads the contents of the input file and stores it in an ArrayList for future use.
      *
@@ -169,7 +170,9 @@ public class RLEDecoder {
         metadata.setName(name.toString());
         metadata.setAuthor(author.toString());
         metadata.setComment(comment.toString());
-
+        
+        // This for-loop needs to decrement i to account for the
+        // changes in RLEdata when removing an element.
         for(int i = 0; i < RLEdata.size(); i++) {
             if(RLEdata.get(i).startsWith("#")) {
                     RLEdata.remove(i);
@@ -187,14 +190,14 @@ public class RLEDecoder {
      * @throws PatternFormatException
      */
     private void getBoardSize() throws PatternFormatException {
-
-            Pattern RLEpatternY = Pattern.compile("([yY][\\s][=][\\s])([\\d]+)");
-        Pattern RLEpatternX = Pattern.compile("([xX][\\s][=][\\s])([\\d]+)");	    
+        Pattern RLEpatternY = Pattern.compile("([yY][\\s][=][\\s])([\\d]+)");
+        Pattern RLEpatternX = Pattern.compile("([xX][\\s][=][\\s])([\\d]+)");
+        
         boolean foundRows = false;
         boolean foundColumns = false;
 
         int rows = 0;
-    int columns = 0;
+        int columns = 0;
 
         for (int i = 0; i < RLEdata.size(); i++) {
             String line = RLEdata.get(i);
@@ -213,18 +216,18 @@ public class RLEDecoder {
 
             if(foundRows && foundColumns) {
                 board = new boolean[rows][columns];
-                    return;
+                return;
             }
         }
 
         if(!foundRows && !foundColumns) {
             throw new PatternFormatException("X and Y values could not be parsed from RLE-file");
-    } else if(!foundRows) {
-            throw new PatternFormatException("Y values could not be parsed from RLE-file");
-    } else if(!foundColumns) {
-            throw new PatternFormatException("X values could not be parsed from RLE-file");
+        } else if(!foundRows) {
+                throw new PatternFormatException("Y values could not be parsed from RLE-file");
+        } else if(!foundColumns) {
+                throw new PatternFormatException("X values could not be parsed from RLE-file");
+        }
     }
-}
 
     /**
      * Reads the game rules from the previously loaded contents and stores it in a MetaData-object.
@@ -235,8 +238,9 @@ public class RLEDecoder {
      * @throws PatternFormatException
      */
     private void getGameRules() throws PatternFormatException {
-            Pattern RLEpatternRules = Pattern.compile("rule[\\s]=[\\s][bB]([\\d]+)/[sS]([\\d]+)");
-            String[] SBrules = new String[2];
+        Pattern RLEpatternRules = 
+                Pattern.compile("rule[\\s]=[\\s][bB]([\\d]+)/[sS]([\\d]+)");
+        String[] SBrules = new String[2];
         boolean foundRules = false;
 
         for (int i = 0; i < RLEdata.size(); i++) {
@@ -244,11 +248,12 @@ public class RLEDecoder {
             Matcher RLEmatcherRules = RLEpatternRules.matcher(line);
 
             if(RLEmatcherRules.find()) {
-                    SBrules[0] = RLEmatcherRules.group(1);
-                    SBrules[1] = RLEmatcherRules.group(2);
-                    foundRules = true;
+                SBrules[0] = RLEmatcherRules.group(1);
+                SBrules[1] = RLEmatcherRules.group(2);
+                foundRules = true;
             }
-            }	    
+        }
+        
         if(!foundRules) {
             throw new PatternFormatException("Game rules could not be parsed from RLE-file");
         }
