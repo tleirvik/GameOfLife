@@ -52,11 +52,13 @@ public class GameOfLife2D extends GameOfLife{
     @Override
 	public void populateRandomBoard() {
     	this.isBoardEmpty = false;
+    	/*
     	for(int row = 0; row < board.getRows(); row++) {
     		for(int col = 0; col < board.getColumns(); col++) {
                 board.setCellAliveState(row,col, super.seedGenerator(5));
     		}
     	}
+    	*/
     }
 
 

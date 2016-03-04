@@ -66,7 +66,7 @@ public class RLEDecoder {
            ViewController.infoBox("Error!", "File was not found", "Please try again!");
            return false;
         }
-        
+
         try {
                 readFile(file);
         } catch (FileNotFoundException fnfE) {
@@ -86,6 +86,8 @@ public class RLEDecoder {
                 return false;
         }
 
+        setBoardFalse();
+
         try {
                 getGameRules();
         } catch (PatternFormatException pfE) {
@@ -100,9 +102,9 @@ public class RLEDecoder {
                 return false;
         }
 
-        return !true;
+        return true;
     }
-    
+
     /**
      * Reads the contents of the input file and stores it in an ArrayList for future use.
      *
@@ -135,10 +137,10 @@ public class RLEDecoder {
     /**
      * Reads the metadata from the previously loaded contents and stores it in a new MetaData-object.
      * If the metadata is incorrectly formatted then it will not be stored.
-     * 
+     *
      * This method is not meant to be called directly, but rather through the decode() method in
      * a RLEDecoder-object.
-     * 
+     *
      * @throws PatternFormatException
      * @see MetaData.java
      */
@@ -170,9 +172,10 @@ public class RLEDecoder {
         metadata.setName(name.toString());
         metadata.setAuthor(author.toString());
         metadata.setComment(comment.toString());
-        
+
         // This for-loop needs to decrement i to account for the
-        // changes in RLEdata when removing an element.
+        // changes in RLEdata when removing an element (subtracts
+        // one from the indices).
         for(int i = 0; i < RLEdata.size(); i++) {
             if(RLEdata.get(i).startsWith("#")) {
                     RLEdata.remove(i);
@@ -183,16 +186,18 @@ public class RLEDecoder {
 
     /**
      * Reads the board's X and Y size from the previously loaded contents and creates a two-dimensional boolean grid
-     * 
+     *
      * This method is not meant to be called directly, but rather through the decode() method in
      * a RLEDecoder-object.
-     * 
+     *
      * @throws PatternFormatException
+     * @return void
+     *
      */
     private void getBoardSize() throws PatternFormatException {
         Pattern RLEpatternY = Pattern.compile("([yY][\\s][=][\\s])([\\d]+)");
         Pattern RLEpatternX = Pattern.compile("([xX][\\s][=][\\s])([\\d]+)");
-        
+
         boolean foundRows = false;
         boolean foundColumns = false;
 
@@ -231,14 +236,15 @@ public class RLEDecoder {
 
     /**
      * Reads the game rules from the previously loaded contents and stores it in a MetaData-object.
-     * 
+     *
      * This method is not meant to be called directly, but rather through the decode() method in
      * a RLEDecoder-object.
-     * 
+     *
      * @throws PatternFormatException
+     * @return void
      */
     private void getGameRules() throws PatternFormatException {
-        Pattern RLEpatternRules = 
+        Pattern RLEpatternRules =
                 Pattern.compile("rule[\\s]=[\\s][bB]([\\d]+)/[sS]([\\d]+)");
         String[] SBrules = new String[2];
         boolean foundRules = false;
@@ -251,64 +257,67 @@ public class RLEDecoder {
                 SBrules[0] = RLEmatcherRules.group(1);
                 SBrules[1] = RLEmatcherRules.group(2);
                 foundRules = true;
+                RLEdata.remove(i);
+                return;
             }
         }
-        
+
         if(!foundRules) {
             throw new PatternFormatException("Game rules could not be parsed from RLE-file");
         }
             metadata.setRules(SBrules);
     }
 
-
     public void parseBoard() throws PatternFormatException{
-        Pattern RLEpattern = Pattern.compile("([0-9]+(?=[bBoO]))|([bBoO])");
+        // Pattern RLEpattern = Pattern.compile("([0-9]+(?=[bBoO]))|([bBoO])");
+    	Pattern RLEpattern = Pattern.compile("([0-9]+[bBoO])|([bBoO])");
+
+        String testString = "";
+
+        for (String s : RLEdata) {
+        	testString += s;
+        }
+
+        String[] tempRLEArray = testString.split("\\$");
 
         //Iterer gjennom hver "linje"
-        for(int row = 0; row < RLEdata.size(); row++) {
-            String line = RLEdata.get(row);
-
-            System.out.println("Line "+row+": " + line);
-
+        for(int row = 0; row < tempRLEArray.length; row++) {
+            Matcher RLEMatcher = RLEpattern.matcher(tempRLEArray[row]);
             int column = 0;
-            Matcher RLEMatcher = RLEpattern.matcher(line);
 
             while (RLEMatcher.find()) {
+            	if (RLEMatcher.group(2) != null) {
 
+                	if (RLEMatcher.group(2).matches("[oO]")) {
+                		System.out.print(" (TRUE) ");
+                		board[row][column] = true;
+    	        	}
+                	column++;
+                } else if (RLEMatcher.group(1) != null) {
+                	Pattern p = Pattern.compile("([0-9]+)([oObB])");
+                	Matcher m = p.matcher(RLEMatcher.group(1));
 
-                    /*System.out.println("Ny while, rad "+row+" kolonne "+column);
+                	m.find();
+                	int number = Integer.parseInt(m.group(1));
 
-                    if (RLEMatcher.group().matches("[oObB]")) {
-
-                            //Setter bare levende celler, men teller også de døde
-                            if(RLEMatcher.group().matches("[oO]")) board[row][column] = true;
-                            column++;
-                            System.out.println("Øker kolonne: "+column);
-
-                    }  else {
-                        int number = Integer.parseInt(RLEMatcher.group());
-                        RLEMatcher.find();
-                        while (number-- != 0) {
-                            if(RLEMatcher.group().matches("[oO]")) board[row][column] = true;
-                            column++;
-                            System.out.println("øker kolonne : "+column);
-                        }
-                    }*/
+                	while (number-- != 0) {
+                		System.out.print(m.group(2));
+		            	if(m.group(2).matches("[oO]")) {
+		            		board[row][column] = true;
+		            		System.out.print(" (while-if TRUE) ");
+		            	}
+		            	column++;
+		            }
                 }
-        }
-
-        for (boolean[] board1 : board) {
-            for (int col = 0; col < board.length; col++) {
-                if (board1[col]) {
-                    System.out.print("O ");
-                } else {
-                    System.out.print("X ");
-                }
-            }
-            System.out.println("");
-        }
-
-    }
+            } // End of first while-loop
+        } // End of for-loop
+        for(int row = 0; row < board.length; row++) {
+    		for(int col = 0; col < board[0].length; col++) {
+                System.out.print(" "+board[row][col]);
+    		}
+    		System.out.println();
+    	}
+    } // End of method parseBoard()
 
     /**
      * Method that returns the board contained in this class

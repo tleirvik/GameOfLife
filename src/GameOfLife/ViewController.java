@@ -390,6 +390,9 @@ public class ViewController {
 				 return;
 			 }
 			 gController.newGame(rledec.getBoard(), isDynamic);
+			 rows = rledec.getBoard().length;
+			 columns = rledec.getBoard()[0].length;
+
 			 grid = gController.getBooleanGrid();
 			 draw();
     	 }
@@ -695,7 +698,7 @@ public class ViewController {
      * @param headerText The header text of the dialog box
      * @param contentText The content text of the dialog box
      */
-    
+
     public static void infoBox(String title, String headerText, String contentText) {
     	Alert alert = new Alert(AlertType.WARNING);
     	alert.setTitle(title);
