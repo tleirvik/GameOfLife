@@ -399,6 +399,10 @@ public class ViewController {
     }
 
     @FXML
+    public void saveRLE() {
+
+    }
+    @FXML
     public void play() {
 		if(timeline == null || timeline.getStatus() != Status.RUNNING) {
             timeline.play();

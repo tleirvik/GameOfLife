@@ -269,15 +269,20 @@ public class RLEDecoder {
         metadata.setRules(SBrules);
     }
 
+
     /**
+     * This method parses the board cells from the previously
+     * loaded contents.
+     *
+     * This method is not meant to be called directly, but rather through the decode() method in
+     * a RLEDecoder-object.
      *
      * @throws PatternFormatException
+     * @return void
      */
-
     public void parseBoard() throws PatternFormatException{
         // Pattern RLEpattern = Pattern.compile("([0-9]+(?=[bBoO]))|([bBoO])");
     	Pattern RLEpattern = Pattern.compile("([0-9]+[bBoO])|([bBoO])");
-
         String testString = "";
 
         for (String s : RLEdata) {
@@ -286,7 +291,6 @@ public class RLEDecoder {
 
         String[] tempRLEArray = testString.split("\\$");
 
-        //Iterer gjennom hver "linje"
         for(int row = 0; row < tempRLEArray.length; row++) {
             Matcher RLEMatcher = RLEpattern.matcher(tempRLEArray[row]);
             int column = 0;
@@ -317,17 +321,17 @@ public class RLEDecoder {
                 }
             } // End of first while-loop
         } // End of for-loop
+
         for(int row = 0; row < board.length; row++) {
     		for(int col = 0; col < board[0].length; col++) {
                 System.out.print(" "+board[row][col]);
     		}
-    		System.out.println();
     	}
     } // End of method parseBoard()
 
     /**
      * Method that returns the board contained in this class
-     * @return board Method that returns the boolean[][] board
+     * @return board Returns the boolean[][] board
      * contained in this class
      */
     public boolean[][] getBoard() {

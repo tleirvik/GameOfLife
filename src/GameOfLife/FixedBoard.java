@@ -124,9 +124,6 @@ public class FixedBoard extends Board{
     		return false;
     }
 
-
-
-
     /**
      *
      * @param row
@@ -141,10 +138,6 @@ public class FixedBoard extends Board{
     	else
     		currentCells[row][column] = 0;
     }
-    public MetaData getMetaData() {
-    	return metadata;
-    }
-
 
     /**
      *  This class' toString()-method

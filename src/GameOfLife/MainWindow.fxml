@@ -144,7 +144,7 @@
                      </font>
                   </Label>
                   <Slider fx:id="cellSizeSlider" orientation="VERTICAL" />
-                  <Label fx:id="cellSizeLabel" text="Cell Size"/>
+                  <Label fx:id="cellSizeLabel" text="Cell Size" />
                   <CheckBox fx:id="fitToView" mnemonicParsing="false" text="Fit to view">
                      <VBox.margin>
                         <Insets top="5.0" />
@@ -169,6 +169,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#openNewGame" text="New game..." />
               <MenuItem mnemonicParsing="false" text="Close" />
                   <MenuItem fx:id="filePicker" mnemonicParsing="false" onAction="#loadRLE" text="Load RLE..." />
+                  <MenuItem fx:id="savePicker" mnemonicParsing="false" onAction="#saveRLE" text="Save RLE As..." />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
