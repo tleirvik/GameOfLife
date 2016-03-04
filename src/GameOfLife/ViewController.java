@@ -370,7 +370,6 @@ public class ViewController {
      */
     @FXML
     public void loadRLE() {
-
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
 
     	//Er dette en billig hack???
@@ -398,10 +397,38 @@ public class ViewController {
     	 }
     }
 
+    /**
+     * This method launches a FileChooser and lets the user specify a
+     * filename and save the current board.
+     * If the file is not null it creates an object of type RLEEncoder and
+     * calls the method encode().
+     *
+     * @return void
+     * @throws IOException
+     * @see RLEDecoder.java
+     */
     @FXML
-    public void saveRLE() {
+    public void saveRLE() throws IOException {
+    	Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
 
-    }
+    	FileChooser fileChooser = new FileChooser();
+    	fileChooser.setTitle("Save RLE Pattern to file");
+   	 	fileChooser.getExtensionFilters().add(
+   	         new ExtensionFilter("RLE files", "*.rle"));
+   	 	File saveRLEFile = fileChooser.showSaveDialog(mainStage);
+
+   	 	if (saveRLEFile != null) {
+ 		// Bør kanskje ha en try..catch blokk rundt denne? Eller holder det
+ 		// med å try..catch'e i encoder'en?
+
+ 		// Her skal RLE filen kodes...
+   	 		RLEEncoder rleenc = new RLEEncoder(saveRLEFile);
+ 			System.out.println(saveRLEFile.getAbsolutePath());
+   	 		statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
+ 		}
+ 	}
+
+
     @FXML
     public void play() {
 		if(timeline == null || timeline.getStatus() != Status.RUNNING) {

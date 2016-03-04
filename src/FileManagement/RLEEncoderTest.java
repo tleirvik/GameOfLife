@@ -13,6 +13,8 @@ public class RLEEncoderTest {
 
 	@Test
 	public void testEncodeMetaData() {
+		// tleirvik 18:49
+		/*
 		rleString = new StringBuffer();
 		//byte[][] board = new byte[5][5];
 
