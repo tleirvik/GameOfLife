@@ -21,7 +21,7 @@ public class RLEDecoder {
 
 	private MetaData metadata;
 	private boolean[][] board;
-	private ArrayList<String> RLEString = new ArrayList<String>();
+	private ArrayList<String> RLEdata;
 
 
 	/**
@@ -36,6 +36,7 @@ public class RLEDecoder {
 	public RLEDecoder(File file) {
 
 		this.file = file;
+		RLEdata = new ArrayList<String>();
 	}
 
 	/**
@@ -73,17 +74,20 @@ public class RLEDecoder {
 			return false;
 		}
 
-		try {
-			getMetaData();
-		} catch (PatternFormatException pfE) {
-			ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occured trying to interpret metadata: " + pfE.getMessage());
-			return false;
-		}
+		getMetaData();
 
+		
 		try {
 			getBoardSize();
 		} catch (PatternFormatException pfE) {
 			ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occured trying to interpret board size: " + pfE.getMessage());
+			return false;
+		}
+		
+		try {
+			getGameRules();
+		} catch (PatternFormatException pfE) {
+			ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occured trying to interpret game rules: " + pfE.getMessage());
 			return false;
 		}
 
@@ -95,227 +99,198 @@ public class RLEDecoder {
 		}
 
 
-		return true;
+		return !true;
 	}
 	/**
-	 * Method that reads a fiel and converts it to a String
+	 * Reads the contents of the input file and stores it in an ArrayList for future use.
+	 *
+	 *This method is not meant to be called directly, but rather through the decode() method in
+	 * a RLEDecoder-object.
 	 *
 	 * @param file
-	 * @return
 	 * @throws FileNotFoundException
 	 * @throws IOException
 	 */
-	private boolean readFile(File file) throws FileNotFoundException, IOException {
-
-		StringBuilder sb = new StringBuilder();
-		String line = null;
-
+	private void readFile(File file) throws FileNotFoundException, IOException {
 		BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
+		String line = null;
 
 		try {
 			while ((line = reader.readLine() ) != null) {
-				RLEString.add(line);
+				RLEdata.add(line);
 			}
-
-
-			System.out.println(sb.toString());
-			return true;
-
 		} catch (FileNotFoundException io) {
-			System.out.println(io.getMessage());
-			ViewController.infoBox(io.getMessage(), io.getMessage(), io.getMessage());
+			throw io;
 		} catch (IOException ioe) {
-			System.out.println(ioe.getMessage());
+			throw ioe;
 		} finally {
 			try {
 				reader.close();
 			} catch (IOException e) {
-				throw new IOException(e.getMessage());
+				throw e;
 			}
 		}
-
-		return false;
 	}
+	
 	/**
-	 *  too bee implemented
+	 * Reads the metadata from the previously loaded contents and stores it in a new MetaData-object.
+	 * If the metadata is incorrectly formatted then it will not be stored.
+	 * 
+	 * This method is not meant to be called directly, but rather through the decode() method in
+	 * a RLEDecoder-object.
+	 * 
+	 * @throws PatternFormatException
+	 * @see MetaData.java
 	 */
-	private void getMetaData() throws PatternFormatException {
+	private void getMetaData() {
 
 		metadata = new MetaData();
 		StringBuilder name = new StringBuilder();
-		StringBuilder comment = new StringBuilder();
 		StringBuilder author = new StringBuilder();
+		StringBuilder comment = new StringBuilder();
 
-		for (int i = 0; i < RLEString.size(); i++) {
-			String line = RLEString.get(i);
-			System.out.println(line);
-
+		for (int i = 0; i < RLEdata.size(); i++) {
+			String line = RLEdata.get(i);
+			
 			if (line.contains("#N")) {
-				String tempString = line.replaceAll("[#N]", "");
-				name.append(tempString);
-				RLEString.remove(i);
-			} else if (line.contains("#C")) {
-				String tempString = line.replaceAll("[#C]", "");
-				comment.append(tempString);
-				comment.append("\n");
-				RLEString.remove(i);
-			} else if (line.contains("#c")) {
-				String tempString = line.replaceAll("[#c]", "");
-				comment.append(tempString);
-				comment.append("\n");
-				RLEString.remove(i);
-			} else if (line.contains("#O")) {
-				String tempString = line.replaceAll("[#O]", "");
-				author.append(tempString);
-				RLEString.remove(i);
-			}
-		}
-/*
-		metadata.setAuthor(author.toString());
-		metadata.setComment(comment.toString());
-		metadata.setName(name.toString());
-		System.out.println(metadata.getAuthor());
-		System.out.println(metadata.getName());
-		System.out.println(metadata.getComment());
-		System.out.println("METADATA END");
-
-		for (String temp : RLEString) {
-			System.out.println(temp);
-		}
-*/
-
-		/*
-
-		StringBuilder tempRLEString = new StringBuilder();
-
-		Scanner scanner = new Scanner(RLEString);
-		while (scanner.hasNextLine()) {
-			String line = scanner.nextLine();
-
-
-			if (line.contains("#N")) {
-				String tempString = line.replaceAll("[#N]", "");
+				String tempString = line.replaceAll("(#N )", "");
 				name.append(tempString);
 			} else if (line.contains("#C")) {
-				String tempString = line.replaceAll("[#C]", "");
+				String tempString = line.replaceAll("(#C )", "");
 				comment.append(tempString);
 				comment.append("\n");
 			} else if (line.contains("#c")) {
-				String tempString = line.replaceAll("[#c]", "");
+				String tempString = line.replaceAll("(#c )", "");
 				comment.append(tempString);
 				comment.append("\n");
 			} else if (line.contains("#O")) {
-				String tempString = line.replaceAll("[#O]", "");
+				String tempString = line.replaceAll("(#O )", "");
 				author.append(tempString);
-			} else {
-				tempRLEString.append(line + "\n");
 			}
 		}
-		scanner.close();
+		metadata.setName(name.toString());
 		metadata.setAuthor(author.toString());
 		metadata.setComment(comment.toString());
-		metadata.setName(name.toString());
-		System.out.println(metadata.getAuthor());
-		System.out.println(metadata.getName());
-		System.out.println(metadata.getComment());
-		System.out.println("METADATA END");
-
-		RLEString = tempRLEString.toString();
-
-		System.out.println(RLEString);
-		*/
-
+		
+		for(int i = 0; i < RLEdata.size(); i++) {
+			if(RLEdata.get(i).startsWith("#")) {
+				RLEdata.remove(i);
+				i--;
+			}
+		}
 	}
-	private boolean getBoardSize() throws PatternFormatException {
-		boolean error = false;
+	
+	/**
+	 * Reads the board's X and Y size from the previously loaded contents and creates a two-dimensional boolean grid
+	 * 
+	 * This method is not meant to be called directly, but rather through the decode() method in
+	 * a RLEDecoder-object.
+	 * 
+	 * @throws PatternFormatException
+	 */
+	private void getBoardSize() throws PatternFormatException {
 
-	    Pattern RLEpatternX = Pattern.compile("[xX][\\s][=][\\s][\\d]+");
-	    Matcher RLEMatcherX = null;
-	    Matcher RLEMatcherY = null;
-
-
-	    for (String temp : RLEString) {
-	    	RLEMatcherX = RLEpatternX.matcher(temp);
-	    	try {
-		    	if(!RLEMatcherX.find()) {
-		    		error = true;
-		    		throw new PatternFormatException();
-		    	}
-		    } catch (PatternFormatException pfe) {
-		    	System.out.println("catch pfe - BoardSize");
-				// ViewController.infoBox("Feil ved innlesning av fil:" + pfe.getMessage(),"Feil ved innlesning av fil", "Feil ved innlesning av fil");
-				throw new PatternFormatException(pfe);
-		    } finally {
-		    	System.out.println("finally - BoardSize");
-		    }
-		}
-
-	    Pattern RLEpatternY = Pattern.compile("y = \\d+");
-
-	    for (String temp : RLEString) {
-	    	RLEMatcherY = RLEpatternY.matcher(temp);
-	    try {
-	    	if(!RLEMatcherY.find()) {
-	    		error = true;
-	    		throw new PatternFormatException();
+		Pattern RLEpatternY = Pattern.compile("([yY][\\s][=][\\s])([\\d]+)");
+	    Pattern RLEpatternX = Pattern.compile("([xX][\\s][=][\\s])([\\d]+)");	    
+	    boolean foundRows = false;
+	    boolean foundColumns = false;
+	    
+	    int rows = 0;
+    	int columns = 0;
+	    
+	    for (int i = 0; i < RLEdata.size(); i++) {
+	    	String line = RLEdata.get(i);
+	    	Matcher RLEmatcherY = RLEpatternY.matcher(line);
+	    	Matcher RLEmatcherX = RLEpatternX.matcher(line);
+	    	
+	    	if(RLEmatcherY.find()) {
+	    		rows = Integer.parseInt(RLEmatcherY.group(2));
+	    		foundRows = true;
 	    	}
-	    } catch (PatternFormatException pfe) {
-	    	System.out.println("catch pfe - Y");
-			ViewController.infoBox("Feil ved innlesning av fil:" + pfe.getMessage(),"Feil ved innlesning av fil", "Feil ved innlesning av fil");
-	    } finally {
-	    	System.out.println("finally - Y");
+	    	
+	    	if(RLEmatcherX.find()) {
+	    		columns = Integer.parseInt(RLEmatcherX.group(2));
+	    		foundColumns = true;
+	    	}
+	    	
+	    	if(foundRows && foundColumns) {
+	    	    board = new boolean[rows][columns];
+	    		return;
+	    	}
 	    }
-
-	    if (error) return false;
-
-	    int column = Integer.parseInt(RLEMatcherX.group().replaceAll("[\\D]", ""));
-	    int row = Integer.parseInt(RLEMatcherY.group().replaceAll("[\\D]", ""));
-
-	    board = new boolean[row][column];
-
-
+	    
+	    if(!foundRows && !foundColumns) {
+    		throw new PatternFormatException("X and Y values could not be parsed from RLE-file");
+    	} else if(!foundRows) {
+    		throw new PatternFormatException("Y values could not be parsed from RLE-file");
+    	} else if(!foundColumns) {
+    		throw new PatternFormatException("X values could not be parsed from RLE-file");
+    	}
+    }
+	
+	/**
+	 * Reads the game rules from the previously loaded contents and stores it in a MetaData-object.
+	 * 
+	 * This method is not meant to be called directly, but rather through the decode() method in
+	 * a RLEDecoder-object.
+	 * 
+	 * @throws PatternFormatException
+	 */
+	private void getGameRules() throws PatternFormatException {
+		Pattern RLEpatternRules = Pattern.compile("rule[\\s]=[\\s][bB]([\\d]+)/[sS]([\\d]+)");
+		String[] SBrules = new String[2];
+	    boolean foundRules = false;
+		
+	    for (int i = 0; i < RLEdata.size(); i++) {
+	    	String line = RLEdata.get(i);
+	    	Matcher RLEmatcherRules = RLEpatternRules.matcher(line);
+	    	
+	    	if(RLEmatcherRules.find()) {
+	    		SBrules[0] = RLEmatcherRules.group(1);
+	    		SBrules[1] = RLEmatcherRules.group(2);
+	    		foundRules = true;
+	    	}
+		}	    
+	    if(!foundRules) {
+    		throw new PatternFormatException("Game rules could not be parsed from RLE-file");
 	    }
-	    return true;
+		metadata.setRules(SBrules);
 	}
 
-
-
+	
 	public void parseBoard() throws PatternFormatException{
-
-		//Splitter arrayet på dollartegn for å markere linjeskift
-		String[] tempRLEString = RLEString.split("[$]");
 	    Pattern RLEpattern = Pattern.compile("([0-9]+(?=[bBoO]))|([bBoO])");
-
-	    System.out.println(tempRLEString[0]);
-
+	    
 	    //Iterer gjennom hver "linje"
-	    for(int i = 0; i < tempRLEString.length; i++) {
-
-    		System.out.println("rad: "+i);
-	    	int columnPos = 0;
-
-	    	Matcher RLEMatcher = RLEpattern.matcher(tempRLEString[i]);
+	    for(int row = 0; row < RLEdata.size(); row++) {
+	    	String line = RLEdata.get(row);
+	    	
+    		System.out.println("Line "+row+": " + line);
+	    	
+    		int column = 0;
+	    	Matcher RLEMatcher = RLEpattern.matcher(line);
 
 	    	while (RLEMatcher.find()) {
-	    		System.out.println("1: "+columnPos);
-
+	    		
+	    		
+	    		/*System.out.println("Ny while, rad "+row+" kolonne "+column);
 
 		        if (RLEMatcher.group().matches("[oObB]")) {
 
 		        	//Setter bare levende celler, men teller også de døde
-		        	if(RLEMatcher.group().matches("[oO]")) board[i][columnPos] = true;
-		        	columnPos++;
-		        	System.out.println("2: "+columnPos);
+		        	if(RLEMatcher.group().matches("[oO]")) board[row][column] = true;
+		        	column++;
+		        	System.out.println("Øker kolonne: "+column);
 
 		        }  else {
 		            int number = Integer.parseInt(RLEMatcher.group());
 		            RLEMatcher.find();
 		            while (number-- != 0) {
-		            	if(RLEMatcher.group().matches("[oO]")) board[i][columnPos] = true;
-		            	columnPos++;
-		            	System.out.println("3: "+columnPos);
+		            	if(RLEMatcher.group().matches("[oO]")) board[row][column] = true;
+		            	column++;
+		            	System.out.println("øker kolonne : "+column);
 		            }
-		        }
+		        }*/
 		    }
 	    }
 
