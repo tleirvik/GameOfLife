@@ -265,18 +265,15 @@ public class RLEDecoder {
         if(!foundRules) {
             throw new PatternFormatException("Game rules could not be parsed from RLE-file");
         }
-        
+
         metadata.setRules(SBrules);
     }
 
-<<<<<<< HEAD
-=======
-
     /**
-     * 
-     * @throws PatternFormatException 
+     *
+     * @throws PatternFormatException
      */
->>>>>>> 46606cc22fa2ac293ac9904a9891286f40580dd8
+
     public void parseBoard() throws PatternFormatException{
         // Pattern RLEpattern = Pattern.compile("([0-9]+(?=[bBoO]))|([bBoO])");
     	Pattern RLEpattern = Pattern.compile("([0-9]+[bBoO])|([bBoO])");
