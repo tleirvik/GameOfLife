@@ -31,7 +31,6 @@ public class RLEEncoderTest {
 			for(int col = 0; col < board[0].length; col++) {
 				if(board[row][col] == lastCell) {
 					count++;
-					break;
 				}
 				String nextChar = (board[row][col] == 1) ? "o" : "b";
 				rleString.append(nextChar);
