@@ -5,12 +5,12 @@ import java.io.IOException;
 
 public class RLEEncoder {
 
-	private boolean[][] board;
+    private boolean[][] board;
 
 
-	public RLEEncoder(File file) throws IOException {
+    public RLEEncoder(File file) throws IOException {
 
 
-	}
+    }
 
 }
