@@ -96,5 +96,9 @@ public class GameController {
 		gol.setCellAliveStatus(row, column, isAlive);
 	}
 
+	public void setMetaData(MetaData metadata) {
+		((GameOfLife2D) gol).setMetaData(metadata);
+	}
+
 
 }

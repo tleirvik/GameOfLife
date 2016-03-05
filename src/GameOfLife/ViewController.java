@@ -411,6 +411,7 @@ public class ViewController {
 				 return;
 			 }
 			 gController.newGame(rledec.getBoard(), isDynamic);
+			 gController.setMetaData(rledec.getMetadata());
 			 rows = rledec.getBoard().length;
 			 columns = rledec.getBoard()[0].length;
 
@@ -445,7 +446,10 @@ public class ViewController {
    	 		
  		// Hentet hele brettet med en ny metode jeg lagde. Vi må huske på å gå igjennom den neste gang
    	 		RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
-   	 		rleenc.encode();
+   	 		if (!rleenc.encode()) {
+				 statusBar.setText("An error occured trying to save the file. Please try again.");
+				 return;
+			 }
  			System.out.println(saveRLEFile.getAbsolutePath());
    	 		statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
  		}

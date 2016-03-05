@@ -6,6 +6,7 @@ import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
+import java.nio.file.Path;
 
 import GameOfLife.Board;
 import GameOfLife.MetaData;
@@ -19,7 +20,7 @@ import GameOfLife.ViewController;
 public class RLEEncoder {
 	private byte[][] board;
 	private MetaData metadata;
-	private File file;
+	private Path filePath;
 	private StringBuffer rleString;
 
 	/**
@@ -30,6 +31,7 @@ public class RLEEncoder {
 	public RLEEncoder(Board b, File f) {
 		metadata = b.getMetaData();
 		board = b.getCellArray();
+		filePath = f.toPath();
 	}
 
 	/**
@@ -41,7 +43,7 @@ public class RLEEncoder {
 		rleString = new StringBuffer();
 		Charset charset = Charset.forName("UTF-8");
 
-		try  (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), charset)) {
+		try  (BufferedWriter bw = Files.newBufferedWriter(filePath, charset)) {
 			encodeMetaData();
 			encodeBoardSize();
 			encodeRuleString();

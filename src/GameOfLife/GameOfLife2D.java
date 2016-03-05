@@ -169,4 +169,9 @@ public class GameOfLife2D extends GameOfLife{
 		board.setCellAliveState(row, column, isAlive);
 	}
 
+
+	public void setMetaData(MetaData metadata) {
+		board.setMetaData(metadata);
+	}
+
 }
