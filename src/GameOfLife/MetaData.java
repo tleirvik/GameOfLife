@@ -16,8 +16,8 @@ public class MetaData {
 	private String author;
 	private String name;
 	private String comment;
-	private String survivalRules;
-	private String birthRules;
+	private String survivalRule;
+	private String birthRule;
 
 	public String getAuthor() {
 		return author;
@@ -37,12 +37,12 @@ public class MetaData {
 	public void setComment(String comment) {
 		this.comment = comment;
 	}
-	public String[] getRules() {
-		String[] rules = { survivalRules, birthRules};
+	public String[] getRuleString() {
+		String[] rules = { survivalRule, birthRule};
 		return rules;
 	}
-	public void setRules(String[] SBrules) {
-		this.survivalRules = SBrules[0];
-		this.birthRules = SBrules[1];
+	public void setRuleString(String[] SBrules) {
+		this.survivalRule = SBrules[0];
+		this.birthRule = SBrules[1];
 	}
 }

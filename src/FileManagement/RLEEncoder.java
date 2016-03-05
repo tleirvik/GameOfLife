@@ -9,6 +9,7 @@ import java.nio.file.Files;
 
 import GameOfLife.Board;
 import GameOfLife.MetaData;
+import GameOfLife.ViewController;
 
 /**
  *
@@ -32,6 +33,8 @@ public class RLEEncoder {
 	}
 
 	/**
+	 * Creates a StringBuffer and encodes the board as well as the associated metadata before writing
+	 * the string to the file specified in the constructor.
 	 *
 	 */
 	public boolean encode() {
@@ -40,14 +43,14 @@ public class RLEEncoder {
 
 		try  (BufferedWriter bw = Files.newBufferedWriter(file.toPath(), charset)) {
 			encodeMetaData();
+			encodeBoardSize();
+			encodeRuleString();
+			encodeBoard();
+			
 			writeToFile(bw);
-
-
-
-		} catch (FileNotFoundException fnfE) {
-
 		} catch (IOException ioE) {
-
+            ViewController.infoBox("Error!", "An unknown error occoured!", "The following error occured when trying to save the game: " + ioE.getMessage());
+            return false;
 		}
 
 
@@ -56,6 +59,11 @@ public class RLEEncoder {
 		return true;
 	}
 
+	/**
+     * Encodes the associated metadata and adds it to the StringBuffer.<p>
+     *
+     *This method is not meant to be called directly, but rather through the encode() method.
+     */
 	public void encodeMetaData() {
 		rleString.append("#N " + metadata.getName() + "\r\n");
 		rleString.append("#O " + metadata.getAuthor() + "\r\n");
@@ -67,12 +75,22 @@ public class RLEEncoder {
 		System.out.println(rleString.toString());
 	}
 
+	/**
+     * Encodes the board size and adds it to the StringBuffer.<p>
+     *
+     *This method is not meant to be called directly, but rather through the encode() method.
+     */
 	private void encodeBoardSize() {
-		rleString,append("x = " + board[0].length + ", " + board.length);
+		rleString.append("x = " + board[0].length + ", " + board.length);
 	}
 
-	private void encodeRule() {
-		String[] rule = metadata.getRules();
+	/**
+     * Encodes the game's rulestring and adds it to the StringBuffer.<p>
+     *
+     *This method is not meant to be called directly, but rather through the encode() method.
+     */
+	private void encodeRuleString() {
+		String[] rule = metadata.getRuleString();
 		rleString.append("rule = B" + rule[0] + "/S" + rule[1] + "\r\n");
 	}
 
@@ -107,14 +125,9 @@ public class RLEEncoder {
 			}
 			rleString.append("$");
 		}
-		System.out.println(rleString);
 	}
 
 	private void writeToFile(BufferedWriter bw) {
-
-	}
-
-	private void closeFile() {
-
+		System.out.println(rleString);
 	}
 }

@@ -445,6 +445,7 @@ public class ViewController {
    	 		
  		// Hentet hele brettet med en ny metode jeg lagde. Vi må huske på å gå igjennom den neste gang
    	 		RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
+   	 		rleenc.encode();
  			System.out.println(saveRLEFile.getAbsolutePath());
    	 		statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
  		}

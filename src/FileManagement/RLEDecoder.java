@@ -89,7 +89,7 @@ public class RLEDecoder {
         setBoardFalse();
 
         try {
-                getGameRules();
+                getGameRuleString();
         } catch (PatternFormatException pfE) {
                 ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occured trying to interpret game rules: " + pfE.getMessage());
                 return false;
@@ -235,7 +235,7 @@ public class RLEDecoder {
     }
 
     /**
-     * Reads the game rules from the previously loaded contents and stores it in a MetaData-object.
+     * Reads the game's rulestring from the previously loaded contents and stores it in a MetaData-object.
      *
      * This method is not meant to be called directly, but rather through the decode() method in
      * a RLEDecoder-object.
@@ -243,7 +243,7 @@ public class RLEDecoder {
      * @throws PatternFormatException
      * @return void
      */
-    private void getGameRules() throws PatternFormatException {
+    private void getGameRuleString() throws PatternFormatException {
         Pattern RLEpatternRules =
                 Pattern.compile("rule[\\s]=[\\s][bB]([\\d]+)/[sS]([\\d]+)");
         String[] SBrules = new String[2];
@@ -266,7 +266,7 @@ public class RLEDecoder {
             throw new PatternFormatException("Game rules could not be parsed from RLE-file");
         }
 
-        metadata.setRules(SBrules);
+        metadata.setRuleString(SBrules);
     }
 
 
