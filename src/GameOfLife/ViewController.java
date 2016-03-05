@@ -68,7 +68,10 @@ public class ViewController {
     @FXML private ColorPicker boardColorPicker;
 
     @FXML private Slider cellSizeSlider;
+    @FXML private Slider fpsSlider;
     @FXML private Label cellSizeLabel;
+    @FXML private Label fpsLabel;
+
     @FXML private CheckBox toggleGrid;
     @FXML private CheckBox fitToView;
     @FXML private Pane canvasParent;
@@ -92,6 +95,7 @@ public class ViewController {
 
     //Slidere kan manipulere disse verdiene
     private double cellSize	= 10;
+    private double fps = 100; // Milisekunder
 
     //Standard farger (Om ikke annet er spesifisert)
     private Color stdAliveCellColor	= Color.BLACK;
@@ -131,7 +135,7 @@ public class ViewController {
     public void initialize() {
     	timeline = new Timeline();
 		timeline.setCycleCount(Animation.INDEFINITE);
-		Duration duration = Duration.millis(100);
+		Duration duration = Duration.millis(fps);
 
 		KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
 			long startTime = System.nanoTime();
@@ -165,6 +169,23 @@ public class ViewController {
             	cellSizeLabel.setText(Double.toString(new_val.intValue()));
             	cellSize = new_val.intValue();
                 draw();
+            }
+        });
+
+    	fpsSlider.setValue((fps / 10));
+    	fpsSlider.valueProperty().addListener(new ChangeListener<Number>() {
+            public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
+            	// KeyFrame's er immutable og vi må derfor lage nye keyframes med ny duration verdi
+            	// http://stackoverflow.com/questions/19549852/javafx-binding-timelines-duration-to-a-property
+            	fpsLabel.setText(Double.toString(new_val.intValue()));
+            	fps = new_val.doubleValue();
+
+            	KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
+        			gController.play();
+        			grid = gController.getBooleanGrid();
+        			draw();
+        		});
+        		timeline.getKeyFrames().add(keyFrame);
             }
         });
 
@@ -440,7 +461,7 @@ public class ViewController {
     public void pause() {
     	timeline.stop();
     	if(timeline != null && timeline.getStatus() == Status.RUNNING) {
-    		timeline.stop();
+    		timeline.pause();
     	}
     }
 

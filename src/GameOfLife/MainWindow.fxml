@@ -76,6 +76,9 @@
                         <Insets />
                      </HBox.margin>
                   </VBox>
+                  <Label text="FPS: " />
+                  <Label fx:id="fpsLabel" />
+                  <Slider fx:id="fpsSlider" min="1.0" prefHeight="30.0" prefWidth="140.0" snapToTicks="true" />
 
 
                </children>
