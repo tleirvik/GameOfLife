@@ -136,7 +136,7 @@ public class ViewController {
     	timeline = new Timeline();
 		timeline.setCycleCount(Animation.INDEFINITE);
 		Duration duration = Duration.millis(fps);
-
+		//timeline.setRate(fps); ?
 		KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
 			long startTime = System.nanoTime();
 			gController.play();
