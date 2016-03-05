@@ -61,6 +61,10 @@ public class GameOfLife2D extends GameOfLife{
     	*/
     }
 
+    //Det var jammen vanskelig å få tak i dette brettet! Kanskje fikse på det?
+    public Board getBoard() {
+    	return board;
+    }
 
     /**
      *

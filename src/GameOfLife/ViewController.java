@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 import FileManagement.RLEDecoder;
+import FileManagement.RLEEncoder;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
@@ -439,11 +440,11 @@ public class ViewController {
    	 	File saveRLEFile = fileChooser.showSaveDialog(mainStage);
 
    	 	if (saveRLEFile != null) {
- 		// Bør kanskje ha en try..catch blokk rundt denne? Eller holder det
- 		// med å try..catch'e i encoder'en?
-
- 		// Her skal RLE filen kodes...
-   	 		RLEEncoder rleenc = new RLEEncoder(saveRLEFile);
+ 		// Tror det er greit å try-catche i RLEEncoder, da er det ryddig i ViewController
+   	 		
+   	 		
+ 		// Hentet hele brettet med en ny metode jeg lagde. Vi må huske på å gå igjennom den neste gang
+   	 		RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
  			System.out.println(saveRLEFile.getAbsolutePath());
    	 		statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
  		}

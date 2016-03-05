@@ -20,6 +20,7 @@ public class GameController {
         gol = new GameOfLife2D(isDynamic, rows, columns);
     }
 
+	//Burde ta imot et byte-board
 	public void newGame(boolean[][] board, boolean isDynamic) {
         gol = new GameOfLife2D(board, isDynamic);
 	}
@@ -65,11 +66,20 @@ public class GameController {
 	public boolean[][] getBooleanGrid() {
 		return gol.convertBoardToBoolean();
 	}
+	
+	//Yet another transportmetode. Vi må virkelig fjerne denne klassen. 
+	public Board getBoard() {
+		//Stygg utførelse av dette, men ville ikke lage en abstrakt metode også.
+		//Kanskje vi skal tenke litt på om abstrakt virkelig er nødvendig (mtp. stygg kode osv)?
+		return ((GameOfLife2D) gol).getBoard();
+	}
 
+	//Disse kunne faktisk blitt kalt fra ViewController til å lagre filen
 	public void saveGame() {
 
 	}
 
+	//Kanskje putte dem i GameOfLife2D?
 	public void loadGame() {
 
 	}
