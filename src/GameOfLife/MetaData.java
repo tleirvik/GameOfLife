@@ -23,25 +23,30 @@ public class MetaData {
 		return author;
 	}
 	public void setAuthor(String author) {
-		this.author = author;
+        this.author = author;
 	}
 	public String getName() {
-		return name;
+        return name;
 	}
 	public void setName(String name) {
-		this.name = name;
+        this.name = name;
 	}
 	public String getComment() {
-		return comment;
+        return comment;
 	}
 	public void setComment(String comment) {
-		this.comment = comment;
+        this.comment = comment;
 	}
+
 	public String[] getRuleString() {
-		String[] rules = { survivalRule, birthRule};
+        String[] rules = {
+                survivalRule,
+                birthRule
+        };
 		return rules;
 	}
 	public void setRuleString(String[] SBrules) {
+        System.out.println("RULESTRING IN METADATA = " + SBrules[0] + " " + SBrules[1]);
 		this.survivalRule = SBrules[0];
 		this.birthRule = SBrules[1];
 	}

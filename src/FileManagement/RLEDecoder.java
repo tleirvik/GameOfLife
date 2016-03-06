@@ -68,38 +68,38 @@ public class RLEDecoder {
         }
 
         try {
-                readFile(file);
+            readFile(file);
         } catch (FileNotFoundException fnfE) {
-                ViewController.infoBox("Error!", "File was not found", fnfE.getMessage());
-                return false;
+            ViewController.infoBox("Error!", "File was not found", fnfE.getMessage());
+            return false;
         } catch (IOException ioE) {
-                ViewController.infoBox("Error!", "An unknown Input/Output error occured", ioE.getMessage());
-                return false;
+            ViewController.infoBox("Error!", "An unknown Input/Output error occurred", ioE.getMessage());
+            return false;
         }
 
         getMetaData();
 
         try {
-                getBoardSize();
+            getBoardSize();
         } catch (PatternFormatException pfE) {
-                ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occured trying to interpret board size: " + pfE.getMessage());
-                return false;
+            ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board size: " + pfE.getMessage());
+            return false;
         }
 
         setBoardFalse();
 
         try {
-                getGameRuleString();
+            getGameRuleString();
         } catch (PatternFormatException pfE) {
-                ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occured trying to interpret game rules: " + pfE.getMessage());
-                return false;
+            ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret game rules: " + pfE.getMessage());
+            return false;
         }
 
         try {
-                parseBoard();
+            parseBoard();
         } catch (PatternFormatException pfE) {
-                ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occured trying to interpret board content " + pfE.getMessage());
-                return false;
+            ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
+            return false;
         }
 
         return true;
@@ -253,11 +253,12 @@ public class RLEDecoder {
             String line = RLEdata.get(i);
             Matcher RLEmatcherRules = RLEpatternRules.matcher(line);
 
-            if(RLEmatcherRules.find()) {
+            if (RLEmatcherRules.find()) {
                 SBrules[0] = RLEmatcherRules.group(1);
                 SBrules[1] = RLEmatcherRules.group(2);
                 foundRules = true;
                 RLEdata.remove(i);
+                metadata.setRuleString(SBrules);
                 return;
             }
         }
@@ -265,8 +266,6 @@ public class RLEDecoder {
         if(!foundRules) {
             throw new PatternFormatException("Game rules could not be parsed from RLE-file");
         }
-
-        metadata.setRuleString(SBrules);
     }
 
 
@@ -283,13 +282,13 @@ public class RLEDecoder {
     public void parseBoard() throws PatternFormatException{
         // Pattern RLEpattern = Pattern.compile("([0-9]+(?=[bBoO]))|([bBoO])");
     	Pattern RLEpattern = Pattern.compile("([0-9]+[bBoO])|([bBoO])");
-        String testString = "";
+        String tempString = "";
 
         for (String s : RLEdata) {
-        	testString += s;
+        	tempString += s;
         }
 
-        String[] tempRLEArray = testString.split("\\$");
+        String[] tempRLEArray = tempString.split("\\$");
 
         for(int row = 0; row < tempRLEArray.length; row++) {
             Matcher RLEMatcher = RLEpattern.matcher(tempRLEArray[row]);
@@ -297,9 +296,7 @@ public class RLEDecoder {
 
             while (RLEMatcher.find()) {
             	if (RLEMatcher.group(2) != null) {
-
                 	if (RLEMatcher.group(2).matches("[oO]")) {
-                		System.out.print(" (TRUE) ");
                 		board[row][column] = true;
     	        	}
                 	column++;
@@ -311,22 +308,14 @@ public class RLEDecoder {
                 	int number = Integer.parseInt(m.group(1));
 
                 	while (number-- != 0) {
-                		System.out.print(m.group(2));
 		            	if(m.group(2).matches("[oO]")) {
 		            		board[row][column] = true;
-		            		System.out.print(" (while-if TRUE) ");
 		            	}
 		            	column++;
 		            }
                 }
             } // End of first while-loop
         } // End of for-loop
-
-        for(int row = 0; row < board.length; row++) {
-    		for(int col = 0; col < board[0].length; col++) {
-                System.out.print(" "+board[row][col]);
-    		}
-    	}
     } // End of method parseBoard()
 
     /**
