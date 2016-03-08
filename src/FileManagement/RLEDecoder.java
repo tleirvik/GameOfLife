@@ -29,9 +29,6 @@ public class RLEDecoder {
      *
      * @param  file
      *         File to be read and interpreted
-     * @throws IOException
-     *         Throws an IOException if file cannot be read, found or other
-     * 		   IO related exception
      */
     public RLEDecoder(File file) {
             this.file = file;
@@ -56,8 +53,6 @@ public class RLEDecoder {
      *
      * @return boolean Returns true if the method parses the board with causing an
      * Exception
-     * @throws IOException Throws IOException if file cannot be read, found or other
-     * IO related exception
      * @throws PatternFormatException Throws an exception if the method is unable to
      * parse the RLE file
      */
@@ -117,9 +112,7 @@ public class RLEDecoder {
      */
     private void readFile(File file) throws FileNotFoundException, IOException {
         String line = null;
-        BufferedReader reader = null;
-        try {
-            reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
+        try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
             while ((line = reader.readLine() ) != null) {
                     RLEdata.add(line);
             }
@@ -127,10 +120,6 @@ public class RLEDecoder {
             throw io;
         } catch (IOException ioe) {
             throw ioe;
-        } finally {
-            if(reader != null) {
-                reader.close();
-            }
         }
     }
 

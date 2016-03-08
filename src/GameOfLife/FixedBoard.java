@@ -9,27 +9,23 @@ package GameOfLife;
  * The purpose of this class is to offer an array which the cells reside in
  *
  */
-public class FixedBoard extends Board{
+public class FixedBoard {
+    private MetaData metadata;
+    private byte[][] currentCells;
 
-	private MetaData metadata;
-	private byte[][] currentCells;
-	// private boolean isBoardEmpty; // er true hvis alle celler på brettet er døde.
-
-	/**
-	 *
-	 * @param rows
-	 * @param columns
-	 */
+    /**
+     *
+     * @param rows
+     * @param columns
+     */
     public FixedBoard(int rows, int columns) {
-        super(rows, columns);
-
         currentCells = new byte[rows][columns];
 
-        for(int row = 0; row < currentCells.length; row++) {
-    		for(int col = 0; col < currentCells[row].length; col++) {
-    			currentCells[row][col] = 0;
-    		}
-    	}
+        for (byte[] currentCell : currentCells) {
+            for (int col = 0; col < currentCell.length; col++) {
+                currentCell[col] = 0;
+            }
+        }
     }
 
     /**
@@ -37,50 +33,71 @@ public class FixedBoard extends Board{
      * @param board
      */
     public FixedBoard(boolean[][] board) {
-        super(board.length, board[0].length);
-
         currentCells = new byte[board.length][board[0].length];
 
         for(int row = 0; row < board.length; row++) {
-    		for(int col = 0; col < board[row].length; col++) {
-    			if (board[row][col]) currentCells[row][col] = 1;
-    			else currentCells[row][col] = 0;
-
-    		}
+            for(int col = 0; col < board[row].length; col++) {
+                if (board[row][col]) {
+                    currentCells[row][col] = 1;
+                } else {
+                    currentCells[row][col] = 0;
+                }
+            }
     	}
     }
-
+    
+    
     /**
-     * @return the rows
+     *
+     * @return
      */
-    @Override
     public int getRows() {
-            return currentCells.length;
-    }
-
-    /**
-     * @return the columns
-     */
-    @Override
-    public int getColumns() {
-            return currentCells[0].length;
+        return currentCells.length;
     }
 
 
     /**
      *
+     * @return
+     */
+    public int getColumns() {
+        return currentCells[0].length;
+    }
+
+
+    /**
+     *  This method returns meta data from the
+     *  board.
+     *
+     * @return MetaData Meta data from the board contained in
+     * the class
+     */
+    public MetaData getMetaData() {
+        return metadata;
+    }
+
+    /**
+     * This method sets the meta data of the board
+     * @param m
+     */
+    public void setMetaData(MetaData m) {
+            metadata = m;
+    }
+
+    
+
+
+    /**
+     *
+     * @return 
      */
     public byte[][] getCellArray() {
-
     	byte[][] copy = new byte[currentCells.length][currentCells[0].length];
 
     	for(int row = 0; row < currentCells.length; row++) {
-    		for(int col = 0; col < currentCells[row].length; col++) {
-
-                copy[row][col] = currentCells[row][col];
-
-    		}
+            System.arraycopy(currentCells[row], 0, copy[row], 0, currentCells[row].length);
     	}
+        
     	return copy;
     }
 
@@ -88,21 +105,20 @@ public class FixedBoard extends Board{
     /**
 	 * The purpose of this method is to set the setIsAalive value of the entire grid
 	 *
-	 * @param boolean[][] grid
+     * @param inputBoard
 	 *
 	 */
     //Tidligere setBoard-metoden
-    @Override
     public void setCellArray(boolean[][] inputBoard) {
     	System.out.println("Setter brettet");
     	for(int row = 0; row < inputBoard.length; row++) {
-    		for(int col = 0; col < inputBoard[row].length; col++) {
-
-    			if(inputBoard[row][col])
-    				currentCells[row][col] = 1;
-    			else
-    				currentCells[row][col] = 0;
-    		}
+            for(int col = 0; col < inputBoard[row].length; col++) {
+                if(inputBoard[row][col]) {
+                    currentCells[row][col] = 1;
+                } else {
+                    currentCells[row][col] = 0;
+                }
+            }
     	}
     }
 
@@ -114,37 +130,23 @@ public class FixedBoard extends Board{
      * @return boolean Returns the boolean value of a cell on the
      * given position
      */
-    @Override
     public boolean getCellAliveState(int row, int column) {
     	byte cell = currentCells[row][column];
 
-    	if (cell == 1)
-    		return true;
-    	else
-    		return false;
+        return cell == 1;
     }
 
     /**
      *
      * @param row
      * @param column
-     * @param b
+     * @param isAlive
      */
-    @Override
     public void setCellAliveState(int row, int column, boolean isAlive) {
-
-    	if (isAlive)
-    		currentCells[row][column] = 1;
-    	else
-    		currentCells[row][column] = 0;
-    }
-
-    /**
-     *  This class' toString()-method
-     *  @return String The size of the board(x,y aka rows and columns)
-     */
-    @Override
-    public String toString() {
-            return "FixedBoard";
+    	if (isAlive) {
+            currentCells[row][column] = 1;
+        } else {
+            currentCells[row][column] = 0;
+        }
     }
 }

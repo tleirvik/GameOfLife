@@ -1,15 +1,14 @@
 package GameOfLife;
 
 public class GameOfLife2D extends GameOfLife{
-
-	private Board board;
+    private FixedBoard board;
     private boolean isBoardEmpty = false;
 
     /**
      * a
      * @param isDynamic
-     * @param r
-     * @param c
+     * @param rows
+     * @param columns
      */
     public GameOfLife2D(boolean isDynamic, int rows, int columns) {
     	this.isBoardEmpty = true;
@@ -24,10 +23,12 @@ public class GameOfLife2D extends GameOfLife{
         }
 
         // bestemmer hvilket brettype som er valgt
-        if(isDynamic)
-            board = new DynamicBoard(rows, columns);
-        else
+        if(isDynamic) {
+            // board = new DynamicBoard(rows, columns);
+        } else {
             board = new FixedBoard(rows, columns);
+        }
+        
         board.setMetaData(new MetaData());
     }
 
@@ -37,32 +38,36 @@ public class GameOfLife2D extends GameOfLife{
     	int rows = board.length;
     	int columns = board[0].length;
 
-    	if(isDynamic)
-            this.board = new DynamicBoard(rows, columns);
-        else
+    	if(isDynamic) {
+            // this.board = new DynamicBoard(rows, columns);
+        } else {
             this.board = new FixedBoard(rows, columns);
+        }
 
     	this.board.setCellArray(board);
-	}
+    }
 
 
 	/**
      *
      */
     @Override
-	public void populateRandomBoard() {
-    	this.isBoardEmpty = false;
-    	/*
-    	for(int row = 0; row < board.getRows(); row++) {
-    		for(int col = 0; col < board.getColumns(); col++) {
+    public void populateRandomBoard() {
+        this.isBoardEmpty = false;
+        /*
+        for(int row = 0; row < board.getRows(); row++) {
+                for(int col = 0; col < board.getColumns(); col++) {
                 board.setCellAliveState(row,col, super.seedGenerator(5));
-    		}
-    	}
-    	*/
+                }
+        }
+        */
     }
 
-    //Det var jammen vanskelig å få tak i dette brettet! Kanskje fikse på det?
-    public Board getBoard() {
+    /**
+     *
+     * @return
+     */
+    public FixedBoard getBoard() {
     	return board;
     }
 
@@ -71,19 +76,19 @@ public class GameOfLife2D extends GameOfLife{
      * @param boardEmpty
      */
     @Override
-	public void setIsBoardEmpty(boolean boardEmpty) {
-		isBoardEmpty = boardEmpty;
-	}
+    public void setIsBoardEmpty(boolean boardEmpty) {
+            isBoardEmpty = boardEmpty;
+    }
 
 
     /**
      *
      * @return
      */
-	@Override
-	public boolean getIsBoardEmpty() {
-		return isBoardEmpty;
-	}
+    @Override
+    public boolean getIsBoardEmpty() {
+            return isBoardEmpty;
+    }
 
 
 	/**
