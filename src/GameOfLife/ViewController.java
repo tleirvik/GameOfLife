@@ -6,6 +6,7 @@ import java.util.Optional;
 
 import FileManagement.RLEDecoder;
 import FileManagement.RLEEncoder;
+import Listeners.ButtonListener;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
@@ -29,15 +30,12 @@ import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.PixelWriter;
-import javafx.scene.image.WritableImage;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseDragEvent;
@@ -46,7 +44,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
-import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
@@ -92,6 +89,8 @@ public class ViewController {
     // Property fields
     //================================================================================
 
+    private ButtonListener bl;
+    
     private Timeline timeline;
     private final GameController gController = new GameController();
     // private MetaData metadata;
@@ -143,28 +142,28 @@ public class ViewController {
 
     public void initialize() {
     	timeline = new Timeline();
-		timeline.setCycleCount(Animation.INDEFINITE);
-		Duration duration = Duration.millis(1000 / fps);
-		KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-			long startTime = System.nanoTime();
-			gController.play();
-			long endTime = System.nanoTime();
-			long duration2 = (endTime - startTime) / 100000;
-			System.out.println("Next Generation: " +duration2);
+        timeline.setCycleCount(Animation.INDEFINITE);
+        Duration duration = Duration.millis(1000 / fps);
+        KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
+                long startTime = System.nanoTime();
+                gController.play();
+                long endTime = System.nanoTime();
+                long duration2 = (endTime - startTime) / 100000;
+                System.out.println("Next Generation: " + duration2);
 
-			startTime = System.nanoTime();
-			grid = gController.getBooleanGrid();
-			endTime = System.nanoTime();
-			duration2 = (endTime - startTime) / 100000;
-			System.out.println("Get grid: " +duration2);
+                startTime = System.nanoTime();
+                grid = gController.getBooleanGrid();
+                endTime = System.nanoTime();
+                duration2 = (endTime - startTime) / 100000;
+                System.out.println("Get grid: " + duration2);
 
-			startTime = System.nanoTime();
-			draw();
-			endTime = System.nanoTime();
-			duration2 = (endTime - startTime) / 100000;
-			System.out.println("Draw: " +duration2);
-		});
-		timeline.getKeyFrames().add(keyFrame);
+                startTime = System.nanoTime();
+                draw();
+                endTime = System.nanoTime();
+                duration2 = (endTime - startTime) / 100000;
+                System.out.println("Draw: " + duration2);
+        });
+        timeline.getKeyFrames().add(keyFrame);
 
     	cellSizeSlider.setMin(1);
     	cellSizeSlider.setMax(150);
@@ -266,7 +265,7 @@ public class ViewController {
     	toggleGrid.selectedProperty().addListener(e -> {
     		drawGrid = !toggleGrid.isSelected();
     		draw();
-		});
+        });
 
     	gameCanvas.heightProperty().bind(canvasParent.heightProperty());
     	gameCanvas.widthProperty().bind(canvasParent.widthProperty());
@@ -285,7 +284,7 @@ public class ViewController {
 				   double bClick_X = e.getX();
 				   double bClick_Y = e.getY();
 
-				   if( isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y) )
+				   if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y))
 				   {
 
 					   int row    = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - rows;
@@ -319,11 +318,10 @@ public class ViewController {
 
 						   // holdingPattern = false;
 					   } else {
-						   cellDraw = !gController.getCellAliveStatus(row, column);
-						   gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
+                                                cellDraw = !gController.getCellAliveStatus(row, column);
+                                                gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
 					   }
 					   grid = gController.getBooleanGrid();
-
 					   draw();
 				   }
 
@@ -442,39 +440,37 @@ public class ViewController {
 
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle("Save RLE Pattern to file");
-   	 	fileChooser.getExtensionFilters().add(
-   	         new ExtensionFilter("RLE files", "*.rle"));
-   	 	File saveRLEFile = fileChooser.showSaveDialog(mainStage);
+        fileChooser.getExtensionFilters().add(
+            new ExtensionFilter("RLE files", "*.rle"));
+        File saveRLEFile = fileChooser.showSaveDialog(mainStage);
 
-   	 	if (saveRLEFile != null) {
+            if (saveRLEFile != null) {
+                // Tror det er greit å try-catche i RLEEncoder, da er det ryddig i ViewController
 
-	 		// Tror det er greit å try-catche i RLEEncoder, da er det ryddig i ViewController
-
-
-	   	 	// Hentet hele brettet med en ny metode jeg lagde. Vi må huske på å gå igjennom den neste gang
-   	 		RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
-   	 		if (!rleenc.encode()) {
-				 statusBar.setText("An error occured trying to save the file. Please try again.");
-				 return;
-			 }
- 			System.out.println(saveRLEFile.getAbsolutePath());
-   	 		statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
- 		}
+                // Hentet hele brettet med en ny metode jeg lagde. Vi må huske på å gå igjennom den neste gang
+                RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
+                if (!rleenc.encode()) {
+                        statusBar.setText("An error occured trying to save the file. Please try again.");
+                        return;
+                }
+                System.out.println(saveRLEFile.getAbsolutePath());
+                statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
+            }
  	}
 
 
     @FXML
     public void play() {
-		if(timeline == null || timeline.getStatus() != Status.RUNNING) {
+        if(timeline == null || timeline.getStatus() != Status.RUNNING) {
             timeline.play();
-		}
+        }
     }
 
     @FXML
     public void pause() {
     	timeline.stop();
     	if(timeline != null && timeline.getStatus() == Status.RUNNING) {
-    		timeline.pause();
+            timeline.pause();
     	}
     }
 
@@ -487,7 +483,6 @@ public class ViewController {
      *  Method that changes the background color according to
      *  the value selected from the ColorPicker
      *
-     *  @return void
      */
     @FXML
     public void changeBackgroundColor() {
@@ -851,7 +846,8 @@ public class ViewController {
     	Optional<Pair<Integer, Integer>> result = dialog.showAndWait();
 
     	result.ifPresent(usernamePassword -> {
-    	    System.out.println("Username=" + usernamePassword.getKey() + ", Password=" + usernamePassword.getValue());
+    	    System.out.println("Username=" + usernamePassword.getKey() + 
+                    ", Password=" + usernamePassword.getValue());
     	});
     }
 
