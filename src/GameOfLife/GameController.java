@@ -66,8 +66,8 @@ public class GameController {
 	public boolean[][] getBooleanGrid() {
 		return gol.convertBoardToBoolean();
 	}
-	
-	//Yet another transportmetode. Vi må virkelig fjerne denne klassen. 
+
+	//Yet another transportmetode. Vi må virkelig fjerne denne klassen.
 	public Board getBoard() {
 		//Stygg utførelse av dette, men ville ikke lage en abstrakt metode også.
 		//Kanskje vi skal tenke litt på om abstrakt virkelig er nødvendig (mtp. stygg kode osv)?
@@ -99,6 +99,4 @@ public class GameController {
 	public void setMetaData(MetaData metadata) {
 		((GameOfLife2D) gol).setMetaData(metadata);
 	}
-
-
 }

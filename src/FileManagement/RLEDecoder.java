@@ -326,7 +326,7 @@ public class RLEDecoder {
     public boolean[][] getBoard() {
             return this.board;
     }
-    
+
     public MetaData getMetadata() {
         return this.metadata;
     }

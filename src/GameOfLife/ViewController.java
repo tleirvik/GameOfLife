@@ -17,7 +17,9 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -28,9 +30,12 @@ import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
+import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
+import javafx.scene.control.Tooltip;
 import javafx.scene.image.PixelWriter;
 import javafx.scene.image.WritableImage;
 import javafx.scene.control.Alert;
@@ -39,6 +44,7 @@ import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Color;
@@ -81,12 +87,14 @@ public class ViewController {
     @FXML private Text textNextGeneration;
     @FXML private Label statusBar;
 
+
 	//================================================================================
     // Property fields
     //================================================================================
 
     private Timeline timeline;
     private final GameController gController = new GameController();
+    // private MetaData metadata;
 
     //Hentet fra modellen
     private boolean[][] grid;
@@ -96,7 +104,7 @@ public class ViewController {
 
     //Slidere kan manipulere disse verdiene
     private double cellSize	= 10;
-    private double fps = 100; // Milisekunder
+    private double fps = 8;
 
     //Standard farger (Om ikke annet er spesifisert)
     private Color stdAliveCellColor	= Color.BLACK;
@@ -136,8 +144,7 @@ public class ViewController {
     public void initialize() {
     	timeline = new Timeline();
 		timeline.setCycleCount(Animation.INDEFINITE);
-		Duration duration = Duration.millis(fps);
-		//timeline.setRate(fps); ?
+		Duration duration = Duration.millis(1000 / fps);
 		KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
 			long startTime = System.nanoTime();
 			gController.play();
@@ -173,20 +180,14 @@ public class ViewController {
             }
         });
 
-    	fpsSlider.setValue((fps / 10));
+    	fpsSlider.setMin(0);
+    	fpsSlider.setMax(60);
+    	fpsSlider.setValue((fps));
     	fpsSlider.valueProperty().addListener(new ChangeListener<Number>() {
             public void changed(ObservableValue<? extends Number> ov, Number old_val, Number new_val) {
-            	// KeyFrame's er immutable og vi må derfor lage nye keyframes med ny duration verdi
-            	// http://stackoverflow.com/questions/19549852/javafx-binding-timelines-duration-to-a-property
             	fpsLabel.setText(Double.toString(new_val.intValue()));
             	fps = new_val.doubleValue();
-
-            	KeyFrame keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-        			gController.play();
-        			grid = gController.getBooleanGrid();
-        			draw();
-        		});
-        		timeline.getKeyFrames().add(keyFrame);
+            	timeline.setRate(fps);
             }
         });
 
@@ -370,6 +371,7 @@ public class ViewController {
     @FXML
     public void openNewGame() {
     	openNewGameDialog();
+    	// metadata = new MetaData();
        	centerBoard();
 
 		//Turn off grid if size is under 8
@@ -434,6 +436,10 @@ public class ViewController {
     public void saveRLE() throws IOException {
     	Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
 
+    	if (gController.getBoard() != null) {
+    		metaDataDialogBox();
+    	}
+
     	FileChooser fileChooser = new FileChooser();
     	fileChooser.setTitle("Save RLE Pattern to file");
    	 	fileChooser.getExtensionFilters().add(
@@ -441,10 +447,11 @@ public class ViewController {
    	 	File saveRLEFile = fileChooser.showSaveDialog(mainStage);
 
    	 	if (saveRLEFile != null) {
- 		// Tror det er greit å try-catche i RLEEncoder, da er det ryddig i ViewController
-   	 		
-   	 		
- 		// Hentet hele brettet med en ny metode jeg lagde. Vi må huske på å gå igjennom den neste gang
+
+	 		// Tror det er greit å try-catche i RLEEncoder, da er det ryddig i ViewController
+
+
+	   	 	// Hentet hele brettet med en ny metode jeg lagde. Vi må huske på å gå igjennom den neste gang
    	 		RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
    	 		if (!rleenc.encode()) {
 				 statusBar.setText("An error occured trying to save the file. Please try again.");
@@ -485,6 +492,7 @@ public class ViewController {
     @FXML
     public void changeBackgroundColor() {
 		stdBackgroundColor = backgroundColorPicker.getValue();
+		draw();
     }
 
     /**
@@ -496,6 +504,7 @@ public class ViewController {
     @FXML
     public void changeBoardColor() {
     	stdBoardColor = boardColorPicker.getValue();
+    	draw();
     }
 
     /**
@@ -507,6 +516,7 @@ public class ViewController {
     @FXML
     public void changeCellColor() {
 		stdAliveCellColor = cellColorPicker.getValue();
+		draw();
     }
 
     /**
@@ -700,6 +710,101 @@ public class ViewController {
     	result.ifPresent(usernamePassword -> {
     	    System.out.println("Username=" + usernamePassword.getKey() + ", Password=" + usernamePassword.getValue());
     	});
+    }
+    /**
+     * This method launches a dialog box where the user can specify
+     * meta data for the game board.
+     * Sets the meta data object with the information the user provides.
+     *
+     * @return void
+     */
+    private void metaDataDialogBox() {
+    	GridPane gp = new GridPane();
+    	Scene scene = new Scene(gp, 720, 300);
+    	Stage mainStage = new Stage();
+
+    	Label patternLabel = new Label("Pattern name:");
+    	Label authorLabel = new Label("Author name:");
+    	Label commentLabel = new Label("Comments:");
+    	Label gameRulesLabel = new Label("Default Rules");
+
+    	HBox buttonBox = new HBox();
+    	buttonBox.setAlignment(Pos.BOTTOM_LEFT);
+    	buttonBox.setSpacing(10);
+
+
+    	RadioButton gameRulesRadioButton = new RadioButton();
+    	gameRulesRadioButton.setTooltip(new Tooltip("Hjelp"));
+    	TextField patternTextArea;
+    	TextField authorTextArea;
+    	TextArea commentTextArea;
+    	MetaData metadata = gController.getBoard().getMetaData();
+
+    	if (metadata != null) {
+    		patternTextArea = new TextField(metadata.getName());
+        	authorTextArea = new TextField(metadata.getAuthor());
+        	commentTextArea = new TextArea(metadata.getComment());
+    	} else {
+    		patternTextArea = new TextField();
+        	authorTextArea = new TextField();
+        	commentTextArea = new TextArea();
+    	}
+
+
+    	Button okButton = new Button("Save");
+    	Button cancelButton = new Button("Cancel");
+
+    	gp.setAlignment(Pos.TOP_LEFT);
+    	gp.setHgap(10);
+    	gp.setVgap(10);
+    	gp.setPadding(new Insets(25, 25, 25, 25));
+
+    	GridPane.setConstraints(patternLabel, 0, 0);
+    	gp.getChildren().add(patternLabel);
+    	GridPane.setConstraints(patternTextArea, 1, 0);
+    	gp.getChildren().add(patternTextArea);
+
+    	GridPane.setConstraints(authorLabel, 0, 1);
+    	gp.getChildren().add(authorLabel);
+    	GridPane.setConstraints(authorTextArea, 1, 1);
+    	gp.getChildren().add(authorTextArea);
+
+    	GridPane.setConstraints(commentLabel, 0, 2);
+    	gp.getChildren().add(commentLabel);
+    	GridPane.setConstraints(commentTextArea, 1, 2);
+    	gp.getChildren().add(commentTextArea);
+
+    	GridPane.setConstraints(gameRulesLabel, 0, 4);
+    	GridPane.setConstraints(gameRulesRadioButton, 1, 4);
+    	buttonBox.getChildren().addAll(gameRulesLabel, gameRulesRadioButton,
+    			okButton, cancelButton);
+
+    	GridPane.setConstraints(buttonBox, 0, 4, 4, 1);
+    	gp.getChildren().add(buttonBox);
+
+    	okButton.setOnAction(e -> {
+    		System.out.println(authorTextArea.getText());
+    		System.out.println(metadata);
+    		metadata.setAuthor(authorTextArea.getText());
+    		metadata.setName(patternTextArea.getText());
+    		metadata.setComment(commentTextArea.getText());
+    		mainStage.close();
+    	});
+
+    	cancelButton.setOnAction(e -> {
+		    mainStage.close();
+    	});
+
+    	gameRulesRadioButton.setOnAction(e -> {
+    		String[] SBrules = new String[2];
+    		SBrules[0] = "3";
+    		SBrules[1] = "23";
+    		metadata.setRuleString(SBrules);
+    	});
+
+    	mainStage.setTitle("Enter meta data");
+    	mainStage.setScene(scene);
+    	mainStage.showAndWait();
     }
 
     @FXML
