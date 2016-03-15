@@ -88,7 +88,7 @@ public class ViewController {
     //================================================================================
 
     private ButtonListener bl;
-    
+
     private Timeline timeline;
     private GameController gController;
     // private MetaData metadata;
@@ -143,17 +143,17 @@ public class ViewController {
     	cellSizeSlider.setMax(150);
     	cellSizeSlider.setValue(cellSize);
     	cellSizeLabel.setText(Double.toString(cellSizeSlider.getValue()));
-        
+
     	fpsSlider.setMin(0);
     	fpsSlider.setMax(60);
     	fpsSlider.setValue((fps));
-    	fpsSlider.valueProperty().addListener((ObservableValue<? 
+    	fpsSlider.valueProperty().addListener((ObservableValue<?
                 extends Number> ov, Number old_val, Number new_val) -> {
             fpsLabel.setText(Double.toString(new_val.intValue()));
             fps = new_val.doubleValue();
             timeline.setRate(fps);
             });
-        
+
         //Finn posisjonen til musen når det zoomes inn
     	//Kalkuler differansen fra musen til canvasen sitt midtpunkt
     	//Flytt Canvasen med den nye differanseverdien
@@ -169,17 +169,17 @@ public class ViewController {
     	gameCanvas.widthProperty().addListener(e -> {
             draw();
     	});
-        
+
         initializeMouseEventHandlers();
-        
-    } // end initialize 
+
+    } // end initialize
 
     //================================================================================
     // GUI Event handlers
     //================================================================================
 
-    
-    
+
+
     /**
      * This method instansiate a new GameController
      * and calls a dialog box for input. The it center the board and
@@ -191,7 +191,7 @@ public class ViewController {
             gController = new GameController();
             openNewGameDialog();
             // metadata = new MetaData();
-            
+
             gController.newGame(false, rows, columns); // send parametrene videre
             grid = gController.getBooleanGrid();
             centerBoard();
@@ -217,8 +217,8 @@ public class ViewController {
             draw();
         }
     }
-    
-   
+
+
 
     /**
      * This method launches a FileChooser and lets the user select a file.
@@ -234,11 +234,11 @@ public class ViewController {
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
 
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
-        
+
         if((timeline != null) && (timeline.getStatus() == Status.RUNNING)) {
             timeline.stop();
         }
-        
+
     	FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
@@ -370,7 +370,7 @@ public class ViewController {
     @FXML
     public void restart() {
         if(gController != null) {
-            
+
         }
     }
 
@@ -383,7 +383,7 @@ public class ViewController {
     public void changeBackgroundColor() {
         stdBackgroundColor = backgroundColorPicker.getValue();
         draw();
-        
+
     }
 
     /**
@@ -439,36 +439,36 @@ public class ViewController {
             double scrollLocation_Y = event.getY();
             double scrollAmount = event.getDeltaY();
             double zoomFactor = 1.01;
-            
+
             if(scrollAmount < 0) {
                 zoomFactor = 1 / zoomFactor;
             }
-            
+
             //Midtpunkter av Canvas
             double center_X = gameCanvas.getWidth()  / 2;
             double center_Y = gameCanvas.getHeight() / 2;
-            
+
             //Finner hvor startposisjonen ligger øverst i venstre hjørnet av Canvas.
             double start_X = center_X - (getBoardWidth() / 2) - offset_X;
             double start_Y = center_Y - (getBoardHeight() / 2) - offset_Y;
-            
-            
+
+
             //Variablene brukt til å tegne firkanten. Plusses med bredden/høyden etter hver iterasjon i for-løkken
             //offset-verdien bestemmer hvor grid-en skal tegnes avhengig av om brukeren har flyttet den ved å dra den (onDrag-funksjon)
-            
+
             //Finn ut om brukeren har musen over grid-et
             if((isXInsideGrid(scrollLocation_X)) && (isYInsideGrid(scrollLocation_Y))) {
                 System.out.println("Cellebredde før: " + getBoardWidth());
                 System.out.println("Cellehøyde før: " + getBoardHeight());
-                
+
                 cellSize *= zoomFactor;
-                
+
                 System.out.println("Cellebredde etter: " + getBoardWidth());
                 System.out.println("Cellehøyde etter: " + getBoardHeight());
-                
+
                 offset_X += (scrollLocation_X - center_X);
                 offset_Y += (scrollLocation_Y - center_Y);
-                
+
                 System.out.println("Offsetverdier etter: " + offset_X + " " + offset_Y);
                 System.out.println();
                 draw();
@@ -485,21 +485,21 @@ public class ViewController {
 
     	if(drawMode) {
             toggleDrawMove.setText("Draw Mode");
-        } else { 
+        } else {
             toggleDrawMove.setText("Move Mode");
         }
     }
-    
+
     @FXML
     public void handleMouseDrag(MouseEvent e) {
-        
+
     }
-    
+
     @FXML
     public void handleMouseClick(MouseEvent e) {
-        
+
     }
-    
+
     @FXML
     public void handleFitToView() {
         if(gController != null) {
@@ -515,7 +515,7 @@ public class ViewController {
             draw();
         }
     }
-    
+
     @FXML
     public void handleToggleGrid() {
         if(gController != null) {
@@ -523,13 +523,13 @@ public class ViewController {
             draw();
         }
     }
-    
-    
+
+
     // sliderens verdi må endres ved fit to view
     @FXML
     public void handleCellSizeSlider() {
-       
-            cellSizeSlider.valueProperty().addListener((ObservableValue<? 
+
+            cellSizeSlider.valueProperty().addListener((ObservableValue<?
                     extends Number> ov, Number old_val, Number new_val) -> {
                 fitToView.setSelected(false);
                 cellSizeLabel.setText(Double.toString(new_val.intValue()));
@@ -537,7 +537,7 @@ public class ViewController {
                 centerBoard();
                 draw();
             });
-       
+
    }
 
 	//================================================================================
@@ -645,17 +645,17 @@ public class ViewController {
 
         // For hver kolonne, tegn en vertikal strek
         for(int x = 0; x <= columns; x++) {
-        	gc.strokeLine(start_X + (cellSize * x), 
+        	gc.strokeLine(start_X + (cellSize * x),
                         start_Y, start_X + (cellSize * x), end_Y);
         }
-        
+
         //EVENTUELLE DEBUG-TEGNINGER
         gc.setFill(stdAliveCellColor);
-        gc.fillOval(gameCanvas.getWidth()/2-2, 
+        gc.fillOval(gameCanvas.getWidth()/2-2,
                 gameCanvas.getHeight() / 2 - 2, 5, 5);
 
         gc.setFill(Color.RED);
-        gc.fillOval(start_X + (getBoardWidth() / 2) - 2, start_Y + 
+        gc.fillOval(start_X + (getBoardWidth() / 2) - 2, start_Y +
                 (getBoardHeight() / 2) - 2, 5, 5);
 
     }
@@ -674,10 +674,10 @@ public class ViewController {
     	root.setHgap(10);
     	root.setVgap(10);
     	root.setPadding(new Insets(20, 150, 10, 10));
-    	
+
         TextField rowValue = new TextField();
     	rowValue.setPromptText("Rows");
-        
+
     	TextField columnValue = new TextField();
     	columnValue.setPromptText("Columns");
 
@@ -850,9 +850,18 @@ public class ViewController {
     	Optional<Pair<Integer, Integer>> result = dialog.showAndWait();
 
     	result.ifPresent(usernamePassword -> {
-    	    System.out.println("Username=" + usernamePassword.getKey() + 
+    	    System.out.println("Username=" + usernamePassword.getKey() +
                     ", Password=" + usernamePassword.getValue());
     	});
+    }
+
+    /**
+     * This method returns true if the timeline is running
+     *
+     * @return boolean True if timeline is running
+     */
+    private boolean isTimelineRunning() {
+    	return (timeline != null) && (timeline.getStatus() == Status.RUNNING);
     }
 
     /**
@@ -869,18 +878,18 @@ public class ViewController {
     	alert.setContentText(contentText);
     	alert.showAndWait();
     }
-    
+
     private void initializeMouseEventHandlers() {
         gameCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
             if(drawMode) {
                 //TEGNEMODUS
                 double bClick_X = e.getX();
                 double bClick_Y = e.getY();
-                
+
                 if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y)) {
                     int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - rows;
                     int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - columns;
-                    
+
                     if(holdingPattern) {
 //                                // drawObject(row, column, pattern)
 //                                boolean[][] testArray = new boolean[][] {
@@ -914,10 +923,10 @@ public class ViewController {
                     grid = gController.getBooleanGrid();
                     draw();
                 }
-                
+
                 int row = 0;
                 int column = 0;
-                
+
             } else {//FLYTTEFUNKSJON
                 fitToView.setSelected(false);
                 offsetBegin_X = e.getX() - getGridStartPosX();
@@ -939,7 +948,7 @@ public class ViewController {
                     // unngår out of bounds exception,
                     // holder seg innenfor arrayets lengde
                     // tegner kun dersom man er innenfor lengde
-                    if((row < gController.getBooleanGrid().length) && 
+                    if((row < gController.getBooleanGrid().length) &&
                             (column < gController.getBooleanGrid().length)) {
                         gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
                         grid = gController.getBooleanGrid();
