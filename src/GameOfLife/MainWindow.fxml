@@ -26,10 +26,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" 
-            minWidth="500.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" 
-            prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.40" 
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.ViewController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.40" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.ViewController">
 
    <bottom>
       <VBox BorderPane.alignment="TOP_CENTER">
@@ -149,16 +146,16 @@
                         <Font name="System Bold" size="13.0" />
                      </font>
                   </Label>
-                  <Slider fx:id="cellSizeSlider" onMousePressed="#handleCellSizeSlider"  orientation="VERTICAL" />
+                  <Slider fx:id="cellSizeSlider" onMousePressed="#handleCellSizeSlider" orientation="VERTICAL" />
                   <Label fx:id="cellSizeLabel" text="Cell Size" />
-                  <CheckBox fx:id="fitToView" onAction="#handleFitToView"  mnemonicParsing="false" text="Fit to view">
+                  <CheckBox fx:id="fitToView" mnemonicParsing="false" onAction="#handleFitToView" text="Fit to view">
                      <VBox.margin>
                         <Insets top="5.0" />
                      </VBox.margin>
                   </CheckBox>
                </children>
             </VBox>
-            <CheckBox id="text" fx:id="toggleGrid" onAction="#handleToggleGrid"  mnemonicParsing="false" text="Turn off grid" />
+            <CheckBox id="text" fx:id="toggleGrid" mnemonicParsing="false" onAction="#handleToggleGrid" text="Turn off grid" />
             <ToggleButton fx:id="toggleDrawMove" mnemonicParsing="false" onAction="#toggleDrawMove" text="Draw Mode" />
          </children>
          <padding>
@@ -175,6 +172,7 @@
                   <MenuItem mnemonicParsing="false" onAction="#openNewGame" text="New game..." />
               <MenuItem mnemonicParsing="false" text="Close" />
                   <MenuItem fx:id="filePicker" mnemonicParsing="false" onAction="#loadRLE" text="Load RLE..." />
+                  <MenuItem mnemonicParsing="false" onAction="#readGameBoardFromURL" text="Load Board from URL" />
                   <MenuItem fx:id="savePicker" mnemonicParsing="false" onAction="#saveRLE" text="Save RLE As..." />
             </items>
           </Menu>
@@ -195,9 +193,7 @@
    <center>
       <Pane fx:id="canvasParent" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308">
          <children>
-            <Canvas id="gameCanvas" fx:id="gameCanvas" height="580.0" 
-                    onMouseDragOver="#moveGrid" width="812.0" onMouseDragged="#handleMouseDrag" 
-                    onMouseClicked="#handleMouseClick" />
+            <Canvas id="gameCanvas" fx:id="gameCanvas" height="580.0" onMouseClicked="#handleMouseClick" onMouseDragOver="#moveGrid" onMouseDragged="#handleMouseDrag" width="812.0" />
          </children>
          <BorderPane.margin>
             <Insets />
