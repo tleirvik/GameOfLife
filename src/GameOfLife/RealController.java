@@ -12,9 +12,9 @@ import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
 import javafx.application.Platform;
-import javafx.beans.Observable;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -37,7 +37,6 @@ import javafx.scene.control.ToggleButton;
 import javafx.scene.control.Tooltip;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.input.MouseDragEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.GridPane;
@@ -144,16 +143,7 @@ public class RealController {
     	cellSizeSlider.setMax(150);
     	cellSizeSlider.setValue(cellSize);
     	cellSizeLabel.setText(Double.toString(cellSizeSlider.getValue()));
-
-    	cellSizeSlider.valueProperty().addListener((ObservableValue<? 
-                extends Number> ov, Number old_val, Number new_val) -> {
-            fitToView.setSelected(false);
-            cellSizeLabel.setText(Double.toString(new_val.intValue()));
-            cellSize = new_val.intValue();
-            draw();
-            });
         
-
     	fpsSlider.setMin(0);
     	fpsSlider.setMax(60);
     	fpsSlider.setValue((fps));
@@ -164,172 +154,107 @@ public class RealController {
             timeline.setRate(fps);
             });
         
-
-    	fitToView.selectedProperty().addListener((Observable e) -> {
-            if(fitToView.isSelected()) {
-                double cellWidth = gameCanvas.getWidth() / columns;
-                double cellHeight = gameCanvas.getHeight() / rows;
-                
-                if(cellWidth < cellHeight) {
-                    cellSize = cellWidth;
-                } else {
-                    cellSize = cellHeight;
-                }
-                centerBoard();
-                draw();
-            }
-        });
-
-
         //Finn posisjonen til musen når det zoomes inn
     	//Kalkuler differansen fra musen til canvasen sitt midtpunkt
     	//Flytt Canvasen med den nye differanseverdien
-    	gameCanvas.setOnScroll((ScrollEvent event) -> {
-            double scrollLocation_X = event.getX();
-            double scrollLocation_Y = event.getY();
-            double scrollAmount = event.getDeltaY();
-            double zoomFactor = 1.01;
-            
-            if(scrollAmount < 0) {
-                zoomFactor = 1 / zoomFactor;
-            }
-            
-            //Midtpunkter av Canvas
-            double center_X = gameCanvas.getWidth()  / 2;
-            double center_Y = gameCanvas.getHeight() / 2;
-            
-            //Finner hvor startposisjonen ligger øverst i venstre hjørnet av Canvas.
-            double start_X = center_X - (getBoardWidth() / 2) - offset_X;
-            double start_Y = center_Y - (getBoardHeight() / 2) - offset_Y;
-            
-            
-            //Variablene brukt til å tegne firkanten. Plusses med bredden/høyden etter hver iterasjon i for-løkken
-            //offset-verdien bestemmer hvor grid-en skal tegnes avhengig av om brukeren har flyttet den ved å dra den (onDrag-funksjon)
-            
-            //Finn ut om brukeren har musen over grid-et
-            if((isXInsideGrid(scrollLocation_X)) && (isYInsideGrid(scrollLocation_Y))) {
-                System.out.println("Cellebredde før: " + getBoardWidth());
-                System.out.println("Cellehøyde før: " + getBoardHeight());
-                
-                cellSize *= zoomFactor;
-                
-                System.out.println("Cellebredde etter: " + getBoardWidth());
-                System.out.println("Cellehøyde etter: " + getBoardHeight());
-                
-                offset_X += (scrollLocation_X - center_X);
-                offset_Y += (scrollLocation_Y - center_Y);
-                
-                System.out.println("Offsetverdier etter: " + offset_X + " " + offset_Y);
-                System.out.println();
-                draw();
-            } else {
-                cellSize *= zoomFactor;
-                draw();
-            }
-        });
-        
-
     	/*
     	 * 		CANVAS
     	 */
-    	toggleGrid.selectedProperty().addListener(e -> {
-    		drawGrid = !toggleGrid.isSelected();
-    		draw();
-        });
-
     	gameCanvas.heightProperty().bind(canvasParent.heightProperty());
     	gameCanvas.widthProperty().bind(canvasParent.widthProperty());
 
     	gameCanvas.heightProperty().addListener(e -> {
-    		draw();
+            draw();
     	});
     	gameCanvas.widthProperty().addListener(e -> {
-    		draw();
+            draw();
     	});
+        
+        gameCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED,new EventHandler<MouseEvent>() {  
+            @Override
+            public void handle(MouseEvent e) {
+                if(drawMode) {
+                    //TEGNEMODUS
+                    double bClick_X = e.getX();
+                    double bClick_Y = e.getY();
 
-        gameCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
-            if(drawMode) {
-                //TEGNEMODUS
-                double bClick_X = e.getX();
-                double bClick_Y = e.getY();
+                    if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y)) {
+                         int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - rows;
+                         int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - columns;
 
-                if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y))
-                {
-                    int row    = (int) ((bClick_Y - (getGridStartPosY() - 
-                            getBoardHeight())) / cellSize) - rows;
-                    
-                    int column = (int) ((bClick_X - (getGridStartPosX() - 
-                            getBoardWidth())) / cellSize) - columns;
+                            if(holdingPattern) {
+                                // drawObject(row, column, pattern)
+                                boolean[][] testArray = new boolean[][] {
+                                            {false, true, false},
+                                            {false, false, true},
+                                            {true, true, true}
+                                };
 
-                    if(holdingPattern) {
-                        // drawObject(row, column, pattern)
-                        boolean[][] testArray = new boolean[][] {
-                            {false, true, false},
-                            {false, false, true},
-                            {true, true, true}
-                        };
+                                final int M = testArray.length;
+                                final int N = testArray[0].length;
+                                boolean[][] ret = new boolean[N][M];
+                                for(int r = 0; r < M; r++) {
+                                    for (int c = 0; c < N; c++) {
+                                        ret[c][M-1-r] = testArray[r][c];
+                                    }
+                                }
 
-                        final int M = testArray.length;
-                        final int N = testArray[0].length;
-                        boolean[][] ret = new boolean[N][M];
-                        for (int r = 0; r < M; r++) {
-                            for (int c = 0; c < N; c++) {
-                                ret[c][M-1-r] = testArray[r][c];
+                                int mid = (0 + ret.length - 1) / 2;
+
+                                for(int i = 0; i < ret.length; i++) {
+                                    for(int j = 0; j < ret[i].length; j++) {
+                                        //gameCanvas.getGraphicsContext2D().drawImage(wImage, i, j);
+                                        gController.setCellAliveStatus(row + i -mid, column + j -mid, ret[i][j]);
+                                    }
+                                }
+                            // holdingPattern = false;
+                            } else {
+                                cellDraw = !gController.getCellAliveStatus(row, column);
+                                gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
                             }
-                        }
-
-                        int mid = (0 + ret.length - 1) / 2;
-
-                        for(int i = 0; i < ret.length; i++) {
-                            for(int j = 0; j < ret[i].length; j++) {
-                                //gameCanvas.getGraphicsContext2D().drawImage(wImage, i, j);
-                                gController.setCellAliveStatus(row + i -mid, column + j -mid, ret[i][j]);
-                            }
-                        }
-
-                        // holdingPattern = false;
-                    } else {
-                        cellDraw = !gController.getCellAliveStatus(row, column);
-                        gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
+                        grid = gController.getBooleanGrid();
+                        draw();
                     }
-                    grid = gController.getBooleanGrid();
-                    draw();
-                }
 
-                int row		= 0;
-                int column	= 0;
+                    int row = 0;
+                    int column = 0;
 
-            } else {//FLYTTEFUNKSJON
-                fitToView.setSelected(false);
-                offsetBegin_X = e.getX() - getGridStartPosX();
-                offsetBegin_Y = e.getY() - getGridStartPosY();
-            }
-        });
+                } else {//FLYTTEFUNKSJON
+                    fitToView.setSelected(false);
+                    offsetBegin_X = e.getX() - getGridStartPosX();
+                    offsetBegin_Y = e.getY() - getGridStartPosY();
+                } // end if
+            } // end handle
+        }); // end eventhandler
 
         gameCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent e) -> {
             if(drawMode) {
                 double bClick_X = e.getX();
                 double bClick_Y = e.getY();
-                
-                if( isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y) && 
-                        !holdingPattern ) {
-                    int row    = (int) ((bClick_Y - (getGridStartPosY() - 
-                            getBoardHeight())) / cellSize) - rows;
-                    
-                    int column = (int) ((bClick_X - (getGridStartPosX() - 
-                            getBoardWidth())) / cellSize) - columns;
-                    
-                    gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
-                    grid = gController.getBooleanGrid();
-                    draw();
-                } else {//FLYTTEFUNKSJON
-                    offset_X = e.getX() - offsetBegin_X;
-                    offset_Y = e.getY() - offsetBegin_Y;
-                    draw();
+
+                if( isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y) && !holdingPattern ) {
+
+                    int row    = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - rows;
+                    int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - columns;
+
+                    // unngår out of bounds exception,
+                    // holder seg innenfor arrayets lengde
+                    // tegner kun dersom man er innenfor lengde
+                    if((row < gController.getBooleanGrid().length) && 
+                            (column < gController.getBooleanGrid().length)) {
+                        gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
+                        grid = gController.getBooleanGrid();
+                        draw();
+                    }
                 }
-            }
+            } else {
+                //FLYTTEFUNKSJON
+                offset_X = e.getX() - offsetBegin_X;
+                offset_Y = e.getY() - offsetBegin_Y;
+                draw();
+            } // end if
         });
-    }
+    } // end initialize 
 
     //================================================================================
     // GUI Event handlers
@@ -342,16 +267,38 @@ public class RealController {
      */
     @FXML
     public void openNewGame() {
-        gController = new GameController();
-    	openNewGameDialog();
-    	// metadata = new MetaData();
-       	centerBoard();
+        if(gController == null) {
+            gController = new GameController();
+            openNewGameDialog();
+            // metadata = new MetaData();
+            centerBoard();
 
-        gController.newGame(false, rows, columns); // send parametrene videre
-        grid = gController.getBooleanGrid();
-        draw();
+            gController.newGame(false, rows, columns); // send parametrene videre
+            grid = gController.getBooleanGrid();
+            draw();
+        } else if(timeline != null) {
+            timeline.stop();
+            gController = new GameController();
+            openNewGameDialog();
+            // metadata = new MetaData();
+            centerBoard();
+
+            gController.newGame(false, rows, columns); // send parametrene videre
+            grid = gController.getBooleanGrid();
+            draw();
+        } else {
+             gController = new GameController();
+            openNewGameDialog();
+            // metadata = new MetaData();
+            centerBoard();
+
+            gController.newGame(false, rows, columns); // send parametrene videre
+            grid = gController.getBooleanGrid();
+            draw();
+        }
     }
     
+   
 
     /**
      * This method launches a FileChooser and lets the user select a file.
@@ -366,29 +313,55 @@ public class RealController {
     public void loadRLE() {
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
 
-    	//Er dette en billig hack???
-    	Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
-
+        Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
+        
+        if((timeline != null) && (timeline.getStatus() == Status.RUNNING)) {
+            timeline.stop();
+        }
+        
     	FileChooser fileChooser = new FileChooser();
-    	 fileChooser.setTitle("Open Resource File");
-    	 fileChooser.getExtensionFilters().addAll(
-    	         new ExtensionFilter("RLE files", "*.rle"),
-    	         new ExtensionFilter("All Files", "*.*"));
+        fileChooser.setTitle("Open Resource File");
+        fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("RLE files", "*.rle"),
+                new ExtensionFilter("All Files", "*.*"));
 
-    	 File selectedFile = fileChooser.showOpenDialog(mainStage);
-    	 if (selectedFile != null) {
-    		 RLEDecoder rledec = new RLEDecoder(selectedFile);
-			 if (!rledec.decode()) {
-				 statusBar.setText("An error occured trying to read the file");
-				 return;
-			 }
-			 gController.newGame(rledec.getBoard(), isDynamic);
-			 gController.setMetaData(rledec.getMetadata());
-			 rows = rledec.getBoard().length;
-			 columns = rledec.getBoard()[0].length;
+        File selectedFile = fileChooser.showOpenDialog(mainStage);
+        if (selectedFile != null) {
+            RLEDecoder rledec = new RLEDecoder(selectedFile);
+            if (!rledec.decode()) {
+                statusBar.setText("An error occured trying to read the file");
+                return;
+            }
+            if(gController == null) {
+                gController = new GameController();
+                gController.newGame(rledec.getBoard(), isDynamic);
+                gController.setMetaData(rledec.getMetadata());
+                rows = rledec.getBoard().length;
+                columns = rledec.getBoard()[0].length;
 
-			 grid = gController.getBooleanGrid();
-			 draw();
+                grid = gController.getBooleanGrid();
+                centerBoard();
+                draw();
+            } else if(timeline != null) {
+                timeline.stop();
+                gController.newGame(rledec.getBoard(), isDynamic);
+                gController.setMetaData(rledec.getMetadata());
+                rows = rledec.getBoard().length;
+                columns = rledec.getBoard()[0].length;
+
+                grid = gController.getBooleanGrid();
+                centerBoard();
+                draw();
+            } else {
+                gController.newGame(rledec.getBoard(), isDynamic);
+                gController.setMetaData(rledec.getMetadata());
+                rows = rledec.getBoard().length;
+                columns = rledec.getBoard()[0].length;
+
+                grid = gController.getBooleanGrid();
+                centerBoard();
+                draw();
+            }
     	 }
     }
 
@@ -490,30 +463,33 @@ public class RealController {
     public void changeBackgroundColor() {
         stdBackgroundColor = backgroundColorPicker.getValue();
         draw();
+        
     }
 
     /**
      *  Method that changes the board color according to
      *  the value selected from the ColorPicker
      *
-     *  @return void
      */
     @FXML
     public void changeBoardColor() {
-    	stdBoardColor = boardColorPicker.getValue();
-    	draw();
+        if((gController != null) && (gController.getBoard() != null)) {
+            stdBoardColor = boardColorPicker.getValue();
+            draw();
+        }
     }
 
     /**
      *  Method that changes the cell color according to
      *  the value selected from the ColorPicker
      *
-     *  @return void
      */
     @FXML
     public void changeCellColor() {
-		stdAliveCellColor = cellColorPicker.getValue();
-		draw();
+        if(gController != null) {
+            stdAliveCellColor = cellColorPicker.getValue();
+            draw();
+        }
     }
 
     /**
@@ -531,49 +507,195 @@ public class RealController {
 
     //Funksjon som skal gi brukeren mulighet til å flytte grid-en
     //Endrer offset-verdiene over for å tilby dette til draw()-funksjonene
+
+    /**
+     *
+     * @param event
+     */
     @FXML
-    void moveGrid(MouseDragEvent event) {
-    	System.out.println("Entered moveGrid");
-    	offset_X += event.getX();
-    	offset_Y += event.getY();
-    	draw();
+    public void moveGrid() {
+    	gameCanvas.setOnScroll((ScrollEvent event) -> {
+            double scrollLocation_X = event.getX();
+            double scrollLocation_Y = event.getY();
+            double scrollAmount = event.getDeltaY();
+            double zoomFactor = 1.01;
+            
+            if(scrollAmount < 0) {
+                zoomFactor = 1 / zoomFactor;
+            }
+            
+            //Midtpunkter av Canvas
+            double center_X = gameCanvas.getWidth()  / 2;
+            double center_Y = gameCanvas.getHeight() / 2;
+            
+            //Finner hvor startposisjonen ligger øverst i venstre hjørnet av Canvas.
+            double start_X = center_X - (getBoardWidth() / 2) - offset_X;
+            double start_Y = center_Y - (getBoardHeight() / 2) - offset_Y;
+            
+            
+            //Variablene brukt til å tegne firkanten. Plusses med bredden/høyden etter hver iterasjon i for-løkken
+            //offset-verdien bestemmer hvor grid-en skal tegnes avhengig av om brukeren har flyttet den ved å dra den (onDrag-funksjon)
+            
+            //Finn ut om brukeren har musen over grid-et
+            if((isXInsideGrid(scrollLocation_X)) && (isYInsideGrid(scrollLocation_Y))) {
+                System.out.println("Cellebredde før: " + getBoardWidth());
+                System.out.println("Cellehøyde før: " + getBoardHeight());
+                
+                cellSize *= zoomFactor;
+                
+                System.out.println("Cellebredde etter: " + getBoardWidth());
+                System.out.println("Cellehøyde etter: " + getBoardHeight());
+                
+                offset_X += (scrollLocation_X - center_X);
+                offset_Y += (scrollLocation_Y - center_Y);
+                
+                System.out.println("Offsetverdier etter: " + offset_X + " " + offset_Y);
+                System.out.println();
+                draw();
+            } else {
+                cellSize *= zoomFactor;
+                draw();
+            }
+        });
     }
 
     @FXML
     void toggleDrawMove(ActionEvent event) {
     	drawMode = !drawMode;
 
-    	if(drawMode) toggleDrawMove.setText("Draw Mode");
-    	else toggleDrawMove.setText("Move Mode");
+    	if(drawMode) {
+            toggleDrawMove.setText("Draw Mode");
+        } else { 
+            toggleDrawMove.setText("Move Mode");
+        }
     }
+    
+    @FXML
+    public void handleMouseDrag(MouseEvent e) {
+//         if(gController != null) {   
+//            if(drawMode) {
+//                double bClick_X = e.getX();
+//                double bClick_Y = e.getY();
+//                
+//                if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y) && 
+//                        !holdingPattern) {
+//                    int row = (int) ((bClick_Y - (getGridStartPosY() - 
+//                            getBoardHeight())) / cellSize) - rows;
+//                    
+//                    int column = (int) ((bClick_X - (getGridStartPosX() - 
+//                            getBoardWidth())) / cellSize) - columns;
+//                    
+//                    gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
+//                    grid = gController.getBooleanGrid();
+//                    draw();
+//                } else {//FLYTTEFUNKSJON
+//                    offset_X = e.getX() - offsetBegin_X;
+//                    offset_Y = e.getY() - offsetBegin_Y;
+//                    draw();
+//                }
+//            }
+//         }
+    }
+    
+    @FXML
+    public void handleMouseClick(MouseEvent e) {
+//        if(gController != null) {
+//            if(drawMode) {
+//                //TEGNEMODUS
+//                double bClick_X = e.getX();
+//                double bClick_Y = e.getY();
+//
+//                if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y)) {
+//                    int row = (int) ((bClick_Y - (getGridStartPosY() - 
+//                            getBoardHeight())) / cellSize) - rows;
+//                    
+//                    int column = (int) ((bClick_X - (getGridStartPosX() - 
+//                            getBoardWidth())) / cellSize) - columns;
+//
+//                    cellDraw = !gController.getCellAliveStatus(row, column);
+//                    gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
+//                    grid = gController.getBooleanGrid();
+//                    draw();
+//                }
+//
+//                int row		= 0;
+//                int column	= 0;
+//
+//            } else {//FLYTTEFUNKSJON
+//                fitToView.setSelected(false);
+//                offsetBegin_X = e.getX() - getGridStartPosX();
+//                offsetBegin_Y = e.getY() - getGridStartPosY();
+//            }
+//        }
+    }
+    
+    @FXML
+    public void handleFitToView() {
+        if(gController != null) {
+            double cellWidth = gameCanvas.getWidth() / columns;
+            double cellHeight = gameCanvas.getHeight() / rows;
+
+            if(cellWidth < cellHeight) {
+                cellSize = cellWidth;
+            } else {
+                cellSize = cellHeight;
+            }
+            centerBoard();
+            draw();
+        }
+    }
+    
+    @FXML
+    public void handleToggleGrid() {
+        if(gController != null) {
+            drawGrid = !toggleGrid.isSelected();
+            draw();
+        }
+    }
+    
+    
+    // sliderens verdi må endres ved fit to view
+    @FXML
+    public void handleCellSizeSlider() {
+       if(gController != null) {
+            cellSizeSlider.valueProperty().addListener((ObservableValue<? 
+                    extends Number> ov, Number old_val, Number new_val) -> {
+                fitToView.setSelected(false);
+                cellSizeLabel.setText(Double.toString(new_val.intValue()));
+                cellSize = new_val.intValue();
+                centerBoard();
+                draw();
+            });
+       }
+   }
 
 	//================================================================================
     // Draw methods
     //================================================================================
 
     //Strengt talt ikke nødvendig med 0, men man kan bytte det med noe annet
-    public double getGridStartPosX() {
+    private double getGridStartPosX() {
     	return 0 + offset_X;
     }
 
     //Strengt talt ikke nødvendig med 0, men man kan bytte det med noe annet
-    public double getGridStartPosY() {
+    private double getGridStartPosY() {
     	return 0 + offset_Y;
     }
 
-    public double getBoardWidth() {
+    private double getBoardWidth() {
     	return cellSize * columns;
     }
 
-    public double getBoardHeight() {
+    private double getBoardHeight() {
     	return cellSize * rows;
     }
 
-    public boolean isXInsideGrid(double posX) {
+    private boolean isXInsideGrid(double posX) {
     	return ((posX >= getGridStartPosX()) && (posX <= getGridStartPosX() + getBoardWidth()));
     }
 
-    public boolean isYInsideGrid(double posY) {
+    private boolean isYInsideGrid(double posY) {
     	return ((posY >= getGridStartPosY()) && (posY <= getGridStartPosY() + getBoardHeight()));
     }
 
@@ -594,13 +716,13 @@ public class RealController {
             double boardHeight = getBoardHeight();
 
             GraphicsContext gc = gameCanvas.getGraphicsContext2D();
-            gc.clearRect(0, 0, gameCanvas.widthProperty().intValue(),
-                    gameCanvas.heightProperty().intValue());
+            gc.clearRect(0, 0, gameCanvas.widthProperty().doubleValue(),
+                    gameCanvas.heightProperty().doubleValue());
 
             if(drawBackground) {
                 gc.setFill(stdBackgroundColor);
-                gc.fillRect(0, 0, gameCanvas.widthProperty().intValue(),
-                        gameCanvas.heightProperty().intValue());
+                gc.fillRect(0, 0, gameCanvas.widthProperty().doubleValue(),
+                        gameCanvas.heightProperty().doubleValue());
             }
 
             if(drawBoardBackground) {

@@ -336,30 +336,27 @@ public class ViewController {
 		   }
 		});
 
-		gameCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, new EventHandler<MouseEvent>() {
-    		@Override
-    		public void handle(MouseEvent e) {
-    			if(drawMode) {
-    				double bClick_X = e.getX();
-    				double bClick_Y = e.getY();
-
-    				if( isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y) && !holdingPattern )
-					{
-
-    					int row    = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - rows;
- 					   	int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - columns;
-
-						gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
-						grid = gController.getBooleanGrid();
-						draw();
-					}
-				} else {//FLYTTEFUNKSJON
-    				offset_X = e.getX() - offsetBegin_X;
-    				offset_Y = e.getY() - offsetBegin_Y;
-    				draw();
-				}
-			}
-    	});
+		gameCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent e) -> {
+                    if(drawMode) {
+                        double bClick_X = e.getX();
+                        double bClick_Y = e.getY();
+                        
+                        if( isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y) && !holdingPattern )
+                        {
+                            
+                            int row    = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - rows;
+                            int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - columns;
+                            
+                            gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
+                            grid = gController.getBooleanGrid();
+                            draw();
+                        }
+                    } else {//FLYTTEFUNKSJON
+                        offset_X = e.getX() - offsetBegin_X;
+                        offset_Y = e.getY() - offsetBegin_Y;
+                        draw();
+                    }
+            });
 	}
 
     //================================================================================
@@ -580,49 +577,52 @@ public class ViewController {
 
     public void draw() {
     	//If the grid is not retrieved yet, do not run the draw function
-    	if(grid == null)
-    		return;
+    	if(grid == null) {
+            return;
+        }
 
     	double start_X = getGridStartPosX();
-		double start_Y = getGridStartPosY();
-		double boardWidth = getBoardWidth();
-		double boardHeight = getBoardHeight();
+        double start_Y = getGridStartPosY();
+        double boardWidth = getBoardWidth();
+        double boardHeight = getBoardHeight();
 
-		GraphicsContext gc = gameCanvas.getGraphicsContext2D();
+        GraphicsContext gc = gameCanvas.getGraphicsContext2D();
 
-		gc.clearRect(0, 0, gameCanvas.widthProperty().intValue(),
-		gameCanvas.heightProperty().intValue());
+        gc.clearRect(0, 0, gameCanvas.widthProperty().intValue(),
+                gameCanvas.heightProperty().intValue());
 
-		if(drawBackground) {
-			gc.setFill(stdBackgroundColor);
-			gc.fillRect(0, 0, gameCanvas.widthProperty().intValue(),gameCanvas.heightProperty().intValue());
-		}
+        if(drawBackground) {
+            gc.setFill(stdBackgroundColor);
+            gc.fillRect(0, 0, gameCanvas.widthProperty().intValue(),gameCanvas.heightProperty().intValue());
+        }
 
-		if(drawBoardBackground) {
-			gc.setFill(stdBoardColor);
-			gc.fillRect(start_X, start_Y, boardWidth, boardHeight);
-		}
+        if(drawBoardBackground) {
+                gc.setFill(stdBoardColor);
+                gc.fillRect(start_X, start_Y, boardWidth, boardHeight);
+        }
 
-		double x = start_X;
-		double y = start_Y;
+        double x = start_X;
+        double y = start_Y;
 
-		for(int row = 0; row < grid.length; row++) {
-			for(int col = 0; col < grid[row].length; col++) {
+            for (boolean[] grid1 : grid) {
+                for (int col = 0; col < grid1.length; col++) {
+                    if (grid1[col]) {
+                        //Hvis cellen lever
+                        gc.setFill(stdAliveCellColor);
+                        gc.fillRect( x, y, cellSize, cellSize);
+                        x += cellSize; //Plusser på for neste kolonne
+                    } else {
+                        x += cellSize; //Plusser på for neste kolonne
+                    }
+                }
+                x = start_X; //Reset X-verdien for neste rad
+                y += cellSize; //Plusser på for neste rad
+            }
 
-		        if(grid[row][col]) { //Hvis cellen lever
-		        	gc.setFill(stdAliveCellColor);
-		        	gc.fillRect( x, y, cellSize, cellSize);
-		        	x += cellSize; //Plusser på for neste kolonne
-		        } else {
-		        	x += cellSize; //Plusser på for neste kolonne
-		        }
-			}
-			x = start_X; //Reset X-verdien for neste rad
-			y += cellSize; //Plusser på for neste rad
-		}
-
-		//Bruker kan bestemme om grid skal tegnes
-		if(drawGrid) drawGridLines(gc);
+        //Bruker kan bestemme om grid skal tegnes
+        if(drawGrid) {
+            drawGridLines(gc);
+        }
     }
 
     public void drawGridLines(GraphicsContext gc) {
