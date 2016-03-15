@@ -844,20 +844,6 @@ public class ViewController {
         timeline.stop();
     }
 }
-    /**
-     * Static function with the purpose of "throwing" dialog boxes
-     * @param title The title of the dialog box
-     * @param headerText The header text of the dialog box
-     * @param contentText The content text of the dialog box
-     */
-
-    public static void infoBox(String title, String headerText, String contentText) {
-    	Alert alert = new Alert(AlertType.WARNING);
-    	alert.setTitle(title);
-    	alert.setHeaderText(headerText);
-    	alert.setContentText(contentText);
-    	alert.showAndWait();
-    }
 
     private void initializeMouseEventHandlers() {
         gameCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
