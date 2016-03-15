@@ -124,9 +124,6 @@ public class DialogBoxes {
 
 
 	public void metaDataDialogBox(MetaData metadata) {
-		// Gjør om til return av metadata objekt.
-		// Singleton
-
     	GridPane gp = new GridPane();
     	Scene scene = new Scene(gp, 720, 300);
     	Stage mainStage = new Stage();
@@ -155,7 +152,6 @@ public class DialogBoxes {
             authorTextArea = new TextField();
             commentTextArea = new TextArea();
     	}
-
 
     	Button okButton = new Button("Save");
     	Button cancelButton = new Button("Cancel");

@@ -3,10 +3,6 @@ package GameOfLife;
 import FileManagement.FileLoader;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Optional;
 
 import FileManagement.RLEDecoder;
 import FileManagement.RLEEncoder;
@@ -15,35 +11,19 @@ import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -51,7 +31,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.util.Pair;
 import util.DialogBoxes;
 
 /**
@@ -96,7 +75,7 @@ public class ViewController {
     private DialogBoxes dialogBoxes;
     private Timeline timeline;
     private GameController gController;
-    // private MetaData metadata;
+
 
     //Hentet fra modellen
     private boolean[][] grid;
@@ -193,6 +172,25 @@ public class ViewController {
      */
     @FXML
     public void openNewGame() {
+        gController = new GameController();
+        if (isTimelineRunning()) {
+            timeline.stop();
+            openNewGameDialog();
+            centerBoard();
+
+            gController.newGame(false, rows, columns); // send parametrene videre
+            grid = gController.getBooleanGrid();
+            draw();
+        } else {
+            openNewGameDialog();
+            // metadata = new MetaData();
+            centerBoard();
+
+            gController.newGame(false, rows, columns); // send parametrene videre
+            grid = gController.getBooleanGrid();
+            draw();
+        }
+        /*
         if(gController == null) {
             gController = new GameController();
             openNewGameDialog();
@@ -222,6 +220,7 @@ public class ViewController {
             grid = gController.getBooleanGrid();
             draw();
         }
+        */
     }
 
 
@@ -238,7 +237,7 @@ public class ViewController {
     @FXML
     public void loadGameBoardFromDisk() {
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
-
+        statusBar.setText("");
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
 
         if(isTimelineRunning()) {
@@ -299,7 +298,7 @@ public class ViewController {
 
     public void loadGameBoardFromURL() {
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
-
+        statusBar.setText("");
         FileLoader fileLoader = new FileLoader();
         
         if(!fileLoader.readGameBoardFromURL(dialogBoxes.urlDialogBox())) {
@@ -355,7 +354,7 @@ public class ViewController {
      * @see RLEDecoder.java
      */
     @FXML
-    public void saveRLE() throws IOException {
+    public void saveRLE() {
     	Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
 
     	if (gController.getBoard() != null) {
@@ -381,7 +380,6 @@ public class ViewController {
                 statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
             }
  	}
-
 
     @FXML
     public void play() {
@@ -637,7 +635,7 @@ public class ViewController {
             offset_Y = gameCanvas.getHeight() / 2 - (getBoardHeight() / 2);
     }
 
-    public void draw() {
+    private void draw() {
     	//If the grid is not retrieved yet, do not run the draw function
     	if(grid != null) {
             double start_X = Math.round(getGridStartPosX());
@@ -685,7 +683,7 @@ public class ViewController {
         } // end if
     }
 
-    public void drawGridLines(GraphicsContext gc) {
+    private void drawGridLines(GraphicsContext gc) {
     	gc.setLineWidth(stdGridLineWidth);
     	gc.setStroke(stdGridColor);
 
@@ -723,7 +721,7 @@ public class ViewController {
   //================================================================================
 
     private void openNewGameDialog() {
-    	int[] rowCol = new int[2];
+    	int[] rowCol;
     	rowCol = dialogBoxes.openNewGameDialog();
     	rows = rowCol[0];
     	columns = rowCol[1];
@@ -738,7 +736,6 @@ public class ViewController {
      */
     private void metaDataDialogBox() {
     	dialogBoxes.metaDataDialogBox(gController.getBoard().getMetaData());
-
     }
 
     @FXML
