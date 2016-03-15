@@ -1,40 +1,30 @@
 package FileManagement;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import GameOfLife.MetaData;
 import GameOfLife.PatternFormatException;
 import GameOfLife.ViewController;
+import java.util.List;
 
 /**
  * 
  * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
  */
 public class RLEDecoder {
-
-    private final File file;
-
     private MetaData metadata;
     private boolean[][] board;
-    private ArrayList<String> RLEdata;
+    private List<String> RLEdata;
 
 
     /**
      * Constructs a RLEDecoder with file as input
      *
-     * @param  file
-     *         File to be read and interpreted
+     * @param RLEdata
      */
-    public RLEDecoder(File file) {
-            this.file = file;
-            RLEdata = new ArrayList<>();
+    public RLEDecoder(List<String> RLEdata) {
+        this.RLEdata = RLEdata;
     }
 
     /**
@@ -59,21 +49,6 @@ public class RLEDecoder {
      * parse the RLE file
      */
     public boolean decode() {
-        if(file == null) {
-           ViewController.infoBox("Error!", "File was not found", "Please try again!");
-           return false;
-        }
-
-        try {
-            readFile(file);
-        } catch (FileNotFoundException fnfE) {
-            ViewController.infoBox("Error!", "File was not found", fnfE.getMessage());
-            return false;
-        } catch (IOException ioE) {
-            ViewController.infoBox("Error!", "An unknown Input/Output error occurred", ioE.getMessage());
-            return false;
-        }
-
         getMetaData();
 
         try {
@@ -100,29 +75,6 @@ public class RLEDecoder {
         }
 
         return true;
-    }
-
-    /**
-     * Reads the contents of the input file and stores it in an ArrayList for future use.
-     *
-     *This method is not meant to be called directly, but rather through the decode() method in
-     * a RLEDecoder-object.
-     *
-     * @param file
-     * @throws FileNotFoundException
-     * @throws IOException
-     */
-    private void readFile(File file) throws FileNotFoundException, IOException {
-        String line = null;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
-            while ((line = reader.readLine() ) != null) {
-                    RLEdata.add(line);
-            }
-        } catch (FileNotFoundException io) {
-            throw io;
-        } catch (IOException ioe) {
-            throw ioe;
-        }
     }
 
     /**
