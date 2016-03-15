@@ -5,13 +5,13 @@
  */
 package FileManagement;
 
-import GameOfLife.PatternFormatException;
-import GameOfLife.ViewController;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
@@ -58,10 +58,29 @@ public class FileLoader {
         return true;
     }
     
-    public void readGameBoardFromURL(String url) throws IOException,
-        PatternFormatException {
-        URL destination = new URL(url);
-        URLConnection conn = destination.openConnection();
+    public boolean readGameBoardFromURL(String urlString) {
+        try {
+            URL url = new URL(urlString);
+            URLConnection conn = url.openConnection();
+            try (BufferedReader reader = new BufferedReader(
+                    new InputStreamReader(conn.getInputStream()))) {
+                String line = null;
+                while((line = reader.readLine()) != null) {
+                    RLEdata.add(line);
+                }
+            } catch (IOException ioE) {
+                DialogBoxes.infoBox("Error!", "", "");
+                return false;
+            }
+        } catch (MalformedURLException muE) { 
+            DialogBoxes.infoBox("Error!", "Invalid URL!", "Please check URL " +
+                    "and try again.");
+            return false;
+        } catch (IOException ex) {
+            DialogBoxes.infoBox("Error!", "", "");
+            return false;
+        }
+        return true;
     }
     
     /**
