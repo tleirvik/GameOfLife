@@ -16,6 +16,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import util.DialogBoxes;
 
 /**
  *
@@ -30,13 +31,13 @@ public class FileLoader {
     
     public boolean readGameBoardFromDisk(File file) {
         if(file == null) {
-            ViewController.infoBox("Error!", "No such file!!", "Please try again!");
+            DialogBoxes.infoBox("Error!", "No such file!!", "Please try again!");
             return false;
         } else if(!file.isFile()) {
-           ViewController.infoBox("Error!", "Invalid file!", "Please try again!");
+          DialogBoxes.infoBox("Error!", "Invalid file!", "Please try again!");
            return false;
         } else if(!file.canRead()) {
-            ViewController.infoBox("Error!", "Could not read file!", 
+            DialogBoxes.infoBox("Error!", "Could not read file!", 
                     "Please try again!");
         }
         
@@ -47,10 +48,10 @@ public class FileLoader {
                     RLEdata.add(line);
             }
         } catch (FileNotFoundException fnfE) {
-            ViewController.infoBox("Error!", "File was not found", fnfE.getMessage());
+            DialogBoxes.infoBox("Error!", "File was not found", fnfE.getMessage());
             return false;
         } catch (IOException ioE) {
-            ViewController.infoBox("Error!", "An unknown Input/Output error occurred", ioE.getMessage());
+            DialogBoxes.infoBox("Error!", "An unknown Input/Output error occurred", ioE.getMessage());
             return false;
         }
         

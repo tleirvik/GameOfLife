@@ -9,6 +9,7 @@ import java.nio.file.Path;
 import GameOfLife.FixedBoard;
 import GameOfLife.MetaData;
 import GameOfLife.ViewController;
+import util.DialogBoxes;
 
 
 /**
@@ -51,7 +52,7 @@ public class RLEEncoder {
 
                     bw.write(rleString.toString());
             } catch (IOException ioE) {
-        ViewController.infoBox("Error!", "An unknown error occurred!", "The following error occurred when trying to save the game: " + ioE.getMessage());
+        DialogBoxes.infoBox("Error!", "An unknown error occurred!", "The following error occurred when trying to save the game: " + ioE.getMessage());
         return false;
             }
 

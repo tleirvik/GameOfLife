@@ -7,6 +7,7 @@ import GameOfLife.MetaData;
 import GameOfLife.PatternFormatException;
 import GameOfLife.ViewController;
 import java.util.List;
+import util.DialogBoxes;
 
 /**
  * 
@@ -54,7 +55,7 @@ public class RLEDecoder {
         try {
             getBoardSize();
         } catch (PatternFormatException pfE) {
-            ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board size: " + pfE.getMessage());
+            DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board size: " + pfE.getMessage());
             return false;
         }
 
@@ -63,14 +64,14 @@ public class RLEDecoder {
         try {
             getGameRuleString();
         } catch (PatternFormatException pfE) {
-            ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret game rules: " + pfE.getMessage());
+            DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret game rules: " + pfE.getMessage());
             return false;
         }
 
         try {
             parseBoard();
         } catch (PatternFormatException pfE) {
-            ViewController.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
+            DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
             return false;
         }
 
