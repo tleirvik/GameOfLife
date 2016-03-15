@@ -5,7 +5,6 @@ import java.util.List;
 public class GameOfLife2D extends GameOfLife{
     private FixedBoard board;
     private boolean isBoardEmpty = false;
-    private List<FixedBoard> boardList;
 
     /**
      * a

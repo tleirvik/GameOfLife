@@ -76,6 +76,7 @@ public class ViewController {
     private Timeline timeline;
     private GameController gController;
 
+    private RLEDecoder rledec;
 
     //Hentet fra modellen
     private boolean[][] grid;
@@ -163,8 +164,6 @@ public class ViewController {
     // GUI Event handlers
     //================================================================================
 
-
-
     /**
      * This method instansiate a new GameController
      * and calls a dialog box for input. The it center the board and
@@ -190,40 +189,7 @@ public class ViewController {
             grid = gController.getBooleanGrid();
             draw();
         }
-        /*
-        if(gController == null) {
-            gController = new GameController();
-            openNewGameDialog();
-            // metadata = new MetaData();
-
-            gController.newGame(false, rows, columns); // send parametrene videre
-            grid = gController.getBooleanGrid();
-            centerBoard();
-            draw();
-        } else if(timeline != null) {
-            timeline.stop();
-            gController = new GameController();
-            openNewGameDialog();
-            // metadata = new MetaData();
-            centerBoard();
-
-            gController.newGame(false, rows, columns); // send parametrene videre
-            grid = gController.getBooleanGrid();
-            draw();
-        } else {
-            gController = new GameController();
-            openNewGameDialog();
-            // metadata = new MetaData();
-            centerBoard();
-
-            gController.newGame(false, rows, columns); // send parametrene videre
-            grid = gController.getBooleanGrid();
-            draw();
-        }
-        */
     }
-
-
 
     /**
      * This method launches a FileChooser and lets the user select a file.
@@ -232,7 +198,7 @@ public class ViewController {
      * pattern from file.
      *
      * @return void
-     * @see RLEDecoder.java
+     * @see RLEDecoder
      */
     @FXML
     public void loadGameBoardFromDisk() {
@@ -265,37 +231,42 @@ public class ViewController {
             }
             if(gController == null) {
                 gController = new GameController();
-                gController.newGame(rledec.getBoard(), isDynamic);
-                gController.setMetaData(rledec.getMetadata());
-                rows = rledec.getBoard().length;
-                columns = rledec.getBoard()[0].length;
-
-                grid = gController.getBooleanGrid();
-                centerBoard();
-                draw();
+                rledecMetode(gController, rledec);
+                centerBoardAndDraw();
             } else if(timeline != null) {
                 timeline.stop();
-                gController.newGame(rledec.getBoard(), isDynamic);
-                gController.setMetaData(rledec.getMetadata());
-                rows = rledec.getBoard().length;
-                columns = rledec.getBoard()[0].length;
-
-                grid = gController.getBooleanGrid();
-                centerBoard();
-                draw();
+                rledecMetode(gController, rledec);
+                centerBoardAndDraw();
             } else {
-                gController.newGame(rledec.getBoard(), isDynamic);
-                gController.setMetaData(rledec.getMetadata());
-                rows = rledec.getBoard().length;
-                columns = rledec.getBoard()[0].length;
-
-                grid = gController.getBooleanGrid();
-                centerBoard();
-                draw();
+                rledecMetode(gController, rledec);
+                centerBoardAndDraw();
             }
     	 }
     }
 
+    /**
+     *  Trenger nytt navn :)
+     */
+    private void centerBoardAndDraw() {
+        grid = gController.getBooleanGrid();
+        centerBoard();
+        draw();
+    }
+    /**
+     *  Trenger nytt navn :)
+     */
+    private void rledecMetode(GameController gController, RLEDecoder rledec) {
+        boolean isDynamic = false;
+        gController.newGame(rledec.getBoard(), isDynamic);
+        gController.setMetaData(rledec.getMetadata());
+        rows = rledec.getBoard().length;
+        columns = rledec.getBoard()[0].length;
+    }
+    /**
+     *  I denne metoden og metoden over er det mye
+     *  repeterende kode. Kan vi putte rledec på utsiden og metodifisere en del
+     *  av koden
+     */
     public void loadGameBoardFromURL() {
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
         statusBar.setText("");
@@ -313,33 +284,15 @@ public class ViewController {
         }
         if(gController == null) {
             gController = new GameController();
-            gController.newGame(rledec.getBoard(), isDynamic);
-            gController.setMetaData(rledec.getMetadata());
-            rows = rledec.getBoard().length;
-            columns = rledec.getBoard()[0].length;
-
-            grid = gController.getBooleanGrid();
-            centerBoard();
-            draw();
+            rledecMetode(gController, rledec);
+            centerBoardAndDraw();
         } else if(timeline != null) {
             timeline.stop();
-            gController.newGame(rledec.getBoard(), isDynamic);
-            gController.setMetaData(rledec.getMetadata());
-            rows = rledec.getBoard().length;
-            columns = rledec.getBoard()[0].length;
-
-            grid = gController.getBooleanGrid();
-            centerBoard();
-            draw();
+            rledecMetode(gController, rledec);
+            centerBoardAndDraw();
         } else {
-            gController.newGame(rledec.getBoard(), isDynamic);
-            gController.setMetaData(rledec.getMetadata());
-            rows = rledec.getBoard().length;
-            columns = rledec.getBoard()[0].length;
-
-            grid = gController.getBooleanGrid();
-            centerBoard();
-            draw();
+            rledecMetode(gController, rledec);
+            centerBoardAndDraw();
         }
     }
 
@@ -351,7 +304,7 @@ public class ViewController {
      *
      * @return void
      * @throws IOException
-     * @see RLEDecoder.java
+     * @see RLEDecoder
      */
     @FXML
     public void saveRLE() {
@@ -487,7 +440,7 @@ public class ViewController {
 
     /**
      *
-     * @param event
+     * @param
      */
     @FXML
     public void moveGrid() {
