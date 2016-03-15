@@ -376,7 +376,7 @@ public class ViewController {
     @FXML
     public void restart() {
         if(gController != null) {
-
+            
         }
     }
 
