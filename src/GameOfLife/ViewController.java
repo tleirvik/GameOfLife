@@ -254,7 +254,7 @@ public class ViewController {
         File selectedFile = fileChooser.showOpenDialog(mainStage);
         if(selectedFile != null) {
             FileLoader fileLoader = new FileLoader();
-            if(!fileLoader.loadGameBoardFromDisk(selectedFile)) {
+            if(!fileLoader.readGameBoardFromDisk(selectedFile)) {
                 statusBar.setText("Could not open file!");
                 return;
             }
@@ -300,17 +300,9 @@ public class ViewController {
     public void loadGameBoardFromURL() {
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
 
-    	URL destination;
-		try {
-			destination = new URL(dialogBoxes.urlDialogBox());
-		} catch (MalformedURLException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-			return;
-		}
-
-		FileLoader fileLoader = new FileLoader();
-        if(fileLoader.loadGameBoardFromURL(destination)) {
+        FileLoader fileLoader = new FileLoader();
+        
+        if(!fileLoader.readGameBoardFromURL(dialogBoxes.urlDialogBox())) {
             statusBar.setText("Could not load file from URL!");
             return;
         }
