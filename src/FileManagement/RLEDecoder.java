@@ -256,11 +256,11 @@ public class RLEDecoder {
 
         RLEpatternRules =
                 Pattern.compile("rule[\\s]=[\\s]([\\d]+)/([\\d]+)");
-        for (int i = 0; i < RLEdata.size(); i++) {
+        for(int i = 0; i < RLEdata.size(); i++) {
             String line = RLEdata.get(i);
             Matcher RLEmatcherRules = RLEpatternRules.matcher(line);
 
-            if (RLEmatcherRules.find()) {
+            if(RLEmatcherRules.find()) {
                 SBrules[0] = RLEmatcherRules.group(1);
                 SBrules[1] = RLEmatcherRules.group(2);
                 foundRules = true;
