@@ -82,7 +82,7 @@ public class RLEEncoder {
  *This method is not meant to be called directly, but rather through the encode() method.
  */
     private void encodeBoardSize() {
-            rleString.append("x = " + board[0].length + ", y = " + board.length + ", ");
+        rleString.append("x = " + board[0].length + ", y = " + board.length + ", ");
     }
 
     /**
@@ -91,8 +91,8 @@ public class RLEEncoder {
  *This method is not meant to be called directly, but rather through the encode() method.
  */
     private void encodeRuleString() {
-    String[] rule = metadata.getRuleString();
-    rleString.append("rule = B" + rule[0] + "/S" + rule[1] + "\r\n");
+        String[] rule = metadata.getRuleString();
+        rleString.append("rule = B" + rule[0] + "/S" + rule[1] + "\r\n");
     }
 
     private void encodeBoard() {
