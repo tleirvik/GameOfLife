@@ -31,7 +31,14 @@ import javafx.util.Pair;
 
 public class DialogBoxes {
 
-	public void infoBox(String title, String headerText, String contentText) {
+	/**
+     * Static function with the purpose of "throwing" dialog boxes
+     * @param title The title of the dialog box
+     * @param headerText The header text of the dialog box
+     * @param contentText The content text of the dialog box
+     */
+
+    public static void infoBox(String title, String headerText, String contentText) {
     	Alert alert = new Alert(AlertType.WARNING);
     	alert.setTitle(title);
     	alert.setHeaderText(headerText);
@@ -113,55 +120,6 @@ public class DialogBoxes {
         File saveRLEFile = fileChooser.showSaveDialog(mainStage);
         return saveRLEFile;
 	}
-	/*
-	private void openOptions() {
-    	Dialog<Pair<Integer, Integer>> dialog = new Dialog<>();
-    	dialog.setTitle("New Game");
-    	dialog.setHeaderText("Start a new game");
-    	ButtonType OKButtonType = new ButtonType("OK", ButtonData.OK_DONE);
-    	dialog.getDialogPane().getButtonTypes().addAll(OKButtonType, ButtonType.CANCEL);
-
-    	GridPane grid = new GridPane();
-    	grid.setHgap(10);
-    	grid.setVgap(10);
-    	grid.setPadding(new Insets(20, 150, 10, 10));
-    	TextField rowValue = new TextField();
-    	rowValue.setPromptText("Rows");
-    	TextField columnValue = new TextField();
-    	columnValue.setPromptText("Columns");
-
-    	grid.add(new Label("Rows:"), 0, 0);
-    	grid.add(rowValue, 1, 0);
-    	grid.add(new Label("Columns:"), 0, 1);
-    	grid.add(columnValue, 1, 1);
-
-    	Node OKButton = dialog.getDialogPane().lookupButton(OKButtonType);
-    	OKButton.setDisable(true);
-
-    	rowValue.textProperty().addListener((observable, oldValue, newValue) -> {
-    	    OKButton.setDisable(newValue.trim().isEmpty());
-    	});
-
-    	dialog.getDialogPane().setContent(grid);
-    	Platform.runLater(() -> rowValue.requestFocus());
-
-    	// Convert the result to a username-password-pair when the login button is clicked.
-    	dialog.setResultConverter(dialogButton -> {
-    	    if (dialogButton == OKButtonType) {
-    	        rows = Integer.parseInt(rowValue.getText());
-    	        columns = Integer.parseInt(columnValue.getText());
-    	    }
-    	    return null;
-    	});
-
-    	Optional<Pair<Integer, Integer>> result = dialog.showAndWait();
-
-    	result.ifPresent(usernamePassword -> {
-    	    System.out.println("Username=" + usernamePassword.getKey() +
-                    ", Password=" + usernamePassword.getValue());
-    	});
-    }
-    */
 
 	/*
 	private void metaDataDialogBox() {
@@ -251,8 +209,8 @@ public class DialogBoxes {
     	mainStage.setScene(scene);
     	mainStage.showAndWait();
     }
-    */
 
+*/
 	public int[] openNewGameDialog() {
     	int[] rowCol = new int[2];
 
