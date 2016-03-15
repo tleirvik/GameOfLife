@@ -1,5 +1,6 @@
 package GameOfLife;
 
+import FileManagement.FileLoader;
 import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
@@ -14,7 +15,6 @@ import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -235,7 +235,7 @@ public class ViewController {
 
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
 
-        if((timeline != null) && (timeline.getStatus() == Status.RUNNING)) {
+        if(isTimelineRunning()) {
             timeline.stop();
         }
 
@@ -246,8 +246,14 @@ public class ViewController {
                 new ExtensionFilter("All Files", "*.*"));
 
         File selectedFile = fileChooser.showOpenDialog(mainStage);
-        if (selectedFile != null) {
-            RLEDecoder rledec = new RLEDecoder(selectedFile);
+        if(selectedFile != null) {
+            FileLoader fileLoader = new FileLoader();
+            if(!fileLoader.readGameBoardFromDisk(selectedFile)) {
+                statusBar.setText("Could not open file!");
+                return;
+            }
+            
+            RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
             if (!rledec.decode()) {
                 statusBar.setText("An error occured trying to read the file");
                 return;
@@ -268,7 +274,7 @@ public class ViewController {
                 gController.setMetaData(rledec.getMetadata());
                 rows = rledec.getBoard().length;
                 columns = rledec.getBoard()[0].length;
-
+                
                 grid = gController.getBooleanGrid();
                 centerBoard();
                 draw();
