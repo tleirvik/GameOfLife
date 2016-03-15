@@ -3,6 +3,8 @@ package GameOfLife;
 import FileManagement.FileLoader;
 import java.io.File;
 import java.io.IOException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.Optional;
 
 import FileManagement.RLEDecoder;
@@ -49,6 +51,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import javafx.util.Pair;
+import util.DialogBoxes;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -89,6 +92,7 @@ public class ViewController {
 
     private ButtonListener bl;
 
+    private DialogBoxes dialogBoxes;
     private Timeline timeline;
     private GameController gController;
     // private MetaData metadata;
@@ -170,6 +174,7 @@ public class ViewController {
             draw();
     	});
 
+    	dialogBoxes = new DialogBoxes();
         initializeMouseEventHandlers();
 
     } // end initialize
@@ -252,7 +257,7 @@ public class ViewController {
                 statusBar.setText("Could not open file!");
                 return;
             }
-            
+
             RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
             if (!rledec.decode()) {
                 statusBar.setText("An error occured trying to read the file");
@@ -274,7 +279,7 @@ public class ViewController {
                 gController.setMetaData(rledec.getMetadata());
                 rows = rledec.getBoard().length;
                 columns = rledec.getBoard()[0].length;
-                
+
                 grid = gController.getBooleanGrid();
                 centerBoard();
                 draw();
@@ -670,53 +675,12 @@ public class ViewController {
   //================================================================================
 
     private void openNewGameDialog() {
-    	Dialog<Pair<Integer, Integer>> dialog = new Dialog<>();
-    	dialog.setTitle("New Game");
-    	dialog.setHeaderText("Start a new game");
-    	ButtonType OKButtonType = new ButtonType("OK", ButtonData.OK_DONE);
-    	dialog.getDialogPane().getButtonTypes().addAll(OKButtonType, ButtonType.CANCEL);
-
-    	GridPane root = new GridPane();
-    	root.setHgap(10);
-    	root.setVgap(10);
-    	root.setPadding(new Insets(20, 150, 10, 10));
-
-        TextField rowValue = new TextField();
-    	rowValue.setPromptText("Rows");
-
-    	TextField columnValue = new TextField();
-    	columnValue.setPromptText("Columns");
-
-    	root.add(new Label("Rows: "), 0, 0);
-    	root.add(rowValue, 1, 0);
-    	root.add(new Label("Columns: "), 0, 1);
-    	root.add(columnValue, 1, 1);
-
-    	Node OKButton = dialog.getDialogPane().lookupButton(OKButtonType);
-    	OKButton.setDisable(true);
-
-    	rowValue.textProperty().addListener((observable, oldValue, newValue) -> {
-    	    OKButton.setDisable(newValue.trim().isEmpty());
-    	});
-
-    	dialog.getDialogPane().setContent(root);
-    	Platform.runLater(() -> rowValue.requestFocus());
-
-    	// Convert the result to a username-password-pair when the login button is clicked.
-    	dialog.setResultConverter(dialogButton -> {
-    	    if (dialogButton == OKButtonType) {
-    	        rows = Integer.parseInt(rowValue.getText());
-    	        columns = Integer.parseInt(columnValue.getText());
-    	    }
-    	    return null;
-    	});
-
-    	Optional<Pair<Integer, Integer>> result = dialog.showAndWait();
-
-    	result.ifPresent(usernamePassword -> {
-    	    System.out.println("Username=" + usernamePassword.getKey() + ", Password=" + usernamePassword.getValue());
-    	});
+    	int[] rowCol = new int[2];
+    	rowCol = dialogBoxes.openNewGameDialog();
+    	rows = rowCol[0];
+    	columns = rowCol[1];
     }
+
     /**
      * This method launches a dialog box where the user can specify
      * meta data for the game board.
@@ -870,6 +834,19 @@ public class ViewController {
     	return (timeline != null) && (timeline.getStatus() == Status.RUNNING);
     }
 
+    public void readGameBoardFromURL() throws IOException,
+	PatternFormatException {
+
+	URL destination = new URL(dialogBoxes.urlDialogBox());
+	// URLConnection conn = destination.openConnection();
+
+	if(isTimelineRunning()) {
+        timeline.stop();
+    }
+
+
+
+}
     /**
      * Static function with the purpose of "throwing" dialog boxes
      * @param title The title of the dialog box
