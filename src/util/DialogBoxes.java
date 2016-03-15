@@ -3,6 +3,7 @@ package util;
 import java.io.File;
 import java.util.Optional;
 
+import GameOfLife.GameController;
 import GameOfLife.MetaData;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -121,8 +122,11 @@ public class DialogBoxes {
         return saveRLEFile;
 	}
 
-	/*
-	private void metaDataDialogBox() {
+
+	public void metaDataDialogBox(MetaData metadata) {
+		// Gjør om til return av metadata objekt.
+		// Singleton
+
     	GridPane gp = new GridPane();
     	Scene scene = new Scene(gp, 720, 300);
     	Stage mainStage = new Stage();
@@ -141,7 +145,6 @@ public class DialogBoxes {
     	TextField patternTextArea;
     	TextField authorTextArea;
     	TextArea commentTextArea;
-    	MetaData metadata = gController.getBoard().getMetaData();
 
     	if (metadata != null) {
             patternTextArea = new TextField(metadata.getName());
@@ -210,7 +213,7 @@ public class DialogBoxes {
     	mainStage.showAndWait();
     }
 
-*/
+
 	public int[] openNewGameDialog() {
     	int[] rowCol = new int[2];
 

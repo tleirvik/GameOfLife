@@ -19,7 +19,8 @@ public class FixedBoard {
      * @param columns
      */
     public FixedBoard(int rows, int columns) {
-        currentCells = new byte[rows][columns];
+        metadata = new MetaData();
+    	currentCells = new byte[rows][columns];
 
         for (byte[] currentCell : currentCells) {
             for (int col = 0; col < currentCell.length; col++) {
@@ -33,7 +34,8 @@ public class FixedBoard {
      * @param board
      */
     public FixedBoard(boolean[][] board) {
-        currentCells = new byte[board.length][board[0].length];
+    	metadata = new MetaData();
+    	currentCells = new byte[board.length][board[0].length];
 
         for(int row = 0; row < board.length; row++) {
             for(int col = 0; col < board[row].length; col++) {
@@ -45,8 +47,8 @@ public class FixedBoard {
             }
     	}
     }
-    
-    
+
+
     /**
      *
      * @return
@@ -84,12 +86,12 @@ public class FixedBoard {
             metadata = m;
     }
 
-    
+
 
 
     /**
      *
-     * @return 
+     * @return
      */
     public byte[][] getCellArray() {
     	byte[][] copy = new byte[currentCells.length][currentCells[0].length];
@@ -97,7 +99,7 @@ public class FixedBoard {
     	for(int row = 0; row < currentCells.length; row++) {
             System.arraycopy(currentCells[row], 0, copy[row], 0, currentCells[row].length);
     	}
-        
+
     	return copy;
     }
 
