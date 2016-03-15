@@ -3,6 +3,7 @@ package GameOfLife;
 import FileManagement.FileLoader;
 import java.io.File;
 import java.io.IOException;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.Optional;
@@ -235,7 +236,7 @@ public class ViewController {
      * @see RLEDecoder.java
      */
     @FXML
-    public void loadRLE() {
+    public void loadGameBoardFromDisk() {
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
 
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
@@ -253,7 +254,7 @@ public class ViewController {
         File selectedFile = fileChooser.showOpenDialog(mainStage);
         if(selectedFile != null) {
             FileLoader fileLoader = new FileLoader();
-            if(!fileLoader.readGameBoardFromDisk(selectedFile)) {
+            if(!fileLoader.loadGameBoardFromDisk(selectedFile)) {
                 statusBar.setText("Could not open file!");
                 return;
             }
@@ -294,6 +295,61 @@ public class ViewController {
                 draw();
             }
     	 }
+    }
+
+    public void loadGameBoardFromURL() {
+    	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
+
+    	URL destination;
+		try {
+			destination = new URL(dialogBoxes.urlDialogBox());
+		} catch (MalformedURLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+			return;
+		}
+
+		FileLoader fileLoader = new FileLoader();
+        if(fileLoader.loadGameBoardFromURL(destination)) {
+            statusBar.setText("Could not load file from URL!");
+            return;
+        }
+
+        RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
+        if (!rledec.decode()) {
+            statusBar.setText("An error occured trying to read the file");
+            return;
+        }
+        if(gController == null) {
+            gController = new GameController();
+            gController.newGame(rledec.getBoard(), isDynamic);
+            gController.setMetaData(rledec.getMetadata());
+            rows = rledec.getBoard().length;
+            columns = rledec.getBoard()[0].length;
+
+            grid = gController.getBooleanGrid();
+            centerBoard();
+            draw();
+        } else if(timeline != null) {
+            timeline.stop();
+            gController.newGame(rledec.getBoard(), isDynamic);
+            gController.setMetaData(rledec.getMetadata());
+            rows = rledec.getBoard().length;
+            columns = rledec.getBoard()[0].length;
+
+            grid = gController.getBooleanGrid();
+            centerBoard();
+            draw();
+        } else {
+            gController.newGame(rledec.getBoard(), isDynamic);
+            gController.setMetaData(rledec.getMetadata());
+            rows = rledec.getBoard().length;
+            columns = rledec.getBoard()[0].length;
+
+            grid = gController.getBooleanGrid();
+            centerBoard();
+            draw();
+        }
     }
 
     /**
@@ -381,7 +437,7 @@ public class ViewController {
     @FXML
     public void restart() {
         if(gController != null) {
-            
+
         }
     }
 
@@ -778,51 +834,7 @@ public class ViewController {
 
     @FXML
     private void openOptions() {
-    	Dialog<Pair<Integer, Integer>> dialog = new Dialog<>();
-    	dialog.setTitle("New Game");
-    	dialog.setHeaderText("Start a new game");
-    	ButtonType OKButtonType = new ButtonType("OK", ButtonData.OK_DONE);
-    	dialog.getDialogPane().getButtonTypes().addAll(OKButtonType, ButtonType.CANCEL);
 
-    	GridPane grid = new GridPane();
-    	grid.setHgap(10);
-    	grid.setVgap(10);
-    	grid.setPadding(new Insets(20, 150, 10, 10));
-    	TextField rowValue = new TextField();
-    	rowValue.setPromptText("Rows");
-    	TextField columnValue = new TextField();
-    	columnValue.setPromptText("Columns");
-
-    	grid.add(new Label("Rows:"), 0, 0);
-    	grid.add(rowValue, 1, 0);
-    	grid.add(new Label("Columns:"), 0, 1);
-    	grid.add(columnValue, 1, 1);
-
-    	Node OKButton = dialog.getDialogPane().lookupButton(OKButtonType);
-    	OKButton.setDisable(true);
-
-    	rowValue.textProperty().addListener((observable, oldValue, newValue) -> {
-    	    OKButton.setDisable(newValue.trim().isEmpty());
-    	});
-
-    	dialog.getDialogPane().setContent(grid);
-    	Platform.runLater(() -> rowValue.requestFocus());
-
-    	// Convert the result to a username-password-pair when the login button is clicked.
-    	dialog.setResultConverter(dialogButton -> {
-    	    if (dialogButton == OKButtonType) {
-    	        rows = Integer.parseInt(rowValue.getText());
-    	        columns = Integer.parseInt(columnValue.getText());
-    	    }
-    	    return null;
-    	});
-
-    	Optional<Pair<Integer, Integer>> result = dialog.showAndWait();
-
-    	result.ifPresent(usernamePassword -> {
-    	    System.out.println("Username=" + usernamePassword.getKey() +
-                    ", Password=" + usernamePassword.getValue());
-    	});
     }
 
     /**
@@ -833,17 +845,6 @@ public class ViewController {
     private boolean isTimelineRunning() {
     	return (timeline != null) && (timeline.getStatus() == Status.RUNNING);
     }
-
-    public void readGameBoardFromURL() throws IOException,
-	PatternFormatException {
-
-	URL destination = new URL(dialogBoxes.urlDialogBox());
-	// URLConnection conn = destination.openConnection();
-
-	if(isTimelineRunning()) {
-        timeline.stop();
-    }
-}
 
     private void initializeMouseEventHandlers() {
         gameCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {

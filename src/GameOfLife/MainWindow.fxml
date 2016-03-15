@@ -171,8 +171,8 @@
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#openNewGame" text="New game..." />
               <MenuItem mnemonicParsing="false" text="Close" />
-                  <MenuItem fx:id="filePicker" mnemonicParsing="false" onAction="#loadRLE" text="Load RLE..." />
-                  <MenuItem mnemonicParsing="false" onAction="#readGameBoardFromURL" text="Load Board from URL" />
+                  <MenuItem fx:id="filePicker" mnemonicParsing="false" onAction="#loadGameBoardFromDisk" text="Load Board from Disk..." />
+                  <MenuItem mnemonicParsing="false" onAction="#loadGameBoardFromURL" text="Load Board from URL..." />
                   <MenuItem fx:id="savePicker" mnemonicParsing="false" onAction="#saveRLE" text="Save RLE As..." />
             </items>
           </Menu>
