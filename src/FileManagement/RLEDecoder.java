@@ -13,6 +13,10 @@ import GameOfLife.MetaData;
 import GameOfLife.PatternFormatException;
 import GameOfLife.ViewController;
 
+/**
+ * 
+ * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
+ */
 public class RLEDecoder {
 
     private final File file;
@@ -215,9 +219,9 @@ public class RLEDecoder {
         if(!foundRows && !foundColumns) {
             throw new PatternFormatException("X and Y values could not be parsed from RLE-file");
         } else if(!foundRows) {
-                throw new PatternFormatException("Y values could not be parsed from RLE-file");
+            throw new PatternFormatException("Y values could not be parsed from RLE-file");
         } else if(!foundColumns) {
-                throw new PatternFormatException("X values could not be parsed from RLE-file");
+            throw new PatternFormatException("X values could not be parsed from RLE-file");
         }
     }
 
