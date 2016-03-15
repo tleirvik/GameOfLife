@@ -5,9 +5,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
-import java.io.StringReader;
 import java.util.ArrayList;
-import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -167,8 +165,8 @@ public class RLEDecoder {
         // one from the indices).
         for(int i = 0; i < RLEdata.size(); i++) {
             if(RLEdata.get(i).startsWith("#")) {
-                    RLEdata.remove(i);
-                    i--;
+                RLEdata.remove(i);
+                i--;
             }
         }
     }

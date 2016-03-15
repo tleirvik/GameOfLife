@@ -10,6 +10,7 @@ import GameOfLife.FixedBoard;
 import GameOfLife.MetaData;
 import GameOfLife.ViewController;
 
+
 /**
  *
  *
