@@ -67,13 +67,19 @@ public class RLEEncoder {
  *This method is not meant to be called directly, but rather through the encode() method.
  */
     public void encodeMetaData() {
-            rleString.append("#N " + metadata.getName() + "\r\n");
-            rleString.append("#O " + metadata.getAuthor() + "\r\n");
-            String[] comments = metadata.getComment().split("\\r?\\n");
+        rleString.append("#N ");
+        rleString.append(metadata.getName());
+        rleString.append("\r\n");
+        rleString.append("#O ");
+        rleString.append(metadata.getAuthor());
+        rleString.append("\r\n");
+        String[] comments = metadata.getComment().split("\\r?\\n");
 
-            for(String comment : comments) {
-                    rleString.append("#C " + comment + "\r\n");
-            }
+        for(String comment : comments) {
+            rleString.append("#C ");
+            rleString.append(comment);
+            rleString.append("\r\n");
+        }
     }
 
     /**
@@ -82,7 +88,11 @@ public class RLEEncoder {
  *This method is not meant to be called directly, but rather through the encode() method.
  */
     private void encodeBoardSize() {
-        rleString.append("x = " + board[0].length + ", y = " + board.length + ", ");
+        rleString.append("x = ");
+        rleString.append(board[0].length);
+        rleString.append(", y = ");
+        rleString.append(board.length);
+        rleString.append(", ");
     }
 
     /**
@@ -92,11 +102,15 @@ public class RLEEncoder {
  */
     private void encodeRuleString() {
         String[] rule = metadata.getRuleString();
-        rleString.append("rule = B" + rule[0] + "/S" + rule[1] + "\r\n");
+        rleString.append("rule = B");
+        rleString.append(rule[0]);
+        rleString.append("/S");
+        rleString.append(rule[1]);
+        rleString.append("\r\n");
     }
 
     private void encodeBoard() {
-                int count = 1;
+        int count = 1;
         int currentCell = -1;
 
         for(int row = 0; row < board.length; row++) {
@@ -105,14 +119,14 @@ public class RLEEncoder {
                 if ((col != board[0].length - 1) && (currentCell == board[row][col + 1])) {
                     count++;
                 } else {
-                    rleString.append(((count > 1) ? count : "") + 
-                            ((currentCell == 1) ? "o" : "b"));
+                    rleString.append((count > 1) ? count : "");
+                    rleString.append((currentCell == 1) ? "o" : "b");
                     count = 1;
                 }
             }
             if (count > 1) {
-                rleString.append(((count > 1) ? count : "") + 
-                        ((currentCell == 1) ? "o" : "b"));
+                rleString.append((count > 1) ? count : "");
+                rleString.append((currentCell == 1) ? "o" : "b");
                 count = 1;
             }
             rleString.append((row != board.length-1) ? "$" : "!");
