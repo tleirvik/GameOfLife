@@ -843,9 +843,6 @@ public class ViewController {
 	if(isTimelineRunning()) {
         timeline.stop();
     }
-
-
-
 }
     /**
      * Static function with the purpose of "throwing" dialog boxes
