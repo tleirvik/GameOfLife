@@ -254,6 +254,38 @@ public class RLEDecoder {
             }
         }
 
+        RLEpatternRules =
+                Pattern.compile("rule[\\s]=[\\s]([\\d]+)/([\\d]+)");
+        for (int i = 0; i < RLEdata.size(); i++) {
+            String line = RLEdata.get(i);
+            Matcher RLEmatcherRules = RLEpatternRules.matcher(line);
+
+            if (RLEmatcherRules.find()) {
+                SBrules[0] = RLEmatcherRules.group(1);
+                SBrules[1] = RLEmatcherRules.group(2);
+                foundRules = true;
+                RLEdata.remove(i);
+                metadata.setRuleString(SBrules);
+                return;
+            }
+        }
+        
+        RLEpatternRules =
+                Pattern.compile("rule[\\s]=[\\s][sS]([\\d]+)/[bB]([\\d]+)");
+        for (int i = 0; i < RLEdata.size(); i++) {
+            String line = RLEdata.get(i);
+            Matcher RLEmatcherRules = RLEpatternRules.matcher(line);
+
+            if (RLEmatcherRules.find()) {
+                SBrules[0] = RLEmatcherRules.group(2);
+                SBrules[1] = RLEmatcherRules.group(1);
+                foundRules = true;
+                RLEdata.remove(i);
+                metadata.setRuleString(SBrules);
+                return;
+            }
+        }
+        
         if(!foundRules) {
             throw new PatternFormatException("Game rules could not be parsed from RLE-file");
         }
