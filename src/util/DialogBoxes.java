@@ -123,7 +123,7 @@ public class DialogBoxes {
     }
 
 
-	public void metaDataDialogBox(MetaData metadata) {
+    public void metaDataDialogBox(MetaData metadata) {
     	GridPane gp = new GridPane();
     	Scene scene = new Scene(gp, 720, 300);
     	Stage mainStage = new Stage();
@@ -246,17 +246,28 @@ public class DialogBoxes {
         GridPane.setConstraints(hbox, 1, 3);
         
         okButton.setOnAction(e -> {
+            boolean error = false;
             try {
+                errorLabel1.setText("");
                 array[0] = Integer.parseInt(inputField1.getText());
-                array[1] = Integer.parseInt(inputField2.getText());
-                System.out.println("Riktig");
-                stage.close();
+                
             } catch (NumberFormatException nfE) {
-               System.out.println("FEIL");
+                error = true;
                errorLabel1.setText("You must enter an integer.");
-               errorLabel2.setText("You must enter an integer.");
+               
+            }
+            try {
+                errorLabel2.setText("");
+                array[1] = Integer.parseInt(inputField2.getText());
+            } catch(NumberFormatException nfE) {
+                error = true;
+                errorLabel2.setText("You must enter an integer.");
+            }
+            if(!error) {
+                stage.close();
             }
         });
+        
         
         cancelButton.setOnAction(e -> {
             stage.close();

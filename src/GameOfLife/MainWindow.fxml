@@ -139,6 +139,7 @@
          <BorderPane.margin>
             <Insets />
          </BorderPane.margin>
+         
          <children>
             <HBox id="bottom" alignment="CENTER" prefHeight="76.0" prefWidth="1000.0" 
                   spacing="10.0">
@@ -210,6 +211,7 @@
                </padding>
             </VBox>
          </children>
+         
       </VBox>
    </bottom>
 

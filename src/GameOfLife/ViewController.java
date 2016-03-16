@@ -172,7 +172,6 @@ public class ViewController {
      */
     @FXML
     public void openNewGame() {
-        gController = new GameController();
         if (isTimelineRunning()) {
             timeline.stop();
             openNewGameDialog();
@@ -207,7 +206,7 @@ public class ViewController {
         statusBar.setText("");
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
 
-        if (isTimelineRunning()) {
+        if(isTimelineRunning()) {
             timeline.stop();
         }
 
