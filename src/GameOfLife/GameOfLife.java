@@ -2,8 +2,6 @@ package GameOfLife;
 
 import java.util.Random;
 
-import com.sun.prism.paint.Color;
-
 /**
  *
  * @author stianreistadrogeberg
@@ -12,74 +10,71 @@ import com.sun.prism.paint.Color;
  */
 public abstract class GameOfLife {
 
-	/**
-	 * The purpose of this method is to generate a pseudo-random boolean value.
-	 *
-	 * @param limit
-	 * @return boolean
-	 */
-	public boolean seedGenerator(int limit) {
-		Random random = new Random();
+    /**
+     * The purpose of this method is to generate a pseudo-random boolean value.
+     *
+     * @param limit
+     * @return boolean
+     */
+    public boolean seedGenerator(int limit) {
+    Random random = new Random();
 
-		if (random.nextInt(limit) != 1)
-			return false;
-		else
-			return true;
-	}
-
-
-	/**
-	 *
-	 * @param row
-	 * @param column
-	 * @return
-	 */
-	public abstract boolean getCellAliveStatus(int row, int column);
+    if (random.nextInt(limit) != 1)
+        return false;
+    else
+        return true;
+    }
 
 
-	/**
-	 *
-	 * @param row
-	 * @param column
-	 * @param isAlive
-	 */
-	public abstract void setCellAliveStatus(int row, int column, boolean isAlive);
+    /**
+     *
+     * @param row
+     * @param column
+     * @return
+     */
+    public abstract boolean getCellAliveState(int row, int column);
 
 
-	/**
-	 *
-	 * @param boardEmpty
-	 */
-	public abstract void setIsBoardEmpty(boolean boardEmpty);
+    /**
+     *
+     * @param row
+     * @param column
+     * @param isAlive
+     */
+    public abstract void setCellAliveState(int row, int column, boolean isAlive);
 
 
-	/**
-	 *
-	 * @return
-	 */
+    /**
+     *
+     * @param boardEmpty
+     */
+    public abstract void setIsBoardEmpty(boolean boardEmpty);
+
+
+    /**
+     *
+     * @return
+     */
     public abstract boolean getIsBoardEmpty();
 
 
     /**
      *
      */
-	public abstract void populateRandomBoard();
+    public abstract void populateRandomBoard();
 
 
-	/**
-	 *
-	 */
-	public abstract void nextGeneration();
+    /**
+     *
+     */
+    public abstract void nextGeneration();
 
 
-	/**
-	 *
-	 * @param row
-	 * @param column
-	 * @return
-	 */
-	public abstract int countNeighbours(int row, int column);
-
-	public abstract boolean[][] convertBoardToBoolean();
-
+    /**
+     *
+     * @param row
+     * @param column
+     * @return
+     */
+    public abstract int countNeighbours(int row, int column);
 }

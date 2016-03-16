@@ -35,7 +35,7 @@ public class GameOfLife2D extends GameOfLife{
     }
 
 
-    public GameOfLife2D(boolean[][] board, boolean isDynamic) {
+    public GameOfLife2D(byte[][] board, boolean isDynamic) {
 
     	int rows = board.length;
     	int columns = board[0].length;
@@ -72,6 +72,10 @@ public class GameOfLife2D extends GameOfLife{
     public FixedBoard getBoard() {
     	return board;
     }
+    
+    public byte[][] getGameBoard() {
+    	return board.getCellArray();
+    }
 
     /**
      *
@@ -91,94 +95,71 @@ public class GameOfLife2D extends GameOfLife{
     public boolean getIsBoardEmpty() {
             return isBoardEmpty;
     }
-
-
-	/**
-	 * Returns a two-dimensional boolean array based on the current game board
-	 * @return boolean[][]
-	 */
-	public boolean[][] convertBoardToBoolean() {
-		boolean[][] grid = new boolean[board.getRows()][board.getColumns()];
-
-		for(int row = 0; row < grid.length; row++) {
-    		for(int col = 0; col < grid[row].length; col++) {
-                grid[row][col] = board.getCellAliveState(row, col);
-    		}
-    	}
-		return grid;
-	}
-
-	@Override
-	public int countNeighbours(int i, int j) {
-            int neighbors = 0;
-
-            if(j > 0) {
-                if(board.getCellAliveState(i, (j - 1)))
-                        neighbors++;
-                if( i > 0) {
-                    if(board.getCellAliveState((i - 1), (j - 1)))
-                        neighbors++;
-                	}
-                	if(i < board.getRows() - 1) {
-            			if(board.getCellAliveState((i + 1), (j - 1)))
-            				neighbors++;
-                	}
-            }
-
-            if(j < board.getColumns() - 1) {
-                if(board.getCellAliveState(i, (j + 1)))
+	
+    @Override
+    public int countNeighbours(int i, int j) {
+        int neighbors = 0;
+        
+        if(j > 0) {
+            if(board.getCellAliveState(i, (j - 1)))
+                neighbors++;
+            if( i > 0) {
+                if(board.getCellAliveState((i - 1), (j - 1)))
                     neighbors++;
-                if(i > 0) {
-                    if(board.getCellAliveState((i - 1), (j + 1)))
-                        neighbors++;
-                }
-                if(i < board.getRows() - 1) {
-                    if(board.getCellAliveState((i + 1), (j + 1)))
-                        neighbors++;
-                }
             }
+            if(i < board.getRows() - 1) {
+                if(board.getCellAliveState((i + 1), (j - 1)))
+                    neighbors++;
+            }
+        }
 
+        if(j < board.getColumns() - 1) {
+            if(board.getCellAliveState(i, (j + 1)))
+                neighbors++;
             if(i > 0) {
-                if(board.getCellAliveState((i - 1), j))
+                if(board.getCellAliveState((i - 1), (j + 1)))
                     neighbors++;
             }
-            if( i < board.getRows() - 1) {
-                if(board.getCellAliveState((i + 1), j))
+            if(i < board.getRows() - 1) {
+                if(board.getCellAliveState((i + 1), (j + 1)))
                     neighbors++;
             }
-            /*
-            if(neighbors == 3)
-                return true;
+        }
 
-            return ( board.getCellAliveState(i, j) && neighbors == 2 );
-            */
-            return neighbors;
-	}
+        if(i > 0) {
+            if(board.getCellAliveState((i - 1), j))
+                neighbors++;
+        }
+        if( i < board.getRows() - 1) {
+            if(board.getCellAliveState((i + 1), j))
+                neighbors++;
+        }
+        
+        return neighbors;
+    }
 
-	@Override
-	public void nextGeneration() {
+    @Override
+    public void nextGeneration() {
+        byte[][] tempBoard = new byte[board.getRows()][board.getColumns()];
 
-		boolean[][] tempBoard = new boolean[board.getRows()][board.getColumns()];
+        for(int row = 0; row < board.getRows(); row++) {
+            for(int col = 0; col < board.getColumns(); col++) {
+                tempBoard[row][col] = ((countNeighbours(row,col) == 3) || ( board.getCellAliveState(row, col) && countNeighbours(row,col) == 2 )) ? (byte)1 : (byte)0;
+            }
+        }
+        board.setCellArray(tempBoard);
+    }
 
-		for(int row = 0; row < board.getRows(); row++) {
-    		for(int col = 0; col < board.getColumns(); col++) {
-    			tempBoard[row][col] = (countNeighbours(row,col) == 3) || ( board.getCellAliveState(row, col) && countNeighbours(row,col) == 2 );
-    		}
-    	}
-		board.setCellArray(tempBoard);
-	}
+    public boolean getCellAliveState(int row, int column) {
+        return board.getCellAliveState(row, column);
+    }
 
-	public boolean getCellAliveStatus(int row, int column) {
-		return board.getCellAliveState(row, column);
-	}
+    public void setCellAliveState(int row, int column, boolean isAlive) {
+        board.setCellAliveState(row, column, isAlive);
+    }
 
-	public void setCellAliveStatus(int row, int column, boolean isAlive) {
-		board.setCellAliveState(row, column, isAlive);
-	}
-
-
-	public void setMetaData(MetaData metadata) {
-		board.setMetaData(metadata);
-	}
+    public void setMetaData(MetaData metadata) {
+        board.setMetaData(metadata);
+    }
 
 }

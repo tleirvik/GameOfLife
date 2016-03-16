@@ -15,7 +15,7 @@ import util.DialogBoxes;
  */
 public class RLEDecoder {
     private MetaData metadata;
-    private boolean[][] board;
+    private byte[][] board;
     private List<String> RLEdata;
 
 
@@ -58,8 +58,6 @@ public class RLEDecoder {
             DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board size: " + pfE.getMessage());
             return false;
         }
-
-        setBoardFalse();
 
         try {
             getGameRuleString();
@@ -164,7 +162,7 @@ public class RLEDecoder {
             }
 
             if(foundRows && foundColumns) {
-                board = new boolean[rows][columns];
+                board = new byte[rows][columns];
                 return;
             }
         }
@@ -273,7 +271,7 @@ public class RLEDecoder {
             while (RLEMatcher.find()) {
             	if (RLEMatcher.group(2) != null) {
                 	if (RLEMatcher.group(2).matches("[oO]")) {
-                		board[row][column] = true;
+                		board[row][column] = 1;
     	        	}
                 	column++;
                 } else if (RLEMatcher.group(1) != null) {
@@ -285,7 +283,7 @@ public class RLEDecoder {
 
                 	while (number-- != 0) {
 		            	if(m.group(2).matches("[oO]")) {
-		            		board[row][column] = true;
+		            		board[row][column] = 1;
 		            	}
 		            	column++;
 		            }
@@ -299,26 +297,11 @@ public class RLEDecoder {
      * @return board Returns the boolean[][] board
      * contained in this class
      */
-    public boolean[][] getBoard() {
+    public byte[][] getBoard() {
             return this.board;
     }
 
     public MetaData getMetadata() {
         return this.metadata;
-    }
-
-    /**
-     * Method that iterates the boolean[][] board and
-     * sets every position to false. This solves the "problem"
-     * that in the RLE format dead cells doesn't necessairly
-     * have to be specified.
-     * @return void
-     */
-    void setBoardFalse() {
-        for (boolean[] board1 : board) {
-            for (int col = 0; col < board[0].length; col++) {
-                board1[col] = false;
-            }
-        }
     }
 }

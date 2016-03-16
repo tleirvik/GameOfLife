@@ -79,14 +79,14 @@ public class ViewController {
     private RLEDecoder rledec;
 
     //Hentet fra modellen
-    private boolean[][] grid;
+    private byte[][] grid;
 
     private int rows = 1000; //Bør hentes fra gController (?)
     private int columns = 1000; //Bør hentes fra gController (?)
 
     //Slidere kan manipulere disse verdiene
     private double cellSize = 10;
-    private double fps = 8;
+    private int fps = 8;
 
     //Standard farger (Om ikke annet er spesifisert)
     private Color stdAliveCellColor = Color.BLACK;
@@ -134,8 +134,8 @@ public class ViewController {
     	fpsSlider.setValue((fps));
     	fpsSlider.valueProperty().addListener((ObservableValue<?
                 extends Number> ov, Number old_val, Number new_val) -> {
-            fpsLabel.setText(Double.toString(new_val.intValue()));
-            fps = new_val.doubleValue();
+            fpsLabel.setText(Integer.toString(new_val.intValue()));
+            fps = new_val.intValue();
             timeline.setRate(fps);
             });
 
@@ -178,7 +178,7 @@ public class ViewController {
             centerBoard();
 
             gController.newGame(false, rows, columns); // send parametrene videre
-            grid = gController.getBooleanGrid();
+            grid = gController.getGameBoard();
             draw();
         } else {
             openNewGameDialog();
@@ -186,7 +186,7 @@ public class ViewController {
             centerBoard();
 
             gController.newGame(false, rows, columns); // send parametrene videre
-            grid = gController.getBooleanGrid();
+            grid = gController.getGameBoard();
             draw();
         }
     }
@@ -257,7 +257,7 @@ public class ViewController {
         if (gController == null) {
             gController = new GameController();
         } else {
-            grid = gController.getBooleanGrid();
+            grid = gController.getGameBoard();
             centerBoard();
             draw();
         }
@@ -346,19 +346,19 @@ public class ViewController {
                     long startTime = System.nanoTime();
                     gController.play();
                     long endTime = System.nanoTime();
-                    long duration2 = (endTime - startTime) / 100000;
+                    long duration2 = (endTime - startTime) / 1000000;
                     System.out.println("Next Generation: " + duration2);
 
                     startTime = System.nanoTime();
-                    grid = gController.getBooleanGrid();
+                    grid = gController.getGameBoard();
                     endTime = System.nanoTime();
-                    duration2 = (endTime - startTime) / 100000;
+                    duration2 = (endTime - startTime) / 1000000;
                     System.out.println("Get grid: " + duration2);
 
                     startTime = System.nanoTime();
                     draw();
                     endTime = System.nanoTime();
-                    duration2 = (endTime - startTime) / 100000;
+                    duration2 = (endTime - startTime) / 1000000;
                     System.out.println("Draw: " + duration2);
                 });
             timeline.getKeyFrames().add(keyFrame);
@@ -614,9 +614,9 @@ public class ViewController {
             double x = start_X;
             double y = start_Y;
 
-            for (boolean[] grid1 : grid) {
+            for (byte[] grid1 : grid) {
                 for (int col = 0; col < grid1.length; col++) {
-                    if (grid1[col]) {
+                    if (grid1[col] == 1) {
                         //Hvis cellen lever
                         gc.setFill(stdAliveCellColor);
                         gc.fillRect( x, y, cellSize, cellSize);
@@ -748,7 +748,7 @@ public class ViewController {
                         cellDraw = !gController.getCellAliveStatus(row, column);
                         gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
                     }
-                    grid = gController.getBooleanGrid();
+                    grid = gController.getGameBoard();
                     draw();
                 }
 
@@ -776,10 +776,10 @@ public class ViewController {
                     // unngår out of bounds exception,
                     // holder seg innenfor arrayets lengde
                     // tegner kun dersom man er innenfor lengde
-                    if((row < gController.getBooleanGrid().length) &&
-                            (column < gController.getBooleanGrid().length)) {
+                    if((row < gController.getGameBoard().length) &&
+                            (column < gController.getGameBoard().length)) {
                         gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
-                        grid = gController.getBooleanGrid();
+                        grid = gController.getGameBoard();
                         draw();
                     }
                 }

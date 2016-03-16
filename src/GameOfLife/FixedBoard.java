@@ -33,18 +33,12 @@ public class FixedBoard {
      *
      * @param board
      */
-    public FixedBoard(boolean[][] board) {
+    public FixedBoard(byte[][] board) {
     	metadata = new MetaData();
     	currentCells = new byte[board.length][board[0].length];
 
         for(int row = 0; row < board.length; row++) {
-            for(int col = 0; col < board[row].length; col++) {
-                if (board[row][col]) {
-                    currentCells[row][col] = 1;
-                } else {
-                    currentCells[row][col] = 0;
-                }
-            }
+            System.arraycopy(board[row], 0, currentCells[row], 0, board[row].length);
     	}
     }
 
@@ -105,22 +99,15 @@ public class FixedBoard {
 
 
     /**
-	 * The purpose of this method is to set the setIsAalive value of the entire grid
-	 *
-     * @param inputBoard
-	 *
-	 */
+    * The purpose of this method is to set the setIsAalive value of the entire grid
+    *
+    *
+    * @param board
+    */
     //Tidligere setBoard-metoden
-    public void setCellArray(boolean[][] inputBoard) {
-    	System.out.println("Setter brettet");
-    	for(int row = 0; row < inputBoard.length; row++) {
-            for(int col = 0; col < inputBoard[row].length; col++) {
-                if(inputBoard[row][col]) {
-                    currentCells[row][col] = 1;
-                } else {
-                    currentCells[row][col] = 0;
-                }
-            }
+    public void setCellArray(byte[][] board) {
+    	for(int row = 0; row < board.length; row++) {
+            System.arraycopy(board[row], 0, currentCells[row], 0, board[row].length);
     	}
     }
 
