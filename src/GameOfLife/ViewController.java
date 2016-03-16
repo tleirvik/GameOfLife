@@ -723,10 +723,12 @@ public class ViewController {
   //================================================================================
 
     private void openNewGameDialog() {
-    	int[] rowCol = new int[2];
+    	int[] rowCol;
     	rowCol = dialogBoxes.openNewGameDialog();
-    	rows = rowCol[0];
-    	columns = rowCol[1];
+        if(rowCol != null) {
+            rows = rowCol[0];
+            columns = rowCol[1];
+        }
     }
 
     /**
