@@ -2,32 +2,21 @@ package util;
 
 import java.io.File;
 import java.util.Optional;
-
-import GameOfLife.MetaData;
-import javafx.application.Platform;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
-import javafx.scene.control.Tooltip;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.util.Pair;
 
 public class DialogBoxes {
 
@@ -46,62 +35,63 @@ public class DialogBoxes {
     	alert.showAndWait();
     }
 
-	public String urlDialogBox() {
-		StringBuilder urlString = new StringBuilder();
+    public String urlDialogBox() {
+        StringBuilder urlString = new StringBuilder();
 
-		GridPane gp = new GridPane();
-    	Scene scene = new Scene(gp, 720, 300);
-    	Stage mainStage = new Stage();
+        GridPane gp = new GridPane();
+        Scene scene = new Scene(gp, 720, 300);
+        Stage mainStage = new Stage();
 
-    	Label url = new Label("URL:");
+        Label url = new Label("URL:");
 
-    	HBox buttonBox = new HBox();
-    	buttonBox.setAlignment(Pos.BOTTOM_LEFT);
-    	buttonBox.setSpacing(10);
+        HBox buttonBox = new HBox();
+        buttonBox.setAlignment(Pos.BOTTOM_LEFT);
+        buttonBox.setSpacing(10);
 
-    	TextField urlTextField = new TextField();
+        TextField urlTextField = new TextField();
 
-    	Button okButton = new Button("Open File");
-    	Button cancelButton = new Button("Cancel");
+        Button okButton = new Button("Open File");
+        Button cancelButton = new Button("Cancel");
 
-    	gp.setAlignment(Pos.TOP_LEFT);
-    	gp.setHgap(10);
-    	gp.setVgap(10);
-    	gp.setPadding(new Insets(25, 25, 25, 25));
+        gp.setAlignment(Pos.TOP_LEFT);
+        gp.setHgap(10);
+        gp.setVgap(10);
+        gp.setPadding(new Insets(25, 25, 25, 25));
 
-    	GridPane.setConstraints(url, 0, 0);
-    	gp.getChildren().add(url);
-    	GridPane.setConstraints(urlTextField, 1, 0);
-    	gp.getChildren().add(urlTextField);
+        GridPane.setConstraints(url, 0, 0);
+        gp.getChildren().add(url);
+        GridPane.setConstraints(urlTextField, 1, 0);
+        gp.getChildren().add(urlTextField);
 
 
-    	buttonBox.getChildren().addAll(okButton, cancelButton);
+        buttonBox.getChildren().addAll(okButton, cancelButton);
 
-    	GridPane.setConstraints(buttonBox, 0, 4, 4, 1);
-    	gp.getChildren().add(buttonBox);
+        GridPane.setConstraints(buttonBox, 0, 4, 4, 1);
+        gp.getChildren().add(buttonBox);
 
-    	okButton.setOnAction(new EventHandler<ActionEvent>() {
-    		@Override
+        okButton.setOnAction(new EventHandler<ActionEvent>() {
+                @Override
             public void handle(ActionEvent event) {
-    			urlString.append(urlTextField.getText());
-    			System.out.println(urlString.toString());
-    			mainStage.close();
+                        urlString.append(urlTextField.getText());
+                        System.out.println(urlString.toString());
+                        mainStage.close();
             }
-    	});
+        });
 
-    	cancelButton.setOnAction(e -> {
-		    mainStage.close();
-    	});
+        cancelButton.setOnAction(e -> {
+                    mainStage.close();
+        });
 
-    	mainStage.setTitle("Enter URL");
-    	mainStage.setScene(scene);
-    	mainStage.showAndWait();
-    	return urlString.toString();
+        mainStage.setTitle("Enter URL");
+        mainStage.setScene(scene);
+        mainStage.showAndWait();
+        return urlString.toString();
     }
-	public File loadRLEDialogBox() {
-		Stage mainStage = new Stage();
+    
+    public File loadRLEDialogBox() {
+        Stage mainStage = new Stage();
 
-		FileChooser fileChooser = new FileChooser();
+        FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("RLE files", "*.rle"),
@@ -109,17 +99,18 @@ public class DialogBoxes {
 
         File selectedFile = fileChooser.showOpenDialog(mainStage);
         return selectedFile;
-	}
-	public File saveRLEDialogBox() {
-		Stage mainStage = new Stage();
+    }
+    
+    public File saveRLEDialogBox() {
+        Stage mainStage = new Stage();
 
-    	FileChooser fileChooser = new FileChooser();
-    	fileChooser.setTitle("Save RLE Pattern to file");
+        FileChooser fileChooser = new FileChooser();
+        fileChooser.setTitle("Save RLE Pattern to file");
         fileChooser.getExtensionFilters().add(
             new ExtensionFilter("RLE files", "*.rle"));
         File saveRLEFile = fileChooser.showSaveDialog(mainStage);
         return saveRLEFile;
-	}
+    }
 
 	/*
 	private void metaDataDialogBox() {
@@ -211,51 +202,113 @@ public class DialogBoxes {
     }
 
 */
-	public int[] openNewGameDialog() {
-    	int[] rowCol = new int[2];
+        // try catch på input-verdier
+    public int[] openNewGameDialog() {
+//    	int[] rowCol = new int[2];
+//
+//        Dialog<Pair<Integer, Integer>> dialog = new Dialog<>();
+//    	dialog.setTitle("New Game");
+//    	dialog.setHeaderText("Start a new game");
+//    	ButtonType OKButtonType = new ButtonType("OK", ButtonData.OK_DONE);
+//    	dialog.getDialogPane().getButtonTypes().addAll(OKButtonType, ButtonType.CANCEL);
+//
+//    	GridPane root = new GridPane();
+//    	root.setHgap(10);
+//    	root.setVgap(10);
+//    	root.setPadding(new Insets(20, 150, 10, 10));
+//
+//        TextField rowValue = new TextField();
+//    	rowValue.setPromptText("Rows");
+//
+//    	TextField columnValue = new TextField();
+//    	columnValue.setPromptText("Columns");
+//
+//    	root.add(new Label("Rows: "), 0, 0);
+//    	root.add(rowValue, 1, 0);
+//    	root.add(new Label("Columns: "), 0, 1);
+//    	root.add(columnValue, 1, 1);
+//
+//    	Node OKButton = dialog.getDialogPane().lookupButton(OKButtonType);
+//    	OKButton.setDisable(true);
+//
+//    	rowValue.textProperty().addListener((observable, oldValue, newValue) -> {
+//    	    OKButton.setDisable(newValue.trim().isEmpty());
+//    	});
+//
+//    	dialog.getDialogPane().setContent(root);
+//    	Platform.runLater(() -> rowValue.requestFocus());
+//
+//    	dialog.setResultConverter(dialogButton -> {
+//    	    if (dialogButton == OKButtonType) {
+//                rowCol[0] = Integer.parseInt(rowValue.getText());
+//                rowCol[1] = Integer.parseInt(columnValue.getText());
+//    	    }
+//    	    return null;
+//    	});
+//
+//    	Optional<Pair<Integer, Integer>> result = dialog.showAndWait();
+//    	return rowCol;
 
-		Dialog<Pair<Integer, Integer>> dialog = new Dialog<>();
-    	dialog.setTitle("New Game");
-    	dialog.setHeaderText("Start a new game");
-    	ButtonType OKButtonType = new ButtonType("OK", ButtonData.OK_DONE);
-    	dialog.getDialogPane().getButtonTypes().addAll(OKButtonType, ButtonType.CANCEL);
-
-    	GridPane root = new GridPane();
-    	root.setHgap(10);
-    	root.setVgap(10);
-    	root.setPadding(new Insets(20, 150, 10, 10));
-
-        TextField rowValue = new TextField();
-    	rowValue.setPromptText("Rows");
-
-    	TextField columnValue = new TextField();
-    	columnValue.setPromptText("Columns");
-
-    	root.add(new Label("Rows: "), 0, 0);
-    	root.add(rowValue, 1, 0);
-    	root.add(new Label("Columns: "), 0, 1);
-    	root.add(columnValue, 1, 1);
-
-    	Node OKButton = dialog.getDialogPane().lookupButton(OKButtonType);
-    	OKButton.setDisable(true);
-
-    	rowValue.textProperty().addListener((observable, oldValue, newValue) -> {
-    	    OKButton.setDisable(newValue.trim().isEmpty());
-    	});
-
-    	dialog.getDialogPane().setContent(root);
-    	Platform.runLater(() -> rowValue.requestFocus());
-
-    	dialog.setResultConverter(dialogButton -> {
-    	    if (dialogButton == OKButtonType) {
-    	        rowCol[0] = Integer.parseInt(rowValue.getText());
-    	        rowCol[1] = Integer.parseInt(columnValue.getText());
-    	    }
-    	    return null;
-    	});
-
-    	Optional<Pair<Integer, Integer>> result = dialog.showAndWait();
-    	return rowCol;
+        int[] array = new int[2];
+        
+        GridPane root = new GridPane();
+        Stage stage = new Stage();
+        
+        
+        
+        Label label1 = new Label("Columns: ");
+        Label label2 = new Label("Rows: ");
+        GridPane.setConstraints(label1, 0, 0);
+        GridPane.setConstraints(label2, 0, 1);
+        root.getChildren().addAll(label1, label2);
+        
+        Label errorLabel1 = new Label();
+        Label errorLabel2 = new Label();
+        GridPane.setConstraints(errorLabel1, 2, 0);
+        GridPane.setConstraints(errorLabel2, 2, 1);
+        root.getChildren().addAll(errorLabel1, errorLabel2);
+        
+        TextField inputField1 = new TextField();
+        TextField inputField2 = new TextField();
+        
+        GridPane.setConstraints(inputField1, 1, 0);
+        GridPane.setConstraints(inputField2, 1, 1);
+        root.getChildren().addAll(inputField1, inputField2);
+        
+        Button okButton = new Button("OK");
+        Button cancelButton = new Button("Cancel");
+        
+        HBox hbox = new HBox();
+        hbox.setSpacing(10);
+        hbox.setAlignment(Pos.CENTER);
+        hbox.getChildren().addAll(okButton, cancelButton);
+        root.getChildren().add(hbox);
+        
+        GridPane.setConstraints(hbox, 1, 3);
+        
+        okButton.setOnAction(e -> {
+            try {
+                array[0] = Integer.parseInt(inputField1.getText());
+                array[1] = Integer.parseInt(inputField2.getText());
+                System.out.println("Riktig");
+                stage.close();
+            } catch (NumberFormatException nfE) {
+               System.out.println("FEIL");
+               errorLabel1.setText("You must enter an integer.");
+               errorLabel2.setText("You must enter an integer.");
+            }
+        });
+        
+        cancelButton.setOnAction(e -> {
+            stage.close();
+        });
+        
+        Scene scene = new Scene(root, 400, 150);
+        stage.setScene(scene);
+        stage.showAndWait();
+        
+        
+        return array;
 
     }
 }
