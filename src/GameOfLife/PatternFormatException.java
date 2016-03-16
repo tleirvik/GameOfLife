@@ -7,7 +7,6 @@ package GameOfLife;
  * Denne klasse trenger noe mer funksjonalitet for å kunne forsvare dens eksistens, men
  * siden den er et krav så må vi implementere den.
  *
- * @author tleirvik
  * @see    java.lang.Error
  */
 public class PatternFormatException extends Exception {

@@ -3,10 +3,6 @@ package GameOfLife;
 import FileManagement.FileLoader;
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.Optional;
 
 import FileManagement.RLEDecoder;
 import FileManagement.RLEEncoder;
@@ -15,35 +11,19 @@ import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.geometry.Insets;
-import javafx.geometry.Pos;
-import javafx.scene.Node;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
 import javafx.scene.control.Slider;
-import javafx.scene.control.TextArea;
-import javafx.scene.control.TextField;
 import javafx.scene.control.ToggleButton;
-import javafx.scene.control.Tooltip;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.GridPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
@@ -51,7 +31,6 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import javafx.util.Pair;
 import util.DialogBoxes;
 
 /**
@@ -96,7 +75,8 @@ public class ViewController {
     private DialogBoxes dialogBoxes;
     private Timeline timeline;
     private GameController gController;
-    // private MetaData metadata;
+
+    private RLEDecoder rledec;
 
     //Hentet fra modellen
     private boolean[][] grid;
@@ -184,8 +164,6 @@ public class ViewController {
     // GUI Event handlers
     //================================================================================
 
-
-
     /**
      * This method instansiate a new GameController
      * and calls a dialog box for input. The it center the board and
@@ -193,27 +171,16 @@ public class ViewController {
      */
     @FXML
     public void openNewGame() {
-        if(gController == null) {
-            gController = new GameController();
-            openNewGameDialog();
-            // metadata = new MetaData();
-
-            gController.newGame(false, rows, columns); // send parametrene videre
-            grid = gController.getBooleanGrid();
-            centerBoard();
-            draw();
-        } else if(timeline != null) {
+        gController = new GameController();
+        if (isTimelineRunning()) {
             timeline.stop();
-            gController = new GameController();
             openNewGameDialog();
-            // metadata = new MetaData();
             centerBoard();
 
             gController.newGame(false, rows, columns); // send parametrene videre
             grid = gController.getBooleanGrid();
             draw();
         } else {
-            gController = new GameController();
             openNewGameDialog();
             // metadata = new MetaData();
             centerBoard();
@@ -224,8 +191,6 @@ public class ViewController {
         }
     }
 
-
-
     /**
      * This method launches a FileChooser and lets the user select a file.
      * If the file is not null it creates an object of type RLEDecoder and
@@ -233,28 +198,28 @@ public class ViewController {
      * pattern from file.
      *
      * @return void
-     * @see RLEDecoder.java
+     * @see RLEDecoder
      */
     @FXML
     public void loadGameBoardFromDisk() {
-    	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
-
+        boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
+        statusBar.setText("");
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
 
-        if(isTimelineRunning()) {
+        if (isTimelineRunning()) {
             timeline.stop();
         }
 
-    	FileChooser fileChooser = new FileChooser();
+        FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("RLE files", "*.rle"),
                 new ExtensionFilter("All Files", "*.*"));
 
         File selectedFile = fileChooser.showOpenDialog(mainStage);
-        if(selectedFile != null) {
+        if (selectedFile != null) {
             FileLoader fileLoader = new FileLoader();
-            if(!fileLoader.readGameBoardFromDisk(selectedFile)) {
+            if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
                 statusBar.setText("Could not open file!");
                 return;
             }
@@ -264,42 +229,58 @@ public class ViewController {
                 statusBar.setText("An error occured trying to read the file");
                 return;
             }
-            if(gController == null) {
-                gController = new GameController();
-                gController.newGame(rledec.getBoard(), isDynamic);
-                gController.setMetaData(rledec.getMetadata());
-                rows = rledec.getBoard().length;
-                columns = rledec.getBoard()[0].length;
-
-                grid = gController.getBooleanGrid();
-                centerBoard();
-                draw();
-            } else if(timeline != null) {
-                timeline.stop();
-                gController.newGame(rledec.getBoard(), isDynamic);
-                gController.setMetaData(rledec.getMetadata());
-                rows = rledec.getBoard().length;
-                columns = rledec.getBoard()[0].length;
-
-                grid = gController.getBooleanGrid();
-                centerBoard();
-                draw();
-            } else {
-                gController.newGame(rledec.getBoard(), isDynamic);
-                gController.setMetaData(rledec.getMetadata());
-                rows = rledec.getBoard().length;
-                columns = rledec.getBoard()[0].length;
-
-                grid = gController.getBooleanGrid();
-                centerBoard();
-                draw();
-            }
-    	 }
+            commonBehaviorInRLE(gController, rledec);
+        }
+    }
+    /**
+     *  Trenger nytt navn :)
+     */
+    private void commonBehaviorInRLE(GameController gController, RLEDecoder rledec) {
+        if(gController == null) {
+            gController = new GameController();
+            rledecMetode(gController, rledec);
+            centerBoardAndDraw();
+        } else if(timeline != null) {
+            timeline.stop();
+            rledecMetode(gController, rledec);
+            centerBoardAndDraw();
+        } else {
+            rledecMetode(gController, rledec);
+            centerBoardAndDraw();
+        }
     }
 
+    /**
+     *  Trenger nytt navn :)
+     */
+    private void centerBoardAndDraw() {
+        if (gController == null) {
+            gController = new GameController();
+        } else {
+            grid = gController.getBooleanGrid();
+            centerBoard();
+            draw();
+        }
+
+    }
+    /**
+     *  Trenger nytt navn :)
+     */
+    private void rledecMetode(GameController gController, RLEDecoder rledec) {
+        boolean isDynamic = false;
+        gController.newGame(rledec.getBoard(), isDynamic);
+        gController.setMetaData(rledec.getMetadata());
+        rows = rledec.getBoard().length;
+        columns = rledec.getBoard()[0].length;
+    }
+    /**
+     *
+     * BUG. Må kjøre metoden to ganger for at det skal fungere. gController må
+     * trolig instansieres et eller annet sted.
+     */
     public void loadGameBoardFromURL() {
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
-
+        statusBar.setText("");
         FileLoader fileLoader = new FileLoader();
         
         if(!fileLoader.readGameBoardFromURL(dialogBoxes.urlDialogBox())) {
@@ -312,36 +293,7 @@ public class ViewController {
             statusBar.setText("An error occured trying to read the file");
             return;
         }
-        if(gController == null) {
-            gController = new GameController();
-            gController.newGame(rledec.getBoard(), isDynamic);
-            gController.setMetaData(rledec.getMetadata());
-            rows = rledec.getBoard().length;
-            columns = rledec.getBoard()[0].length;
-
-            grid = gController.getBooleanGrid();
-            centerBoard();
-            draw();
-        } else if(timeline != null) {
-            timeline.stop();
-            gController.newGame(rledec.getBoard(), isDynamic);
-            gController.setMetaData(rledec.getMetadata());
-            rows = rledec.getBoard().length;
-            columns = rledec.getBoard()[0].length;
-
-            grid = gController.getBooleanGrid();
-            centerBoard();
-            draw();
-        } else {
-            gController.newGame(rledec.getBoard(), isDynamic);
-            gController.setMetaData(rledec.getMetadata());
-            rows = rledec.getBoard().length;
-            columns = rledec.getBoard()[0].length;
-
-            grid = gController.getBooleanGrid();
-            centerBoard();
-            draw();
-        }
+        commonBehaviorInRLE(gController, rledec);
     }
 
     /**
@@ -352,10 +304,10 @@ public class ViewController {
      *
      * @return void
      * @throws IOException
-     * @see RLEDecoder.java
+     * @see RLEDecoder
      */
     @FXML
-    public void saveRLE() throws IOException {
+    public void saveRLE() {
     	Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
 
     	if (gController.getBoard() != null) {
@@ -381,7 +333,6 @@ public class ViewController {
                 statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
             }
  	}
-
 
     @FXML
     public void play() {
@@ -428,8 +379,8 @@ public class ViewController {
 
     @FXML
     public void restart() {
-        if(gController != null) {
-
+        if(gController != null && timeline.getStatus() == Status.PAUSED) {
+            timeline.play();
         }
     }
 
@@ -489,7 +440,7 @@ public class ViewController {
 
     /**
      *
-     * @param event
+     * @param
      */
     @FXML
     public void moveGrid() {
@@ -637,7 +588,7 @@ public class ViewController {
             offset_Y = gameCanvas.getHeight() / 2 - (getBoardHeight() / 2);
     }
 
-    public void draw() {
+    private void draw() {
     	//If the grid is not retrieved yet, do not run the draw function
     	if(grid != null) {
             double start_X = Math.round(getGridStartPosX());
@@ -685,7 +636,7 @@ public class ViewController {
         } // end if
     }
 
-    public void drawGridLines(GraphicsContext gc) {
+    private void drawGridLines(GraphicsContext gc) {
     	gc.setLineWidth(stdGridLineWidth);
     	gc.setStroke(stdGridColor);
 
@@ -739,91 +690,7 @@ public class ViewController {
      * @return void
      */
     private void metaDataDialogBox() {
-    	GridPane gp = new GridPane();
-    	Scene scene = new Scene(gp, 720, 300);
-    	Stage mainStage = new Stage();
-
-    	Label patternLabel = new Label("Pattern name:");
-    	Label authorLabel = new Label("Author name:");
-    	Label commentLabel = new Label("Comments:");
-    	Label gameRulesLabel = new Label("Default Rules");
-
-    	HBox buttonBox = new HBox();
-    	buttonBox.setAlignment(Pos.BOTTOM_LEFT);
-    	buttonBox.setSpacing(10);
-
-    	RadioButton gameRulesRadioButton = new RadioButton();
-    	gameRulesRadioButton.setTooltip(new Tooltip("Hjelp"));
-    	TextField patternTextArea;
-    	TextField authorTextArea;
-    	TextArea commentTextArea;
-    	MetaData metadata = gController.getBoard().getMetaData();
-
-    	if (metadata != null) {
-            patternTextArea = new TextField(metadata.getName());
-            authorTextArea = new TextField(metadata.getAuthor());
-            commentTextArea = new TextArea(metadata.getComment());
-    	} else {
-            patternTextArea = new TextField();
-            authorTextArea = new TextField();
-            commentTextArea = new TextArea();
-    	}
-
-
-    	Button okButton = new Button("Save");
-    	Button cancelButton = new Button("Cancel");
-
-    	gp.setAlignment(Pos.TOP_LEFT);
-    	gp.setHgap(10);
-    	gp.setVgap(10);
-    	gp.setPadding(new Insets(25, 25, 25, 25));
-
-    	GridPane.setConstraints(patternLabel, 0, 0);
-    	gp.getChildren().add(patternLabel);
-    	GridPane.setConstraints(patternTextArea, 1, 0);
-    	gp.getChildren().add(patternTextArea);
-
-    	GridPane.setConstraints(authorLabel, 0, 1);
-    	gp.getChildren().add(authorLabel);
-    	GridPane.setConstraints(authorTextArea, 1, 1);
-    	gp.getChildren().add(authorTextArea);
-
-    	GridPane.setConstraints(commentLabel, 0, 2);
-    	gp.getChildren().add(commentLabel);
-    	GridPane.setConstraints(commentTextArea, 1, 2);
-    	gp.getChildren().add(commentTextArea);
-
-    	GridPane.setConstraints(gameRulesLabel, 0, 4);
-    	GridPane.setConstraints(gameRulesRadioButton, 1, 4);
-    	buttonBox.getChildren().addAll(gameRulesLabel, gameRulesRadioButton,
-    			okButton, cancelButton);
-
-    	GridPane.setConstraints(buttonBox, 0, 4, 4, 1);
-    	gp.getChildren().add(buttonBox);
-
-    	okButton.setOnAction(e -> {
-    		System.out.println(authorTextArea.getText());
-    		System.out.println(metadata);
-    		metadata.setAuthor(authorTextArea.getText());
-    		metadata.setName(patternTextArea.getText());
-    		metadata.setComment(commentTextArea.getText());
-    		mainStage.close();
-    	});
-
-    	cancelButton.setOnAction(e -> {
-		    mainStage.close();
-    	});
-
-    	gameRulesRadioButton.setOnAction(e -> {
-    		String[] SBrules = new String[2];
-    		SBrules[0] = "3";
-    		SBrules[1] = "23";
-    		metadata.setRuleString(SBrules);
-    	});
-
-    	mainStage.setTitle("Enter meta data");
-    	mainStage.setScene(scene);
-    	mainStage.showAndWait();
+    	dialogBoxes.metaDataDialogBox(gController.getBoard().getMetaData());
     }
 
     @FXML

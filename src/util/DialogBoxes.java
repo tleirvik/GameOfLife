@@ -2,6 +2,13 @@ package util;
 
 import java.io.File;
 import java.util.Optional;
+<<<<<<< HEAD
+=======
+
+import GameOfLife.GameController;
+import GameOfLife.MetaData;
+import javafx.application.Platform;
+>>>>>>> 4b6265d1948e2705f786e30dfe459c0446e88a2d
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -112,8 +119,8 @@ public class DialogBoxes {
         return saveRLEFile;
     }
 
-	/*
-	private void metaDataDialogBox() {
+
+	public void metaDataDialogBox(MetaData metadata) {
     	GridPane gp = new GridPane();
     	Scene scene = new Scene(gp, 720, 300);
     	Stage mainStage = new Stage();
@@ -132,7 +139,6 @@ public class DialogBoxes {
     	TextField patternTextArea;
     	TextField authorTextArea;
     	TextArea commentTextArea;
-    	MetaData metadata = gController.getBoard().getMetaData();
 
     	if (metadata != null) {
             patternTextArea = new TextField(metadata.getName());
@@ -143,7 +149,6 @@ public class DialogBoxes {
             authorTextArea = new TextField();
             commentTextArea = new TextArea();
     	}
-
 
     	Button okButton = new Button("Save");
     	Button cancelButton = new Button("Cancel");
@@ -201,6 +206,7 @@ public class DialogBoxes {
     	mainStage.showAndWait();
     }
 
+<<<<<<< HEAD
 */
         // try catch på input-verdier
     public int[] openNewGameDialog() {
@@ -309,6 +315,54 @@ public class DialogBoxes {
         
         
         return array;
+=======
+
+	public int[] openNewGameDialog() {
+    	int[] rowCol = new int[2];
+
+		Dialog<Pair<Integer, Integer>> dialog = new Dialog<>();
+    	dialog.setTitle("New Game");
+    	dialog.setHeaderText("Start a new game");
+    	ButtonType OKButtonType = new ButtonType("OK", ButtonData.OK_DONE);
+    	dialog.getDialogPane().getButtonTypes().addAll(OKButtonType, ButtonType.CANCEL);
+
+    	GridPane root = new GridPane();
+    	root.setHgap(10);
+    	root.setVgap(10);
+    	root.setPadding(new Insets(20, 150, 10, 10));
+
+        TextField rowValue = new TextField();
+    	rowValue.setPromptText("Rows");
+
+    	TextField columnValue = new TextField();
+    	columnValue.setPromptText("Columns");
+
+    	root.add(new Label("Rows: "), 0, 0);
+    	root.add(rowValue, 1, 0);
+    	root.add(new Label("Columns: "), 0, 1);
+    	root.add(columnValue, 1, 1);
+
+    	Node OKButton = dialog.getDialogPane().lookupButton(OKButtonType);
+    	OKButton.setDisable(true);
+
+    	rowValue.textProperty().addListener((observable, oldValue, newValue) -> {
+    	    OKButton.setDisable(newValue.trim().isEmpty());
+    	});
+
+    	dialog.getDialogPane().setContent(root);
+    	Platform.runLater(() -> rowValue.requestFocus());
+
+    	dialog.setResultConverter(dialogButton -> {
+    	    if (dialogButton == OKButtonType) {
+    	        rowCol[0] = Integer.parseInt(rowValue.getText());
+    	        rowCol[1] = Integer.parseInt(columnValue.getText());
+    	    }
+    	    return null;
+    	});
+
+    	Optional<Pair<Integer, Integer>> result = dialog.showAndWait();
+    	return rowCol;
+>>>>>>> 4b6265d1948e2705f786e30dfe459c0446e88a2d
 
     }
 }
