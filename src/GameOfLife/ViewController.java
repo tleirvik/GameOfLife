@@ -157,6 +157,7 @@ public class ViewController {
 
     	dialogBoxes = new DialogBoxes();
         initializeMouseEventHandlers();
+        gController = new GameController();
 
     } // end initialize
 
