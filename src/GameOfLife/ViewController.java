@@ -202,24 +202,24 @@ public class ViewController {
      */
     @FXML
     public void loadGameBoardFromDisk() {
-    	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
+        boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
         statusBar.setText("");
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
 
-        if(isTimelineRunning()) {
+        if (isTimelineRunning()) {
             timeline.stop();
         }
 
-    	FileChooser fileChooser = new FileChooser();
+        FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
         fileChooser.getExtensionFilters().addAll(
                 new ExtensionFilter("RLE files", "*.rle"),
                 new ExtensionFilter("All Files", "*.*"));
 
         File selectedFile = fileChooser.showOpenDialog(mainStage);
-        if(selectedFile != null) {
+        if (selectedFile != null) {
             FileLoader fileLoader = new FileLoader();
-            if(!fileLoader.readGameBoardFromDisk(selectedFile)) {
+            if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
                 statusBar.setText("Could not open file!");
                 return;
             }
@@ -229,28 +229,39 @@ public class ViewController {
                 statusBar.setText("An error occured trying to read the file");
                 return;
             }
-            if(gController == null) {
-                gController = new GameController();
-                rledecMetode(gController, rledec);
-                centerBoardAndDraw();
-            } else if(timeline != null) {
-                timeline.stop();
-                rledecMetode(gController, rledec);
-                centerBoardAndDraw();
-            } else {
-                rledecMetode(gController, rledec);
-                centerBoardAndDraw();
-            }
-    	 }
+            commonBehaviorInRLE(gController, rledec);
+        }
+    }
+    /**
+     *  Trenger nytt navn :)
+     */
+    private void commonBehaviorInRLE(GameController gController, RLEDecoder rledec) {
+        if(gController == null) {
+            gController = new GameController();
+            rledecMetode(gController, rledec);
+            centerBoardAndDraw();
+        } else if(timeline != null) {
+            timeline.stop();
+            rledecMetode(gController, rledec);
+            centerBoardAndDraw();
+        } else {
+            rledecMetode(gController, rledec);
+            centerBoardAndDraw();
+        }
     }
 
     /**
      *  Trenger nytt navn :)
      */
     private void centerBoardAndDraw() {
-        grid = gController.getBooleanGrid();
-        centerBoard();
-        draw();
+        if (gController == null) {
+            gController = new GameController();
+        } else {
+            grid = gController.getBooleanGrid();
+            centerBoard();
+            draw();
+        }
+
     }
     /**
      *  Trenger nytt navn :)
@@ -263,9 +274,9 @@ public class ViewController {
         columns = rledec.getBoard()[0].length;
     }
     /**
-     *  I denne metoden og metoden over er det mye
-     *  repeterende kode. Kan vi putte rledec på utsiden og metodifisere en del
-     *  av koden
+     *
+     * BUG. Må kjøre metoden to ganger for at det skal fungere. gController må
+     * trolig instansieres et eller annet sted.
      */
     public void loadGameBoardFromURL() {
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
@@ -282,18 +293,7 @@ public class ViewController {
             statusBar.setText("An error occured trying to read the file");
             return;
         }
-        if(gController == null) {
-            gController = new GameController();
-            rledecMetode(gController, rledec);
-            centerBoardAndDraw();
-        } else if(timeline != null) {
-            timeline.stop();
-            rledecMetode(gController, rledec);
-            centerBoardAndDraw();
-        } else {
-            rledecMetode(gController, rledec);
-            centerBoardAndDraw();
-        }
+        commonBehaviorInRLE(gController, rledec);
     }
 
     /**
@@ -379,8 +379,8 @@ public class ViewController {
 
     @FXML
     public void restart() {
-        if(gController != null) {
-
+        if(gController != null && timeline.getStatus() == Status.PAUSED) {
+            timeline.play();
         }
     }
 
