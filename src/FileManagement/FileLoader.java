@@ -16,6 +16,9 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import util.DialogBoxes;
 
 /**
@@ -24,39 +27,72 @@ import util.DialogBoxes;
  */
 public class FileLoader {
     private List<String> RLEdata;
-    
+    private StringBuilder sb;
+    private boolean[][] board;
+
     public FileLoader() {
         RLEdata = new ArrayList<>();
+        sb = new StringBuilder();
     }
-    
-    public boolean readGameBoardFromDisk(File file) {
-        if(file == null) {
+
+    public boolean readGameBoardFromDisk(File file) throws IOException {
+        long startTime = System.currentTimeMillis();
+        board = new boolean[1715][1648];
+        if (file == null) {
             DialogBoxes.infoBox("Error!", "No such file!!", "Please try again!");
             return false;
-        } else if(!file.isFile()) {
-          DialogBoxes.infoBox("Error!", "Invalid file!", "Please try again!");
-           return false;
-        } else if(!file.canRead()) {
-            DialogBoxes.infoBox("Error!", "Could not read file!", 
+        } else if (!file.isFile()) {
+            DialogBoxes.infoBox("Error!", "Invalid file!", "Please try again!");
+            return false;
+        } else if (!file.canRead()) {
+            DialogBoxes.infoBox("Error!", "Could not read file!",
                     "Please try again!");
         }
-        
+
         String line = null;
-        try (BufferedReader reader = 
-                new BufferedReader(new FileReader(file.getAbsolutePath()))) {
-            while ((line = reader.readLine() ) != null) {
-                    RLEdata.add(line);
+        try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
+
+            while ((line = reader.readLine()) != null) {
+                Pattern RLEpattern = Pattern.compile("([0-9]+[bBoO])|([bBoO])");
+                Pattern p = Pattern.compile("([0-9]+)([oObB])");
+                // Matcher RLEMatcher = RLEpattern.matcher(line);
+
+                for (int row = 0; row < line.length(); row++) {
+                    Matcher RLEMatcher = RLEpattern.matcher(String.valueOf(line.charAt(row)));
+                    System.out.println(String.valueOf(line.charAt(row)));
+                    int column = 0;
+
+                    while (RLEMatcher.find()) {
+                        if (RLEMatcher.group(2) != null) {
+                            if (RLEMatcher.group(2).matches("[oO]")) {
+                                board[row][column] = true;
+                            }
+                            column++;
+                        } else if (RLEMatcher.group(1) != null) {
+                            // Flyttet ut denne så sparer man tusenvis av cpu cycles
+                            Matcher m = p.matcher(RLEMatcher.group(1));
+
+                            m.find();
+                            int number = Integer.parseInt(m.group(1));
+
+                            while (number-- != 0) {
+                                if (m.group(2).matches("[oO]")) {
+                                    board[row][column] = true;
+                                }
+                                column++;
+                            }
+                        }
+                    } // End of first while-loop
+                } // End of for-loop
             }
-        } catch (FileNotFoundException fnfE) {
-            DialogBoxes.infoBox("Error!", "File was not found", fnfE.getMessage());
-            return false;
-        } catch (IOException ioE) {
-            DialogBoxes.infoBox("Error!", "An unknown Input/Output error occurred", ioE.getMessage());
-            return false;
         }
-        
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println("Tid i ms: " + elapsedTime);
         return true;
     }
+
+
     
     public boolean readGameBoardFromURL(String urlString) {
         try {
@@ -66,8 +102,10 @@ public class FileLoader {
                     new InputStreamReader(conn.getInputStream()))) {
                 String line = null;
                 while((line = reader.readLine()) != null) {
-                    RLEdata.add(line);
+
+                    sb.append(line + "\n");
                 }
+                // System.out.println(sb.toString());
             } catch (IOException ioE) {
                 DialogBoxes.infoBox("Error!", "", "");
                 return false;
@@ -102,5 +140,11 @@ public class FileLoader {
      */
     public List<String> getRLEdata() {
         return RLEdata;
+    }
+    public String getRLEString() {
+        return sb.toString();
+    }
+    public boolean[][] getBoard() {
+        return this.board;
     }
 }

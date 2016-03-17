@@ -75,7 +75,7 @@ public class ViewController {
     private DialogBoxes dialogBoxes;
     private Timeline timeline;
     private GameController gController;
-
+    private FileLoader fileLoader;
     private RLEDecoder rledec;
 
     //Hentet fra modellen
@@ -201,7 +201,7 @@ public class ViewController {
      * @see RLEDecoder
      */
     @FXML
-    public void loadGameBoardFromDisk() {
+    public void loadGameBoardFromDisk() throws IOException{
         boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
         statusBar.setText("");
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
@@ -218,18 +218,21 @@ public class ViewController {
 
         File selectedFile = fileChooser.showOpenDialog(mainStage);
         if (selectedFile != null) {
-            FileLoader fileLoader = new FileLoader();
+            fileLoader = new FileLoader();
             if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
                 statusBar.setText("Could not open file!");
                 return;
             }
 
-            RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
+            /*
+            RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEString());
             if (!rledec.decode()) {
                 statusBar.setText("An error occured trying to read the file");
                 return;
             }
+            */
             commonBehaviorInRLE(gController, rledec);
+
         }
     }
     /**
@@ -268,10 +271,10 @@ public class ViewController {
      */
     private void rledecMetode(GameController gController, RLEDecoder rledec) {
         boolean isDynamic = false;
-        gController.newGame(rledec.getBoard(), isDynamic);
-        gController.setMetaData(rledec.getMetadata());
-        rows = rledec.getBoard().length;
-        columns = rledec.getBoard()[0].length;
+        gController.newGame(fileLoader.getBoard(), isDynamic);
+        // gController.setMetaData(rledec.getMetadata());
+        rows = fileLoader.getBoard().length;
+        columns = fileLoader.getBoard()[0].length;
     }
     /**
      *
@@ -287,8 +290,9 @@ public class ViewController {
             statusBar.setText("Could not load file from URL!");
             return;
         }
+        RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEString());
 
-        RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
+        // RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
         if (!rledec.decode()) {
             statusBar.setText("An error occured trying to read the file");
             return;

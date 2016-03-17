@@ -16,7 +16,9 @@ import util.DialogBoxes;
 public class RLEDecoder {
     private MetaData metadata;
     private boolean[][] board;
-    private List<String> RLEdata;
+    private String RLEdata;
+    private String RLEString;
+    private String[] RLEArray;
 
 
     /**
@@ -24,10 +26,14 @@ public class RLEDecoder {
      *
      * @param RLEdata
      */
+    /*
     public RLEDecoder(List<String> RLEdata) {
         this.RLEdata = RLEdata;
     }
-
+    */
+    public RLEDecoder(String RLEdata) {
+        this.RLEdata = RLEdata;
+    }
     /**
      * "Samlemetode" that controls the flow of the RLE file parsing
      * This method calls other methods in this class with the purpose of
@@ -49,7 +55,13 @@ public class RLEDecoder {
      * @throws PatternFormatException Throws an exception if the method is unable to
      * parse the RLE file
      */
+    private void convertStringToStringArray() {
+        RLEArray = RLEdata.split("\n");
+        System.out.println(RLEArray);
+    }
     public boolean decode() {
+        long startTime = System.currentTimeMillis();
+        convertStringToStringArray();
         getMetaData();
 
         try {
@@ -74,7 +86,9 @@ public class RLEDecoder {
             DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
             return false;
         }
-
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println("Tid i ms: " + elapsedTime);
         return true;
     }
 
@@ -94,8 +108,9 @@ public class RLEDecoder {
         StringBuilder author = new StringBuilder();
         StringBuilder comment = new StringBuilder();
 
-        for (int i = 0; i < RLEdata.size(); i++) {
-            String line = RLEdata.get(i);
+        for (int i = 0; i < RLEArray.length; i++) {
+            String line = RLEArray[i];
+
 
             if (line.contains("#N")) {
                     String tempString = line.replaceAll("(#N )", "");
@@ -120,9 +135,9 @@ public class RLEDecoder {
         // This for-loop needs to decrement i to account for the
         // changes in RLEdata when removing an element (subtracts
         // one from the indices).
-        for(int i = 0; i < RLEdata.size(); i++) {
-            if(RLEdata.get(i).startsWith("#")) {
-                RLEdata.remove(i);
+        for(int i = 0; i < RLEArray.length; i++) {
+            if(RLEArray[i].startsWith("#")) {
+                RLEArray[i] = "\n";
                 i--;
             }
         }
@@ -148,8 +163,8 @@ public class RLEDecoder {
         int rows = 0;
         int columns = 0;
 
-        for (int i = 0; i < RLEdata.size(); i++) {
-            String line = RLEdata.get(i);
+        for (int i = 0; i < RLEArray.length; i++) {
+            String line = RLEArray[i];
             Matcher RLEmatcherY = RLEpatternY.matcher(line);
             Matcher RLEmatcherX = RLEpatternX.matcher(line);
 
@@ -193,15 +208,15 @@ public class RLEDecoder {
         String[] SBrules = new String[2];
         boolean foundRules = false;
 
-        for (int i = 0; i < RLEdata.size(); i++) {
-            String line = RLEdata.get(i);
+        for (int i = 0; i < RLEArray.length; i++) {
+            String line = RLEArray[i];
             Matcher RLEmatcherRules = RLEpatternRules.matcher(line);
 
             if (RLEmatcherRules.find()) {
                 SBrules[0] = RLEmatcherRules.group(1);
                 SBrules[1] = RLEmatcherRules.group(2);
                 foundRules = true;
-                RLEdata.remove(i);
+                RLEArray[i] = "\n";
                 metadata.setRuleString(SBrules);
                 return;
             }
@@ -209,15 +224,15 @@ public class RLEDecoder {
 
         RLEpatternRules =
                 Pattern.compile("rule[\\s]=[\\s]([\\d]+)/([\\d]+)");
-        for(int i = 0; i < RLEdata.size(); i++) {
-            String line = RLEdata.get(i);
+        for(int i = 0; i < RLEArray.length; i++) {
+            String line = RLEArray[i];
             Matcher RLEmatcherRules = RLEpatternRules.matcher(line);
 
             if(RLEmatcherRules.find()) {
                 SBrules[0] = RLEmatcherRules.group(1);
                 SBrules[1] = RLEmatcherRules.group(2);
                 foundRules = true;
-                RLEdata.remove(i);
+                RLEArray[i] = "\n";
                 metadata.setRuleString(SBrules);
                 return;
             }
@@ -225,15 +240,15 @@ public class RLEDecoder {
         
         RLEpatternRules =
                 Pattern.compile("rule[\\s]=[\\s][sS]([\\d]+)/[bB]([\\d]+)");
-        for (int i = 0; i < RLEdata.size(); i++) {
-            String line = RLEdata.get(i);
+        for (int i = 0; i < RLEArray.length; i++) {
+            String line = RLEArray[i];
             Matcher RLEmatcherRules = RLEpatternRules.matcher(line);
 
             if (RLEmatcherRules.find()) {
                 SBrules[0] = RLEmatcherRules.group(2);
                 SBrules[1] = RLEmatcherRules.group(1);
                 foundRules = true;
-                RLEdata.remove(i);
+                RLEArray[i] = "\n";
                 metadata.setRuleString(SBrules);
                 return;
             }
@@ -259,8 +274,10 @@ public class RLEDecoder {
         // Pattern RLEpattern = Pattern.compile("([0-9]+(?=[bBoO]))|([bBoO])");
     	Pattern RLEpattern = Pattern.compile("([0-9]+[bBoO])|([bBoO])");
         String tempString = "";
+        Pattern p = Pattern.compile("([0-9]+)([oObB])");
 
-        for (String s : RLEdata) {
+        // Kopierer array'et
+        for (String s : RLEArray) {
         	tempString += s;
         }
 
@@ -277,7 +294,7 @@ public class RLEDecoder {
     	        	}
                 	column++;
                 } else if (RLEMatcher.group(1) != null) {
-                	Pattern p = Pattern.compile("([0-9]+)([oObB])");
+                	// Flyttet ut denne så sparer man tusenvis av cpu cycles
                 	Matcher m = p.matcher(RLEMatcher.group(1));
 
                 	m.find();

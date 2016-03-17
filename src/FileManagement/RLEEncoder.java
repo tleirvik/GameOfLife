@@ -41,10 +41,11 @@ public class RLEEncoder {
      * @return 
      */
     public boolean encode() {
-            rleString = new StringBuffer();
-            Charset charset = Charset.forName("UTF-8");
+        long startTime = System.currentTimeMillis();
+        rleString = new StringBuffer();
+        Charset charset = Charset.forName("UTF-8");
 
-            try (BufferedWriter bw = Files.newBufferedWriter(filePath, charset)) {
+        try (BufferedWriter bw = Files.newBufferedWriter(filePath, charset)) {
                     encodeMetaData();
                     encodeBoardSize();
                     encodeRuleString();
