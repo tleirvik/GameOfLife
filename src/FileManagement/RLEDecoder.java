@@ -294,7 +294,7 @@ public class RLEDecoder {
     	        	}
                 	column++;
                 } else if (RLEMatcher.group(1) != null) {
-                	// Flyttet ut denne så sparer man tusenvis av cpu cycles
+
                 	Matcher m = p.matcher(RLEMatcher.group(1));
 
                 	m.find();

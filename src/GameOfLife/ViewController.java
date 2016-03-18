@@ -694,7 +694,9 @@ public class ViewController {
      * @return void
      */
     private void metaDataDialogBox() {
-    	dialogBoxes.metaDataDialogBox(gController.getBoard().getMetaData());
+    	dialogBoxes.metaDataDialogBox(fileLoader.getMetadata());
+        // Bør vel kanskje heller hente fra GameController?
+        // Eller board?
     }
 
     @FXML
