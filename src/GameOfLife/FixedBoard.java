@@ -88,13 +88,14 @@ public class FixedBoard {
      * @return
      */
     public byte[][] getCellArray() {
-    	byte[][] copy = new byte[currentCells.length][currentCells[0].length];
+    	/*
+        byte[][] copy = new byte[currentCells.length][currentCells[0].length];
 
     	for(int row = 0; row < currentCells.length; row++) {
             System.arraycopy(currentCells[row], 0, copy[row], 0, currentCells[row].length);
     	}
-
-    	return copy;
+        */
+    	return currentCells;
     }
 
 

@@ -77,6 +77,7 @@ public class ViewController {
     private GameController gController;
 
     private RLEDecoder rledec;
+    private FileLoader fileloader;
 
     //Hentet fra modellen
     private byte[][] grid;
@@ -201,7 +202,8 @@ public class ViewController {
      * @see RLEDecoder
      */
     @FXML
-    public void loadGameBoardFromDisk() {
+    public void loadGameBoardFromDisk() throws IOException {
+        gController = new GameController();
         boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
         statusBar.setText("");
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
@@ -224,12 +226,17 @@ public class ViewController {
                 return;
             }
 
+            /*
             RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
             if (!rledec.decode()) {
                 statusBar.setText("An error occured trying to read the file");
                 return;
             }
-            commonBehaviorInRLE(gController, rledec);
+            */
+
+                gController.newGame(fileLoader.getBoard(), isDynamic);
+                centerBoardAndDraw();
+
         }
     }
     /**
@@ -238,14 +245,14 @@ public class ViewController {
     private void commonBehaviorInRLE(GameController gController, RLEDecoder rledec) {
         if(gController == null) {
             gController = new GameController();
-            rledecMetode(gController, rledec);
+            rledecMetode(gController);
             centerBoardAndDraw();
         } else if(timeline != null) {
             timeline.stop();
-            rledecMetode(gController, rledec);
+            rledecMetode(gController);
             centerBoardAndDraw();
         } else {
-            rledecMetode(gController, rledec);
+            rledecMetode(gController);
             centerBoardAndDraw();
         }
     }
@@ -266,12 +273,12 @@ public class ViewController {
     /**
      *  Trenger nytt navn :)
      */
-    private void rledecMetode(GameController gController, RLEDecoder rledec) {
+    private void rledecMetode(GameController gController) {
         boolean isDynamic = false;
-        gController.newGame(rledec.getBoard(), isDynamic);
-        gController.setMetaData(rledec.getMetadata());
-        rows = rledec.getBoard().length;
-        columns = rledec.getBoard()[0].length;
+        gController.newGame(fileloader.getBoard(), isDynamic);
+        // gController.setMetaData(rledec.getMetadata());
+        rows = fileloader.getBoard().length;
+        columns = fileloader.getBoard()[0].length;
     }
     /**
      *
@@ -293,7 +300,7 @@ public class ViewController {
             statusBar.setText("An error occured trying to read the file");
             return;
         }
-        commonBehaviorInRLE(gController, rledec);
+        // commonBehaviorInRLE(gController, rledec);
     }
 
     /**
