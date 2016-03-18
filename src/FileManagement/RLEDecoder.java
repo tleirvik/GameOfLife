@@ -50,6 +50,7 @@ public class RLEDecoder {
      * parse the RLE file
      */
     public boolean decode() {
+        long startTime = System.currentTimeMillis();
         getMetaData();
 
         try {
@@ -72,7 +73,9 @@ public class RLEDecoder {
             DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
             return false;
         }
-
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println("Tid i ms: " + elapsedTime);
         return true;
     }
 
