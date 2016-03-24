@@ -82,9 +82,7 @@ public class FileLoader {
         */
 
     public boolean readGameBoardFromDisk(File file) throws IOException, PatternFormatException {
-        System.out.println("Creating board and setting to false");
-        System.out.println("Max memory: " + Runtime.getRuntime().maxMemory());
-
+        // System.out.println("Max memory: " + Runtime.getRuntime().maxMemory());
         long startTime = System.currentTimeMillis();
 
         if (file == null) {
@@ -104,6 +102,9 @@ public class FileLoader {
             rleDecoder.parseMetadata(reader);
             rleDecoder.parseBoard(reader);
         }
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println("Tid i ms: " + elapsedTime);
         return true;
     }
 
