@@ -202,7 +202,8 @@ public class ViewController {
      * @see RLEDecoder
      */
     @FXML
-    public void loadGameBoardFromDisk() throws IOException {
+    public void loadGameBoardFromDisk() throws IOException, PatternFormatException {
+        rledec = new RLEDecoder();
         gController = new GameController();
         boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
         statusBar.setText("");
@@ -222,20 +223,19 @@ public class ViewController {
         if (selectedFile != null) {
             FileLoader fileLoader = new FileLoader();
             if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
+
                 statusBar.setText("Could not open file!");
                 return;
             }
-
+            gController.newGame(fileLoader.getBoard(), isDynamic);
+            centerBoardAndDraw();
             /*
-            RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
-            if (!rledec.decode()) {
+            if (!fileLoader.decode()) {
                 statusBar.setText("An error occured trying to read the file");
                 return;
             }
-            */
+*/
 
-                gController.newGame(fileLoader.getBoard(), isDynamic);
-                centerBoardAndDraw();
 
         }
     }
@@ -285,7 +285,7 @@ public class ViewController {
      * BUG. Må kjøre metoden to ganger for at det skal fungere. gController må
      * trolig instansieres et eller annet sted.
      */
-    public void loadGameBoardFromURL() {
+    public void loadGameBoardFromURL() throws IOException, PatternFormatException{
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
         statusBar.setText("");
         FileLoader fileLoader = new FileLoader();
@@ -295,8 +295,8 @@ public class ViewController {
             return;
         }
 
-        RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
-        if (!rledec.decode()) {
+
+        if (!fileLoader.decode()) {
             statusBar.setText("An error occured trying to read the file");
             return;
         }
