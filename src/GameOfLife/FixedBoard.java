@@ -111,8 +111,7 @@ public class FixedBoard {
      *
      * @param row
      * @param column
-     * @param isAlive sets the <code>byte</code> value of a cell on the
-     * given position
+     * @param aliveState
      */
     public void setCellAliveState(int row, int column, byte aliveState) {
         if(aliveState != 0 || aliveState != 1) {
