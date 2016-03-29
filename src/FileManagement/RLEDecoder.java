@@ -57,7 +57,8 @@ public class RLEDecoder {
             DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
             return false;
         }
-
+        removeComments();
+        System.out.println("RLEdata" + RLEdata);
         try {
             parseBoard();
         } catch (PatternFormatException pfE) {
@@ -66,7 +67,15 @@ public class RLEDecoder {
         }
         return true;
     }
+    private void removeComments() {
+        for(int i = 0; i < RLEdata.size(); i++) {
+            if(RLEdata.get(i).startsWith("#")) {
+                RLEdata.remove(i);
+                //i--;
+            }
+        }
 
+    }
 
     /**
      * Reads the metadata from the previously loaded contents and stores it in a new MetaData-object.
@@ -142,6 +151,7 @@ public class RLEDecoder {
                     System.out.println("Board created :" + board + " x: " + columns + " y: " + rows);
                     return;
                 }
+
                 if (!foundRows && !foundColumns) {
                     throw new PatternFormatException("X and Y values could not be parsed from RLE-file");
                 } else if (!foundRows) {
@@ -155,12 +165,12 @@ public class RLEDecoder {
 
     private void parseBoard() throws PatternFormatException {
         String line = null;
-        System.out.println("Hallo! - parseBoard");
+        System.out.println("parseBoard");
         int row = 0, col = 0;
         final char lineBreak = '$';
-        // System.out.println(RLEdata.toString());
+        System.out.println(RLEdata.toString());
         for (Object item : RLEdata) {
-            System.out.println(item);
+            // System.out.println(item);
             line = item.toString();
             // System.out.println(line.length());
             //System.out.println("Hallo" + item.toString());
