@@ -3,6 +3,7 @@ package FileManagement;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import GameOfLife.MetaData;
@@ -16,8 +17,6 @@ import util.DialogBoxes;
  * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
  */
 public class RLEDecoder {
-
-    private BufferedReader reader;
     private MetaData metadata;
     private byte[][] board;
     private List<String> RLEdata;
@@ -27,7 +26,7 @@ public class RLEDecoder {
      *
      * @param
      */
-    public RLEDecoder() {
+    public RLEDecoder(List<String> RLEdata) {
         this.RLEdata = RLEdata;
     }
 
@@ -51,35 +50,24 @@ public class RLEDecoder {
      * @throws PatternFormatException Throws an exception if the method is unable to
      *                                parse the RLE file
      */
-    public boolean decode() throws IOException, PatternFormatException {
-
-        rleDecoder = new RLEDecoder();
-        long startTime = System.currentTimeMillis();
-
+    public boolean decode() throws PatternFormatException {
         try {
-            rleDecoder.parseMetadata(reader);
-        } catch (IOException ioE) {
-
-        }
-
-        try {
-            rleDecoder.parseBoard(reader);
+            parseMetadata();
         } catch (PatternFormatException pfE) {
             DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
             return false;
         }
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        System.out.println("Tid i ms: " + elapsedTime);
+
+        try {
+            parseBoard();
+        } catch (PatternFormatException pfE) {
+            DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
+            return false;
+        }
         return true;
     }
 
-    /* catch (PatternFormatException pfE) {
-            DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board size: " + pfE.getMessage());
-            return false;
-        }
 
-        */
     /**
      * Reads the metadata from the previously loaded contents and stores it in a new MetaData-object.
      * If the metadata is incorrectly formatted then it will not be stored.
@@ -90,7 +78,7 @@ public class RLEDecoder {
      * @throws PatternFormatException
      * @see MetaData
      */
-    public void parseMetadata(BufferedReader reader) throws IOException {
+    private void parseMetadata() throws PatternFormatException {
         metadata = new MetaData();
         StringBuilder name = new StringBuilder();
         StringBuilder author = new StringBuilder();
@@ -99,9 +87,10 @@ public class RLEDecoder {
         Pattern RLEpatternX = Pattern.compile("([xX][\\s][=][\\s])([\\d]+)");
 
         String line = null;
-        while ((line = reader.readLine()) != null) { // OG INNEHOLDER # ?
+        for (Object item : RLEdata) {
+            line = item.toString();
+            // System.out.println("i:" + item.toString());
             if (line.charAt(0) == '#') {
-
                 final char tempChar = line.charAt(1);
                 switch (tempChar) {
                     case 'N':
@@ -150,35 +139,42 @@ public class RLEDecoder {
 
                 if (foundRows && foundColumns) {
                     board = new byte[rows][columns];
-                    System.out.println("Board created :" + board);
+                    System.out.println("Board created :" + board + " x: " + columns + " y: " + rows);
                     return;
                 }
                 if (!foundRows && !foundColumns) {
-                    //throw new PatternFormatException("X and Y values could not be parsed from RLE-file");
+                    throw new PatternFormatException("X and Y values could not be parsed from RLE-file");
                 } else if (!foundRows) {
-                    //throw new PatternFormatException("Y values could not be parsed from RLE-file");
+                    throw new PatternFormatException("Y values could not be parsed from RLE-file");
                 } else if (!foundColumns) {
-                    //throw new PatternFormatException("X values could not be parsed from RLE-file");
+                    throw new PatternFormatException("X values could not be parsed from RLE-file");
                 }
             }
         }
     }
-    public void parseBoard(BufferedReader reader)  throws IOException, PatternFormatException {
+
+    private void parseBoard() throws PatternFormatException {
         String line = null;
-        System.out.println("Hallo!");
+        System.out.println("Hallo! - parseBoard");
         int row = 0, col = 0;
         final char lineBreak = '$';
-        while ((line = reader.readLine()) != null) { //Bør være dedikert til lesing av brett
+        // System.out.println(RLEdata.toString());
+        for (Object item : RLEdata) {
+            System.out.println(item);
+            line = item.toString();
+            // System.out.println(line.length());
+            //System.out.println("Hallo" + item.toString());
             int charNumber = 0; // Antall forekomster av en celle
-            for (int i = 0; i < line.length(); i++) {
-                if (Character.isDigit(line.charAt(i))) {
+            for (int j = 0; j < line.length(); j++) {
+                System.out.println(j);
+                if (Character.isDigit(line.charAt(j))) {
                     if (charNumber == 0) {
-                        charNumber = Character.getNumericValue(line.charAt(i));
+                        charNumber = Character.getNumericValue(line.charAt(j));
                     } else {
                         charNumber *= 10;
-                        charNumber += Character.getNumericValue(line.charAt(i));
+                        charNumber += Character.getNumericValue(line.charAt(j));
                     }
-                } else if (line.charAt(i) == 'o' || line.charAt(i) == 'O') {
+                } else if (line.charAt(j) == 'o' || line.charAt(j) == 'O') {
                     if (charNumber != 0) { //Iterer gjennom antall forekomster og sett celle til levende
                         while (charNumber != 0) {
                             board[row][col] = 1;
@@ -189,7 +185,7 @@ public class RLEDecoder {
                         board[row][col] = 1;
                         col++;
                     }
-                } else if (line.charAt(i) == 'b' || line.charAt(i) == 'B') {
+                } else if (line.charAt(j) == 'b' || line.charAt(j) == 'B') {
                     if (charNumber != 0) {
                         while (charNumber != 0) {
                             charNumber--;
@@ -198,7 +194,7 @@ public class RLEDecoder {
                     } else {
                         col++;
                     }
-                } else if (line.charAt(i) == lineBreak) {
+                } else if (line.charAt(j) == lineBreak) {
                     row++;
                     col = 0;
                     charNumber = 0;
@@ -206,40 +202,6 @@ public class RLEDecoder {
             }
         }
     }
-
-
-    /**
-     * Reads the board's X and Y size from the previously loaded contents and creates a two-dimensional boolean grid
-     *
-     * This method is not meant to be called directly, but rather through the decode() method in
-     * a RLEDecoder-object.
-     *
-     * @throws PatternFormatException
-     * @return void
-     *
-     */
-
-
-    /**
-     * Reads the game's rulestring from the previously loaded contents and stores it in a MetaData-object.
-     *
-     * This method is not meant to be called directly, but rather through the decode() method in
-     * a RLEDecoder-object.
-     *
-     * @throws PatternFormatException
-     * @return void
-     */
-
-    /**
-     * This method parses the board cells from the previously
-     * loaded contents.
-     *
-     * This method is not meant to be called directly, but rather through the decode() method in
-     * a RLEDecoder-object.
-     *
-     * @throws PatternFormatException
-     * @return void
-     */
 
     /**
      * Method that returns the board contained in this class
@@ -253,6 +215,4 @@ public class RLEDecoder {
     public MetaData getMetadata() {
         return this.metadata;
     }
-
-
 }

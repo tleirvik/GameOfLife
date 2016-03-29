@@ -229,19 +229,15 @@ public class ViewController {
             }
             RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
 
-            byte[][] board = fileLoader.getBoard();
+            if (!rledec.decode()) {
+                statusBar.setText("An error occured trying to read the file");
+                return;
+            }
+            byte[][] board = rledec.getBoard();
             rows = board.length;
             columns = board[0].length;
             gController.newGame(board, isDynamic);
             centerBoardAndDraw();
-            /*
-            if (!fileLoader.decode()) {
-                statusBar.setText("An error occured trying to read the file");
-                return;
-            }
-*/
-
-
         }
     }
     /**
@@ -280,10 +276,10 @@ public class ViewController {
      */
     private void rledecMetode(GameController gController) {
         boolean isDynamic = false;
-        gController.newGame(fileloader.getBoard(), isDynamic);
+        gController.newGame(rledec.getBoard(), isDynamic);
         // gController.setMetaData(rledec.getMetadata());
-        rows = fileloader.getBoard().length;
-        columns = fileloader.getBoard()[0].length;
+        rows = rledec.getBoard().length;
+        columns = rledec.getBoard()[0].length;
     }
     /**
      *
@@ -301,10 +297,11 @@ public class ViewController {
         }
 
 
-        if (!fileLoader.decode()) {
+        if (!rledec.decode()) {
             statusBar.setText("An error occured trying to read the file");
             return;
         }
+
         // commonBehaviorInRLE(gController, rledec);
     }
 
