@@ -82,8 +82,8 @@ public class ViewController {
     //Hentet fra modellen
     private byte[][] grid;
 
-    private int rows = 1000; //Bør hentes fra gController (?)
-    private int columns = 1000; //Bør hentes fra gController (?)
+    private int rows = 0; //Bør hentes fra gController (?)
+    private int columns = 0; //Bør hentes fra gController (?)
 
     //Slidere kan manipulere disse verdiene
     private double cellSize = 10;
@@ -227,7 +227,10 @@ public class ViewController {
                 statusBar.setText("Could not open file!");
                 return;
             }
-            gController.newGame(fileLoader.getBoard(), isDynamic);
+            byte[][] board = fileLoader.getBoard();
+            rows = board.length;
+            columns = board[0].length;
+            gController.newGame(board, isDynamic);
             centerBoardAndDraw();
             /*
             if (!fileLoader.decode()) {
