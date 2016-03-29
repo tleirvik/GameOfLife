@@ -203,8 +203,8 @@ public class ViewController {
      */
     @FXML
     public void loadGameBoardFromDisk() throws IOException, PatternFormatException {
-        rledec = new RLEDecoder();
-        gController = new GameController();
+        // rledec = new RLEDecoder();
+        // gController = new GameController();
         boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
         statusBar.setText("");
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
@@ -227,6 +227,8 @@ public class ViewController {
                 statusBar.setText("Could not open file!");
                 return;
             }
+            RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
+
             byte[][] board = fileLoader.getBoard();
             rows = board.length;
             columns = board[0].length;
@@ -358,14 +360,15 @@ public class ViewController {
                     long endTime = System.nanoTime();
                     long duration2 = (endTime - startTime) / 1000000;
                     System.out.println("Next Generation: " + duration2);
-
+                    /*
                     startTime = System.nanoTime();
-                    grid = gController.getGameBoard();
+                    // grid = gController.getGameBoard();
                     endTime = System.nanoTime();
                     duration2 = (endTime - startTime) / 1000000;
                     System.out.println("Get grid: " + duration2);
-
+*/
                     startTime = System.nanoTime();
+
                     draw();
                     endTime = System.nanoTime();
                     duration2 = (endTime - startTime) / 1000000;

@@ -27,11 +27,53 @@ public class FileLoader {
     private byte[][] board;
     private BufferedReader reader;
     private RLEDecoder rleDecoder;
+    private List<String> RLEdata;
 
+    /**
+     *  Constructs an object and instantiates an ArrayList
+     *
+     *
+     */
     public FileLoader() {
-        sb = new StringBuilder();
+        // sb = new StringBuilder();
+        RLEdata = new ArrayList<>();
     }
 
+    public boolean readGameBoardFromDisk(File file) {
+        long startTime = System.currentTimeMillis();
+
+        if (file == null) {
+            DialogBoxes.infoBox("Error!", "No such file!!", "Please try again!");
+            return false;
+        } else if (!file.isFile()) {
+            DialogBoxes.infoBox("Error!", "Invalid file!", "Please try again!");
+            return false;
+        } else if (!file.canRead()) {
+            DialogBoxes.infoBox("Error!", "Could not read file!",
+                    "Please try again!");
+        }
+        // rleDecoder = new RLEDecoder();
+
+        String line = null;
+        try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
+            while ((line = reader.readLine() ) != null) {
+                RLEdata.add(line);
+            }
+            // rleDecoder.parseMetadata(reader);
+            // rleDecoder.parseBoard(reader);
+        } catch (FileNotFoundException fnfE) {
+            DialogBoxes.infoBox("Error!", "File was not found", fnfE.getMessage());
+            return false;
+        } catch (IOException ioE) {
+            DialogBoxes.infoBox("Error!", "An unknown Input/Output error occurred", ioE.getMessage());
+            return false;
+        }
+
+        long stopTime = System.currentTimeMillis();
+        long elapsedTime = stopTime - startTime;
+        System.out.println("Tid i ms: " + elapsedTime);
+        return true;
+    }
     /**
      * "Samlemetode" that controls the flow of the RLE file parsing
      * This method calls other methods in this class with the purpose of
@@ -81,32 +123,7 @@ public class FileLoader {
 
         */
 
-    public boolean readGameBoardFromDisk(File file) throws IOException, PatternFormatException {
-        // System.out.println("Max memory: " + Runtime.getRuntime().maxMemory());
-        long startTime = System.currentTimeMillis();
 
-        if (file == null) {
-            DialogBoxes.infoBox("Error!", "No such file!!", "Please try again!");
-            return false;
-        } else if (!file.isFile()) {
-            DialogBoxes.infoBox("Error!", "Invalid file!", "Please try again!");
-            return false;
-        } else if (!file.canRead()) {
-            DialogBoxes.infoBox("Error!", "Could not read file!",
-                    "Please try again!");
-        }
-        rleDecoder = new RLEDecoder();
-        String line = null;
-        try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
-            System.out.println("File is open for reading");
-            rleDecoder.parseMetadata(reader);
-            rleDecoder.parseBoard(reader);
-        }
-        long stopTime = System.currentTimeMillis();
-        long elapsedTime = stopTime - startTime;
-        System.out.println("Tid i ms: " + elapsedTime);
-        return true;
-    }
 
     public boolean readGameBoardFromURL(String urlString) {
         try {
@@ -133,6 +150,9 @@ public class FileLoader {
             return false;
         }
         return true;
+    }
+    public List<String> getRLEdata() {
+        return RLEdata;
     }
 
     public byte[][] getBoard() {
