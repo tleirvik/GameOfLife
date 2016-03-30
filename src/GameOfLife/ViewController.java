@@ -203,8 +203,6 @@ public class ViewController {
      */
     @FXML
     public void loadGameBoardFromDisk() throws IOException, PatternFormatException {
-        // rledec = new RLEDecoder();
-        // gController = new GameController();
         boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
         statusBar.setText("");
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
@@ -227,13 +225,7 @@ public class ViewController {
                 statusBar.setText("Could not open file!");
                 return;
             }
-            RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
-
-            if (!rledec.decode()) {
-                statusBar.setText("An error occured trying to read the file");
-                return;
-            }
-            byte[][] board = rledec.getBoard();
+            byte[][] board = fileLoader.getBoard();
             rows = board.length;
             columns = board[0].length;
             gController.newGame(board, isDynamic);
@@ -282,9 +274,7 @@ public class ViewController {
         columns = rledec.getBoard()[0].length;
     }
     /**
-     *
-     * BUG. Må kjøre metoden to ganger for at det skal fungere. gController må
-     * trolig instansieres et eller annet sted.
+     * ..........
      */
     public void loadGameBoardFromURL() throws IOException, PatternFormatException{
     	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
@@ -295,12 +285,17 @@ public class ViewController {
             statusBar.setText("Could not load file from URL!");
             return;
         }
-
-
+        byte[][] board = fileLoader.getBoard();
+        rows = board.length;
+        columns = board[0].length;
+        gController.newGame(board, isDynamic);
+        centerBoardAndDraw();
+        /*
         if (!rledec.decode()) {
             statusBar.setText("An error occured trying to read the file");
             return;
         }
+        */
 
         // commonBehaviorInRLE(gController, rledec);
     }

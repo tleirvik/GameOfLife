@@ -13,21 +13,28 @@ import java.util.List;
 import util.DialogBoxes;
 
 /**
+ * This class handles the interpretation of RLE files. One method reads the meta data and creates the game board and
+ * the second method translates the files to our byte[][] game board.
  * 
  * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
+ *
+ * @version 4.0 This class has been the focus of our attention for some time and we developed several versions and
+ * this is as of now our final version. Changed the interpretation logic from regex to if-else branching and we used
+ * JProfiler to measure performance increase upwards of 4000%!
  */
 public class RLEDecoder {
     private MetaData metadata;
     private byte[][] board;
     private List<String> RLEdata;
+    private BufferedReader reader;
 
     /**
-     * Constructs a RLEDecoder with file as input
+     * Constructs a RLEDecoder with a BufferedReader as input
      *
-     * @param
+     * @param reader BufferedReader file to be parsed
      */
-    public RLEDecoder(List<String> RLEdata) {
-        this.RLEdata = RLEdata;
+    RLEDecoder(BufferedReader reader) {
+        this.reader = reader;
     }
 
     /**
@@ -50,17 +57,15 @@ public class RLEDecoder {
      * @throws PatternFormatException Throws an exception if the method is unable to
      *                                parse the RLE file
      */
-    public boolean decode() throws PatternFormatException {
+    public boolean decode() throws PatternFormatException, IOException {
         try {
-            parseMetadata();
+            parseMetadata(reader);
         } catch (PatternFormatException pfE) {
             DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
             return false;
         }
-        removeComments();
-        System.out.println("RLEdata" + RLEdata);
         try {
-            parseBoard();
+            parseBoard(reader);
         } catch (PatternFormatException pfE) {
             DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
             return false;
@@ -74,7 +79,6 @@ public class RLEDecoder {
                 //i--;
             }
         }
-
     }
 
     /**
@@ -84,10 +88,10 @@ public class RLEDecoder {
      * This method is not meant to be called directly, but rather through the decode() method in
      * a RLEDecoder-object.
      *
-     * @throws PatternFormatException
+     * @throws PatternFormatException Throws an exception if the method is unable to parse the RLE file
      * @see MetaData
      */
-    private void parseMetadata() throws PatternFormatException {
+    private void parseMetadata(BufferedReader reader) throws PatternFormatException, IOException {
         metadata = new MetaData();
         StringBuilder name = new StringBuilder();
         StringBuilder author = new StringBuilder();
@@ -96,9 +100,7 @@ public class RLEDecoder {
         Pattern RLEpatternX = Pattern.compile("([xX][\\s][=][\\s])([\\d]+)");
 
         String line = null;
-        for (Object item : RLEdata) {
-            line = item.toString();
-            // System.out.println("i:" + item.toString());
+        while ((line = reader.readLine()) != null) {
             if (line.charAt(0) == '#') {
                 final char tempChar = line.charAt(1);
                 switch (tempChar) {
@@ -106,7 +108,6 @@ public class RLEDecoder {
                         String tempString = line.replaceAll("(#N )", "");
                         name.append(tempString);
                         metadata.setName(name.toString());
-                        // System.out.println(metadata.getName());
                         System.out.println(name.toString());
                         break;
                     case 'C':
@@ -125,7 +126,6 @@ public class RLEDecoder {
                         String tempString4 = line.replaceAll("(#O )", "");
                         author.append(tempString4);
                         metadata.setAuthor(author.toString());
-
                 }
 
             } else {
@@ -148,7 +148,7 @@ public class RLEDecoder {
 
                 if (foundRows && foundColumns) {
                     board = new byte[rows][columns];
-                    System.out.println("Board created :" + board + " x: " + columns + " y: " + rows);
+                    // System.out.println("Board created :" + board + " x: " + columns + " y: " + rows);
                     return;
                 }
 
@@ -163,20 +163,26 @@ public class RLEDecoder {
         }
     }
 
-    private void parseBoard() throws PatternFormatException {
+    /**
+     * This method parses the RLE file and converts the contents to a byte[][] board.
+     *
+     * @param reader BufferedReader The file to be interpreted
+     * @throws PatternFormatException Throws an exception if the method is unable to parse the RLE file
+     * @throws IOException Other unspecified I/O related issues
+     *
+     * @version 3.0 Complete changed the logic. Converted from regex to if-else and
+     * we observed a > 3800% performance gain. Large RLE files now usually never takes more than a few hundred
+     * milisecounds compared to >40 seconds using regex
+     *
+     */
+    private void parseBoard(BufferedReader reader) throws PatternFormatException, IOException {
         String line = null;
-        System.out.println("parseBoard");
         int row = 0, col = 0;
         final char lineBreak = '$';
-        System.out.println(RLEdata.toString());
-        for (Object item : RLEdata) {
-            // System.out.println(item);
-            line = item.toString();
-            // System.out.println(line.length());
-            //System.out.println("Hallo" + item.toString());
+
+        while ((line = reader.readLine()) != null) {
             int charNumber = 0; // Antall forekomster av en celle
             for (int j = 0; j < line.length(); j++) {
-                System.out.println(j);
                 if (Character.isDigit(line.charAt(j))) {
                     if (charNumber == 0) {
                         charNumber = Character.getNumericValue(line.charAt(j));
@@ -215,13 +221,17 @@ public class RLEDecoder {
 
     /**
      * Method that returns the board contained in this class
-     * @return board Returns the boolean[][] board
-     * contained in this class
+     * @return board Returns the boolean[][] board contained in this class
      */
     public byte[][] getBoard() {
             return this.board;
     }
 
+    /**
+     * Method that returns the associated MetaData object that we read from the RLE files
+     *
+     * @return metadata A MetaData object that contains relevant metadata about the board
+     */
     public MetaData getMetadata() {
         return this.metadata;
     }
