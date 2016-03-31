@@ -31,7 +31,7 @@ public class GameOfLife2D extends GameOfLife{
             board = new FixedBoard(rows, columns);
         }
         
-        board.setMetaData(new MetaData());
+        //board.setMetaData(new MetaData());
     }
 
 

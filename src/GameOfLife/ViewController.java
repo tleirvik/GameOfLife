@@ -95,7 +95,7 @@ public class ViewController {
     private Color stdGridColor = Color.GREY;
 
     //Gridtykkelse
-    private double stdGridLineWidth = 1;
+    private final double stdGridLineWidth = 0.5;
 
     //Variabler trengt for å kalkulere differansen
     //mellom start og slutt for å finne ut hvor langt brukeren har dratt brettet

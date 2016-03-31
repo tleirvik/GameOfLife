@@ -221,7 +221,7 @@
 
             <Canvas id="gameCanvas" fx:id="gameCanvas" height="580.0" 
                     onMouseClicked="#handleMouseClick" onMouseDragOver="#moveGrid" 
-                    onMouseDragged="#handleMouseDrag" width="812.0" />
+                    onMouseDragged="#handleMouseDrag" width="812.0"/>
             <!--<Canvas id="gameCanvas" fx:id="gameCanvas" height="580.0"
                     onMouseDragOver="#moveGrid" width="812.0" onMouseDragged="#handleMouseDrag"
                     onMouseClicked="#handleMouseClick"/>-->
