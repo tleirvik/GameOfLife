@@ -2,15 +2,10 @@ package FileManagement;
 
 import java.io.BufferedReader;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import GameOfLife.MetaData;
 import GameOfLife.PatternFormatException;
-import GameOfLife.ViewController;
-import java.util.List;
-import util.DialogBoxes;
 
 /**
  * This class handles the interpretation of RLE files. One method reads the meta data and creates the game board and
@@ -25,7 +20,6 @@ import util.DialogBoxes;
 public class RLEDecoder {
     private MetaData metadata;
     private byte[][] board;
-    private List<String> RLEdata;
     private BufferedReader reader;
 
     /**
@@ -57,29 +51,11 @@ public class RLEDecoder {
      * @throws PatternFormatException Throws an exception if the method is unable to
      *                                parse the RLE file
      */
-    public boolean decode() throws PatternFormatException, IOException {
-        try {
-            parseMetadata(reader);
-        } catch (PatternFormatException pfE) {
-            DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
-            return false;
-        }
-        try {
-            parseBoard(reader);
-        } catch (PatternFormatException pfE) {
-            DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret board content " + pfE.getMessage());
-            return false;
-        }
-        return true;
+    public void decode() throws PatternFormatException, IOException {
+        parseMetadata(reader);
+        parseBoard(reader);
     }
-    private void removeComments() {
-        for(int i = 0; i < RLEdata.size(); i++) {
-            if(RLEdata.get(i).startsWith("#")) {
-                RLEdata.remove(i);
-                //i--;
-            }
-        }
-    }
+
 
     /**
      * Reads the metadata from the previously loaded contents and stores it in a new MetaData-object.

@@ -2,17 +2,13 @@ package GameOfLife;
 
 import FileManagement.FileLoader;
 import java.io.File;
-
 import FileManagement.RLEDecoder;
 import Listeners.ButtonListener;
-
 import java.io.IOException;
-import java.util.List;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;

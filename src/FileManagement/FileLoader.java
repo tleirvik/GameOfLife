@@ -9,11 +9,6 @@ import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-
 import GameOfLife.MetaData;
 import GameOfLife.PatternFormatException;
 import util.DialogBoxes;
@@ -37,18 +32,11 @@ public class FileLoader {
      * @throws PatternFormatException Throws an exception if the method is unable to parse the RLE file
      */
     public boolean readGameBoardFromDisk(File file) throws PatternFormatException {
-        if (file == null) {
-            DialogBoxes.infoBox("Error!", "No such file!!", "Please try again!");
-            return false;
-        } else if (!file.isFile()) {
-            DialogBoxes.infoBox("Error!", "Invalid file!", "Please try again!");
-            return false;
-        } else if (!file.canRead()) {
+        if (!file.canRead()) {
             DialogBoxes.infoBox("Error!", "Could not read file!",
-                    "Please try again!");
+                    "Please check your file permissions!");
         }
 
-        String line = null;
         try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
             rleDecoder = new RLEDecoder(reader);
             rleDecoder.decode();
@@ -56,7 +44,8 @@ public class FileLoader {
             DialogBoxes.infoBox("Error!", "File was not found", fnfE.getMessage());
             return false;
         } catch (PatternFormatException pfE) {
-            DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret game rules: " + pfE.getMessage());
+            DialogBoxes.infoBox("Error!", "The file is not in a compatible format",
+                    "The following error occurred trying to interpret game rules: " + pfE.getMessage());
             return false;
         } catch (IOException ioE) {
             DialogBoxes.infoBox("Error!", "An unknown Input/Output error occurred", ioE.getMessage());
@@ -76,8 +65,8 @@ public class FileLoader {
         try {
             URL url = new URL(urlString);
             URLConnection conn = url.openConnection();
-            try (BufferedReader reader = new BufferedReader(
-                    new InputStreamReader(conn.getInputStream()))) {
+
+            try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
                 rleDecoder = new RLEDecoder(reader);
                 rleDecoder.decode();
             } catch (IOException ioE) {
@@ -89,7 +78,8 @@ public class FileLoader {
                     "and try again.");
             return false;
         } catch (PatternFormatException pfE) {
-            DialogBoxes.infoBox("Error!", "The file is not in a compatible format", "The following error occurred trying to interpret game rules: " + pfE.getMessage());
+            DialogBoxes.infoBox("Error!", "The file is not in a compatible format",
+                    "The following error occurred trying to interpret game rules: " + pfE.getMessage());
             return false;
         } catch (IOException ex) {
             DialogBoxes.infoBox("Error!", "", "");
