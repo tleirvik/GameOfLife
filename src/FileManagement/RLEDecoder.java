@@ -123,8 +123,7 @@ public class RLEDecoder {
                 }
 
                 if (foundRows && foundColumns) {
-                    board = new byte[rows][columns];
-                    // System.out.println("Board created :" + board + " x: " + columns + " y: " + rows);
+                    board = new byte[rows+2][columns+2];
                     return;
                 }
 
@@ -153,7 +152,7 @@ public class RLEDecoder {
      */
     private void parseBoard(BufferedReader reader) throws PatternFormatException, IOException {
         String line = null;
-        int row = 0, col = 0;
+        int row = 1, col = 1;
         final char lineBreak = '$';
 
         while ((line = reader.readLine()) != null) {
@@ -187,9 +186,15 @@ public class RLEDecoder {
                         col++;
                     }
                 } else if (line.charAt(j) == lineBreak) {
-                    row++;
-                    col = 0;
-                    charNumber = 0;
+                    if (charNumber != 0) {
+                        while (charNumber != 0) {
+                            charNumber--;
+                            row++;
+                        }
+                    } else {
+                        row++;
+                    }
+                    col = 1;
                 }
             }
         }
