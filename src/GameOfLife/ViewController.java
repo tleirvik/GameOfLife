@@ -2,15 +2,15 @@ package GameOfLife;
 
 import FileManagement.FileLoader;
 import java.io.File;
-import java.io.IOException;
 
 import FileManagement.RLEDecoder;
-import FileManagement.RLEEncoder;
 import Listeners.ButtonListener;
+import java.util.List;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -43,9 +43,9 @@ public class ViewController {
     // JavaFX Fields
     //================================================================================
 
-	@FXML private Button playButton;
-	@FXML private Button pauseButton;
-	@FXML private Button restartButton;
+    @FXML private Button playButton;
+    @FXML private Button pauseButton;
+    @FXML private Button restartButton;
 
     @FXML private ColorPicker gridColorPicker;
     @FXML private ColorPicker cellColorPicker;
@@ -86,7 +86,6 @@ public class ViewController {
 
     //Slidere kan manipulere disse verdiene
     private double cellSize = 10;
-    private int fps = 8;
 
     //Standard farger (Om ikke annet er spesifisert)
     private Color stdAliveCellColor = Color.BLACK;
@@ -117,7 +116,7 @@ public class ViewController {
     //
     private boolean holdingPattern = false; //Find out if user is holding pattern
     private boolean drawMode = false; //False for move, true for draw
-    private boolean cellDraw = false; //Inverter for å tegne andre fargen
+    private boolean drawCell = false;
 
 	//================================================================================
     // Listeners
@@ -129,15 +128,21 @@ public class ViewController {
     	cellSizeSlider.setValue(cellSize);
     	cellSizeLabel.setText(Double.toString(cellSizeSlider.getValue()));
 
-    	fpsSlider.setMin(0);
+    	fpsSlider.setMin(10);
     	fpsSlider.setMax(60);
-    	fpsSlider.setValue((fps));
+        fpsSlider.setSnapToTicks(true);
+        fpsSlider.setShowTickMarks(true);
+        fpsSlider.setShowTickLabels(true);
+        fpsSlider.setMajorTickUnit(10);
+        fpsSlider.setMinorTickCount(0);
+        fpsLabel.setText("10");
     	fpsSlider.valueProperty().addListener((ObservableValue<?
                 extends Number> ov, Number old_val, Number new_val) -> {
             fpsLabel.setText(Integer.toString(new_val.intValue()));
-            fps = new_val.intValue();
-            timeline.setRate(fps);
-            });
+            //fps = (1/new_val.intValue())*1000;
+            KeyFrame keyframe = timeline.getKeyFrames().get(0);
+            timeline.getTargetFramerate();
+        });
 
         //Finn posisjonen til musen når det zoomes inn
     	//Kalkuler differansen fra musen til canvasen sitt midtpunkt
@@ -178,7 +183,7 @@ public class ViewController {
             centerBoard();
 
             gController.newGame(false, rows, columns); // send parametrene videre
-            grid = gController.getGameBoard();
+            grid = gController.getBoardReference();
             draw();
         } else {
             openNewGameDialog();
@@ -186,7 +191,7 @@ public class ViewController {
             centerBoard();
 
             gController.newGame(false, rows, columns); // send parametrene videre
-            grid = gController.getGameBoard();
+            grid = gController.getBoardReference();
             draw();
         }
     }
@@ -197,7 +202,6 @@ public class ViewController {
      * calls the method decode(). And starts a new game with the the selected
      * pattern from file.
      *
-     * @return void
      * @see RLEDecoder
      */
     @FXML
@@ -257,7 +261,7 @@ public class ViewController {
         if (gController == null) {
             gController = new GameController();
         } else {
-            grid = gController.getGameBoard();
+            grid = gController.getBoardReference();
             centerBoard();
             draw();
         }
@@ -268,8 +272,7 @@ public class ViewController {
      */
     private void rledecMetode(GameController gController, RLEDecoder rledec) {
         boolean isDynamic = false;
-        gController.newGame(rledec.getBoard(), isDynamic);
-        gController.setMetaData(rledec.getMetadata());
+        gController.newGame(rledec.getBoard(), rledec.getMetadata());
         rows = rledec.getBoard().length;
         columns = rledec.getBoard()[0].length;
     }
@@ -302,15 +305,13 @@ public class ViewController {
      * If the file is not null it creates an object of type RLEEncoder and
      * calls the method encode().
      *
-     * @return void
-     * @throws IOException
      * @see RLEDecoder
      */
     @FXML
     public void saveRLE() {
     	Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
 
-    	if (gController.getBoard() != null) {
+    	if (gController.getBoardReference() != null) {
     		metaDataDialogBox();
     	}
 
@@ -324,11 +325,11 @@ public class ViewController {
                 // Tror det er greit å try-catche i RLEEncoder, da er det ryddig i ViewController
 
                 // Hentet hele brettet med en ny metode jeg lagde. Vi må huske på å gå igjennom den neste gang
-                RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
+                /*RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
                 if (!rleenc.encode()) {
                         statusBar.setText("An error occured trying to save the file. Please try again.");
                         return;
-                }
+                }*/
                 System.out.println(saveRLEFile.getAbsolutePath());
                 statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
             }
@@ -340,7 +341,7 @@ public class ViewController {
             if(timeline == null || timeline.getStatus() != Status.RUNNING) {
                 timeline = new Timeline();
                 timeline.setCycleCount(Animation.INDEFINITE);
-                Duration duration = Duration.millis(1000 / fps);
+                Duration duration = Duration.millis(33.333);
                 KeyFrame keyFrame;
                 keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
                     long startTime = System.nanoTime();
@@ -350,7 +351,7 @@ public class ViewController {
                     System.out.println("Next Generation: " + duration2);
 
                     startTime = System.nanoTime();
-                    grid = gController.getGameBoard();
+                    grid = gController.getBoardReference();
                     endTime = System.nanoTime();
                     duration2 = (endTime - startTime) / 1000000;
                     System.out.println("Get grid: " + duration2);
@@ -379,9 +380,11 @@ public class ViewController {
 
     @FXML
     public void restart() {
-        if(gController != null && timeline.getStatus() == Status.PAUSED) {
-            timeline.play();
+        if(gController != null && timeline.getStatus() != Status.STOPPED) {
+            timeline.stop();
         }
+        gController.resetGame();
+        grid = gController.getBoardReference();
     }
 
     /**
@@ -403,7 +406,7 @@ public class ViewController {
      */
     @FXML
     public void changeBoardColor() {
-        if((gController != null) && (gController.getBoard() != null)) {
+        if((gController != null) && (gController.getBoardReference() != null)) {
             stdBoardColor = boardColorPicker.getValue();
             draw();
         }
@@ -438,10 +441,7 @@ public class ViewController {
     //Funksjon som skal gi brukeren mulighet til å flytte grid-en
     //Endrer offset-verdiene over for å tilby dette til draw()-funksjonene
 
-    /**
-     *
-     * @param
-     */
+    
     @FXML
     public void moveGrid() {
     	gameCanvas.setOnScroll((ScrollEvent event) -> {
@@ -614,11 +614,11 @@ public class ViewController {
             double x = start_X;
             double y = start_Y;
 
-            for (byte[] grid1 : grid) {
-                for (int col = 0; col < grid1.length; col++) {
-                    if (grid1[col] == 1) {
+            gc.setFill(stdAliveCellColor);
+            for(int rows = 0; rows < grid.length; rows++) {
+                for(int cols = 0; cols < grid[0].length; cols++ ) {
+                    if (grid[rows][cols] == 1) {
                         //Hvis cellen lever
-                        gc.setFill(stdAliveCellColor);
                         gc.fillRect( x, y, cellSize, cellSize);
                         x += cellSize; //Plusser på for neste kolonne
                     } else {
@@ -690,7 +690,7 @@ public class ViewController {
      * @return void
      */
     private void metaDataDialogBox() {
-    	dialogBoxes.metaDataDialogBox(gController.getBoard().getMetaData());
+    	//dialogBoxes.metaDataDialogBox(gController.getBoardReference().getMetaData());
     }
 
     @FXML
@@ -745,10 +745,10 @@ public class ViewController {
 //                                }
 // holdingPattern = false;
                     } else {
-                        cellDraw = !gController.getCellAliveStatus(row, column);
-                        gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
+                        drawCell = (gController.getCellAliveStatus(row, column) == 1);
+                        gController.setCellAliveStatus(row, column, (drawCell ? (byte)1 : (byte)0));
                     }
-                    grid = gController.getGameBoard();
+                    grid = gController.getBoardReference();
                     draw();
                 }
 
@@ -776,10 +776,9 @@ public class ViewController {
                     // unngår out of bounds exception,
                     // holder seg innenfor arrayets lengde
                     // tegner kun dersom man er innenfor lengde
-                    if((row < gController.getGameBoard().length) &&
-                            (column < gController.getGameBoard().length)) {
-                        gController.setCellAliveStatus(row, column, !gController.getCellAliveStatus(row, column));
-                        grid = gController.getGameBoard();
+                    if((row < grid.length) && (column < grid[0].length)) {
+                        gController.setCellAliveStatus(row, column, (drawCell ? (byte)1 : (byte)0));
+                        grid = gController.getBoardReference();
                         draw();
                     }
                 }

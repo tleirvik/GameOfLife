@@ -2,79 +2,93 @@ package GameOfLife;
 
 import java.util.Random;
 
-/**
- *
- * @author stianreistadrogeberg
- *
- * Implementer getter setter + variabel for om brettet er tomt (alle celler er false eller 0). 9/2/16
- */
-public abstract class GameOfLife {
+public class GameOfLife {
+    private FixedBoard board; 
 
-    /**
-     * The purpose of this method is to generate a pseudo-random boolean value.
-     *
-     * @param limit
-     * @return boolean
-     */
-    public boolean seedGenerator(int limit) {
-    Random random = new Random();
-
-    if (random.nextInt(limit) != 1)
-        return false;
-    else
-        return true;
+    //Burde ikke lage brett i konstruktør, burde heller
+    //Være en egen funksjon så man slipper å slette og lage ny GameOfLife.
+    //Singleton?
+    public GameOfLife(boolean isDynamic, int rows, int columns) {        
+        board = new FixedBoard(rows, columns);
     }
 
+    //Burde ikke lage brett i konstruktør, burde heller
+    //Være en egen funksjon så man slipper å slette og lage ny GameOfLife.
+    //Singleton?
+    public GameOfLife(byte[][] board, MetaData metadata) {
+        this.board = new FixedBoard(board, metadata);
+    }
 
-    /**
-     *
-     * @param row
-     * @param column
-     * @return
-     */
-    public abstract boolean getCellAliveState(int row, int column);
-
-
-    /**
-     *
-     * @param row
-     * @param column
-     * @param isAlive
-     */
-    public abstract void setCellAliveState(int row, int column, boolean isAlive);
-
-
-    /**
-     *
-     * @param boardEmpty
-     */
-    public abstract void setIsBoardEmpty(boolean boardEmpty);
-
+    public void populateRandomBoard() {
+        Random random = new Random();
+        for(int row = 0; row < board.getRows(); row++) {
+            for(int col = 0; col < board.getColumns(); col++) {
+                board.setCellAliveState(row,col,((random.nextInt(5) == 1) ? (byte)1 : (byte)0));
+            }
+        }
+    }
 
     /**
      *
      * @return
      */
-    public abstract boolean getIsBoardEmpty();
+    public FixedBoard getBoard() {
+    	return board;
+        
+    }
+    
+    public byte[][] getBoardReference() {
+    	return board.getBoardReference();
+    }
 
+    public void update() {
+        board.nextGeneration();
+    }
+    
+    public MetaData getMetaData() {
+        return board.getMetaData();
+    }
+    
+    public void resetGame() {
+        board.resetBoard();
+    }
+    
+    /*
+    public void updateWithThreads(int num_Cores) {
+        Thread[] threads = new Thread[num_Cores];
+        
+        int rowsPerCore = board.getRows() / num_Cores;
+        int leftoverRows = board.getRows() % num_Cores;
+        int startRow = 0, endRow = rowsPerCore;
+        
+        for(int i = 0; i < num_Cores; i++) {
+            if(leftoverRows != 0) {
+                endRow++;
+                threads[i] = new Thread(new NextGenerationWorker(startRow, endRow, board));
+                leftoverRows--;
+            } else {
+                threads[i] = new Thread(new NextGenerationWorker(startRow, endRow, board));
+            }
+            threads[i].start();
+            startRow=endRow;
+            endRow+=rowsPerCore;
+        }
+        for(int i = 0; i < num_Cores; i++) {
+            try {
+                threads[i].join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(GameOfLife.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }
+        board.nextGenerationToCurrent();
+    }*/
 
-    /**
-     *
-     */
-    public abstract void populateRandomBoard();
+    public byte getCellAliveState(int row, int column) {
+        return board.getCellAliveState(row, column);
+    }
 
+    public void setCellAliveState(int row, int column, byte isAlive) {
+        board.setCellAliveState(row, column, isAlive);
+    }
 
-    /**
-     *
-     */
-    public abstract void nextGeneration();
-
-
-    /**
-     *
-     * @param row
-     * @param column
-     * @return
-     */
-    public abstract int countNeighbours(int row, int column);
 }

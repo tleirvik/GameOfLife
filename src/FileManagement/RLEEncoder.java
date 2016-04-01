@@ -8,7 +8,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import GameOfLife.FixedBoard;
 import GameOfLife.MetaData;
-import GameOfLife.ViewController;
 import util.DialogBoxes;
 
 
@@ -30,7 +29,7 @@ public class RLEEncoder {
      */
     public RLEEncoder(FixedBoard b, File f) {
     metadata = b.getMetaData();
-    board = b.getCellArray();
+    board = b.getBoardReference();
     filePath = f.toPath();
     }
 
