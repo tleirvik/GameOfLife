@@ -16,11 +16,12 @@ import GameOfLife.PatternFormatException;
  * @version 4.0 This class has been the focus of our attention for some time and we developed several versions and
  * this is as of now our final version. Changed the interpretation logic from regex to if-else branching and we used
  * JProfiler to measure performance increase upwards of 4000%!
+ * @version 5.0 Fixed bug in RLE decoding where position near the edges didn't parse correctly
  */
 public class RLEDecoder {
     private MetaData metadata;
     private byte[][] board;
-    private BufferedReader reader;
+    private final BufferedReader reader;
 
     /**
      * Constructs a RLEDecoder with a BufferedReader as input
@@ -46,7 +47,6 @@ public class RLEDecoder {
      * dead cells and iterate the board and setting alive cells to
      * true according to the RLE file read)
      *
-     * @return boolean Returns true if the method parses the board with causing an
      * Exception
      * @throws PatternFormatException Throws an exception if the method is unable to
      *                                parse the RLE file
@@ -75,7 +75,7 @@ public class RLEDecoder {
         Pattern RLEpatternY = Pattern.compile("([yY][\\s][=][\\s])([\\d]+)");
         Pattern RLEpatternX = Pattern.compile("([xX][\\s][=][\\s])([\\d]+)");
 
-        String line = null;
+        String line;
         while ((line = reader.readLine()) != null) {
             if (line.charAt(0) == '#') {
                 final char tempChar = line.charAt(1);
@@ -151,7 +151,7 @@ public class RLEDecoder {
      *
      */
     private void parseBoard(BufferedReader reader) throws PatternFormatException, IOException {
-        String line = null;
+        String line;
         int row = 1, col = 1;
         final char lineBreak = '$';
 

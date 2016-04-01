@@ -3,6 +3,7 @@ package GameOfLife;
 import FileManagement.FileLoader;
 import java.io.File;
 import FileManagement.RLEDecoder;
+import FileManagement.RLEEncoder;
 import Listeners.ButtonListener;
 import java.io.IOException;
 import javafx.animation.Animation;
@@ -329,11 +330,11 @@ public class ViewController {
                 // Tror det er greit å try-catche i RLEEncoder, da er det ryddig i ViewController
 
                 // Hentet hele brettet med en ny metode jeg lagde. Vi må huske på å gå igjennom den neste gang
-                /*RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
+                RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
                 if (!rleenc.encode()) {
                         statusBar.setText("An error occured trying to save the file. Please try again.");
                         return;
-                }*/
+                }
                 System.out.println(saveRLEFile.getAbsolutePath());
                 statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
             }

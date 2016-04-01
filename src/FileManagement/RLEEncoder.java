@@ -12,9 +12,10 @@ import util.DialogBoxes;
 
 
 /**
+ * This class handles the interpretation of the board and translates it to Run Length Encoding format
+ * Three methods that interprets the meta data and one method that parses the byte[][] board
  *
- *
- *
+ * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
  */
 public class RLEEncoder {
     private byte[][] board;
@@ -23,9 +24,9 @@ public class RLEEncoder {
     private StringBuffer rleString;
 
     /**
-     *
-     * @param b
-     * @param f
+     * Constructor that creates an RLEDecoder object.
+     * @param b The board that we want to parse and save to file
+     * @param f The file to save the board to
      */
     public RLEEncoder(FixedBoard b, File f) {
     metadata = b.getMetaData();
@@ -37,7 +38,7 @@ public class RLEEncoder {
      * Creates a StringBuffer and encodes the board as well as the associated metadata before writing
      * the string to the file specified in the constructor.
      *
-     * @return 
+     * @return true if the writing to file is successful
      */
     public boolean encode() {
             rleString = new StringBuffer();
@@ -51,21 +52,17 @@ public class RLEEncoder {
 
                     bw.write(rleString.toString());
             } catch (IOException ioE) {
-        DialogBoxes.infoBox("Error!", "An unknown error occurred!", "The following error occurred when trying to save the game: " + ioE.getMessage());
-        return false;
+            DialogBoxes.infoBox("Error!", "An unknown error occurred!", "The following error occurred when trying to save the game: " + ioE.getMessage());
+            return false;
             }
-
-
-
-
             return true;
     }
 
-    /**
- * Encodes the associated metadata and adds it to the StringBuffer.<p>
- *
- *This method is not meant to be called directly, but rather through the encode() method.
- */
+     /**
+     * Encodes the associated metadata and adds it to the StringBuffer.<p>
+     *
+     *This method is not meant to be called directly, but rather through the encode() method.
+     */
     public void encodeMetaData() {
         rleString.append("#N ");
         rleString.append(metadata.getName());
@@ -82,11 +79,11 @@ public class RLEEncoder {
         }
     }
 
-    /**
- * Encodes the board size and adds it to the StringBuffer.<p>
- *
- *This method is not meant to be called directly, but rather through the encode() method.
- */
+     /**
+     * Encodes the board size and adds it to the StringBuffer.<p>
+     *
+     *This method is not meant to be called directly, but rather through the encode() method.
+     */
     private void encodeBoardSize() {
         rleString.append("x = ");
         rleString.append(board[0].length);
@@ -94,12 +91,11 @@ public class RLEEncoder {
         rleString.append(board.length);
         rleString.append(", ");
     }
-
-    /**
- * Encodes the game's rulestring and adds it to the StringBuffer.<p>
- *
- *This method is not meant to be called directly, but rather through the encode() method.
- */
+     /**
+     * Encodes the game's rule string and adds it to the StringBuffer.<p>
+     *
+     *This method is not meant to be called directly, but rather through the encode() method.
+     */
     private void encodeRuleString() {
         String[] rule = metadata.getRuleString();
         rleString.append("rule = B");
@@ -109,6 +105,10 @@ public class RLEEncoder {
         rleString.append("\r\n");
     }
 
+    /**
+     * This method parses the byte[][] game board and translates it to Run Length Encoding(RLE) format
+     *
+     */
     private void encodeBoard() {
         int count = 1;
         int currentCell = -1;
