@@ -210,6 +210,7 @@ public class DialogBoxes {
     }
 
     public int[] openNewGameDialog() {
+        
         int[] array = new int[2];
         
         GridPane root = new GridPane();
