@@ -5,6 +5,8 @@ import java.io.File;
 
 import FileManagement.RLEDecoder;
 import Listeners.ButtonListener;
+
+import java.io.IOException;
 import java.util.List;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
@@ -205,7 +207,7 @@ public class ViewController {
      * @see RLEDecoder
      */
     @FXML
-    public void loadGameBoardFromDisk() {
+    public void loadGameBoardFromDisk() throws IOException, PatternFormatException{
         boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
         statusBar.setText("");
         Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
@@ -224,17 +226,17 @@ public class ViewController {
         if (selectedFile != null) {
             FileLoader fileLoader = new FileLoader();
             if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
+
                 statusBar.setText("Could not open file!");
                 return;
             }
-
-            RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
-            if (!rledec.decode()) {
-                statusBar.setText("An error occured trying to read the file");
-                return;
-            }
-            commonBehaviorInRLE(gController, rledec);
+            byte[][] board = fileLoader.getBoard();
+            rows = board.length;
+            columns = board[0].length;
+            gController.newGame(board, fileLoader.getMetadata());
+            centerBoardAndDraw();
         }
+
     }
     /**
      *  Trenger nytt navn :)
@@ -281,22 +283,28 @@ public class ViewController {
      * BUG. Må kjøre metoden to ganger for at det skal fungere. gController må
      * trolig instansieres et eller annet sted.
      */
-    public void loadGameBoardFromURL() {
-    	boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
+    public void loadGameBoardFromURL() throws IOException, PatternFormatException{
+        boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
         statusBar.setText("");
         FileLoader fileLoader = new FileLoader();
-        
+
         if(!fileLoader.readGameBoardFromURL(dialogBoxes.urlDialogBox())) {
             statusBar.setText("Could not load file from URL!");
             return;
         }
-
-        RLEDecoder rledec = new RLEDecoder(fileLoader.getRLEdata());
+        byte[][] board = fileLoader.getBoard();
+        rows = board.length;
+        columns = board[0].length;
+        gController.newGame(board, fileLoader.getMetadata());
+        centerBoardAndDraw();
+        /*
         if (!rledec.decode()) {
             statusBar.setText("An error occured trying to read the file");
             return;
         }
-        commonBehaviorInRLE(gController, rledec);
+        */
+
+        // commonBehaviorInRLE(gController, rledec);
     }
 
     /**
