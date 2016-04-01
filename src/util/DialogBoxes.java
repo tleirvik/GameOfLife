@@ -245,6 +245,7 @@ public class DialogBoxes {
         
         GridPane.setConstraints(hbox, 1, 3);
         
+        okButton.setDefaultButton(true);
         okButton.setOnAction(e -> {
             boolean error = false;
             try {
