@@ -111,7 +111,7 @@ public class FixedBoard {
      *
      * @param row
      * @param column
-     * @param isAlive sets the <code>byte</code> value of a cell on the
+     * @param aliveState sets the <code>byte</code> value of a cell on the
      * given position
      */
     public void setCellAliveState(int row, int column, byte aliveState) {
@@ -173,5 +173,21 @@ public class FixedBoard {
                         countNeighbours(row,col) == 2 )) ? (byte)1 : (byte)0;
             }
         }
+    }
+
+    /**
+     *  Method that returns the game board as a String. Used for Unit Testing with JUnit 4
+     *
+     * @return String The contents of the game board as a String
+     */
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+        for (int i = 0; i < currentGeneration.length; i++) {
+            for (int j = 0; j < currentGeneration[0].length; j++) {
+                sb.append(currentGeneration[i][j]);
+            }
+        }
+        return sb.toString();
     }
 }
