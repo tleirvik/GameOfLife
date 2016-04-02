@@ -64,6 +64,8 @@ public class ViewController {
     @FXML private Text textNextGeneration;
     @FXML private Label statusBar;
 
+    private static final double MAX_SCALE = 10.0d;
+    private static final double MIN_SCALE = .1d;
 
 	//================================================================================
     // Property fields
@@ -513,6 +515,50 @@ public class ViewController {
     @FXML
     public void handleMouseClick(MouseEvent e) {
 
+    }
+    @FXML
+    public void scroll(ScrollEvent e) {
+
+
+        System.out.println("delta X:" + e.getDeltaX());
+        System.out.println(e.getX());
+        fitToView.setSelected(false);
+        double delta = 1.2;
+
+        double scale =  gameCanvas.getScaleX();
+        double oldScale = scale;
+
+        if (e.getDeltaY() < 0) {
+            scale /= Math.pow(delta, -e.getDeltaY() / 20);
+        } else {
+            scale *= Math.pow(delta, e.getDeltaY()/20);
+        }
+
+        scale = clamp( scale, MIN_SCALE, MAX_SCALE);
+        double f = (scale / oldScale)-1;
+
+        double dx = (e.getSceneX() - (gameCanvas.getBoundsInParent().getWidth()/2 + gameCanvas.getBoundsInParent().getMinX()));
+        double dy = (e.getSceneY() - (gameCanvas.getBoundsInParent().getHeight()/2 + gameCanvas.getBoundsInParent().getMinY()));
+
+        gameCanvas.setScaleX(scale);
+        gameCanvas.setScaleY(scale);
+
+        // note: pivot value must be untransformed, i. e. without scaling
+        // gameCanvas.setPivot(f*dx, f*dy);
+
+        e.consume();
+
+
+    }
+    private static double clamp( double value, double min, double max) {
+
+        if( Double.compare(value, min) < 0)
+            return min;
+
+        if( Double.compare(value, max) > 0)
+            return max;
+
+        return value;
     }
 
     @FXML
