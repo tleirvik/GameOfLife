@@ -1,11 +1,9 @@
 package GameOfLife;
 
 import FileManagement.FileLoader;
-import java.io.File;
 import FileManagement.RLEDecoder;
 import FileManagement.RLEEncoder;
 import Listeners.ButtonListener;
-import java.io.IOException;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
@@ -15,12 +13,7 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.Slider;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
@@ -31,6 +24,10 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import util.DialogBoxes;
+import util.Stopwatch;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -351,23 +348,19 @@ public class ViewController {
                 Duration duration = Duration.millis(33.333);
                 KeyFrame keyFrame;
                 keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-                    long startTime = System.nanoTime();
+                    // long startTime = System.nanoTime();
+                    Stopwatch sw = new Stopwatch("Next generation");
+                    sw.start();
                     gController.play();
-                    long endTime = System.nanoTime();
-                    long duration2 = (endTime - startTime) / 1000000;
-                    System.out.println("Next Generation: " + duration2);
-
-                    startTime = System.nanoTime();
+                    sw.stop();
+                    Stopwatch swGrid = new Stopwatch("Get grid");
+                    swGrid.start();
                     grid = gController.getBoardReference();
-                    endTime = System.nanoTime();
-                    duration2 = (endTime - startTime) / 1000000;
-                    System.out.println("Get grid: " + duration2);
-
-                    startTime = System.nanoTime();
+                    swGrid.stop();
+                    Stopwatch swDraw = new Stopwatch("Draw");
+                    swDraw.start();
                     draw();
-                    endTime = System.nanoTime();
-                    duration2 = (endTime - startTime) / 1000000;
-                    System.out.println("Draw: " + duration2);
+                    swDraw.stop();
                 });
             timeline.getKeyFrames().add(keyFrame);
             }
