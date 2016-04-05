@@ -1,9 +1,8 @@
 package util;
 
 import java.io.File;
-import java.util.Optional;
 import GameOfLife.MetaData;
-import javafx.application.Platform;
+import java.util.Optional;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
@@ -212,27 +211,111 @@ public class DialogBoxes {
     public int[] openNewGameDialog() {
         int[] array = new int[2];
         
+//        Dialog<Pair<String, String>> dialog = new Dialog<>();
+//        dialog.setTitle("KLJ");
+//        dialog.setHeaderText("Header");
+//        
+//        ButtonType buttonType = new ButtonType("OK", ButtonData.OK_DONE);
+//        dialog.getDialogPane().getButtonTypes().addAll(buttonType, ButtonType.CANCEL);
+//        
+//        GridPane grid = new GridPane();
+//        grid.setHgap(10);
+//        grid.setVgap(10);
+//        grid.setPadding(new Insets(20, 150, 10, 10));
+//        
+//        TextField columns = new TextField();
+//        columns.setPromptText("Number of columns");
+//        TextField rows = new TextField();
+//        rows.setPromptText("Number of rows");
+//        
+//        
+//        
+//        grid.add(new Label("Columns:"), 0, 0);
+//        grid.add(columns, 1, 0);
+//        grid.add(new Label("Rows:"), 0, 1);
+//        grid.add(rows, 1, 1);
+//        
+//        Label errorColumns = new Label("");
+//        Label errorRows = new Label("");
+//        grid.add(errorColumns, 2, 0);
+//        grid.add(errorRows, 2, 1);
+//        
+//        Node okButton = dialog.getDialogPane().lookupButton(buttonType);
+//        
+//        
+//        columns.textProperty().addListener((observable, oldValue, newValue) -> {
+//            okButton.setDisable(newValue.trim().isEmpty());
+//        });
+//        
+//        
+//        dialog.getDialogPane().setContent(grid);
+//        
+//        dialog.setResultConverter(dialogButton -> {
+//            if(dialogButton == buttonType) {
+//                return new Pair<>(columns.getText(), rows.getText());
+//            }
+//            return null;
+//        });
+//        
+//        Optional<Pair<String, String>> result = dialog.showAndWait();
+//        
+//        result.ifPresent(columnsRows -> {
+//            boolean ok1 = false;
+//            boolean ok2 = false;
+//            try {
+//                array[0] = Integer.parseInt(columnsRows.getKey());
+//                
+//            } catch (NumberFormatException e) {
+//                errorColumns.setText("Error Columns");
+//                ok1 = true;
+//            }
+//            
+//            try {
+//                array[1] = Integer.parseInt(columnsRows.getValue());
+//            } catch (NumberFormatException e) {
+//                errorRows.setText("Error Rows");
+//                ok2 = true;
+//            }
+//
+//            if(!ok1 && !ok2) {
+//                //dialog.close();
+//            } 
+//        });
+        
+        
+        
+        
+        
+        
         GridPane root = new GridPane();
+        root.setPadding(new Insets(20, 150, 10, 10));
+        root.setHgap(10);
+        root.setVgap(10);
         Stage stage = new Stage();
         
         Label label1 = new Label("Columns: ");
         Label label2 = new Label("Rows: ");
-        GridPane.setConstraints(label1, 0, 0);
-        GridPane.setConstraints(label2, 0, 1);
+        GridPane.setConstraints(label1, 0, 0, 1, 1);
+        GridPane.setConstraints(label2, 0, 1, 1, 1);
         root.getChildren().addAll(label1, label2);
+        
+        TextField columns = new TextField();
+        columns.setPromptText("Enter a positiv integer.");
+        TextField rows = new TextField();
+        rows.setPromptText("Enter a positiv integer.");
+        GridPane.setConstraints(columns, 1, 0, 3, 1);
+        GridPane.setConstraints(rows, 1, 1, 3, 1);
+        root.getChildren().addAll(columns, rows);
         
         Label errorLabel1 = new Label();
         Label errorLabel2 = new Label();
-        GridPane.setConstraints(errorLabel1, 2, 0);
-        GridPane.setConstraints(errorLabel2, 2, 1);
+        GridPane.setConstraints(errorLabel1, 4, 0);
+        GridPane.setConstraints(errorLabel2, 4, 1);
         root.getChildren().addAll(errorLabel1, errorLabel2);
         
-        TextField inputField1 = new TextField();
-        TextField inputField2 = new TextField();
         
-        GridPane.setConstraints(inputField1, 1, 0);
-        GridPane.setConstraints(inputField2, 1, 1);
-        root.getChildren().addAll(inputField1, inputField2);
+        
+        
         
         Button okButton = new Button("OK");
         Button cancelButton = new Button("Cancel");
@@ -250,8 +333,10 @@ public class DialogBoxes {
             boolean error = false;
             try {
                 errorLabel1.setText("");
-                array[0] = Integer.parseInt(inputField1.getText());
-                
+                array[0] = Integer.parseInt(columns.getText());
+                if(array[0] <= 0) {
+                    throw new NumberFormatException();
+                }
             } catch (NumberFormatException nfE) {
                 error = true;
                errorLabel1.setText("You must enter an integer.");
@@ -259,7 +344,10 @@ public class DialogBoxes {
             }
             try {
                 errorLabel2.setText("");
-                array[1] = Integer.parseInt(inputField2.getText());
+                array[1] = Integer.parseInt(rows.getText());
+                if(array[1] <= 0) {
+                    throw new NumberFormatException();
+                }
             } catch(NumberFormatException nfE) {
                 error = true;
                 errorLabel2.setText("You must enter an integer.");
@@ -274,11 +362,13 @@ public class DialogBoxes {
             stage.close();
         });
         
-        Scene scene = new Scene(root, 400, 150);
+        Scene scene = new Scene(root, 560, 150);
+
         stage.setScene(scene);
         stage.showAndWait();
         
-        
         return array;
     }
+        
+    
 }

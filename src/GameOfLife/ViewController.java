@@ -10,25 +10,28 @@ import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import util.DialogBoxes;
@@ -43,6 +46,9 @@ public class ViewController {
     // JavaFX Fields
     //================================================================================
 
+    @FXML private MenuItem openPatternEditor;
+    @FXML private MenuItem savePicker;
+    
     @FXML private Button playButton;
     @FXML private Button pauseButton;
     @FXML private Button restartButton;
@@ -115,6 +121,8 @@ public class ViewController {
     private boolean holdingPattern = false; //Find out if user is holding pattern
     private boolean drawMode = false; //False for move, true for draw
     private boolean drawCell = false;
+    
+    private Stage editor;
 
     //================================================================================
     // Listeners
@@ -146,6 +154,41 @@ public class ViewController {
         openNewGameDialog();
         gController.newGame(false, rows, columns);
         openGame();
+    }
+    
+    @FXML
+    public void openPatternEditor() {
+        timeline.stop();
+
+        editor = new Stage();
+        editor.initModality(Modality.WINDOW_MODAL);
+        editor.initOwner(gameCanvas.getScene().getWindow());
+        
+        
+        try {
+            FXMLLoader loader;
+            loader = new FXMLLoader(getClass().getResource("PatternEditor.fxml"));
+            
+            BorderPane root = loader.load();
+            editor.setResizable(false);
+            
+            // Muliggjør overføring av nødvendig data til editor.
+            EditorController edController = loader.getController();
+            // overføre data via setter ?
+            edController.setPattern(grid);
+
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource(
+                    "patternEditor.css").toExternalForm());
+            
+            editor.setScene(scene);
+            editor.setTitle("Pattern Editor");
+            editor.show();
+        } catch (IOException e) {
+            DialogBoxes.infoBox("Error", "Could not open the Pattern Editor", 
+                    "Please try again.");
+        }
+        
     }
     
     public void loadGameBoardFromRLE(boolean online) {
@@ -208,6 +251,12 @@ public class ViewController {
         setLowestCellSize();
         centerBoard();
         draw();
+        
+        openPatternEditor.setDisable(false);
+        playButton.setDisable(false);
+        pauseButton.setDisable(false);
+        restartButton.setDisable(false);
+        savePicker.setDisable(false);
     }
 
     /**
@@ -343,15 +392,15 @@ public class ViewController {
 
     @FXML
     public void handleFitToView() {
-        double cellWidth = gameCanvas.getWidth() / columns;
-        double cellHeight = gameCanvas.getHeight() / rows;
+        double cellWidth = gameCanvas.getWidth() / (columns - 2);
+        double cellHeight = gameCanvas.getHeight() / (rows - 2);
 
             if(cellWidth < cellHeight) {
                 cellSize = cellWidth;
             } else {
                 cellSize = cellHeight;
             }
-        
+       
         initializeCellSizeSlider(cellSize, cellSize);
         centerBoard();
         draw();
@@ -378,11 +427,11 @@ public class ViewController {
     }
 
     private double getBoardWidth() {
-    	return cellSize * columns;
+    	return cellSize * (columns-2);
     }
 
     private double getBoardHeight() {
-    	return cellSize * rows;
+    	return cellSize * (rows-2);
     }
 
     private boolean isXInsideGrid(double posX) {
@@ -429,8 +478,8 @@ public class ViewController {
         double y = start_Y;
 
         gc.setFill(stdAliveCellColor);
-        for(int rows = 0; rows < grid.length; rows++) {
-            for(int cols = 0; cols < grid[0].length; cols++ ) {
+        for(int rows = 1; rows < grid.length - 1; rows++) {
+            for(int cols = 1; cols < grid[0].length - 1; cols++ ) {
                 if (grid[rows][cols]== 1) {
                     gc.fillRect(x, y, cellSize, cellSize);
                 }
@@ -457,13 +506,13 @@ public class ViewController {
         double end_Y = start_Y + getBoardHeight();
 
     	// For hver rad, tegn en horisontal strek
-        for(int y = 0; y <= rows; y++) {
+        for(int y = 0; y <= rows-2; y++) {
             gc.strokeLine(start_X, start_Y + (cellSize * y),
                     end_X, start_Y + (cellSize * y));
         }
 
         // For hver kolonne, tegn en vertikal strek
-        for(int x = 0; x <= columns; x++) {
+        for(int x = 0; x <= columns-2; x++) {
         	gc.strokeLine(start_X + (cellSize * x),
                         start_Y, start_X + (cellSize * x), end_Y);
         }
