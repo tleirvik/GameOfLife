@@ -10,7 +10,6 @@ import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
-import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -22,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
@@ -29,7 +29,6 @@ import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
@@ -47,6 +46,8 @@ public class ViewController {
     // JavaFX Fields
     //================================================================================
 
+    @FXML private MenuItem openPatternEditor;
+    @FXML private MenuItem savePicker;
     
     @FXML private Button playButton;
     @FXML private Button pauseButton;
@@ -174,7 +175,7 @@ public class ViewController {
             // Muliggjør overføring av nødvendig data til editor.
             EditorController edController = loader.getController();
             // overføre data via setter ?
-            edController.setPattern(grid, cellSize);
+            edController.setPattern(grid);
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
@@ -250,6 +251,12 @@ public class ViewController {
         setLowestCellSize();
         centerBoard();
         draw();
+        
+        openPatternEditor.setDisable(false);
+        playButton.setDisable(false);
+        pauseButton.setDisable(false);
+        restartButton.setDisable(false);
+        savePicker.setDisable(false);
     }
 
     /**
@@ -385,15 +392,15 @@ public class ViewController {
 
     @FXML
     public void handleFitToView() {
-        double cellWidth = gameCanvas.getWidth() / columns;
-        double cellHeight = gameCanvas.getHeight() / rows;
+        double cellWidth = gameCanvas.getWidth() / (columns - 2);
+        double cellHeight = gameCanvas.getHeight() / (rows - 2);
 
             if(cellWidth < cellHeight) {
                 cellSize = cellWidth;
             } else {
                 cellSize = cellHeight;
             }
-        
+       
         initializeCellSizeSlider(cellSize, cellSize);
         centerBoard();
         draw();

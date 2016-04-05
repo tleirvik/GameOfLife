@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -19,7 +26,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.ViewController">
+<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="500.0" minWidth="500.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.ViewController">
 
     <top>
       <MenuBar id="menuBar" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
@@ -27,15 +34,15 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
                   <MenuItem onAction="#newGame" text="New game..." />
-              <MenuItem mnemonicParsing="false" text="Close" />
                   <MenuItem fx:id="filePicker" mnemonicParsing="false" onAction="#loadGameBoardFromDisk" text="Load Board from Disk..." />
                   <MenuItem onAction="#loadGameBoardFromURL" text="Load Board from URL..." />
-                  <MenuItem fx:id="savePicker" onAction="#saveRLE" text="Save RLE As..." />
+                  <MenuItem fx:id="savePicker" disable="true" onAction="#saveRLE" text="Save RLE As..." />
+              <MenuItem mnemonicParsing="false" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-                <MenuItem onAction="#openPatternEditor" text="Pattern Editor" />
+                <MenuItem fx:id="openPatternEditor" disable="true" onAction="#openPatternEditor" text="Pattern Editor" />
               <MenuItem onAction="#openOptions" text="Options..." />
             </items>
           </Menu>
@@ -120,19 +127,19 @@
             <HBox id="bottom" alignment="CENTER" prefHeight="76.0" prefWidth="1000.0" spacing="10.0">
 
                 <children>
-                  <Button fx:id="playButton" alignment="CENTER" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="100.0" text="Play" textOverrun="CENTER_WORD_ELLIPSIS">
+                  <Button fx:id="playButton" alignment="CENTER" disable="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="100.0" text="Play" textOverrun="CENTER_WORD_ELLIPSIS">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </Button>
 
 
-                  <Button fx:id="pauseButton" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#pause" prefHeight="40.0" prefWidth="100.0" text="Pause">
+                  <Button fx:id="pauseButton" disable="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#pause" prefHeight="40.0" prefWidth="100.0" text="Pause">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="restartButton" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#restart" prefHeight="40.0" prefWidth="100.0" text="Restart" />
+                  <Button fx:id="restartButton" disable="true" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#restart" prefHeight="40.0" prefWidth="100.0" text="Restart" />
 
 
                   <ComboBox id="combobox" fx:id="patternList" minHeight="20.0" minWidth="100.0" prefHeight="40.0" prefWidth="100.0" promptText="Pattern">

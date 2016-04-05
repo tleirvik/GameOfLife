@@ -78,7 +78,7 @@
    <center>
       <Pane BorderPane.alignment="CENTER">
          <children>
-            <Canvas fx:id="patternCanvas" height="395.0" width="602.0" />
+            <Canvas fx:id="patternCanvas" height="395.0" width="602.0" onMouseClicked="#handleMouseClick"/>
          </children>
       </Pane>
    </center>

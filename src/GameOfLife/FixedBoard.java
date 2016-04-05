@@ -122,24 +122,6 @@ public class FixedBoard {
         }
     }
     
-    /**
-     * Counts the amount of neighbours for the cell at the given position
-     * 
-     * @param row 
-     * @param col
-     * @return the amount of neighbours around the cell
-     */
-    public int countNeighbours(int row, int col) {        
-        return currentGeneration[row-1][col-1] + 
-                currentGeneration[row-1][col] + 
-                currentGeneration[row-1][col+1] + 
-                currentGeneration[row][col-1] + 
-                currentGeneration[row][col+1] + 
-                currentGeneration[row+1][col-1] + 
-                currentGeneration[row+1][col] + 
-                currentGeneration[row+1][col+1];
-    }
-    
     public void nextGeneration() {
         byte[][] neighbourArray = new byte[currentGeneration.length][currentGeneration[0].length];
         
@@ -165,6 +147,26 @@ public class FixedBoard {
         }
     }
     
+    /*
+    /**
+     * Counts the amount of neighbours for the cell at the given position
+     * 
+     * @param row 
+     * @param col
+     * @return the amount of neighbours around the cell
+     *//*
+    public int countNeighbours(int row, int col) {        
+        return currentGeneration[row-1][col-1] + 
+                currentGeneration[row-1][col] + 
+                currentGeneration[row-1][col+1] + 
+                currentGeneration[row][col-1] + 
+                currentGeneration[row][col+1] + 
+                currentGeneration[row+1][col-1] + 
+                currentGeneration[row+1][col] + 
+                currentGeneration[row+1][col+1];
+    }*/
+    
+    /*
     public void nextGeneration(int startRow, int endRow) {
         for(int row = startRow; row < endRow; row++) {
             for(int col = 0; col < currentGeneration[0].length; col++) {
@@ -173,7 +175,7 @@ public class FixedBoard {
                         countNeighbours(row,col) == 2 )) ? (byte)1 : (byte)0;
             }
         }
-    }
+    }*/
 
     /**
      *  Method that returns the game board as a String. Used for Unit Testing with JUnit 4

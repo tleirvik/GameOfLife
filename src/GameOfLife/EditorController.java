@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
@@ -52,8 +53,17 @@ public class EditorController {
         File saveRLEFile = fileChooser.showSaveDialog(mainStage);
     }
     
+    @FXML
+    public void handleMouseClick(MouseEvent e) {
+        
+        
+        //pattern[row][col] = (pattern[row][col] == 1) ? (byte) 0 : (byte) 1;
+        
+        draw();
+    }
+    
     // sette brettet her?
-    public void setPattern(byte[][] pattern, double cellSize) {
+    public void setPattern(byte[][] pattern) {
         if(pattern != null) {
             this.pattern = pattern;
             double cellWidth = patternCanvas.getWidth() / pattern.length;
@@ -70,7 +80,7 @@ public class EditorController {
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, patternCanvas.getWidth(), 
                 patternCanvas.getHeight());
-        
+
         double x = 0, y = 0;
         
         gc.setFill(Color.VIOLET);
@@ -84,17 +94,35 @@ public class EditorController {
             x = 0; //Reset X-verdien for neste rad
             y += cellSize; //Plusser på for neste rad
         }
-        draw(gc);
+        drawGridLines(gc);
     }
     
     // bør ha gridlines for å gjøre manipulering mer lesbar.
-    private void draw(GraphicsContext gc) {
+    private void drawGridLines(GraphicsContext gc) {
         gc.setLineWidth(0.6);
         gc.setStroke(Color.GRAY);
-
-//        for(int y = 0; y <= pattern.length; y++) {
-//            gc.strokeLine(0, 0 + (cellSize * y),
-//                    patternCanvas.getWidth(), patternCanvas.getHeight());
-//        }
+        
+        final double height = getPatternHeight();
+        final double width = getPatternWidth();
+        
+        System.out.println(pattern.length);
+        System.out.println(pattern[0].length);
+        
+        // For hver kolonne, tegn en vertikal strek
+        for(int col = 0; col <= pattern[0].length - 2; col++) {
+            gc.strokeLine(cellSize * col, 0, cellSize * col, height);   
+        }
+        
+        for(int row = 0; row <= pattern.length - 2; row++) {
+            gc.strokeLine(0, cellSize * row, width, cellSize * row);
+        }
+    }
+    
+    private double getPatternWidth() {
+        return cellSize * (pattern[0].length - 2);
+    }
+    
+    private double getPatternHeight() {
+        return cellSize * (pattern.length - 2);
     }
 }
