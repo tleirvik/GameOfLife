@@ -14,6 +14,8 @@ import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
@@ -24,11 +26,13 @@ import javafx.scene.control.Slider;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import util.DialogBoxes;
@@ -43,6 +47,7 @@ public class ViewController {
     // JavaFX Fields
     //================================================================================
 
+    
     @FXML private Button playButton;
     @FXML private Button pauseButton;
     @FXML private Button restartButton;
@@ -115,6 +120,8 @@ public class ViewController {
     private boolean holdingPattern = false; //Find out if user is holding pattern
     private boolean drawMode = false; //False for move, true for draw
     private boolean drawCell = false;
+    
+    private Stage editor;
 
     //================================================================================
     // Listeners
@@ -146,6 +153,41 @@ public class ViewController {
         openNewGameDialog();
         gController.newGame(false, rows, columns);
         openGame();
+    }
+    
+    @FXML
+    public void openPatternEditor() {
+        timeline.stop();
+
+        editor = new Stage();
+        editor.initModality(Modality.WINDOW_MODAL);
+        editor.initOwner(gameCanvas.getScene().getWindow());
+        
+        
+        try {
+            FXMLLoader loader;
+            loader = new FXMLLoader(getClass().getResource("PatternEditor.fxml"));
+            
+            BorderPane root = loader.load();
+            editor.setResizable(false);
+            
+            // Muliggjør overføring av nødvendig data til editor.
+            EditorController edController = loader.getController();
+            // overføre data via setter ?
+            edController.setPattern(grid, cellSize);
+
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource(
+                    "patternEditor.css").toExternalForm());
+            
+            editor.setScene(scene);
+            editor.setTitle("Pattern Editor");
+            editor.show();
+        } catch (IOException e) {
+            DialogBoxes.infoBox("Error", "Could not open the Pattern Editor", 
+                    "Please try again.");
+        }
+        
     }
     
     public void loadGameBoardFromRLE(boolean online) {
