@@ -54,15 +54,12 @@ public class EditorController {
     
     // sette brettet her?
     public void setPattern(byte[][] pattern, double cellSize) {
-        this.pattern = pattern;
-        double cellWidth = patternCanvas.getWidth() / pattern.length;
-        double cellHeight = patternCanvas.getHeight() / pattern[0].length;
-        this.cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-        System.out.println(cellWidth);
-        System.out.println(cellHeight);
-        System.out.println(cellSize);
-        
         if(pattern != null) {
+            this.pattern = pattern;
+            double cellWidth = patternCanvas.getWidth() / pattern.length;
+            double cellHeight = patternCanvas.getHeight() / pattern[0].length;
+            this.cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
+            
             draw();
         }
     }
