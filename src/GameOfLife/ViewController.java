@@ -3,12 +3,14 @@ package GameOfLife;
 import FileManagement.FileLoader;
 import java.io.File;
 import FileManagement.RLEDecoder;
+import FileManagement.RLEEncoder;
 import Listeners.ButtonListener;
 import java.io.IOException;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -37,7 +39,7 @@ import util.DialogBoxes;
  */
 public class ViewController {
 
-	//================================================================================
+    //================================================================================
     // JavaFX Fields
     //================================================================================
 
@@ -56,15 +58,13 @@ public class ViewController {
     @FXML private Label fpsLabel;
 
     @FXML private CheckBox toggleGrid;
-    @FXML private CheckBox fitToView;
     @FXML private Pane canvasParent;
     @FXML private Canvas gameCanvas;
     @FXML private ToggleButton toggleDrawMove;
-    @FXML private Text textNextGeneration;
     @FXML private Label statusBar;
 
 
-	//================================================================================
+    //================================================================================
     // Property fields
     //================================================================================
 
@@ -116,84 +116,76 @@ public class ViewController {
     private boolean drawMode = false; //False for move, true for draw
     private boolean drawCell = false;
 
-	//================================================================================
+    //================================================================================
     // Listeners
     //================================================================================
 
     public void initialize() {
-    	cellSizeSlider.setMin(1);
-    	cellSizeSlider.setMax(150);
-    	cellSizeSlider.setValue(cellSize);
-    	cellSizeLabel.setText(Double.toString(cellSizeSlider.getValue()));
-
-    	fpsSlider.setMin(10);
-    	fpsSlider.setMax(60);
-        fpsSlider.setSnapToTicks(true);
-        fpsSlider.setShowTickMarks(true);
-        fpsSlider.setShowTickLabels(true);
-        fpsSlider.setMajorTickUnit(10);
-        fpsSlider.setMinorTickCount(0);
-        fpsLabel.setText("10");
-    	fpsSlider.valueProperty().addListener((ObservableValue<?
-                extends Number> ov, Number old_val, Number new_val) -> {
-            fpsLabel.setText(Integer.toString(new_val.intValue()));
-            //fps = (1/new_val.intValue())*1000;
-            KeyFrame keyframe = timeline.getKeyFrames().get(0);
-            timeline.getTargetFramerate();
-        });
-
-        //Finn posisjonen til musen når det zoomes inn
-    	//Kalkuler differansen fra musen til canvasen sitt midtpunkt
-    	//Flytt Canvasen med den nye differanseverdien
-    	/*
-    	 * 		CANVAS
-    	 */
-    	gameCanvas.heightProperty().bind(canvasParent.heightProperty());
-    	gameCanvas.widthProperty().bind(canvasParent.widthProperty());
-
-    	gameCanvas.heightProperty().addListener(e -> {
-            draw();
-    	});
-    	gameCanvas.widthProperty().addListener(e -> {
-            draw();
-    	});
+        gController = new GameController();
+        
+        initializeTimeline();
+        initializeCellSizeSlider(1,1);
+        initializeFpsSlider();
+        initializeBindCanvasSize();
 
     	dialogBoxes = new DialogBoxes();
         initializeMouseEventHandlers();
-        gController = new GameController();
-
-    } // end initialize
+    }
 
     //================================================================================
     // GUI Event handlers
     //================================================================================
 
     /**
-     * This method instansiate a new GameController
-     * and calls a dialog box for input. The it center the board and
-     * draws the board
+     * This method instansiates a new GameController
+     * and calls a dialog box for input.
      */
     @FXML
-    public void openNewGame() {
-        if (isTimelineRunning()) {
-            timeline.stop();
-            openNewGameDialog();
-            centerBoard();
-
-            gController.newGame(false, rows, columns); // send parametrene videre
-            grid = gController.getBoardReference();
-            draw();
-        } else {
-            openNewGameDialog();
-            // metadata = new MetaData();
-            centerBoard();
-
-            gController.newGame(false, rows, columns); // send parametrene videre
-            grid = gController.getBoardReference();
-            draw();
-        }
+    public void newGame() {
+        timeline.stop();
+        openNewGameDialog();
+        gController.newGame(false, rows, columns);
+        openGame();
     }
+    
+    public void loadGameBoardFromRLE(boolean online) {
+        timeline.stop();
+        statusBar.setText("");
+        FileLoader fileLoader = new FileLoader();
+        
+        if(online) {
+            if(!fileLoader.readGameBoardFromURL(dialogBoxes.urlDialogBox())) {
+                statusBar.setText("Could not load file from URL!");
+                return;
+            }
+        } else {
+            Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
+            
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Open Resource File");
+            fileChooser.getExtensionFilters().addAll(
+                new ExtensionFilter("RLE files", "*.rle"),
+                new ExtensionFilter("All Files", "*.*"));
 
+            File selectedFile = fileChooser.showOpenDialog(mainStage);
+            if(selectedFile != null) {
+                if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
+                    statusBar.setText("Could not open file!");
+                    return;
+                }
+            }
+        }
+        byte[][] board = fileLoader.getBoard();
+        rows = board.length;
+        columns = board[0].length;
+        gController.newGame(board, fileLoader.getMetadata());
+        openGame();
+    }
+    
+    public void loadGameBoardFromURL() {
+        loadGameBoardFromRLE(true);
+    }
+    
     /**
      * This method launches a FileChooser and lets the user select a file.
      * If the file is not null it creates an object of type RLEDecoder and
@@ -203,104 +195,19 @@ public class ViewController {
      * @see RLEDecoder
      */
     @FXML
-    public void loadGameBoardFromDisk() throws IOException, PatternFormatException{
-        boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
-        statusBar.setText("");
-        Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
-
-        if(isTimelineRunning()) {
-            timeline.stop();
-        }
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
-        fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("RLE files", "*.rle"),
-                new ExtensionFilter("All Files", "*.*"));
-
-        File selectedFile = fileChooser.showOpenDialog(mainStage);
-        if (selectedFile != null) {
-            FileLoader fileLoader = new FileLoader();
-            if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
-
-                statusBar.setText("Could not open file!");
-                return;
-            }
-            byte[][] board = fileLoader.getBoard();
-            rows = board.length;
-            columns = board[0].length;
-            gController.newGame(board, fileLoader.getMetadata());
-            centerBoardAndDraw();
-        }
-
+    public void loadGameBoardFromDisk() {
+        loadGameBoardFromRLE(false);
     }
+    
     /**
-     *  Trenger nytt navn :)
+     * Opens a currently loaded game, whether it is completely new
+     * or loaded from a file.
      */
-    private void commonBehaviorInRLE(GameController gController, RLEDecoder rledec) {
-        if(gController == null) {
-            gController = new GameController();
-            rledecMetode(gController, rledec);
-            centerBoardAndDraw();
-        } else if(timeline != null) {
-            timeline.stop();
-            rledecMetode(gController, rledec);
-            centerBoardAndDraw();
-        } else {
-            rledecMetode(gController, rledec);
-            centerBoardAndDraw();
-        }
-    }
-
-    /**
-     *  Trenger nytt navn :)
-     */
-    private void centerBoardAndDraw() {
-        if (gController == null) {
-            gController = new GameController();
-        } else {
-            grid = gController.getBoardReference();
-            centerBoard();
-            draw();
-        }
-
-    }
-    /**
-     *  Trenger nytt navn :)
-     */
-    private void rledecMetode(GameController gController, RLEDecoder rledec) {
-        boolean isDynamic = false;
-        gController.newGame(rledec.getBoard(), rledec.getMetadata());
-        rows = rledec.getBoard().length;
-        columns = rledec.getBoard()[0].length;
-    }
-    /**
-     *
-     * BUG. Må kjøre metoden to ganger for at det skal fungere. gController må
-     * trolig instansieres et eller annet sted.
-     */
-    public void loadGameBoardFromURL() throws IOException, PatternFormatException{
-        boolean isDynamic = false; //La bruker velge om brettet skal kunne øke i bredde/høyde
-        statusBar.setText("");
-        FileLoader fileLoader = new FileLoader();
-
-        if(!fileLoader.readGameBoardFromURL(dialogBoxes.urlDialogBox())) {
-            statusBar.setText("Could not load file from URL!");
-            return;
-        }
-        byte[][] board = fileLoader.getBoard();
-        rows = board.length;
-        columns = board[0].length;
-        gController.newGame(board, fileLoader.getMetadata());
-        centerBoardAndDraw();
-        /*
-        if (!rledec.decode()) {
-            statusBar.setText("An error occured trying to read the file");
-            return;
-        }
-        */
-
-        // commonBehaviorInRLE(gController, rledec);
+    public void openGame() {
+        grid = gController.getBoardReference();
+        setLowestCellSize();
+        centerBoard();
+        draw();
     }
 
     /**
@@ -329,11 +236,11 @@ public class ViewController {
                 // Tror det er greit å try-catche i RLEEncoder, da er det ryddig i ViewController
 
                 // Hentet hele brettet med en ny metode jeg lagde. Vi må huske på å gå igjennom den neste gang
-                /*RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
+                RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
                 if (!rleenc.encode()) {
                         statusBar.setText("An error occured trying to save the file. Please try again.");
                         return;
-                }*/
+                }
                 System.out.println(saveRLEFile.getAbsolutePath());
                 statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
             }
@@ -341,44 +248,16 @@ public class ViewController {
 
     @FXML
     public void play() {
-        if(gController != null) {
-            if(timeline == null || timeline.getStatus() != Status.RUNNING) {
-                timeline = new Timeline();
-                timeline.setCycleCount(Animation.INDEFINITE);
-                Duration duration = Duration.millis(33.333);
-                KeyFrame keyFrame;
-                keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-                    long startTime = System.nanoTime();
-                    gController.play();
-                    long endTime = System.nanoTime();
-                    long duration2 = (endTime - startTime) / 1000000;
-                    System.out.println("Next Generation: " + duration2);
-
-                    startTime = System.nanoTime();
-                    grid = gController.getBoardReference();
-                    endTime = System.nanoTime();
-                    duration2 = (endTime - startTime) / 1000000;
-                    System.out.println("Get grid: " + duration2);
-
-                    startTime = System.nanoTime();
-                    draw();
-                    endTime = System.nanoTime();
-                    duration2 = (endTime - startTime) / 1000000;
-                    System.out.println("Draw: " + duration2);
-                });
-            timeline.getKeyFrames().add(keyFrame);
-            }
+        if(timeline != null || timeline.getStatus() != Status.RUNNING) {
             timeline.play();
         }
     }
 
     @FXML
     public void pause() {
-        if(gController != null) {
-            timeline.stop();
-            if(timeline != null && timeline.getStatus() == Status.RUNNING) {
-                timeline.pause();
-            }
+        timeline.stop();
+        if(timeline != null && timeline.getStatus() == Status.RUNNING) {
+            timeline.pause();
         }
     }
 
@@ -388,7 +267,7 @@ public class ViewController {
             timeline.stop();
         }
         gController.resetGame();
-        grid = gController.getBoardReference();
+        draw();
     }
 
     /**
@@ -400,7 +279,6 @@ public class ViewController {
     public void changeBackgroundColor() {
         stdBackgroundColor = backgroundColorPicker.getValue();
         draw();
-
     }
 
     /**
@@ -410,10 +288,8 @@ public class ViewController {
      */
     @FXML
     public void changeBoardColor() {
-        if((gController != null) && (gController.getBoardReference() != null)) {
-            stdBoardColor = boardColorPicker.getValue();
-            draw();
-        }
+        stdBoardColor = boardColorPicker.getValue();
+        draw();
     }
 
     /**
@@ -423,10 +299,8 @@ public class ViewController {
      */
     @FXML
     public void changeCellColor() {
-        if(gController != null) {
-            stdAliveCellColor = cellColorPicker.getValue();
-            draw();
-        }
+        stdAliveCellColor = cellColorPicker.getValue();
+        draw();
     }
 
     /**
@@ -436,62 +310,12 @@ public class ViewController {
      */
     @FXML
     public void changeGridColor() {
-        if(gController != null) {
-            stdGridColor = gridColorPicker.getValue();
-            draw();
-        }
+        stdGridColor = gridColorPicker.getValue();
+        draw();
     }
 
     //Funksjon som skal gi brukeren mulighet til å flytte grid-en
     //Endrer offset-verdiene over for å tilby dette til draw()-funksjonene
-
-    
-    @FXML
-    public void moveGrid() {
-    	gameCanvas.setOnScroll((ScrollEvent event) -> {
-            double scrollLocation_X = event.getX();
-            double scrollLocation_Y = event.getY();
-            double scrollAmount = event.getDeltaY();
-            double zoomFactor = 1.01;
-
-            if(scrollAmount < 0) {
-                zoomFactor = 1 / zoomFactor;
-            }
-
-            //Midtpunkter av Canvas
-            double center_X = gameCanvas.getWidth()  / 2;
-            double center_Y = gameCanvas.getHeight() / 2;
-
-            //Finner hvor startposisjonen ligger øverst i venstre hjørnet av Canvas.
-            double start_X = center_X - (getBoardWidth() / 2) - offset_X;
-            double start_Y = center_Y - (getBoardHeight() / 2) - offset_Y;
-
-
-            //Variablene brukt til å tegne firkanten. Plusses med bredden/høyden etter hver iterasjon i for-løkken
-            //offset-verdien bestemmer hvor grid-en skal tegnes avhengig av om brukeren har flyttet den ved å dra den (onDrag-funksjon)
-
-            //Finn ut om brukeren har musen over grid-et
-            if((isXInsideGrid(scrollLocation_X)) && (isYInsideGrid(scrollLocation_Y))) {
-                System.out.println("Cellebredde før: " + getBoardWidth());
-                System.out.println("Cellehøyde før: " + getBoardHeight());
-
-                cellSize *= zoomFactor;
-
-                System.out.println("Cellebredde etter: " + getBoardWidth());
-                System.out.println("Cellehøyde etter: " + getBoardHeight());
-
-                offset_X += (scrollLocation_X - center_X);
-                offset_Y += (scrollLocation_Y - center_Y);
-
-                System.out.println("Offsetverdier etter: " + offset_X + " " + offset_Y);
-                System.out.println();
-                draw();
-            } else {
-                cellSize *= zoomFactor;
-                draw();
-            }
-        });
-    }
 
     @FXML
     void toggleDrawMove(ActionEvent event) {
@@ -504,11 +328,14 @@ public class ViewController {
         }
     }
 
+    
+    // HVOR KOMMER DISSE FRA? :)
     @FXML
     public void handleMouseDrag(MouseEvent e) {
 
     }
 
+    // HVOR KOMMER DISSE FRA? :)
     @FXML
     public void handleMouseClick(MouseEvent e) {
 
@@ -516,43 +343,25 @@ public class ViewController {
 
     @FXML
     public void handleFitToView() {
-        if(gController != null) {
-            double cellWidth = gameCanvas.getWidth() / columns;
-            double cellHeight = gameCanvas.getHeight() / rows;
+        double cellWidth = gameCanvas.getWidth() / columns;
+        double cellHeight = gameCanvas.getHeight() / rows;
 
             if(cellWidth < cellHeight) {
                 cellSize = cellWidth;
             } else {
                 cellSize = cellHeight;
             }
-            centerBoard();
-            draw();
-        }
+        
+        initializeCellSizeSlider(cellSize, cellSize);
+        centerBoard();
+        draw();
     }
 
     @FXML
     public void handleToggleGrid() {
-        if(gController != null) {
-            drawGrid = !toggleGrid.isSelected();
-            draw();
-        }
+        drawGrid = !toggleGrid.isSelected();
+        draw();
     }
-
-
-    // sliderens verdi må endres ved fit to view
-    @FXML
-    public void handleCellSizeSlider() {
-
-            cellSizeSlider.valueProperty().addListener((ObservableValue<?
-                    extends Number> ov, Number old_val, Number new_val) -> {
-                fitToView.setSelected(false);
-                cellSizeLabel.setText(Double.toString(new_val.intValue()));
-                cellSize = new_val.intValue();
-                centerBoard();
-                draw();
-            });
-
-   }
 
 	//================================================================================
     // Draw methods
@@ -593,51 +402,47 @@ public class ViewController {
     }
 
     private void draw() {
-    	//If the grid is not retrieved yet, do not run the draw function
-    	if(grid != null) {
-            double start_X = Math.round(getGridStartPosX());
-            double start_Y = Math.round(getGridStartPosY());
-            double boardWidth = getBoardWidth();
-            double boardHeight = getBoardHeight();
+        if(grid == null) {
+            return;
+        }
+        double start_X = Math.round(getGridStartPosX());
+        double start_Y = Math.round(getGridStartPosY());
+        double boardWidth = getBoardWidth();
+        double boardHeight = getBoardHeight();
 
-            GraphicsContext gc = gameCanvas.getGraphicsContext2D();
-            gc.clearRect(0, 0, gameCanvas.widthProperty().doubleValue(),
+        GraphicsContext gc = gameCanvas.getGraphicsContext2D();
+        gc.clearRect(0, 0, gameCanvas.widthProperty().doubleValue(),
+                gameCanvas.heightProperty().doubleValue());
+
+        if(drawBackground) {
+            gc.setFill(stdBackgroundColor);
+            gc.fillRect(0, 0, gameCanvas.widthProperty().doubleValue(),
                     gameCanvas.heightProperty().doubleValue());
+        }
 
-            if(drawBackground) {
-                gc.setFill(stdBackgroundColor);
-                gc.fillRect(0, 0, gameCanvas.widthProperty().doubleValue(),
-                        gameCanvas.heightProperty().doubleValue());
-            }
+        if(drawBoardBackground) {
+            gc.setFill(stdBoardColor);
+            gc.fillRect(start_X, start_Y, boardWidth, boardHeight);
+        }
 
-            if(drawBoardBackground) {
-                gc.setFill(stdBoardColor);
-                gc.fillRect(start_X, start_Y, boardWidth, boardHeight);
-            }
+        double x = start_X;
+        double y = start_Y;
 
-            double x = start_X;
-            double y = start_Y;
-
-            gc.setFill(stdAliveCellColor);
-            for(int rows = 0; rows < grid.length; rows++) {
-                for(int cols = 0; cols < grid[0].length; cols++ ) {
-                    if (grid[rows][cols] == 1) {
-                        //Hvis cellen lever
-                        gc.fillRect( x, y, cellSize, cellSize);
-                        x += cellSize; //Plusser på for neste kolonne
-                    } else {
-                        x += cellSize; //Plusser på for neste kolonne
-                    }
+        gc.setFill(stdAliveCellColor);
+        for(int rows = 0; rows < grid.length; rows++) {
+            for(int cols = 0; cols < grid[0].length; cols++ ) {
+                if (grid[rows][cols]== 1) {
+                    gc.fillRect(x, y, cellSize, cellSize);
                 }
-                x = start_X; //Reset X-verdien for neste rad
-                y += cellSize; //Plusser på for neste rad
+                x += cellSize; //Plusser på for neste kolonne
             }
+            x = start_X; //Reset X-verdien for neste rad
+            y += cellSize; //Plusser på for neste rad
+        }
 
-            //Bruker kan bestemme om grid skal tegnes
-            if(drawGrid) {
-                drawGridLines(gc);
-            }
-        } // end if
+        if(drawGrid) {
+            drawGridLines(gc);
+        }
     }
 
     private void drawGridLines(GraphicsContext gc) {
@@ -694,21 +499,12 @@ public class ViewController {
      * @return void
      */
     private void metaDataDialogBox() {
-    	//dialogBoxes.metaDataDialogBox(gController.getBoardReference().getMetaData());
+    	dialogBoxes.metaDataDialogBox(gController.getMetadata());
     }
 
     @FXML
     private void openOptions() {
 
-    }
-
-    /**
-     * This method returns true if the timeline is running
-     *
-     * @return boolean True if timeline is running
-     */
-    private boolean isTimelineRunning() {
-    	return (timeline != null) && (timeline.getStatus() == Status.RUNNING);
     }
 
     private void initializeMouseEventHandlers() {
@@ -760,7 +556,6 @@ public class ViewController {
                 int column = 0;
 
             } else {//FLYTTEFUNKSJON
-                fitToView.setSelected(false);
                 offsetBegin_X = e.getX() - getGridStartPosX();
                 offsetBegin_Y = e.getY() - getGridStartPosY();
             } // end if
@@ -793,5 +588,139 @@ public class ViewController {
                 draw();
             } // end if
         });
+        
+        gameCanvas.setOnScroll((ScrollEvent event) -> {
+            double scrollLocation_X = event.getX();
+            double scrollLocation_Y = event.getY();
+            double scrollAmount = event.getDeltaY();
+            double zoomFactor = 1.01;
+
+            if(scrollAmount < 0) {
+                zoomFactor = 1 / zoomFactor;
+            }
+
+            //Midtpunkter av Canvas
+            double center_X = gameCanvas.getWidth()  / 2;
+            double center_Y = gameCanvas.getHeight() / 2;
+
+            //Finner hvor startposisjonen ligger øverst i venstre hjørnet av Canvas.
+            double start_X = center_X - (getBoardWidth() / 2) - offset_X;
+            double start_Y = center_Y - (getBoardHeight() / 2) - offset_Y;
+
+
+            //Variablene brukt til å tegne firkanten. Plusses med bredden/høyden etter hver iterasjon i for-løkken
+            //offset-verdien bestemmer hvor grid-en skal tegnes avhengig av om brukeren har flyttet den ved å dra den (onDrag-funksjon)
+
+            //Finn ut om brukeren har musen over grid-et
+            if((isXInsideGrid(scrollLocation_X)) && (isYInsideGrid(scrollLocation_Y))) {
+                cellSizeSlider.setValue(cellSize*zoomFactor);
+                
+                offset_X += (scrollLocation_X - center_X);
+                offset_Y += (scrollLocation_Y - center_Y);
+                
+                draw();
+            } else {
+                cellSizeSlider.setValue(cellSize*zoomFactor);
+                draw();
+            }
+        });
+    }
+
+    /**
+     * Initializes the cellSizeSlider with the current value and minimum value
+     * 
+     * @param current
+     * @param min
+     */
+    private void initializeCellSizeSlider(double current, double min) {
+        cellSizeSlider.setMin(min);
+    	cellSizeSlider.setMax(150);
+    	cellSizeSlider.setValue(current);
+    	cellSizeLabel.setText(Double.toString(cellSizeSlider.getValue()));
+        
+        cellSizeSlider.valueProperty().addListener((ObservableValue<?
+                    extends Number> ov, Number old_size, Number new_size) -> {
+                cellSizeLabel.setText(Double.toString(new_size.intValue()));
+                cellSize = new_size.intValue();
+                draw();
+            });
+    }
+
+    private void initializeFpsSlider() {
+        fpsSlider.setMin(10);
+    	fpsSlider.setMax(60);
+        fpsSlider.setSnapToTicks(true);
+        fpsSlider.setShowTickMarks(true);
+        fpsSlider.setShowTickLabels(true);
+        fpsSlider.setMajorTickUnit(10);
+        fpsSlider.setMinorTickCount(0);
+        fpsLabel.setText("10");
+        fpsSlider.valueChangingProperty().addListener((ObservableValue<? extends Boolean> obs, Boolean wasChanging, Boolean isChanging) -> {
+            if (!isChanging) {
+                int newValue = (int)fpsSlider.getValue();
+                fpsLabel.setText(Integer.toString(newValue));
+                if(timeline.getStatus() == Animation.Status.RUNNING) {
+                    timeline.stop();
+                    initializeKeyFrame(newValue);
+                    timeline.play();
+                } else {
+                    initializeKeyFrame(newValue);
+                }
+                
+            }
+        });
+    }
+
+    private void initializeBindCanvasSize() {
+        gameCanvas.heightProperty().bind(canvasParent.heightProperty());
+    	gameCanvas.widthProperty().bind(canvasParent.widthProperty());
+
+    	gameCanvas.heightProperty().addListener(e -> {
+            draw();
+    	});
+    	gameCanvas.widthProperty().addListener(e -> {
+            draw();
+    	});
+    }
+
+    private void initializeTimeline() {
+        timeline = new Timeline();
+        timeline.setCycleCount(Animation.INDEFINITE);
+        initializeKeyFrame(30);
+    }
+
+    /**
+     * Calculates and sets the cell size that is required to show
+     * the entire board on the screen
+     */
+    private void setLowestCellSize() {
+        double cellWidth = gameCanvas.getWidth() / columns;
+        double cellHeight = gameCanvas.getHeight() / rows;
+
+        if(cellWidth < cellHeight) {
+            initializeCellSizeSlider(cellWidth, cellWidth);
+        } else {
+            initializeCellSizeSlider(cellHeight, cellHeight);
+        }     
+    }
+
+    private void initializeKeyFrame(int fps) {
+        Duration duration = Duration.millis(1000/fps);
+        KeyFrame keyFrame;
+        keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
+            long startTime = System.nanoTime();
+            gController.play();
+            long endTime = System.nanoTime();
+            long duration2 = (endTime - startTime) / 1000000;
+            System.out.println("Next Generation: " + duration2);
+
+            startTime = System.nanoTime();
+            draw();
+            endTime = System.nanoTime();
+            duration2 = (endTime - startTime) / 1000000;
+            System.out.println("Draw: " + duration2);
+        });
+        timeline.getKeyFrames().clear();
+        timeline.getKeyFrames().add(0, keyFrame);
     }
 }

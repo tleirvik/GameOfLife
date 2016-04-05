@@ -29,9 +29,8 @@ public class FileLoader {
      *  and calls the decode() method in RLEDecoder for interpreting the file.
      * @param file File to be read
      * @return boolean True if the file is parsed by the RLEDecoder
-     * @throws PatternFormatException Throws an exception if the method is unable to parse the RLE file
      */
-    public boolean readGameBoardFromDisk(File file) throws PatternFormatException {
+    public boolean readGameBoardFromDisk(File file) {
         if (!file.canRead()) {
             DialogBoxes.infoBox("Error!", "Could not read file!",
                     "Please check your file permissions!");
@@ -61,7 +60,7 @@ public class FileLoader {
      * @return boolean True if the file is downloaded and is parsed by the RLEDecoder.
      * @throws PatternFormatException Throws an exception if the method is unable to parse the RLE file
      */
-    public boolean readGameBoardFromURL(String urlString) throws PatternFormatException {
+    public boolean readGameBoardFromURL(String urlString) {
         try {
             URL url = new URL(urlString);
             URLConnection conn = url.openConnection();

@@ -49,7 +49,10 @@ public class GameController {
     public void exportGame() {
 
     }
-    
+
+    public FixedBoard getBoard() {
+        return gol.getBoard();
+    }
     public void resetGame() {
         gol.resetGame();
     }
