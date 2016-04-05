@@ -1,11 +1,9 @@
 package GameOfLife;
 
 import FileManagement.FileLoader;
-import java.io.File;
 import FileManagement.RLEDecoder;
 import FileManagement.RLEEncoder;
 import Listeners.ButtonListener;
-import java.io.IOException;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
@@ -17,13 +15,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Button;
-import javafx.scene.control.CheckBox;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Label;
-import javafx.scene.control.MenuItem;
-import javafx.scene.control.Slider;
-import javafx.scene.control.ToggleButton;
+import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.BorderPane;
@@ -35,6 +27,9 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import util.DialogBoxes;
+
+import java.io.File;
+import java.io.IOException;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -489,8 +484,9 @@ public class ViewController {
             y += cellSize; //Plusser på for neste rad
         }
 
-        if(drawGrid) {
+        if(drawGrid && grid.length < 100) {
             drawGridLines(gc);
+            System.out.println(grid.length);
         }
     }
 

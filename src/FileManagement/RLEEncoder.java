@@ -1,15 +1,15 @@
 package FileManagement;
 
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.IOException;
-import java.nio.Buffer;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import GameOfLife.FixedBoard;
 import GameOfLife.MetaData;
 import util.DialogBoxes;
+
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 
 /**
@@ -113,13 +113,39 @@ public class RLEEncoder {
      */
 
     private void encodeBoard() {
+        // Bør bytte til StringBuilder fordi den er raskere StringBuffer
         int count = 1;
+        int previous = -1;
 
         for (int row = 1; row < board.length - 1; row++) {
             for (int col = 1; col < board[0].length - 1; col++) {
                 final int nextPosition = col + 1;
                 final byte currentCell = board[row][col];
-                rleString.append(currentCell == 1 ? "o" : "b");
+                if (col < board[0].length && currentCell == nextPosition) {
+                    count++;
+                } else {
+                    rleString.append(count > 1 ? count : "" ).append(currentCell == 1 ? "o" : "b");
+                    count = 1;
+                }
+
+                /*
+                while (col < board[0].length && currentCell == nextPosition) {
+                    count++;
+                }
+                */
+
+                if (count > 1) {
+                    rleString.append((count >1) ? count : "");
+                    rleString.append(currentCell == 1 ? "o" : "b");
+                    count = 1;
+                }
+                /*
+                else {
+                    rleString.append(currentCell == 1 ? "o" : "b");
+                }
+                //rleString.append(count).append(currentCell == 1 ? "o" : "b");
+                //rleString.append(count > 1 ? count : "" ).append(currentCell == 1 ? "o" : "b");
+                */
             }
             rleString.append("$");
         }
