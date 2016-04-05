@@ -420,11 +420,11 @@ public class ViewController {
     }
 
     private double getBoardWidth() {
-    	return cellSize * columns;
+    	return cellSize * (columns-2);
     }
 
     private double getBoardHeight() {
-    	return cellSize * rows;
+    	return cellSize * (rows-2);
     }
 
     private boolean isXInsideGrid(double posX) {
@@ -471,8 +471,8 @@ public class ViewController {
         double y = start_Y;
 
         gc.setFill(stdAliveCellColor);
-        for(int rows = 0; rows < grid.length; rows++) {
-            for(int cols = 0; cols < grid[0].length; cols++ ) {
+        for(int rows = 1; rows < grid.length - 1; rows++) {
+            for(int cols = 1; cols < grid[0].length - 1; cols++ ) {
                 if (grid[rows][cols]== 1) {
                     gc.fillRect(x, y, cellSize, cellSize);
                 }
@@ -499,13 +499,13 @@ public class ViewController {
         double end_Y = start_Y + getBoardHeight();
 
     	// For hver rad, tegn en horisontal strek
-        for(int y = 0; y <= rows; y++) {
+        for(int y = 0; y <= rows-2; y++) {
             gc.strokeLine(start_X, start_Y + (cellSize * y),
                     end_X, start_Y + (cellSize * y));
         }
 
         // For hver kolonne, tegn en vertikal strek
-        for(int x = 0; x <= columns; x++) {
+        for(int x = 0; x <= columns-2; x++) {
         	gc.strokeLine(start_X + (cellSize * x),
                         start_Y, start_X + (cellSize * x), end_Y);
         }

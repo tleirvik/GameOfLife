@@ -55,8 +55,14 @@ public class EditorController {
     // sette brettet her?
     public void setPattern(byte[][] pattern, double cellSize) {
         this.pattern = pattern;
-        this.cellSize = cellSize;
-        if(pattern != null && cellSize != 0) {
+        double cellWidth = patternCanvas.getWidth() / pattern.length;
+        double cellHeight = patternCanvas.getHeight() / pattern[0].length;
+        this.cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
+        System.out.println(cellWidth);
+        System.out.println(cellHeight);
+        System.out.println(cellSize);
+        
+        if(pattern != null) {
             draw();
         }
     }
@@ -68,16 +74,18 @@ public class EditorController {
         gc.fillRect(0, 0, patternCanvas.getWidth(), 
                 patternCanvas.getHeight());
         
-        for (int i = 0; i < pattern.length; i++) {
-            for(int j = 0; j < pattern[0].length; j++) {
-                if(pattern[i][j] == 1) {
-                    gc.setFill(Color.VIOLET);
-                    double x = Math.round(j * patternCanvas.getWidth() / pattern[0].length);
-                    double y = Math.round(i * patternCanvas.getHeight() / pattern[i].length);
-                    gc.fillRect(x, y, Math.round(patternCanvas.getWidth() / pattern[0].length),
-                            Math.round(patternCanvas.getHeight() / pattern[i].length));
+        double x = 0, y = 0;
+        
+        gc.setFill(Color.VIOLET);
+        for(int row = 1; row < pattern.length - 1; row++) {
+            for(int col = 1; col < pattern[0].length - 1; col++) {
+                if (pattern[row][col]== 1) {
+                    gc.fillRect(x, y, cellSize, cellSize);
                 }
+                x += cellSize; //Plusser på for neste kolonne
             }
+            x = 0; //Reset X-verdien for neste rad
+            y += cellSize; //Plusser på for neste rad
         }
         draw(gc);
     }

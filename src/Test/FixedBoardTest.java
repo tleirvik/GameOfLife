@@ -2,7 +2,6 @@ package Test;
 
 import org.junit.Test;
 
-import static org.junit.Assert.*;
 
 /**
  * Created by tleirvik on 01.04.2016.

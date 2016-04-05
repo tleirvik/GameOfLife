@@ -1,15 +1,18 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
-<?import javafx.scene.canvas.*?>
-<?import javafx.geometry.*?>
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ScrollBar?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="patternController" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.EditorController">
+<BorderPane fx:id="patternController" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.EditorController">
    <left>
       <VBox prefHeight="371.0" prefWidth="198.0" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
@@ -73,7 +76,11 @@
       </VBox>
    </left>
    <center>
-      <Canvas fx:id="patternCanvas" height="355.0" width="578.0" BorderPane.alignment="CENTER" />
+      <Pane BorderPane.alignment="CENTER">
+         <children>
+            <Canvas fx:id="patternCanvas" height="395.0" width="602.0" />
+         </children>
+      </Pane>
    </center>
    <bottom>
       <VBox prefHeight="130.0" prefWidth="100.0" BorderPane.alignment="CENTER">
