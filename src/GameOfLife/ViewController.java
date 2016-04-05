@@ -10,6 +10,7 @@ import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -122,7 +123,7 @@ public class ViewController {
     public void initialize() {
         gController = new GameController();
         
-        initializeTimeline(10);
+        initializeTimeline();
         initializeCellSizeSlider(1,1);
         initializeFpsSlider();
         initializeBindCanvasSize();
@@ -612,14 +613,14 @@ public class ViewController {
 
             //Finn ut om brukeren har musen over grid-et
             if((isXInsideGrid(scrollLocation_X)) && (isYInsideGrid(scrollLocation_Y))) {
-                cellSize *= zoomFactor;
+                cellSizeSlider.setValue(cellSize*zoomFactor);
                 
                 offset_X += (scrollLocation_X - center_X);
                 offset_Y += (scrollLocation_Y - center_Y);
                 
                 draw();
             } else {
-                cellSize *= zoomFactor;
+                cellSizeSlider.setValue(cellSize*zoomFactor);
                 draw();
             }
         });
@@ -654,12 +655,19 @@ public class ViewController {
         fpsSlider.setMajorTickUnit(10);
         fpsSlider.setMinorTickCount(0);
         fpsLabel.setText("10");
-    	fpsSlider.valueProperty().addListener((ObservableValue<?
-                extends Number> ov, Number old_fps, Number new_fps) -> {
-            fpsLabel.setText(Integer.toString(new_fps.intValue()));
-            KeyFrame keyframe = timeline.getKeyFrames().get(0);
-            timeline = new Timeline(new_fps.intValue());
-            timeline.getKeyFrames().add(keyframe);
+        fpsSlider.valueChangingProperty().addListener((ObservableValue<? extends Boolean> obs, Boolean wasChanging, Boolean isChanging) -> {
+            if (!isChanging) {
+                int newValue = (int)fpsSlider.getValue();
+                fpsLabel.setText(Integer.toString(newValue));
+                if(timeline.getStatus() == Animation.Status.RUNNING) {
+                    timeline.stop();
+                    initializeKeyFrame(newValue);
+                    timeline.play();
+                } else {
+                    initializeKeyFrame(newValue);
+                }
+                
+            }
         });
     }
 
@@ -675,25 +683,10 @@ public class ViewController {
     	});
     }
 
-    private void initializeTimeline(int fps) {
+    private void initializeTimeline() {
         timeline = new Timeline();
-        
-        Duration duration = Duration.millis(1000/60);
-        KeyFrame keyFrame;
-        keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-            long startTime = System.nanoTime();
-            gController.play();
-            long endTime = System.nanoTime();
-            long duration2 = (endTime - startTime) / 1000000;
-            System.out.println("Next Generation: " + duration2);
-
-            startTime = System.nanoTime();
-            draw();
-            endTime = System.nanoTime();
-            duration2 = (endTime - startTime) / 1000000;
-            System.out.println("Draw: " + duration2);
-        });
-        timeline.getKeyFrames().add(keyFrame);
+        timeline.setCycleCount(Animation.INDEFINITE);
+        initializeKeyFrame(30);
     }
 
     /**
@@ -709,5 +702,25 @@ public class ViewController {
         } else {
             initializeCellSizeSlider(cellHeight, cellHeight);
         }     
+    }
+
+    private void initializeKeyFrame(int fps) {
+        Duration duration = Duration.millis(1000/fps);
+        KeyFrame keyFrame;
+        keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
+            long startTime = System.nanoTime();
+            gController.play();
+            long endTime = System.nanoTime();
+            long duration2 = (endTime - startTime) / 1000000;
+            System.out.println("Next Generation: " + duration2);
+
+            startTime = System.nanoTime();
+            draw();
+            endTime = System.nanoTime();
+            duration2 = (endTime - startTime) / 1000000;
+            System.out.println("Draw: " + duration2);
+        });
+        timeline.getKeyFrames().clear();
+        timeline.getKeyFrames().add(0, keyFrame);
     }
 }
