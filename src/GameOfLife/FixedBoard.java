@@ -38,8 +38,8 @@ public class FixedBoard {
      */
     public FixedBoard(byte[][] board, MetaData metadata) {
     	this.metadata = metadata;
-    	currentGeneration = new byte[board.length+2][board[0].length+2];
-        firstGeneration = new byte[board.length+2][board[0].length+2];
+    	currentGeneration = new byte[board.length][board[0].length];
+        firstGeneration = new byte[board.length][board[0].length];
 
     	for(int row = 1; row < board.length-1; row++) {
             for(int col = 1; col < board[0].length-1; col++) {

@@ -3,6 +3,7 @@ package FileManagement;
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
+import java.nio.Buffer;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
@@ -18,10 +19,10 @@ import util.DialogBoxes;
  * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
  */
 public class RLEEncoder {
-    private byte[][] board;
-    private MetaData metadata;
-    private Path filePath;
-    private StringBuffer rleString;
+    private final byte[][] board;
+    private final MetaData metadata;
+    private final Path filePath;
+    private final StringBuffer rleString;
 
     /**
      * Constructor that creates an RLEDecoder object.
@@ -29,9 +30,11 @@ public class RLEEncoder {
      * @param f The file to save the board to
      */
     public RLEEncoder(FixedBoard b, File f) {
-    metadata = b.getMetaData();
-    board = b.getBoardReference();
-    filePath = f.toPath();
+        metadata = b.getMetaData();
+        board = b.getBoardReference();
+        filePath = f.toPath();
+        rleString = new StringBuffer();
+        System.out.println(board.length + " " + board[0].length);
     }
 
     /**
@@ -41,16 +44,15 @@ public class RLEEncoder {
      * @return true if the writing to file is successful
      */
     public boolean encode() {
-            rleString = new StringBuffer();
             Charset charset = Charset.forName("UTF-8");
 
             try (BufferedWriter bw = Files.newBufferedWriter(filePath, charset)) {
                     encodeMetaData();
                     encodeBoardSize();
                     encodeRuleString();
+                    writeMetadata(bw);
                     encodeBoard();
-
-                    bw.write(rleString.toString());
+                    writeBoard(bw);
             } catch (IOException ioE) {
             DialogBoxes.infoBox("Error!", "An unknown error occurred!", "The following error occurred when trying to save the game: " + ioE.getMessage());
             return false;
@@ -58,7 +60,7 @@ public class RLEEncoder {
             return true;
     }
 
-     /**
+    /**
      * Encodes the associated metadata and adds it to the StringBuffer.<p>
      *
      *This method is not meant to be called directly, but rather through the encode() method.
@@ -86,9 +88,9 @@ public class RLEEncoder {
      */
     private void encodeBoardSize() {
         rleString.append("x = ");
-        rleString.append(board[0].length);
+        rleString.append(board[0].length - 2);
         rleString.append(", y = ");
-        rleString.append(board.length);
+        rleString.append(board.length - 2);
         rleString.append(", ");
     }
      /**
@@ -109,27 +111,61 @@ public class RLEEncoder {
      * This method parses the byte[][] game board and translates it to Run Length Encoding(RLE) format
      *
      */
+
     private void encodeBoard() {
+        int count = 1;
+
+        for (int row = 1; row < board.length - 1; row++) {
+            for (int col = 1; col < board[0].length - 1; col++) {
+                final int nextPosition = col + 1;
+                final byte currentCell = board[row][col];
+                rleString.append(currentCell == 1 ? "o" : "b");
+            }
+            rleString.append("$");
+        }
+        rleString.append("!");
+    }
+
+    private void writeMetadata(BufferedWriter bw) throws IOException {
+        bw.write(rleString.toString());
+        rleString.delete(0, rleString.length());
+    }
+
+    private void writeBoard(BufferedWriter bw) throws IOException {
+        int offset = 0;
+        final int offsetValue = 79;
+        final String tempRleString = rleString.toString();
+        while(offset < tempRleString.length()) {
+            if(tempRleString.length() - offset < offsetValue) {
+                bw.write(rleString.toString(), offset, tempRleString.length() - offset);
+                return;
+            }
+            bw.write(rleString.toString(), offset, offsetValue);
+            bw.write("\r\n");
+            offset += offsetValue;
+        }
+
+    }
+}
+/*
+private void encodeBoard() {
         int count = 1;
         int currentCell = -1;
 
-        for(int row = 0; row < board.length; row++) {
-            for (int col = 0; col < board[0].length; col++) {
-                currentCell = board[row][col];
-                if ((col != board[0].length - 1) && (currentCell == board[row][col + 1])) {
-                    count++;
+        for (int row = 1; row < board.length - 1; row++) {
+            for (int col = 1; col < board[0].length - 1; col++) {
+                final int nextPosition = col+1;
+                currentCell = board[row][col]; // Henter cellen
+                if((nextPosition != board[0].length - 1) && (currentCell == board[row][nextPosition])) { // Hvis cellen matcher neste celle...
+                    count++; // Pluss på antall forekomster av cellen
                 } else {
-                    rleString.append((count > 1) ? count : "");
-                    rleString.append((currentCell == 1) ? "o" : "b");
+                    // Skriver inn antall forekomster (skipper om den bare forekommer en gang) og om den er død eller levende
+                    rleString.append(((count == 1) ? "" : Integer.toString(count)) + ((currentCell == 1) ? "o" : "b"));
                     count = 1;
                 }
             }
-            if (count > 1) {
-                rleString.append((count > 1) ? count : "");
-                rleString.append((currentCell == 1) ? "o" : "b");
-                count = 1;
-            }
-            rleString.append((row != board.length-1) ? "$" : "!");
+            rleString.append("$");
         }
+        rleString.append("!");
     }
-}
+ */

@@ -6,6 +6,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import GameOfLife.MetaData;
 import GameOfLife.PatternFormatException;
+import javafx.scene.control.Dialog;
 
 /**
  * This class handles the interpretation of RLE files. One method reads the meta data and creates the game board and
@@ -103,7 +104,6 @@ public class RLEDecoder {
                         author.append(tempString4);
                         metadata.setAuthor(author.toString());
                 }
-
             } else {
                 boolean foundRows = false;
                 boolean foundColumns = false;
