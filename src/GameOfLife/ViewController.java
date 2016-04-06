@@ -536,6 +536,11 @@ public class ViewController {
         }
     }
 
+    @FXML
+    public void showStatistics() {
+        System.out.println("hei");
+        dialogBoxes.statisticsDialogBox();
+    }
     /**
      * This method launches a dialog box where the user can specify
      * meta data for the game board.
