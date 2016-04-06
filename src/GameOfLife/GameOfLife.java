@@ -3,7 +3,9 @@ package GameOfLife;
 import java.util.Random;
 
 public class GameOfLife {
-    private FixedBoard board; 
+    private FixedBoard board;
+    private int[][] stats;
+    private FixedBoard statsBoard;
 
     //Burde ikke lage brett i konstruktør, burde heller
     //Være en egen funksjon så man slipper å slette og lage ny GameOfLife.
@@ -36,7 +38,40 @@ public class GameOfLife {
     	return board;
         
     }
-    
+    int[][] getStatistics(int iterations) {
+        // Lage en ny kopi av brettet og kjøre nextgen i egen tråd?
+        // Lage count metode av levende celler
+        // e = set membership
+        // i intervallet
+        // liggende U er A <U> B(subset). Alle elemter av A er også i B(Eulers diagram)
+
+        // Ta inn et brett, kjøre antall generasjoner og samle stats
+
+
+        GameOfLife statsGol = new GameOfLife(board.getBoardReference(), new MetaData());
+        statsBoard = statsGol.getBoard();
+        stats = new int[iterations][3];
+
+        
+        return stats;
+
+    }
+    public int countAliveCells() {
+        String boardString = statsBoard.getBoardReference().toString();
+        System.out.println(boardString);
+
+        int count = 0;
+
+        for (int i = 0; i < boardString.length(); i++) {
+            if (boardString.charAt(i) == 1) {
+                count++;
+            }
+            
+        }
+    }
+
+
+
     public byte[][] getBoardReference() {
     	return board.getBoardReference();
     }
