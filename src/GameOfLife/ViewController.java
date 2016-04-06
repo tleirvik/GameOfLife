@@ -149,8 +149,15 @@ public class ViewController {
     @FXML
     public void newGame() {
         timeline.stop();
-        openNewGameDialog();
-        gController.newGame(false, rows, columns);
+        int[] rowCol;
+    	rowCol = dialogBoxes.openNewGameDialog();
+        
+        if(rowCol == null) {
+            return;
+            
+        }
+        
+        gController.newGame(false, rowCol[1], rowCol[0]);        
         openGame();
     }
     
@@ -162,7 +169,6 @@ public class ViewController {
         editor.initModality(Modality.WINDOW_MODAL);
         editor.initOwner(gameCanvas.getScene().getWindow());
         
-        
         try {
             FXMLLoader loader;
             loader = new FXMLLoader(getClass().getResource("PatternEditor.fxml"));
@@ -173,7 +179,7 @@ public class ViewController {
             // Muliggjør overføring av nødvendig data til editor.
             EditorController edController = loader.getController();
             // overføre data via setter ?
-            edController.setPattern(grid);
+            edController.setPattern(grid, gController.getMetadata());
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
@@ -184,9 +190,8 @@ public class ViewController {
             editor.show();
         } catch (IOException e) {
             DialogBoxes.infoBox("Error", "Could not open the Pattern Editor", 
-                    "Please try again.");
-        }
-        
+                    e.getMessage());
+        } 
     }
     
     public void loadGameBoardFromRLE(boolean online) {
@@ -214,6 +219,7 @@ public class ViewController {
                 new ExtensionFilter("All Files", "*.*"));
 
             File selectedFile = fileChooser.showOpenDialog(mainStage);
+            
             if(selectedFile != null) {
                 if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
                     statusBar.setText("Could not open file!");
@@ -223,10 +229,12 @@ public class ViewController {
                 return;
             }
         }
+        
         byte[][] board = fileLoader.getBoard();
         rows = board.length;
         columns = board[0].length;
         gController.newGame(board, fileLoader.getMetadata());
+        
         openGame();
     }
     
@@ -253,6 +261,8 @@ public class ViewController {
      */
     public void openGame() {
         grid = gController.getBoardReference();
+        rows = gController.getRows();
+        columns = gController.getColumns();
         setLowestCellSize();
         centerBoard();
         draw();
@@ -542,14 +552,7 @@ public class ViewController {
   // Dialog boxes
   //================================================================================
 
-    private void openNewGameDialog() {
-    	int[] rowCol;
-    	rowCol = dialogBoxes.openNewGameDialog();
-        if(rowCol != null) {
-            rows = rowCol[0];
-            columns = rowCol[1];
-        }
-    }
+    
 
     /**
      * This method launches a dialog box where the user can specify

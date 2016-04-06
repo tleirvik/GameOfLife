@@ -91,9 +91,12 @@
    <bottom>
       <VBox prefHeight="130.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox prefHeight="184.0" prefWidth="600.0" />
+            <HBox fx:id="stripBox" maxHeight="185.0" minWidth="600.0" maxWidth="600.0">
+               <children>
+                  <Canvas fx:id="strip" height="185.0" width="800.0" />
+               </children></HBox>
             <ScrollBar />
-            <Button fx:id="updateStripBtn" text="Update Strip" onAction="#updateStrip" />
+            <Button onAction="#updateStrip" text="Update Strip" />
          </children>
       </VBox>
    </bottom>

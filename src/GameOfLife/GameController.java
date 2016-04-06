@@ -64,4 +64,12 @@ public class GameController {
     public void setCellAliveStatus(int row, int column, byte isAlive) {
         gol.setCellAliveState(row, column, isAlive);
     }
+
+    public int getRows() {
+       return gol.getRows();
+    }
+
+    public int getColumns() {
+        return gol.getColumns();
+    }
 }

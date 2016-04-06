@@ -12,6 +12,7 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
+import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -27,13 +28,15 @@ import javafx.stage.Stage;
 public class EditorController {
     @FXML private BorderPane patternController;
     @FXML private Canvas patternCanvas;
+    @FXML private Canvas strip;
     @FXML private Button closeButton;
     @FXML private Button updateStripBtn;
+    @FXML private HBox stripBox;
     
-    private GraphicsContext gc;
-    private byte[][] pattern;
     private double cellSize;
-    
+    private double cellSizeStrip;
+    private FixedBoard fixedBoard;
+    private byte[][] pattern;
     
     /**
      * This method closes the editor window.
@@ -68,23 +71,42 @@ public class EditorController {
     @FXML
     public void updateStrip() {
         // oppdater mønsteret hver gang knappen trykkes
+        // kopiere mønsteret til en ny variabel slik at ikke originalen endres
+        for(int i = 0; i < 20; i++) {
+            fixedBoard.nextGeneration();
+            Canvas canvas = new Canvas(20, 20);
+            stripBox.getChildren().add(canvas);
+            GraphicsContext gc = canvas.getGraphicsContext2D();
+            drawStrip();
+        }
+        
+        fixedBoard.resetBoard();
     }
     
     // sette brettet her?
-    public void setPattern(byte[][] pattern) {
-        if(pattern != null) {
-            this.pattern = pattern;
-            double cellWidth = patternCanvas.getWidth() / pattern.length;
-            double cellHeight = patternCanvas.getHeight() / pattern[0].length;
-            this.cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
-            
-            draw();
-        }
+    public void setPattern(byte[][] pattern, MetaData metaData) {
+        fixedBoard = new FixedBoard(pattern, metaData);
+        this.pattern = fixedBoard.getBoardReference();
+
+        double cellWidth = patternCanvas.getWidth() / pattern[0].length;
+        System.out.println(pattern[0].length + " height");
+        System.out.println(pattern.length + " bredde");
+        double cellHeight = patternCanvas.getHeight() / pattern.length;
+        this.cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
+
+        draw();
+    }
+    
+    private void drawStrip() {
+        final double stripCellSize = strip.getHeight() / pattern[0].length;
+        final double generationWidth;
+        boolean isGenerationAlive = false;
+        
     }
     
     // tegne mønsteret
     private void draw() {
-        gc = patternCanvas.getGraphicsContext2D();
+        GraphicsContext gc = patternCanvas.getGraphicsContext2D();
         gc.setFill(Color.BLACK);
         gc.fillRect(0, 0, patternCanvas.getWidth(), 
                 patternCanvas.getHeight());
