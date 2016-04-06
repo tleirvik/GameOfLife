@@ -30,6 +30,7 @@ import util.DialogBoxes;
 
 import java.io.File;
 import java.io.IOException;
+import javafx.application.Platform;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -44,9 +45,11 @@ public class ViewController {
     @FXML private MenuItem openPatternEditor;
     @FXML private MenuItem savePicker;
     
+    
     @FXML private Button playButton;
     @FXML private Button pauseButton;
     @FXML private Button restartButton;
+    
 
     @FXML private ColorPicker gridColorPicker;
     @FXML private ColorPicker cellColorPicker;
@@ -190,11 +193,16 @@ public class ViewController {
         timeline.stop();
         statusBar.setText("");
         FileLoader fileLoader = new FileLoader();
-        
+                
         if(online) {
-            if(!fileLoader.readGameBoardFromURL(dialogBoxes.urlDialogBox())) {
-                statusBar.setText("Could not load file from URL!");
-                return;
+            String urlString = dialogBoxes.urlDialogBox();
+            if(!urlString.equals("")) {
+                if(!fileLoader.readGameBoardFromURL(urlString)) {
+                    statusBar.setText("Could not load file from URL!");
+                    return;
+                }
+            } else {
+               return;
             }
         } else {
             Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
@@ -211,6 +219,8 @@ public class ViewController {
                     statusBar.setText("Could not open file!");
                     return;
                 }
+            } else {
+                return;
             }
         }
         byte[][] board = fileLoader.getBoard();
@@ -312,6 +322,11 @@ public class ViewController {
         }
         gController.resetGame();
         draw();
+    }
+    
+    @FXML
+    public void closeApplication() {
+        Platform.exit();
     }
 
     /**

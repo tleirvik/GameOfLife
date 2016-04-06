@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -12,7 +18,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="patternController" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.EditorController">
+<BorderPane fx:id="patternController" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.EditorController">
    <left>
       <VBox prefHeight="371.0" prefWidth="198.0" spacing="20.0" BorderPane.alignment="CENTER">
          <children>
@@ -78,7 +84,7 @@
    <center>
       <Pane BorderPane.alignment="CENTER">
          <children>
-            <Canvas fx:id="patternCanvas" height="395.0" width="602.0" onMouseClicked="#handleMouseClick"/>
+            <Canvas fx:id="patternCanvas" height="395.0" onMouseClicked="#handleMouseClick" width="602.0" />
          </children>
       </Pane>
    </center>
@@ -87,6 +93,7 @@
          <children>
             <HBox prefHeight="184.0" prefWidth="600.0" />
             <ScrollBar />
+            <Button fx:id="updateStripBtn" text="Update Strip" onAction="#updateStrip" />
          </children>
       </VBox>
    </bottom>

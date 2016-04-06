@@ -28,6 +28,7 @@ public class EditorController {
     @FXML private BorderPane patternController;
     @FXML private Canvas patternCanvas;
     @FXML private Button closeButton;
+    @FXML private Button updateStripBtn;
     
     private GraphicsContext gc;
     private byte[][] pattern;
@@ -55,20 +56,18 @@ public class EditorController {
     
     @FXML
     public void handleMouseClick(MouseEvent e) {
-        
-//        int column = board.getColumns() * (int) evt.getX() / 
-//                super.getCanvas().widthProperty().intValue();
-//        int row = (int) board.getRows() * (int) evt.getY() / 
-//                super.getCanvas().heightProperty().intValue();
-        
         int row = (int) (e.getY() / cellSize) + 1;
         int col = (int) (e.getX() / cellSize) + 1;
-        
         
         if(row < pattern.length && col < pattern[0].length) {
             pattern[row][col] = (pattern[row][col] == 1) ? (byte) 0 : (byte) 1;
             draw();
         }
+    }
+    
+    @FXML
+    public void updateStrip() {
+        // oppdater mønsteret hver gang knappen trykkes
     }
     
     // sette brettet her?
@@ -93,18 +92,18 @@ public class EditorController {
         double x = 0;
         double y = 0;
         
-        gc.setFill(Color.VIOLET);
+        gc.setFill(Color.WHITE);
         for(int row = 1; row < pattern.length - 1; row++) {
             for(int col = 1; col < pattern[0].length - 1; col++) {
                 if (pattern[row][col] == 1) {
                     gc.fillRect(x, y, cellSize, cellSize);
                 }
-                x += cellSize; //Plusser på for neste kolonne
+                x += cellSize; // Plusser på for neste kolonne
             }
-            x = 0; //Reset X-verdien for neste rad
-            y += cellSize; //Plusser på for neste rad
+            x = 0; // Reset X-verdien for neste rad
+            y += cellSize; // Plusser på for neste rad
         }
-        drawGridLines(gc);
+        //drawGridLines(gc);
     }
     
     // bør ha gridlines for å gjøre manipulering mer lesbar.

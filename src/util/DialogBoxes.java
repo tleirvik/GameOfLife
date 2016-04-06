@@ -82,7 +82,6 @@ public class DialogBoxes {
                 @Override
             public void handle(ActionEvent event) {
                         urlString.append(urlTextField.getText());
-                        System.out.println(urlString.toString());
                         mainStage.close();
             }
         });
@@ -210,83 +209,6 @@ public class DialogBoxes {
 
     public int[] openNewGameDialog() {
         int[] array = new int[2];
-        
-//        Dialog<Pair<String, String>> dialog = new Dialog<>();
-//        dialog.setTitle("KLJ");
-//        dialog.setHeaderText("Header");
-//        
-//        ButtonType buttonType = new ButtonType("OK", ButtonData.OK_DONE);
-//        dialog.getDialogPane().getButtonTypes().addAll(buttonType, ButtonType.CANCEL);
-//        
-//        GridPane grid = new GridPane();
-//        grid.setHgap(10);
-//        grid.setVgap(10);
-//        grid.setPadding(new Insets(20, 150, 10, 10));
-//        
-//        TextField columns = new TextField();
-//        columns.setPromptText("Number of columns");
-//        TextField rows = new TextField();
-//        rows.setPromptText("Number of rows");
-//        
-//        
-//        
-//        grid.add(new Label("Columns:"), 0, 0);
-//        grid.add(columns, 1, 0);
-//        grid.add(new Label("Rows:"), 0, 1);
-//        grid.add(rows, 1, 1);
-//        
-//        Label errorColumns = new Label("");
-//        Label errorRows = new Label("");
-//        grid.add(errorColumns, 2, 0);
-//        grid.add(errorRows, 2, 1);
-//        
-//        Node okButton = dialog.getDialogPane().lookupButton(buttonType);
-//        
-//        
-//        columns.textProperty().addListener((observable, oldValue, newValue) -> {
-//            okButton.setDisable(newValue.trim().isEmpty());
-//        });
-//        
-//        
-//        dialog.getDialogPane().setContent(grid);
-//        
-//        dialog.setResultConverter(dialogButton -> {
-//            if(dialogButton == buttonType) {
-//                return new Pair<>(columns.getText(), rows.getText());
-//            }
-//            return null;
-//        });
-//        
-//        Optional<Pair<String, String>> result = dialog.showAndWait();
-//        
-//        result.ifPresent(columnsRows -> {
-//            boolean ok1 = false;
-//            boolean ok2 = false;
-//            try {
-//                array[0] = Integer.parseInt(columnsRows.getKey());
-//                
-//            } catch (NumberFormatException e) {
-//                errorColumns.setText("Error Columns");
-//                ok1 = true;
-//            }
-//            
-//            try {
-//                array[1] = Integer.parseInt(columnsRows.getValue());
-//            } catch (NumberFormatException e) {
-//                errorRows.setText("Error Rows");
-//                ok2 = true;
-//            }
-//
-//            if(!ok1 && !ok2) {
-//                //dialog.close();
-//            } 
-//        });
-        
-        
-        
-        
-        
-        
         GridPane root = new GridPane();
         root.setPadding(new Insets(20, 150, 10, 10));
         root.setHgap(10);
