@@ -68,53 +68,86 @@ public class EditorController {
         }
     }
     
-    @FXML
-    public void updateStrip() {
-        // oppdater mønsteret hver gang knappen trykkes
-        // kopiere mønsteret til en ny variabel slik at ikke originalen endres
-        for(int i = 0; i < 20; i++) {
-            fixedBoard.nextGeneration();
-            Canvas canvas = new Canvas(20, 20);
-            stripBox.getChildren().add(canvas);
-            GraphicsContext gc = canvas.getGraphicsContext2D();
-            drawStrip();
-        }
-        
-        fixedBoard.resetBoard();
-    }
+    
     
     // sette brettet her?
     public void setPattern(byte[][] pattern, MetaData metaData) {
         fixedBoard = new FixedBoard(pattern, metaData);
         this.pattern = fixedBoard.getBoardReference();
 
-        double cellWidth = patternCanvas.getWidth() / pattern[0].length;
-        System.out.println(pattern[0].length + " height");
-        System.out.println(pattern.length + " bredde");
-        double cellHeight = patternCanvas.getHeight() / pattern.length;
+        double cellWidth = patternCanvas.getWidth() / (pattern[0].length - 2);
+        double cellHeight = patternCanvas.getHeight() / (pattern.length - 2);
         this.cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
 
         draw();
     }
     
-    private void drawStrip() {
-        final double stripCellSize = strip.getHeight() / pattern[0].length;
-        final double generationWidth;
+    @FXML
+    public void updateStrip() {
+        final double stripCellSize = strip.getHeight() / (pattern.length - 2);
+        final double generationWidth = stripCellSize * (pattern[0].length - 2);
+        final double padding = 25;
+        strip.setWidth((generationWidth + padding) * 20);
+        double offset_X = 0;
+        
+        final GraphicsContext gc = strip.getGraphicsContext2D();
+        gc.clearRect(0, 0, strip.widthProperty().doubleValue(), 
+                strip.heightProperty().doubleValue());
+        
+        for(int i = 0; i < 20; i++) {
+            fixedBoard.nextGeneration();
+            drawStrip(gc, offset_X, stripCellSize);
+            offset_X += generationWidth + padding;
+        }
+        
+        fixedBoard.resetBoard();
+    }
+    
+    private void drawStrip(GraphicsContext gc, double offset_X, double stripCellSize) {
         boolean isGenerationAlive = false;
         
+        double x = offset_X;
+        double y = 0;
+
+        for(int row = 1; row < pattern.length - 1; row++) {
+            for(int col = 1; col < pattern[0].length - 1; col++) {
+                if (pattern[row][col] == 1) {
+                    gc.fillRect(x, y, stripCellSize, stripCellSize);
+                }
+                x += stripCellSize; // Plusser på for neste kolonne
+            }
+            x = offset_X; // Reset X-verdien for neste rad
+            y += stripCellSize; // Plusser på for neste rad
+        }
+        
+        final double start_x = offset_X;
+        final double start_y = 0;
+        final double end_y = stripCellSize * pattern.length;
+        final double end_x = offset_X + 
+                (stripCellSize * pattern[0].length);
+        
+        // tegner en ramme rundt hver generasjon
+        // topp
+        gc.strokeLine(start_x, start_y, end_x, start_y);
+        // venstre
+        gc.strokeLine(start_x, start_y, start_x, end_y);
+        // høyre
+        gc.strokeLine(end_x, start_y, end_x, end_y);
+        // bunn
+        gc.strokeLine(start_x, end_y, end_x, end_y);
     }
     
     // tegne mønsteret
     private void draw() {
-        GraphicsContext gc = patternCanvas.getGraphicsContext2D();
-        gc.setFill(Color.BLACK);
+        final GraphicsContext gc = patternCanvas.getGraphicsContext2D();
+        gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, patternCanvas.getWidth(), 
                 patternCanvas.getHeight());
 
         double x = 0;
         double y = 0;
         
-        gc.setFill(Color.WHITE);
+        gc.setFill(Color.BLACK);
         for(int row = 1; row < pattern.length - 1; row++) {
             for(int col = 1; col < pattern[0].length - 1; col++) {
                 if (pattern[row][col] == 1) {
@@ -125,7 +158,7 @@ public class EditorController {
             x = 0; // Reset X-verdien for neste rad
             y += cellSize; // Plusser på for neste rad
         }
-        //drawGridLines(gc);
+        drawGridLines(gc);
     }
     
     // bør ha gridlines for å gjøre manipulering mer lesbar.
@@ -135,7 +168,6 @@ public class EditorController {
         
         final double height = getPatternHeight();
         final double width = getPatternWidth();
-        
         
         // For hver kolonne, tegn en vertikal strek
         for(int col = 0; col <= pattern[0].length - 2; col++) {

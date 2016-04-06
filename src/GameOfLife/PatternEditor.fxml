@@ -91,11 +91,11 @@
    <bottom>
       <VBox prefHeight="130.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
-            <HBox fx:id="stripBox" maxHeight="185.0" minWidth="600.0" maxWidth="600.0">
-               <children>
-                  <Canvas fx:id="strip" height="185.0" width="800.0" />
-               </children></HBox>
-            <ScrollBar />
+            <ScrollPane fitToHeight="true" minHeight="150.0" minWidth="800.0" pannable="false" prefViewportWidth="800.0" vbarPolicy="NEVER" vmax="0.0">
+               <content>
+                  <Canvas fx:id="strip" height="132.0" width="7000.0" />
+               </content>
+            </ScrollPane>
             <Button onAction="#updateStrip" text="Update Strip" />
          </children>
       </VBox>
