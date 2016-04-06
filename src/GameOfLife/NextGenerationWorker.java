@@ -3,20 +3,19 @@ package GameOfLife;
 /**
  *
  * @author Robin
+ *
+ * Endret, men ble ikke merkbart raskere med egen klasse som implementerer Runnable
  */
 public class NextGenerationWorker implements Runnable {
-    private int startRow;
-    private int endRow;
-    private DynamicBoard workingBoard;
+
+    private GameController gameController;
     
-    public NextGenerationWorker(int startRow, int endRow, DynamicBoard workingBoard) {
-        this.startRow = startRow;
-        this.endRow = endRow;
-        this.workingBoard = workingBoard;
+    public NextGenerationWorker(GameController gameController) {
+        this.gameController = gameController;
     }
     
     @Override
     public void run() {
-        workingBoard.nextGeneration(startRow, endRow);
+        gameController.play();
     }    
 }

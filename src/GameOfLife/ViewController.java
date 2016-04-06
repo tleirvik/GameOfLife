@@ -348,19 +348,23 @@ public class ViewController {
                 Duration duration = Duration.millis(33.333);
                 KeyFrame keyFrame;
                 keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-                    // long startTime = System.nanoTime();
-                    Stopwatch sw = new Stopwatch("Next generation");
+                    Stopwatch sw = new Stopwatch("Next generation threading");
                     sw.start();
-                    gController.play();
-                    sw.stop();
-                    Stopwatch swGrid = new Stopwatch("Get grid");
-                    swGrid.start();
+                    Thread newGenerationThread = new Thread() {
+                        public void run() {
+                            gController.play();
+                        }
+                    };
+                    newGenerationThread.start();
+
+                    try {
+                        newGenerationThread.join();
+                    } catch (InterruptedException e1) {
+                        e1.printStackTrace();
+                    }
                     grid = gController.getBoardReference();
-                    swGrid.stop();
-                    Stopwatch swDraw = new Stopwatch("Draw");
-                    swDraw.start();
                     draw();
-                    swDraw.stop();
+                    sw.stop();
                 });
             timeline.getKeyFrames().add(keyFrame);
             }
