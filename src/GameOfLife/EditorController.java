@@ -64,9 +64,11 @@ public class EditorController {
         int row = (int) (e.getY() / cellSize) + 1;
         int col = (int) (e.getX() / cellSize) + 1;
         
-        pattern[row][col] = (pattern[row][col] == 1) ? (byte) 0 : (byte) 1;
         
-        draw();
+        if(row < pattern.length && col < pattern[0].length) {
+            pattern[row][col] = (pattern[row][col] == 1) ? (byte) 0 : (byte) 1;
+            draw();
+        }
     }
     
     // sette brettet her?
