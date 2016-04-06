@@ -8,6 +8,7 @@ import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -30,7 +31,6 @@ import util.DialogBoxes;
 
 import java.io.File;
 import java.io.IOException;
-import javafx.application.Platform;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -556,8 +556,11 @@ public class ViewController {
 
     @FXML
     public void showStatistics() {
-        System.out.println("hei");
-        dialogBoxes.statisticsDialogBox();
+        timeline.stop();
+        Statistics statistics = new Statistics(grid, 20, new MetaData());
+        statistics.run();
+
+        dialogBoxes.statisticsDialogBox(statistics.getStats());
     }
     /**
      * This method launches a dialog box where the user can specify

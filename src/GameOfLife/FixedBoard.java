@@ -12,6 +12,9 @@ public class FixedBoard {
     private final MetaData metadata;
     private final byte[][] currentGeneration;
     private final byte[][] firstGeneration;
+    private int[] statsArray = new int[20];
+    private int[] diffArray = new int[20];
+    int counter = 0;
     
     /**
      * Constructs a board of a fixed size.
@@ -145,7 +148,54 @@ public class FixedBoard {
             }
         }
     }
-    
+
+    public void nextGenerationWithStats(int iterations) {
+        byte[][] neighbourArray = new byte[currentGeneration.length][currentGeneration[0].length];
+
+        for(int row = 1; row < currentGeneration.length-1; row++) {
+            for(int col = 1; col < currentGeneration[0].length-1; col++) {
+                if(currentGeneration[row][col] == 1) {
+                    neighbourArray[row-1][col-1]++;
+                    neighbourArray[row-1][col]++;
+                    neighbourArray[row-1][col+1]++;
+                    neighbourArray[row][col-1]++;
+                    neighbourArray[row][col+1]++;
+                    neighbourArray[row+1][col-1]++;
+                    neighbourArray[row+1][col]++;
+                    neighbourArray[row+1][col+1]++;
+                }
+            }
+        }
+
+        for(int row = 1; row < currentGeneration.length-1; row++) {
+            for(int col = 1; col < currentGeneration[0].length-1; col++) {
+                currentGeneration[row][col] = ((neighbourArray[row][col]== 3) || (currentGeneration[row][col] == 1 && neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0;
+            }
+        }
+        counter++;
+        String boardString = toString();
+        //System.out.println(toString());
+        int stringCounter = 0;
+        for (char c : boardString.toCharArray()) {
+            if (c == '1') {
+                ++stringCounter;
+
+            }
+            //
+        }
+        System.out.println("cell counter" + stringCounter);
+        System.out.println("counter" + counter);
+        statsArray[counter] = stringCounter;
+        System.out.println(statsArray[counter]);
+
+        for (int i = 0; i < 19; i++) {
+                System.out.println(statsArray[i]);
+
+
+        }
+
+
+    }
     /*
     /**
      * Counts the amount of neighbours for the cell at the given position
@@ -190,5 +240,8 @@ public class FixedBoard {
             }
         }
         return sb.toString();
+    }
+    public int[] getStatsArray() {
+        return statsArray;
     }
 }

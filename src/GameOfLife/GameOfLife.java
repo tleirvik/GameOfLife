@@ -44,7 +44,13 @@ public class GameOfLife {
     public void update() {
         board.nextGeneration();
     }
-    
+
+    public void updateWithStats(int iterations) {
+        board.nextGenerationWithStats(iterations);
+    }
+    public int[] getStatsArray() {
+        return board.getStatsArray();
+    }
     public MetaData getMetaData() {
         return board.getMetaData();
     }
