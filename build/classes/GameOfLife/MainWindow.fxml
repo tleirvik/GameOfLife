@@ -37,7 +37,7 @@
                   <MenuItem fx:id="filePicker" mnemonicParsing="false" onAction="#loadGameBoardFromDisk" text="Load Board from Disk..." />
                   <MenuItem onAction="#loadGameBoardFromURL" text="Load Board from URL..." />
                   <MenuItem fx:id="savePicker" disable="true" onAction="#saveRLE" text="Save RLE As..." />
-              <MenuItem mnemonicParsing="false" text="Close" />
+                  <MenuItem text="Close" onAction="#closeApplication" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">

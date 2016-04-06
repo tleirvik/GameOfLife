@@ -91,4 +91,12 @@ public class GameOfLife {
         board.setCellAliveState(row, column, isAlive);
     }
 
+    public int getRows() {
+        return board.getRows();
+    }
+
+    public int getColumns() {
+        return board.getColumns();
+    }
+
 }

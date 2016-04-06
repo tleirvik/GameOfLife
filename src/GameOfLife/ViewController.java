@@ -30,6 +30,7 @@ import util.DialogBoxes;
 
 import java.io.File;
 import java.io.IOException;
+import javafx.application.Platform;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -44,9 +45,11 @@ public class ViewController {
     @FXML private MenuItem openPatternEditor;
     @FXML private MenuItem savePicker;
     
+    
     @FXML private Button playButton;
     @FXML private Button pauseButton;
     @FXML private Button restartButton;
+    
 
     @FXML private ColorPicker gridColorPicker;
     @FXML private ColorPicker cellColorPicker;
@@ -146,8 +149,15 @@ public class ViewController {
     @FXML
     public void newGame() {
         timeline.stop();
-        openNewGameDialog();
-        gController.newGame(false, rows, columns);
+        int[] rowCol;
+    	rowCol = dialogBoxes.openNewGameDialog();
+        
+        if(rowCol == null) {
+            return;
+            
+        }
+        
+        gController.newGame(false, rowCol[1], rowCol[0]);        
         openGame();
     }
     
@@ -159,7 +169,6 @@ public class ViewController {
         editor.initModality(Modality.WINDOW_MODAL);
         editor.initOwner(gameCanvas.getScene().getWindow());
         
-        
         try {
             FXMLLoader loader;
             loader = new FXMLLoader(getClass().getResource("PatternEditor.fxml"));
@@ -170,7 +179,7 @@ public class ViewController {
             // Muliggjør overføring av nødvendig data til editor.
             EditorController edController = loader.getController();
             // overføre data via setter ?
-            edController.setPattern(grid);
+            edController.setPattern(grid, gController.getMetadata());
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
@@ -181,20 +190,24 @@ public class ViewController {
             editor.show();
         } catch (IOException e) {
             DialogBoxes.infoBox("Error", "Could not open the Pattern Editor", 
-                    "Please try again.");
-        }
-        
+                    e.getMessage());
+        } 
     }
     
     public void loadGameBoardFromRLE(boolean online) {
         timeline.stop();
         statusBar.setText("");
         FileLoader fileLoader = new FileLoader();
-        
+                
         if(online) {
-            if(!fileLoader.readGameBoardFromURL(dialogBoxes.urlDialogBox())) {
-                statusBar.setText("Could not load file from URL!");
-                return;
+            String urlString = dialogBoxes.urlDialogBox();
+            if(!urlString.equals("")) {
+                if(!fileLoader.readGameBoardFromURL(urlString)) {
+                    statusBar.setText("Could not load file from URL!");
+                    return;
+                }
+            } else {
+               return;
             }
         } else {
             Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
@@ -206,17 +219,22 @@ public class ViewController {
                 new ExtensionFilter("All Files", "*.*"));
 
             File selectedFile = fileChooser.showOpenDialog(mainStage);
+            
             if(selectedFile != null) {
                 if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
                     statusBar.setText("Could not open file!");
                     return;
                 }
+            } else {
+                return;
             }
         }
+        
         byte[][] board = fileLoader.getBoard();
         rows = board.length;
         columns = board[0].length;
         gController.newGame(board, fileLoader.getMetadata());
+        
         openGame();
     }
     
@@ -243,6 +261,8 @@ public class ViewController {
      */
     public void openGame() {
         grid = gController.getBoardReference();
+        rows = gController.getRows();
+        columns = gController.getColumns();
         setLowestCellSize();
         centerBoard();
         draw();
@@ -312,6 +332,11 @@ public class ViewController {
         }
         gController.resetGame();
         draw();
+    }
+    
+    @FXML
+    public void closeApplication() {
+        Platform.exit();
     }
 
     /**
@@ -527,14 +552,7 @@ public class ViewController {
   // Dialog boxes
   //================================================================================
 
-    private void openNewGameDialog() {
-    	int[] rowCol;
-    	rowCol = dialogBoxes.openNewGameDialog();
-        if(rowCol != null) {
-            rows = rowCol[0];
-            columns = rowCol[1];
-        }
-    }
+    
 
     @FXML
     public void showStatistics() {

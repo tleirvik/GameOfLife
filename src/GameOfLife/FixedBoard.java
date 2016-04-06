@@ -21,8 +21,8 @@ public class FixedBoard {
      */
     public FixedBoard(int rows, int columns) {
         metadata = new MetaData();
-    	currentGeneration = new byte[rows+2][columns+2];
-        firstGeneration = new byte[rows+2][columns+2];
+    	currentGeneration = new byte[rows + 2][columns + 2];
+        firstGeneration = new byte[rows + 2][columns + 2];
     }
 
     /**
@@ -41,8 +41,8 @@ public class FixedBoard {
     	currentGeneration = new byte[board.length][board[0].length];
         firstGeneration = new byte[board.length][board[0].length];
 
-    	for(int row = 1; row < board.length-1; row++) {
-            for(int col = 1; col < board[0].length-1; col++) {
+    	for(int row = 1; row < board.length - 1; row++) {
+            for(int col = 1; col < board[0].length - 1; col++) {
                 currentGeneration[row][col] = board[row][col];
                 firstGeneration[row][col] = board[row][col];
             }
@@ -85,10 +85,9 @@ public class FixedBoard {
     }
     
     public void resetBoard() {
-        for(int row = 1; row < firstGeneration.length-1; row++) {
-            for(int col = 1; col < firstGeneration[0].length-1; col++) {
-                currentGeneration[row][col] = firstGeneration[row][col];
-            }
+        for(int row = 1; row < firstGeneration.length - 1; row++) {
+            System.arraycopy(firstGeneration[row], 1, 
+                    currentGeneration[row], 1, firstGeneration[0].length - 1 - 1);
     	}
     }
 
