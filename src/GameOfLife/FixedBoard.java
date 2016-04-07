@@ -1,5 +1,9 @@
 package GameOfLife;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
 /**
  * @author Robin Sean Aron David Lundh, Terje Leirvik, Stian Reistad Røgeberg.
  * 
@@ -12,9 +16,12 @@ public class FixedBoard {
     private final MetaData metadata;
     private final byte[][] currentGeneration;
     private final byte[][] firstGeneration;
+    // private final byte[][] previousGeneration;
     private int[] statsArray = new int[20];
     private int[] diffArray = new int[20];
+    private int[] distanceArray = new int[20];
     int counter = 0;
+    int previousValue = 0;
     
     /**
      * Constructs a board of a fixed size.
@@ -150,51 +157,29 @@ public class FixedBoard {
     }
 
     public void nextGenerationWithStats(int iterations) {
-        byte[][] neighbourArray = new byte[currentGeneration.length][currentGeneration[0].length];
-
-        for(int row = 1; row < currentGeneration.length-1; row++) {
-            for(int col = 1; col < currentGeneration[0].length-1; col++) {
-                if(currentGeneration[row][col] == 1) {
-                    neighbourArray[row-1][col-1]++;
-                    neighbourArray[row-1][col]++;
-                    neighbourArray[row-1][col+1]++;
-                    neighbourArray[row][col-1]++;
-                    neighbourArray[row][col+1]++;
-                    neighbourArray[row+1][col-1]++;
-                    neighbourArray[row+1][col]++;
-                    neighbourArray[row+1][col+1]++;
-                }
-            }
-        }
-
-        for(int row = 1; row < currentGeneration.length-1; row++) {
-            for(int col = 1; col < currentGeneration[0].length-1; col++) {
-                currentGeneration[row][col] = ((neighbourArray[row][col]== 3) || (currentGeneration[row][col] == 1 && neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0;
-            }
-        }
-        counter++;
+        nextGeneration();
         String boardString = toString();
-        //System.out.println(toString());
-        int stringCounter = 0;
-        for (char c : boardString.toCharArray()) {
-            if (c == '1') {
-                ++stringCounter;
-
-            }
-            //
-        }
-        System.out.println("cell counter" + stringCounter);
-        System.out.println("counter" + counter);
+        String previousBoardString = "";
+        final int stringCounter = countAliveCells(boardString);
+        //System.out.println("cell counter" + stringCounter);
+        //System.out.println("counter" + counter);
         statsArray[counter] = stringCounter;
-        System.out.println(statsArray[counter]);
-
-        for (int i = 0; i < 19; i++) {
-                System.out.println(statsArray[i]);
-
-
+        //System.out.println(statsArray[counter]);
+        if (counter == 0) {
+            diffArray[counter] = 0;
+            previousValue = stringCounter;
+            distanceArray[counter] = 0;
+            // previousBoardString = boardString;
+        } else {
+            diffArray[counter] = (stringCounter - previousValue);
+            distanceArray[counter] = (int)distance(boardString, previousBoardString);
+            previousValue = stringCounter;
+            previousBoardString = boardString;
         }
 
-
+        System.out.println("distance :" + distanceArray[counter]);
+        //System.out.println(distance(boardString, previousBoardString));
+        counter++;
     }
     /*
     /**
@@ -243,5 +228,71 @@ public class FixedBoard {
     }
     public int[] getStatsArray() {
         return statsArray;
+    }
+    public int[] getDiffArray() {
+        return diffArray;
+    }
+    private int countAliveCells(String boardString) {
+        int stringCounter = 0;
+        for (char c : boardString.toCharArray()) {
+            if (c == '1') {
+                ++stringCounter;
+            }
+        }
+        return stringCounter;
+    }
+    // Levhenstein distance
+    public double distance(String s1, String s2) {
+        if (s1.equals(s2)){
+            return 0;
+        }
+
+        if (s1.length() == 0) {
+            return s2.length();
+        }
+
+        if (s2.length() == 0) {
+            return s1.length();
+        }
+
+        // create two work vectors of integer distances
+        int[] v0 = new int[s2.length() + 1];
+        int[] v1 = new int[s2.length() + 1];
+        int[] vtemp;
+
+        // initialize v0 (the previous row of distances)
+        // this row is A[0][i]: edit distance for an empty s
+        // the distance is just the number of characters to delete from t
+        for (int i = 0; i < v0.length; i++) {
+            v0[i] = i;
+        }
+
+        for (int i = 0; i < s1.length(); i++) {
+            // calculate v1 (current row distances) from the previous row v0
+            // first element of v1 is A[i+1][0]
+            //   edit distance is delete (i+1) chars from s to match empty t
+            v1[0] = i + 1;
+
+            // use formula to fill in the rest of the row
+            for (int j = 0; j < s2.length(); j++) {
+                int cost = (s1.charAt(i) == s2.charAt(j)) ? 0 : 1;
+                v1[j + 1] = Math.min(
+                        v1[j] + 1,              // Cost of insertion
+                        Math.min(
+                                v0[j + 1] + 1,  // Cost of remove
+                                v0[j] + cost)); // Cost of substitution
+            }
+
+            // copy v1 (current row) to v0 (previous row) for next iteration
+            //System.arraycopy(v1, 0, v0, 0, v0.length);
+
+            // Flip references to current and previous row
+            vtemp = v0;
+            v0 = v1;
+            v1 = vtemp;
+
+        }
+
+        return v0[s2.length()];
     }
 }

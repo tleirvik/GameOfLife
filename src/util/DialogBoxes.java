@@ -88,7 +88,7 @@ public class DialogBoxes {
         return urlString.toString();
     }
 
-    public void statisticsDialogBox(int[] statsArray) {
+    public void statisticsDialogBox(int[] statsArray, int[] diffArray) {
         Stage mainStage = new Stage();
         final NumberAxis xAxis = new NumberAxis();
         final NumberAxis yAxis = new NumberAxis();
@@ -100,20 +100,28 @@ public class DialogBoxes {
         lineChart.setTitle("Antall levende celler");
         //defining a series
         XYChart.Series series = new XYChart.Series();
+        XYChart.Series series2 = new XYChart.Series();
         series.setName("Levende celler");
+        series2.setName("Endringer celler");
         //populating the series with data
-        int counter = 1;
+
         for (int i = 1; i < 19; i++) {
             series.getData().add(new XYChart.Data(i, statsArray[i]));
 
         }
 
+        //populating the series with data
+
+        for (int i = 1; i < 19; i++) {
+            series2.getData().add(new XYChart.Data(i, diffArray[i]));
+
+        }
         for (int i = 0; i < statsArray.length; i++) {
             System.out.println("dialogboks: " + statsArray[i]);
 
         }
         Scene scene  = new Scene(lineChart,800,600);
-        lineChart.getData().add(series);
+        lineChart.getData().addAll(series, series2);
 
         mainStage.setScene(scene);
         mainStage.show();

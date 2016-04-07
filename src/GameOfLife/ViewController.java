@@ -560,7 +560,7 @@ public class ViewController {
         Statistics statistics = new Statistics(grid, 20, new MetaData());
         statistics.run();
 
-        dialogBoxes.statisticsDialogBox(statistics.getStats());
+        dialogBoxes.statisticsDialogBox(statistics.getStats(), statistics.getDiffStats());
     }
     /**
      * This method launches a dialog box where the user can specify

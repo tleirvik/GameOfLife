@@ -51,6 +51,9 @@ public class GameOfLife {
     public int[] getStatsArray() {
         return board.getStatsArray();
     }
+    public int[] getDiffArray() {
+        return board.getDiffArray();
+    }
     public MetaData getMetaData() {
         return board.getMetaData();
     }

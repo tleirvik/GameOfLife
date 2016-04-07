@@ -5,11 +5,9 @@ package GameOfLife;
  * Created by tleirvik on 06.04.2016.
  */
 public class Statistics {
-    private FixedBoard fixedBoard;
     private byte[][] pattern;
     private GameOfLife gol;
     private MetaData metaData;
-    private int[] stats;
     private int iterations;
 
     public Statistics(byte[][] pattern, int interations, MetaData metaData) {
@@ -30,6 +28,9 @@ public class Statistics {
     }
     public int[] getStats() {
         return gol.getStatsArray();
+    }
+    public int[] getDiffStats() {
+        return gol.getDiffArray();
     }
 
 
