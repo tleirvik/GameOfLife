@@ -116,8 +116,7 @@ public class EditorController {
     }
     
     private void drawStrip(GraphicsContext gc, double offset_X, double stripCellSize) {
-        boolean isGenerationAlive = false;
-        
+
         double x = offset_X;
         double y = 0;
 
@@ -134,9 +133,9 @@ public class EditorController {
         
         final double start_x = offset_X;
         final double start_y = 0;
-        final double end_y = stripCellSize * (pattern.length -2);
-        final double end_x = offset_X + 
-                (stripCellSize * pattern[0].length -2);
+        final double end_y = stripCellSize * (pattern.length - 2);
+        final double end_x = offset_X +
+                stripCellSize * (pattern[0].length - 2);
         
         // tegner en ramme rundt hver generasjon
         // topp
