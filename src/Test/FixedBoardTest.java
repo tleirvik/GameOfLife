@@ -9,7 +9,10 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
- * Created by tleirvik on 08.04.16.
+ *  Test class for FixedBoard
+ *
+ *  @see FixedBoard
+ *  @see org.junit.runners.JUnit4
  */
 public class FixedBoardTest {
 
@@ -29,47 +32,67 @@ public class FixedBoardTest {
 
     };
 
+    /**
+     *  JUnit setup method that runs before testing and creates a test board
+     * @see org.junit.runners.JUnit4
+     * @see FixedBoard
+     */
     @Before
-    public void setUp() throws Exception {
-        FixedBoard fb = new FixedBoard(inputArraySmallExploder, new MetaData());
-
-
+    public void setUp() {
+        fb = new FixedBoard(inputArraySmallExploder, new MetaData());
+        assertTrue(fb instanceof FixedBoard);
     }
 
+    /**
+     * Test the getRows()-method and asserts that we have 11 rows on the board
+     * @see org.junit.runners.JUnit4
+     * @see FixedBoard
+     */
     @Test
-    public void getRows() throws Exception {
+    public void getRows() {
         // Arrange
-        FixedBoard fb = new FixedBoard(inputArraySmallExploder, new MetaData());
-        int rows = fb.getRows();
+
         // Act
+        int rows = fb.getRows();
+
         // Assert
         assertEquals(fb.getRows(), 11);
 
     }
-
+    /**
+     * Tests the getColumns()-method and asserts that we have 11 columns on the board
+     * @see org.junit.runners.JUnit4
+     * @see FixedBoard
+     */
     @Test
-    public void getColumns() throws Exception {
+    public void getColumns() {
         // Arrange
-        FixedBoard fb = new FixedBoard(inputArraySmallExploder, new MetaData());
-        int columns = fb.getColumns();
+
         // Act
+        int columns = fb.getColumns();
+
         // Assert
         assertEquals(fb.getColumns(), 11);
     }
-
+    /**
+     * Tests the getMetaData()-method and asserts that the method returns the meta data we specified
+     * @see org.junit.runners.JUnit4
+     * @see FixedBoard
+     */
     @Test
-    public void getMetaData() throws Exception {
+    public void getMetaData() {
         // Arrange
         MetaData metaData = new MetaData();
+
+        // Act
         metaData.setAuthor("Ola Nordmann");
         metaData.setComment("Kommentar");
         metaData.setName("Brett");
         String[] ruleString = {
                 "B3","S23"
-                };
+        };
         metaData.setRuleString(ruleString);
-        FixedBoard fb = new FixedBoard(inputArraySmallExploder, new MetaData());
-        // Act
+
         // Assert
         assertEquals(metaData.getAuthor(), "Ola Nordmann");
         assertEquals(metaData.getName(), "Brett");
@@ -80,7 +103,7 @@ public class FixedBoardTest {
 
     /* Må endres */
     @Test
-    public void getBoardReference() throws Exception {
+    public void getBoardReference() {
         // Arrange
         FixedBoard fb = new FixedBoard(inputArraySmallExploder, new MetaData());
         byte[][] testBoard = fb.getBoardReference();
@@ -89,11 +112,18 @@ public class FixedBoardTest {
         // Assert
         assertEquals(testBoard, fbCompare);
     }
-
+    /**
+     * Tests the resetBoard()-method and asserts that the board is reset to the same board that the class was
+     * instantiated with. Runs nextGeneration once and runs the method. Then asserts that the board is equal to
+     * the starting board
+     *
+     * @see org.junit.runners.JUnit4
+     * @see FixedBoard
+     */
     @Test
-    public void resetBoard() throws Exception {
+    public void resetBoard() {
         // Arrange
-        FixedBoard fb = new FixedBoard(inputArraySmallExploder, new MetaData());
+
         // Act
         fb.nextGeneration();
         assertEquals(fb.toString(), "0000000000000000000000000000000000000000000000001110000000010100000000101000000000100000000000000000000000000000000000000");
@@ -102,50 +132,80 @@ public class FixedBoardTest {
         assertEquals(fb.toString(), "0000000000000000000000000000000000000000000000000100000000011100000000101000000000100000000000000000000000000000000000000");
     }
 
+    /**
+     * Tests the getCellAliveState()-method and asserts that the method returns the correct byte value from the
+     * board array
+     *
+     * @see org.junit.runners.JUnit4
+     * @see FixedBoard
+     */
     @Test
-    public void getCellAliveState() throws Exception {
+    public void getCellAliveState() {
         // Arrange
-        FixedBoard fb = new FixedBoard(inputArraySmallExploder, new MetaData());
+
         // Act
         byte cellState = fb.getCellAliveState(4, 5);
+
         // Assert
         assertEquals(cellState, 1);
     }
-
+    /**
+     * Tests the setCellAliveState()-method and asserts that the method is able to set a value in board array.
+     *
+     * @see org.junit.runners.JUnit4
+     * @see FixedBoard
+     */
     @Test
     public void setCellAliveState() throws Exception {
         // Arrange
-        FixedBoard fb = new FixedBoard(inputArraySmallExploder, new MetaData());
+
         // Act
         fb.setCellAliveState(4 ,5, (byte)0);
         // Assert
         assertEquals(fb.getCellAliveState(4, 5), 0);
     }
-
+    /**
+     * Tests the nextGeneration()-method(Game Of Life game rules) and runs the method 10 times and asserts that we have
+     * a game board that complies to the correct B3/S23 rules of game of life(verified manually and
+     * on http://www.bitstorm.org/gameoflife/
+     *
+     * @see org.junit.runners.JUnit4
+     * @see FixedBoard
+     */
     @Test
-    public void nextGeneration() throws Exception {
+    public void nextGeneration() {
         // Arrange
-        FixedBoard fb = new FixedBoard(inputArraySmallExploder, new MetaData());
 
         // Act
         for (int i = 0; i <= 9; i++) {
             // System.out.println(i);
             fb.nextGeneration();
-            System.out.println(i);
         }
         // Assert
-        String s = "0000000000000010001000000100010000110000011000000100000000010100000000010000001100000110000100010000001000100000000000000";
+        String s = "00000000000000100010000001000100001100000110000001000000000101000000000100000011000001100001000" +
+                "10000001000100000000000000";
         assertEquals(s, fb.toString());
-
-        // Is the boject an instance of GameOfLife2D
-        assertTrue(fb instanceof FixedBoard);
     }
-
+    /**
+     * Tests the toString()-method and asserts that the board is correctly translated from a byte array to a String
+     *
+     * @see org.junit.runners.JUnit4
+     * @see FixedBoard
+     */
     @Test
-    public void testToString() throws Exception {
+    public void testToString() {
         // Arrange
-        FixedBoard fb = new FixedBoard(inputArraySmallExploder, new MetaData());
-        String testString = new String("0000000000000000000000000000000000000000000000000100000000011100000000101000000000100000000000000000000000000000000000000");
-        assertEquals(fb.toString(), testString);
+
+        // Act
+        String s = fb.toString();
+        System.out.println(fb.toString());
+        assertEquals(tempBoard[5][5], fb.getCellAliveState(5, 5));
+        assertEquals(tempBoard[0][0], 0);
     }
+
+
 }
+
+
+
+
