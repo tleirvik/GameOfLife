@@ -1,14 +1,14 @@
 package GameOfLife;
 
 /**
- * @author tleirvik, rlundh<p>
+ *
  * @version 1.0<p>
  *
  * This class is a container class for a boards metadata<p>
  *
- * @see Board
- * @see RLEDecoder
- * @see RLEEncoder
+ * @see FixedBoard
+ * @see FileManagement.RLEDecoder
+ * @see FileManagement.RLEEncoder
  *
  */
 public class MetaData {

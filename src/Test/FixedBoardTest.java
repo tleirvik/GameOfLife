@@ -198,9 +198,10 @@ public class FixedBoardTest {
 
         // Act
         String s = fb.toString();
-        System.out.println(fb.toString());
-        assertEquals(tempBoard[5][5], fb.getCellAliveState(5, 5));
-        assertEquals(tempBoard[0][0], 0);
+        String boardArray = "0000000000000000000000000000000000000000000000000100000000011100000000101000000000100000" +
+                "000000000000000000000000000000000";
+        assertEquals(s, boardArray);
+
     }
 
 
