@@ -31,6 +31,7 @@ import util.DialogBoxes;
 import java.io.File;
 import java.io.IOException;
 import javafx.application.Platform;
+import util.Stopwatch;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -771,17 +772,23 @@ public class ViewController {
         Duration duration = Duration.millis(1000/fps);
         KeyFrame keyFrame;
         keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-            long startTime = System.nanoTime();
-            gController.play();
-            long endTime = System.nanoTime();
-            long duration2 = (endTime - startTime) / 1000000;
-            System.out.println("Next Generation: " + duration2);
+            Stopwatch sw = new Stopwatch("Next generation threading");
+            sw.start();
+            Thread newGenerationThread = new Thread() {
+                public void run() {
+                    gController.play();
+                }
+            };
+            newGenerationThread.start();
 
-            startTime = System.nanoTime();
+            try {
+                newGenerationThread.join();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+            grid = gController.getBoardReference();
             draw();
-            endTime = System.nanoTime();
-            duration2 = (endTime - startTime) / 1000000;
-            System.out.println("Draw: " + duration2);
+            sw.stop();
         });
         timeline.getKeyFrames().clear();
         timeline.getKeyFrames().add(0, keyFrame);
