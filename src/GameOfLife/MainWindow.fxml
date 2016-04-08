@@ -99,6 +99,7 @@
                   <Slider fx:id="cellSizeSlider" orientation="VERTICAL" />
                   <Label fx:id="cellSizeLabel" text="Cell Size" />
                   <Button mnemonicParsing="false" onAction="#handleFitToView" text="Fit to view" />
+                   <Button mnemonicParsing="false" onAction="#newRandomGame" text="randGame" />
                </children>
             </VBox>
             <CheckBox id="text" fx:id="toggleGrid" mnemonicParsing="false" onAction="#handleToggleGrid" text="Turn off grid" />
