@@ -10,6 +10,7 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -32,12 +33,17 @@ public class EditorController {
     @FXML private Button closeButton;
     @FXML private Button updateStripBtn;
     @FXML private HBox stripBox;
-    
+    @FXML private TextField authorTextField;
+    @FXML private TextField titleTextField;
+    @FXML private TextField descriptionTextField;
+    @FXML private TextField rulesTextField;
+
     private double cellSize;
     private double cellSizeStrip;
     private FixedBoard fixedBoard;
     private byte[][] pattern;
-    
+    private MetaData metaData;
+
     /**
      * This method closes the editor window.
      */
@@ -74,10 +80,16 @@ public class EditorController {
     public void setPattern(byte[][] pattern, MetaData metaData) {
         fixedBoard = new FixedBoard(pattern, metaData);
         this.pattern = fixedBoard.getBoardReference();
+        this.metaData = metaData;
 
         double cellWidth = patternCanvas.getWidth() / (pattern[0].length - 2);
         double cellHeight = patternCanvas.getHeight() / (pattern.length - 2);
         this.cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
+
+        authorTextField.setText(metaData.getAuthor());
+        descriptionTextField.setText(metaData.getComment());
+        titleTextField.setText(metaData.getName());
+        rulesTextField.setText(metaData.getRuleString()[0] + " " + metaData.getRuleString()[1]);
 
         draw();
     }
@@ -104,8 +116,7 @@ public class EditorController {
     }
     
     private void drawStrip(GraphicsContext gc, double offset_X, double stripCellSize) {
-        boolean isGenerationAlive = false;
-        
+
         double x = offset_X;
         double y = 0;
 
@@ -122,9 +133,9 @@ public class EditorController {
         
         final double start_x = offset_X;
         final double start_y = 0;
-        final double end_y = stripCellSize * pattern.length;
-        final double end_x = offset_X + 
-                (stripCellSize * pattern[0].length);
+        final double end_y = stripCellSize * (pattern.length - 2);
+        final double end_x = offset_X +
+                stripCellSize * (pattern[0].length - 2);
         
         // tegner en ramme rundt hver generasjon
         // topp
