@@ -165,7 +165,7 @@ public class ViewController {
     public void newRandomGame() {
 
     }
-    
+
     @FXML
     public void openPatternEditor() {
         timeline.stop();
