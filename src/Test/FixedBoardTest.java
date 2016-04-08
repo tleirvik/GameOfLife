@@ -135,17 +135,12 @@ public class FixedBoardTest {
             fb.nextGeneration();
             System.out.println(i);
         }
-
         // Assert
         String s = "0000000000000010001000000100010000110000011000000100000000010100000000010000001100000110000100010000001000100000000000000";
         assertEquals(s, fb.toString());
 
-        // Verify that the input array is the same +2 in length/width after input
-
         // Is the boject an instance of GameOfLife2D
         assertTrue(fb instanceof FixedBoard);
-        String boardAfter10Gen = "";
-
     }
 
     @Test
