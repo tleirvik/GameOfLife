@@ -161,6 +161,10 @@ public class ViewController {
         gController.newGame(false, rowCol[1], rowCol[0]);        
         openGame();
     }
+    @FXML
+    public void newRandomGame() {
+
+    }
     
     @FXML
     public void openPatternEditor() {
