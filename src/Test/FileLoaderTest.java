@@ -2,14 +2,12 @@ package Test;
 
 import FileManagement.FileLoader;
 import GameOfLife.FixedBoard;
-import GameOfLife.MetaData;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.*;
 
 import java.io.File;
 
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -18,9 +16,14 @@ import static org.mockito.Mockito.when;
  */
 public class FileLoaderTest {
     private FileLoader fl;
+    private File file;
     @Before
     public void setUp() throws Exception {
         fl = new FileLoader();
+        file = mock(File.class);
+        when(file.canRead()).thenReturn(true);
+        when(file.getAbsolutePath()).thenReturn("C:\temp\test.rle");
+
     }
 
     @Test
@@ -28,6 +31,7 @@ public class FileLoaderTest {
         // Arrange
 
         // Act
+        assertTrue(fl.readGameBoardFromDisk(file));
         //fl.readGameBoardFromDisk(testFile);
         // Assert
 

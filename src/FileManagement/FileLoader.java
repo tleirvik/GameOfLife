@@ -5,13 +5,14 @@
  */
 package FileManagement;
 
+import GameOfLife.MetaData;
+import GameOfLife.PatternFormatException;
+import util.DialogBoxes;
+
 import java.io.*;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import GameOfLife.MetaData;
-import GameOfLife.PatternFormatException;
-import util.DialogBoxes;
 
 /**
  * This class opens a file from disk or a an URL. It passes the file to the RLEDecoder for decoding of the RLE file
@@ -34,6 +35,7 @@ public class FileLoader {
         if (!file.canRead()) {
             DialogBoxes.infoBox("Error!", "Could not read file!",
                     "Please check your file permissions!");
+            return false;
         }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {

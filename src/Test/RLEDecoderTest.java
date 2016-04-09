@@ -6,17 +6,15 @@ import org.junit.Test;
 
 import java.io.BufferedReader;
 
-import static org.junit.Assert.*;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
-
-import org.objenesis.*;
 
 /**
  * Created by tleirvik on 08.04.16.
  */
 public class RLEDecoderTest {
     private RLEDecoder rleDecoder;
+
     @Before
     public void setUp() throws Exception {
         // Arrange
