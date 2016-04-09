@@ -315,13 +315,18 @@ public class ViewController {
             }
  	}
 
+    /**
+     * This method is launched when the play button is pressed and starts the animation
+     */
     @FXML
     public void play() {
         if(timeline != null || timeline.getStatus() != Status.RUNNING) {
             timeline.play();
         }
     }
-
+    /**
+     * This method is launched when the pause button is pressed and pauses the animation
+     */
     @FXML
     public void pause() {
         timeline.stop();
@@ -329,7 +334,10 @@ public class ViewController {
             timeline.pause();
         }
     }
-
+    /**
+     * This method is launched when the reset button is pressed and resets the game board via the resetGame() method
+     * and draws the origin board
+     */
     @FXML
     public void restart() {
         if(gController != null && timeline.getStatus() != Status.STOPPED) {
@@ -338,7 +346,10 @@ public class ViewController {
         gController.resetGame();
         draw();
     }
-    
+
+    /**
+     * This method exits the application
+     */
     @FXML
     public void closeApplication() {
         Platform.exit();
