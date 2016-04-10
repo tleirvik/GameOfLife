@@ -19,6 +19,12 @@ import javafx.stage.Stage;
 
 import java.io.File;
 
+/**
+ * Utility class for handling dialog boxes
+ *
+ * @see GameOfLife.ViewController
+ * @see GameOfLife.EditorController
+ */
 public class DialogBoxes {
 
 	/**
@@ -36,6 +42,13 @@ public class DialogBoxes {
     	alert.showAndWait();
     }
 
+    /**
+     * This dialog box is used for user input of URL string in the RLE downloading and decoding
+     *
+     * @return The String the user specifies in the input dialog box
+     * @see FileManagement.RLEDecoder
+     * @see GameOfLife.ViewController
+     */
     public String urlDialogBox() {
         StringBuilder urlString = new StringBuilder();
 
@@ -88,6 +101,11 @@ public class DialogBoxes {
         return urlString.toString();
     }
 
+    /**
+     * This dialog box is used for presenting statistics to the user
+     *
+     * @see Statistics
+     */
     public void statisticsDialogBox() {
         Stage mainStage = new Stage();
         final NumberAxis xAxis = new NumberAxis();
@@ -121,6 +139,11 @@ public class DialogBoxes {
         mainStage.setScene(scene);
         mainStage.show();
     }
+
+    /**
+     * This dialog box launches a file chooser and lets the user specify which file to load
+     * @return The user specified file
+     */
     public File loadRLEDialogBox() {
         Stage mainStage = new Stage();
 
@@ -133,7 +156,10 @@ public class DialogBoxes {
         File selectedFile = fileChooser.showOpenDialog(mainStage);
         return selectedFile;
     }
-    
+    /**
+     * This dialog box launches a file chooser and lets the user specify which file to save
+     * @return The user specified file
+     */
     public File saveRLEDialogBox() {
         Stage mainStage = new Stage();
 
@@ -145,7 +171,11 @@ public class DialogBoxes {
         return saveRLEFile;
     }
 
-
+    /**
+     * This dialog box enables the user to edit the meta data for the game board
+     *
+     * @param metadata The meta data object to view or edit
+     */
     public void metaDataDialogBox(MetaData metadata) {
     	GridPane gp = new GridPane();
     	Scene scene = new Scene(gp, 720, 300);
@@ -232,6 +262,14 @@ public class DialogBoxes {
     	mainStage.showAndWait();
     }
 
+    /**
+     * This dialog box lets the user specify the number of rows and columns of the game board
+     *
+     * @return An array with the rows and columns values
+     *
+     * @see GameOfLife.GameOfLife
+     * @see GameOfLife.FixedBoard
+     */
     public int[] openNewGameDialog() {
         int[] array = new int[2];
         GridPane root = new GridPane();
@@ -259,11 +297,7 @@ public class DialogBoxes {
         GridPane.setConstraints(errorLabel1, 4, 0);
         GridPane.setConstraints(errorLabel2, 4, 1);
         root.getChildren().addAll(errorLabel1, errorLabel2);
-        
-        
-        
-        
-        
+
         Button okButton = new Button("OK");
         Button cancelButton = new Button("Cancel");
         
@@ -303,8 +337,7 @@ public class DialogBoxes {
                 stage.close();
             }
         });
-        
-        
+
         cancelButton.setOnAction(e -> {
             stage.close();
         });
@@ -316,6 +349,4 @@ public class DialogBoxes {
         
         return array;
     }
-        
-    
 }

@@ -23,8 +23,14 @@ import javafx.stage.Stage;
  *
  * @author Stian Reistad Røgeberg, Terje Leirvik, Robin Sean Aron Lundh
  * 
- * This controller class controls handles all the actions performed in
- * the its related view.
+ * This controller class controls and handles all the actions performed in
+ * the PatternEditor View.
+ *
+ * @see ViewController
+ * @see FixedBoard
+ * @see MetaData
+ * @see FileManagement.RLEEncoder
+ * @see FileManagement.FileLoader
  */
 public class EditorController {
     @FXML private BorderPane patternController;
@@ -52,7 +58,14 @@ public class EditorController {
         Stage s = (Stage) closeButton.getScene().getWindow();
         s.close();
     }
-    
+
+    /**
+     * This method is called upon when the user clicks the Save button in the view. It instaniates a new
+     * FileLoader object and saves the pattern to a file
+     *
+     * @see FileManagement.FileLoader
+     * @see FileManagement.RLEEncoder
+     */
     @FXML
     public void handleSaveButton() {
         Stage mainStage = (Stage) patternCanvas.getScene().getWindow();
@@ -62,7 +75,11 @@ public class EditorController {
             new FileChooser.ExtensionFilter("RLE files", "*.rle"));
         File saveRLEFile = fileChooser.showSaveDialog(mainStage);
     }
-    
+
+    /**
+     * Method that handles mouse clicks on the canvas and sets a cells alive status when clicked
+     * @param e MouseEvent
+     */
     @FXML
     public void handleMouseClick(MouseEvent e) {
         int row = (int) (e.getY() / cellSize) + 1;
@@ -77,6 +94,14 @@ public class EditorController {
     
     
     // sette brettet her?
+
+    /**
+     * This method sets the pattern we want to edit in the pattern editor and populates the text fields
+     * in the view with the meta data
+     *
+     * @param pattern the byte[][] board we want to edit
+     * @param metaData the associated meta data to the board
+     */
     public void setPattern(byte[][] pattern, MetaData metaData) {
         fixedBoard = new FixedBoard(pattern, metaData);
         this.pattern = fixedBoard.getBoardReference();
@@ -93,7 +118,13 @@ public class EditorController {
 
         draw();
     }
-    
+
+    /**
+     * This method handles the Update Strip button in the view and shows the patterns development
+     * in the next 20 generations and creates a visualization in the bottom of the screen
+     *
+     * @see FixedBoard
+     */
     @FXML
     public void updateStrip() {
         final double stripCellSize = strip.getHeight() / (pattern.length - 2);
@@ -114,7 +145,16 @@ public class EditorController {
         
         fixedBoard.resetBoard();
     }
-    
+
+    /**
+     * Specialized draw method that visualizes the board on the screen with a frame to create
+     * a "film strip". Called from updateStrip()-method     *
+     *
+     * @param gc GraphicContext The specific Canvas we want to draw on
+     * @param offset_X The offset value
+     * @param stripCellSize The size of the cell we want to draw
+     * @see FixedBoard
+     */
     private void drawStrip(GraphicsContext gc, double offset_X, double stripCellSize) {
 
         double x = offset_X;
@@ -149,6 +189,12 @@ public class EditorController {
     }
     
     // tegne mønsteret
+
+    /**
+     * This method visualizes the game board on the screen and only draws cells that are alive(1)
+     *
+     * @see FixedBoard
+     */
     private void draw() {
         final GraphicsContext gc = patternCanvas.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
@@ -173,6 +219,12 @@ public class EditorController {
     }
     
     // bør ha gridlines for å gjøre manipulering mer lesbar.
+
+    /**
+     * This method draws grid lines on the canvas for increased visibility and usability
+     *
+     * @param gc GraphicContext The specific Canvas we want to draw on
+     */
     private void drawGridLines(GraphicsContext gc) {
         gc.setLineWidth(0.6);
         gc.setStroke(Color.GRAY);
@@ -189,11 +241,20 @@ public class EditorController {
             gc.strokeLine(0, cellSize * row, width, cellSize * row);
         }
     }
-    
+
+    /**
+     * This method returns the patterns width
+     *
+     * @return Returns a double value of the patterns width
+     */
     private double getPatternWidth() {
         return cellSize * (pattern[0].length - 2);
     }
-    
+    /**
+     * This method returns the patterns length
+     *
+     * @return Returns a double value of the patterns length
+     */
     private double getPatternHeight() {
         return cellSize * (pattern.length - 2);
     }

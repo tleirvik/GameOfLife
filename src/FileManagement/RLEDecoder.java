@@ -51,6 +51,7 @@ public class RLEDecoder {
      * Exception
      * @throws PatternFormatException Throws an exception if the method is unable to
      *                                parse the RLE file
+     * @throws IOException Other unspecified I/O related errors
      */
     public void decode() throws PatternFormatException, IOException {
         parseMetadata(reader);

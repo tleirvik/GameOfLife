@@ -34,8 +34,7 @@ import javafx.application.Platform;
 import util.Stopwatch;
 
 /**
- *Denne klassen lytter på hendelser i .fxml
- *
+ * This is the view controller for the game
  */
 public class ViewController {
 
@@ -127,6 +126,11 @@ public class ViewController {
     // Listeners
     //================================================================================
 
+    /**
+     * This method is called by the Java FX FXMLLoader after the root element has been
+     * processed and initializes game objects and GUI features
+     * @see FXMLLoader
+     */
     public void initialize() {
         gController = new GameController();
         
@@ -144,7 +148,7 @@ public class ViewController {
     //================================================================================
 
     /**
-     * This method instansiates a new GameController
+     * This method instantiates a new GameController
      * and calls a dialog box for input.
      */
     @FXML
@@ -165,7 +169,13 @@ public class ViewController {
     public void newRandomGame() {
 
     }
-    
+
+    /**
+     * This method is called upon when the user clicks on the Pattern Editor Menu Item and launches
+     * a new Pattern Editor and this controller hands over control to EditorController
+     *
+     * @see EditorController
+     */
     @FXML
     public void openPatternEditor() {
         timeline.stop();
@@ -198,8 +208,20 @@ public class ViewController {
                     e.getMessage());
         } 
     }
-    
-    public void loadGameBoardFromRLE(boolean online) {
+
+    /**
+     * This method is launched when the user selects the Load Game Board From Disk or URL Menu Items and launches
+     * a FileChooser or URL dialog box where the user selects a file to be interpreted.
+     * This method instantiates a FileLoader object
+     * and uses the selected file as an input. If the decoding is successful, a new game with the the selected board
+     * is started
+     *
+     * @param online If true, the loadGameBoardFromURL is used. If not, the loadGameBoardFromDisk is used
+     *
+     * @see RLEDecoder
+     * @see FileLoader
+     */
+    private void loadGameBoardFromRLE(boolean online) {
         timeline.stop();
         statusBar.setText("");
         FileLoader fileLoader = new FileLoader();
@@ -234,7 +256,7 @@ public class ViewController {
                 return;
             }
         }
-        
+        // Dette segmentet bør flyttes ut av metoden og inn i en egen metode(TL 09.04)
         byte[][] board = fileLoader.getBoard();
         rows = board.length;
         columns = board[0].length;
@@ -242,16 +264,16 @@ public class ViewController {
         
         openGame();
     }
-    
+
+    /**
+     * This method is a listener in the view and calls the loadGameBoardFromRLE with true as an input parameter
+     */
     public void loadGameBoardFromURL() {
         loadGameBoardFromRLE(true);
     }
     
     /**
-     * This method launches a FileChooser and lets the user select a file.
-     * If the file is not null it creates an object of type RLEDecoder and
-     * calls the method decode(). And starts a new game with the the selected
-     * pattern from file.
+     * This method is a listener in the view and calls the loadGameBoardFromRLE with false as an input parameter
      *
      * @see RLEDecoder
      */
@@ -402,6 +424,12 @@ public class ViewController {
     //Funksjon som skal gi brukeren mulighet til å flytte grid-en
     //Endrer offset-verdiene over for å tilby dette til draw()-funksjonene
 
+    /**
+     * This method handles the Draw button in the view and this enables the user to switch between
+     * draw mode and move mode
+     *
+     * @param event Mouse click event
+     */
     @FXML
     void toggleDrawMove(ActionEvent event) {
     	drawMode = !drawMode;
@@ -413,19 +441,9 @@ public class ViewController {
         }
     }
 
-    
-    // HVOR KOMMER DISSE FRA? :)
-    @FXML
-    public void handleMouseDrag(MouseEvent e) {
-
-    }
-
-    // HVOR KOMMER DISSE FRA? :)
-    @FXML
-    public void handleMouseClick(MouseEvent e) {
-
-    }
-
+    /**
+     * This method handles the Fit To View button and resizes the boards cells to fit the view
+     */
     @FXML
     public void handleFitToView() {
         double cellWidth = gameCanvas.getWidth() / (columns - 2);
@@ -442,6 +460,9 @@ public class ViewController {
         draw();
     }
 
+    /**
+     * This method handles the Toggle Grid button in the view and when pressed removes the grid lines
+     */
     @FXML
     public void handleToggleGrid() {
         drawGrid = !toggleGrid.isSelected();
@@ -453,27 +474,60 @@ public class ViewController {
     //================================================================================
 
     //Strengt talt ikke nødvendig med 0, men man kan bytte det med noe annet
+
+    /**
+     * This method returns the value of X-axis starting position
+     *
+     * @return The double value of the starting x position
+     */
     private double getGridStartPosX() {
     	return 0 + offset_X;
     }
 
     //Strengt talt ikke nødvendig med 0, men man kan bytte det med noe annet
+    /**
+     * This method returns the value of Y-axis starting position
+     *
+     * @return The double value of the starting y position
+     */
     private double getGridStartPosY() {
     	return 0 + offset_Y;
     }
 
+    /**
+     * This method return the boards width
+     *
+     * @return The double value of the boards width
+     * @see FixedBoard
+     */
     private double getBoardWidth() {
     	return cellSize * (columns-2);
     }
-
+    /**
+     * This method return the boards height
+     *
+     * @return The double value of the boards height
+     * @see FixedBoard
+     */
     private double getBoardHeight() {
     	return cellSize * (rows-2);
     }
 
+    /**
+     * This helper method returns true if the users mouse click is within the canvas x-axis
+     *
+     * @param posX The position of the mouse click
+     * @return Return true if inside the canvas x-axis
+     */
     private boolean isXInsideGrid(double posX) {
     	return ((posX >= getGridStartPosX()) && (posX <= getGridStartPosX() + getBoardWidth()));
     }
-
+    /**
+     * This helper method returns true if the users mouse click is within the canvas y-axis
+     *
+     * @param posY The position of the mouse click
+     * @return Return true if inside the canvas y-axis
+     */
     private boolean isYInsideGrid(double posY) {
     	return ((posY >= getGridStartPosY()) && (posY <= getGridStartPosY() + getBoardHeight()));
     }
@@ -486,6 +540,9 @@ public class ViewController {
             offset_Y = gameCanvas.getHeight() / 2 - (getBoardHeight() / 2);
     }
 
+    /**
+     * This method draws the game board onto the canvas
+     */
     private void draw() {
         if(grid == null) {
             return;
@@ -531,6 +588,11 @@ public class ViewController {
         }
     }
 
+    /**
+     * This method draws grid lines on the canvas
+     *
+     * @param gc GraphicContext The specific Canvas we want to draw on
+     */
     private void drawGridLines(GraphicsContext gc) {
     	gc.setLineWidth(stdGridLineWidth);
     	gc.setStroke(stdGridColor);
@@ -568,8 +630,13 @@ public class ViewController {
   // Dialog boxes
   //================================================================================
 
-    
 
+    /**
+     * This method is a called when user clicks on the stats button in the view and launches
+     * the Statistics dialog box
+     *
+     * @see DialogBoxes
+     */
     @FXML
     public void showStatistics() {
         System.out.println("hei");
@@ -580,17 +647,16 @@ public class ViewController {
      * meta data for the game board.
      * Sets the meta data object with the information the user provides.
      *
-     * @return void
+     * @see MetaData
+     * @see DialogBoxes
      */
     private void metaDataDialogBox() {
     	dialogBoxes.metaDataDialogBox(gController.getMetadata());
     }
 
-    @FXML
-    private void openOptions() {
-
-    }
-
+    /**
+     * This method initializes the mouse event handlers used in the view
+     */
     private void initializeMouseEventHandlers() {
         gameCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
             if(drawMode) {
@@ -730,6 +796,9 @@ public class ViewController {
             });
     }
 
+    /**
+     * This method initializes the Frames per second(fps) slider in the view
+     */
     private void initializeFpsSlider() {
         fpsSlider.setMin(10);
     	fpsSlider.setMax(60);
@@ -755,6 +824,9 @@ public class ViewController {
         });
     }
 
+    /**
+     * This method binds the canvas size to its parent
+     */
     private void initializeBindCanvasSize() {
         gameCanvas.heightProperty().bind(canvasParent.heightProperty());
     	gameCanvas.widthProperty().bind(canvasParent.widthProperty());
@@ -767,6 +839,9 @@ public class ViewController {
     	});
     }
 
+    /**
+     * This method initializes a new Timeline object and configures the Cycle count and Keyframes
+     */
     private void initializeTimeline() {
         timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
@@ -788,6 +863,12 @@ public class ViewController {
         }     
     }
 
+    /**
+     * This method handles the KeyFrame event. Spawns a new thread for the game algorithm and runs the algorithm
+     * the number of times specified in the <code>fps</code> variable
+     *
+     * @param fps Frames per second
+     */
     private void initializeKeyFrame(int fps) {
         Duration duration = Duration.millis(1000/fps);
         KeyFrame keyFrame;
