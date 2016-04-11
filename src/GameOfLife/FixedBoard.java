@@ -8,7 +8,7 @@ package GameOfLife;
  * made for a board of a fixed size.
  * 
  */
-public class FixedBoard {
+public class FixedBoard extends Board{
     private final MetaData metadata;
     private final byte[][] currentGeneration;
     private final byte[][] firstGeneration;
