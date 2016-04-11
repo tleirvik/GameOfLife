@@ -5,7 +5,10 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * Created by tleirvik on 01.04.2016.
+ * Unit test for the RLEDecoder class
+ *
+ * @see org.junit.runners.JUnit4
+ * @see GameOfLife.FixedBoard
  */
 public class RLEDecoderTest {
 

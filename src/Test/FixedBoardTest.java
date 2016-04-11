@@ -5,6 +5,8 @@ import GameOfLife.MetaData;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+
 import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -17,7 +19,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class FixedBoardTest {
     private FixedBoard fb;
-    byte[][] inputArraySmallExploder = {
+    private final byte[][] inputArraySmallExploder = {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -53,7 +55,7 @@ public class FixedBoardTest {
         int rows = fb.getRows();
 
         // Assert
-        assertEquals(fb.getRows(), 11);
+        assertEquals(rows, 11);
     }
     /**
      * Tests the getColumns()-method and asserts that we have 11 columns on the board
@@ -68,7 +70,7 @@ public class FixedBoardTest {
         int columns = fb.getColumns();
 
         // Assert
-        assertEquals(fb.getColumns(), 11);
+        assertEquals(columns, 11);
     }
     /**
      * Tests the getMetaData()-method and asserts that the method returns the meta data we specified
@@ -114,7 +116,7 @@ public class FixedBoardTest {
         byte[] fbCompareTestRow = fbCompare[5];
 
         // Assert
-        assertEquals(testBoard.hashCode(), fbCompare.hashCode());
+        assertEquals(Arrays.hashCode(testBoard), Arrays.hashCode(fbCompare));
         assertArrayEquals(testRow, fbCompareTestRow);
     }
     /**
@@ -163,7 +165,7 @@ public class FixedBoardTest {
      * @see FixedBoard
      */
     @Test
-    public void setCellAliveState() throws Exception {
+    public void setCellAliveState() {
         // Arrange
 
         // Act
@@ -174,7 +176,7 @@ public class FixedBoardTest {
     /**
      * Tests the nextGeneration()-method(Game Of Life game rules) and runs the method 10 times and asserts that we have
      * a game board that complies to the correct B3/S23 rules of game of life(verified manually and
-     * on http://www.bitstorm.org/gameoflife/
+     * with the Game Of Life implementation @ http://www.bitstorm.org/gameoflife/
      *
      * @see org.junit.runners.JUnit4
      * @see FixedBoard

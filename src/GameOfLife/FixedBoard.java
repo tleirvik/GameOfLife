@@ -50,7 +50,8 @@ public class FixedBoard extends Board{
     }
 
     /**
-     * 
+     * This method return the number of rows in the game board
+     *
      * @return The number of rows
      */
     public int getRows() {
@@ -58,6 +59,7 @@ public class FixedBoard extends Board{
     }
 
     /**
+     * This method return the number of columns in the game board
      *
      * @return The number of columns
      */
@@ -71,19 +73,24 @@ public class FixedBoard extends Board{
      *
      * @return MetaData Meta data from the board contained in
      * the class
+     * @see MetaData
      */
     public MetaData getMetaData() {
         return metadata;
     }
 
     /**
-     * 
+     * This method returns a reference to the current game board
+     *
      * @return The board's current generation
      */
     public byte[][] getBoardReference() {
     	return currentGeneration;
     }
-    
+
+    /**
+     * This method resets the board to the origin board
+     */
     public void resetBoard() {
         for(int row = 1; row < firstGeneration.length - 1; row++) {
             System.arraycopy(firstGeneration[row], 1, 
@@ -94,8 +101,8 @@ public class FixedBoard extends Board{
     /**
      * Returns the <code>byte</code> value of the cell at the given position
      *
-     * @param row
-     * @param column
+     * @param row The x position on the board
+     * @param column The y position on the board
      * @return Returns the <code>byte</code> value of a cell on the
      * given position
      */
@@ -108,8 +115,8 @@ public class FixedBoard extends Board{
      * to the <code>byte</code> value given in aliveState. Throws a Runtime
      * Exception if the number does not equal 0 or 1.
      *
-     * @param row
-     * @param column
+     * @param row The x position on the board
+     * @param column The y position on the board
      * @param aliveState sets the <code>byte</code> value of a cell on the
      * given position
      */
@@ -120,7 +127,13 @@ public class FixedBoard extends Board{
             throw new RuntimeException("Invalid number in cell state: " + aliveState);
         }
     }
-    
+
+    /**
+     * This is the game algorithm that calculates a if a cell should be alive or dead in the next generation
+     *
+     *
+     * @version 3.0 Decreased the number of if's and increased the performance using a neighbourhood array
+     */
     public void nextGeneration() {
         byte[][] neighbourArray = new byte[currentGeneration.length][currentGeneration[0].length];
         
@@ -145,36 +158,6 @@ public class FixedBoard extends Board{
             }
         }
     }
-    
-    /*
-    /**
-     * Counts the amount of neighbours for the cell at the given position
-     * 
-     * @param row 
-     * @param col
-     * @return the amount of neighbours around the cell
-     *//*
-    public int countNeighbours(int row, int col) {        
-        return currentGeneration[row-1][col-1] + 
-                currentGeneration[row-1][col] + 
-                currentGeneration[row-1][col+1] + 
-                currentGeneration[row][col-1] + 
-                currentGeneration[row][col+1] + 
-                currentGeneration[row+1][col-1] + 
-                currentGeneration[row+1][col] + 
-                currentGeneration[row+1][col+1];
-    }*/
-    
-    /*
-    public void nextGeneration(int startRow, int endRow) {
-        for(int row = startRow; row < endRow; row++) {
-            for(int col = 0; col < currentGeneration[0].length; col++) {
-                currentGeneration[row][col] = ((countNeighbours(row,col) == 3) || 
-                        (currentGeneration[row][col] == 1 && 
-                        countNeighbours(row,col) == 2 )) ? (byte)1 : (byte)0;
-            }
-        }
-    }*/
 
     /**
      *  Method that returns the game board as a String. Used for Unit Testing with JUnit 4
