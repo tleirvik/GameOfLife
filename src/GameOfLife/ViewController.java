@@ -2,8 +2,6 @@ package GameOfLife;
 
 import FileManagement.FileLoader;
 import FileManagement.RLEDecoder;
-import FileManagement.RLEEncoder;
-import Listeners.ButtonListener;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
@@ -11,25 +9,20 @@ import javafx.animation.Timeline;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import util.DialogBoxes;
 
 import java.io.File;
-import java.io.IOException;
 import javafx.application.Platform;
 import util.Stopwatch;
 
@@ -73,19 +66,9 @@ public class ViewController {
     // Property fields
     //================================================================================
 
-    private ButtonListener bl;
-
-    private DialogBoxes dialogBoxes;
-    private Timeline timeline;
-    private GameController gController;
-
-    private RLEDecoder rledec;
-
-    //Hentet fra modellen
-    private byte[][] grid;
-
-    private int rows = 1000; //Bør hentes fra gController (?)
-    private int columns = 1000; //Bør hentes fra gController (?)
+    final private DialogBoxes dialogBoxes = new DialogBoxes(this);
+    final private Timeline timeline = new Timeline();
+    final private GameOfLife gol = new GameOfLife();
 
     //Slidere kan manipulere disse verdiene
     private double cellSize = 10;
@@ -120,25 +103,21 @@ public class ViewController {
     private boolean holdingPattern = false; //Find out if user is holding pattern
     private boolean drawMode = false; //False for move, true for draw
     private boolean drawCell = false;
-    
-    private Stage editor;
-
     //================================================================================
-    // Listeners
+    // Initializer
     //================================================================================
-
     public void initialize() {
-        gController = new GameController();
-        
         initializeTimeline();
         initializeCellSizeSlider(1,1);
         initializeFpsSlider();
+        
+        gol.newEmptyGame(20, 20);        
+        openGame();
+        
         initializeBindCanvasSize();
-
-    	dialogBoxes = new DialogBoxes();
         initializeMouseEventHandlers();
     }
-
+    
     //================================================================================
     // GUI Event handlers
     //================================================================================
@@ -150,6 +129,19 @@ public class ViewController {
     @FXML
     public void newGame() {
         timeline.stop();
+        int[] rowCol = dialogBoxes.openNewGameDialog();
+        
+        if(rowCol[0] == 0 || rowCol[1] == 0) {
+            return;
+        } else {
+            gol.newEmptyGame(rowCol[0], rowCol[1]);        
+            openGame();
+        }
+    }
+    
+    @FXML
+    public void newRandomGame() {
+        timeline.stop();
         int[] rowCol;
     	rowCol = dialogBoxes.openNewGameDialog();
         
@@ -158,41 +150,14 @@ public class ViewController {
             
         }
         
-        gController.newGame(false, rowCol[1], rowCol[0]);        
+        gol.newRandomGame(rowCol[1], rowCol[0]);        
         openGame();
     }
     
     @FXML
     public void openPatternEditor() {
         timeline.stop();
-
-        editor = new Stage();
-        editor.initModality(Modality.WINDOW_MODAL);
-        editor.initOwner(gameCanvas.getScene().getWindow());
-        
-        try {
-            FXMLLoader loader;
-            loader = new FXMLLoader(getClass().getResource("PatternEditor.fxml"));
-            
-            BorderPane root = loader.load();
-            editor.setResizable(false);
-            
-            // Muliggjør overføring av nødvendig data til editor.
-            EditorController edController = loader.getController();
-            // overføre data via setter ?
-            edController.setPattern(grid, gController.getMetadata());
-
-            Scene scene = new Scene(root);
-            scene.getStylesheets().add(getClass().getResource(
-                    "patternEditor.css").toExternalForm());
-            
-            editor.setScene(scene);
-            editor.setTitle("Pattern Editor");
-            editor.show();
-        } catch (IOException e) {
-            DialogBoxes.infoBox("Error", "Could not open the Pattern Editor", 
-                    e.getMessage());
-        } 
+        dialogBoxes.openPatternEditor(gol.getBoard());
     }
     
     public void loadGameBoardFromRLE(boolean online) {
@@ -223,7 +188,6 @@ public class ViewController {
             
             if(selectedFile != null) {
                 if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
-                    statusBar.setText("Could not open file!");
                     return;
                 }
             } else {
@@ -231,11 +195,7 @@ public class ViewController {
             }
         }
         
-        byte[][] board = fileLoader.getBoard();
-        rows = board.length;
-        columns = board[0].length;
-        gController.newGame(board, fileLoader.getMetadata());
-        
+        gol.loadGame(fileLoader.getBoard(), fileLoader.getMetadata());
         openGame();
     }
     
@@ -261,9 +221,6 @@ public class ViewController {
      * or loaded from a file.
      */
     public void openGame() {
-        grid = gController.getBoardReference();
-        rows = gController.getRows();
-        columns = gController.getColumns();
         setLowestCellSize();
         centerBoard();
         draw();
@@ -285,35 +242,12 @@ public class ViewController {
      */
     @FXML
     public void saveRLE() {
-    	Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
-
-    	if (gController.getBoardReference() != null) {
-    		metaDataDialogBox();
-    	}
-
-    	FileChooser fileChooser = new FileChooser();
-    	fileChooser.setTitle("Save RLE Pattern to file");
-        fileChooser.getExtensionFilters().add(
-            new ExtensionFilter("RLE files", "*.rle"));
-        File saveRLEFile = fileChooser.showSaveDialog(mainStage);
-
-            if (saveRLEFile != null) {
-                // Tror det er greit å try-catche i RLEEncoder, da er det ryddig i ViewController
-
-                // Hentet hele brettet med en ny metode jeg lagde. Vi må huske på å gå igjennom den neste gang
-                RLEEncoder rleenc = new RLEEncoder(gController.getBoard(), saveRLEFile);
-                if (!rleenc.encode()) {
-                        statusBar.setText("An error occured trying to save the file. Please try again.");
-                        return;
-                }
-                System.out.println(saveRLEFile.getAbsolutePath());
-                statusBar.setText("File saved to : " + saveRLEFile.getAbsolutePath());
-            }
- 	}
+        //dialogBoxes.saveRLEDialogBox(gol.getBoard());
+    }
 
     @FXML
     public void play() {
-        if(timeline != null || timeline.getStatus() != Status.RUNNING) {
+        if(timeline.getStatus() != Status.RUNNING) {
             timeline.play();
         }
     }
@@ -321,17 +255,12 @@ public class ViewController {
     @FXML
     public void pause() {
         timeline.stop();
-        if(timeline != null && timeline.getStatus() == Status.RUNNING) {
-            timeline.pause();
-        }
     }
 
     @FXML
     public void restart() {
-        if(gController != null && timeline.getStatus() != Status.STOPPED) {
-            timeline.stop();
-        }
-        gController.resetGame();
+        timeline.stop();
+        gol.resetGame();
         draw();
     }
     
@@ -398,23 +327,10 @@ public class ViewController {
         }
     }
 
-    
-    // HVOR KOMMER DISSE FRA? :)
-    @FXML
-    public void handleMouseDrag(MouseEvent e) {
-
-    }
-
-    // HVOR KOMMER DISSE FRA? :)
-    @FXML
-    public void handleMouseClick(MouseEvent e) {
-
-    }
-
     @FXML
     public void handleFitToView() {
-        double cellWidth = gameCanvas.getWidth() / (columns - 2);
-        double cellHeight = gameCanvas.getHeight() / (rows - 2);
+        double cellWidth = gameCanvas.getWidth() / (gol.getColumns());
+        double cellHeight = gameCanvas.getHeight() / (gol.getRows());
 
             if(cellWidth < cellHeight) {
                 cellSize = cellWidth;
@@ -448,11 +364,11 @@ public class ViewController {
     }
 
     private double getBoardWidth() {
-    	return cellSize * (columns-2);
+    	return cellSize * (gol.getColumns());
     }
 
     private double getBoardHeight() {
-    	return cellSize * (rows-2);
+    	return cellSize * (gol.getRows());
     }
 
     private boolean isXInsideGrid(double posX) {
@@ -472,13 +388,12 @@ public class ViewController {
     }
 
     private void draw() {
-        if(grid == null) {
-            return;
-        }
-        double start_X = Math.round(getGridStartPosX());
-        double start_Y = Math.round(getGridStartPosY());
-        double boardWidth = getBoardWidth();
-        double boardHeight = getBoardHeight();
+        final double start_X = Math.round(getGridStartPosX());
+        final double start_Y = Math.round(getGridStartPosY());
+        final int boardRowLength = gol.getRows();
+        final int boardColumnLength = gol.getColumns();
+        final double boardWidth = getBoardWidth();
+        final double boardHeight = getBoardHeight();
 
         GraphicsContext gc = gameCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, gameCanvas.widthProperty().doubleValue(),
@@ -499,9 +414,9 @@ public class ViewController {
         double y = start_Y;
 
         gc.setFill(stdAliveCellColor);
-        for(int rows = 1; rows < grid.length - 1; rows++) {
-            for(int cols = 1; cols < grid[0].length - 1; cols++ ) {
-                if (grid[rows][cols]== 1) {
+        for(int row = 0; row < boardRowLength; row++) {
+            for(int col = 0; col < boardColumnLength; col++ ) {
+                if (gol.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, cellSize, cellSize);
                 }
                 x += cellSize; //Plusser på for neste kolonne
@@ -510,15 +425,16 @@ public class ViewController {
             y += cellSize; //Plusser på for neste rad
         }
 
-        if(drawGrid && grid.length < 100) {
+        if(drawGrid) {
             drawGridLines(gc);
-            System.out.println(grid.length);
         }
     }
 
     private void drawGridLines(GraphicsContext gc) {
     	gc.setLineWidth(stdGridLineWidth);
     	gc.setStroke(stdGridColor);
+        final int boardRowLength = gol.getRows();
+        final int boardColumnLength = gol.getColumns();
 
     	double start_X = getGridStartPosX();
         double start_Y = getGridStartPosY();
@@ -528,13 +444,13 @@ public class ViewController {
         double end_Y = start_Y + getBoardHeight();
 
     	// For hver rad, tegn en horisontal strek
-        for(int y = 0; y <= rows-2; y++) {
+        for(int y = 0; y <= boardRowLength; y++) {
             gc.strokeLine(start_X, start_Y + (cellSize * y),
                     end_X, start_Y + (cellSize * y));
         }
 
         // For hver kolonne, tegn en vertikal strek
-        for(int x = 0; x <= columns-2; x++) {
+        for(int x = 0; x <= boardColumnLength; x++) {
         	gc.strokeLine(start_X + (cellSize * x),
                         start_Y, start_X + (cellSize * x), end_Y);
         }
@@ -563,7 +479,7 @@ public class ViewController {
      * @return void
      */
     private void metaDataDialogBox() {
-    	dialogBoxes.metaDataDialogBox(gController.getMetadata());
+    	dialogBoxes.metaDataDialogBox(gol.getMetaData());
     }
 
     @FXML
@@ -579,8 +495,8 @@ public class ViewController {
                 double bClick_Y = e.getY();
 
                 if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y)) {
-                    int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - rows;
-                    int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - columns;
+                    int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getColumns();
+                    int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getRows();
 
                     if(holdingPattern) {
 //                                // drawObject(row, column, pattern)
@@ -609,10 +525,9 @@ public class ViewController {
 //                                }
 // holdingPattern = false;
                     } else {
-                        drawCell = (gController.getCellAliveStatus(row, column) == 1);
-                        gController.setCellAliveStatus(row, column, (drawCell ? (byte)1 : (byte)0));
+                        drawCell = (gol.getCellAliveState(row, column) == 1);
+                        gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
                     }
-                    grid = gController.getBoardReference();
                     draw();
                 }
 
@@ -633,15 +548,14 @@ public class ViewController {
 
                 if( isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y) && !holdingPattern ) {
 
-                    int row    = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - rows;
-                    int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - columns;
+                    int row    = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
+                    int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
 
                     // unngår out of bounds exception,
                     // holder seg innenfor arrayets lengde
                     // tegner kun dersom man er innenfor lengde
-                    if((row < grid.length) && (column < grid[0].length)) {
-                        gController.setCellAliveStatus(row, column, (drawCell ? (byte)1 : (byte)0));
-                        grid = gController.getBoardReference();
+                    if((row < gol.getRows()-1) && (column < gol.getColumns()-1)) {
+                        gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
                         draw();
                     }
                 }
@@ -736,19 +650,18 @@ public class ViewController {
     }
 
     private void initializeBindCanvasSize() {
-        gameCanvas.heightProperty().bind(canvasParent.heightProperty());
-    	gameCanvas.widthProperty().bind(canvasParent.widthProperty());
-
-    	gameCanvas.heightProperty().addListener(e -> {
+        gameCanvas.heightProperty().addListener(e -> {
             draw();
     	});
     	gameCanvas.widthProperty().addListener(e -> {
             draw();
     	});
+        
+        gameCanvas.heightProperty().bind(canvasParent.heightProperty());
+    	gameCanvas.widthProperty().bind(canvasParent.widthProperty());
     }
 
     private void initializeTimeline() {
-        timeline = new Timeline();
         timeline.setCycleCount(Animation.INDEFINITE);
         initializeKeyFrame(30);
     }
@@ -758,8 +671,8 @@ public class ViewController {
      * the entire board on the screen
      */
     private void setLowestCellSize() {
-        double cellWidth = gameCanvas.getWidth() / columns;
-        double cellHeight = gameCanvas.getHeight() / rows;
+        double cellWidth = gameCanvas.getWidth() / (gol.getRows()-2);
+        double cellHeight = gameCanvas.getHeight() / (gol.getColumns()-2);
 
         if(cellWidth < cellHeight) {
             initializeCellSizeSlider(cellWidth, cellWidth);
@@ -774,10 +687,10 @@ public class ViewController {
         keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
             Stopwatch sw = new Stopwatch("Next generation threading");
             sw.start();
-            Thread newGenerationThread = new Thread() {
-                public void run() {
-                    gController.play();
-                }
+            //Thread newGenerationThread = new Thread() {
+            //    public void run() {
+                    gol.update();
+            /*    }
             };
             newGenerationThread.start();
 
@@ -785,12 +698,19 @@ public class ViewController {
                 newGenerationThread.join();
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
-            }
-            grid = gController.getBoardReference();
+            }*/
             draw();
             sw.stop();
         });
         timeline.getKeyFrames().clear();
         timeline.getKeyFrames().add(0, keyFrame);
+    }
+    
+    public void setMainStageDialogBoxes(Stage mainStage) {
+        dialogBoxes.setMainStage(mainStage);
+    }
+    
+    public void setStatusBarText(String s) {
+        statusBar.setText(s);
     }
 }

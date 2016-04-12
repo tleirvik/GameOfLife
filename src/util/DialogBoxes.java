@@ -1,40 +1,55 @@
 package util;
 
+import FileManagement.RLEEncoder;
+import GameOfLife.Board;
+import GameOfLife.EditorController;
+import GameOfLife.FixedBoard;
 import java.io.File;
 import GameOfLife.MetaData;
-import java.util.Optional;
+import GameOfLife.ViewController;
+import java.io.IOException;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
-import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.util.Pair;
+import javafx.stage.Modality;
 
 public class DialogBoxes {
-
+    
+    private final ViewController viewControllerReference;
+    private Stage mainStage;
+    
+    public DialogBoxes(ViewController viewController) {
+        this.viewControllerReference = viewController;
+    }
+    
 	/**
      * Static function with the purpose of "throwing" dialog boxes
      * @param title The title of the dialog box
      * @param headerText The header text of the dialog box
      * @param contentText The content text of the dialog box
      */
+    
+    public void setMainStage(Stage mainStage) {
+        this.mainStage = mainStage;
+    }
 
     public static void infoBox(String title, String headerText, String contentText) {
     	Alert alert = new Alert(AlertType.WARNING);
@@ -109,7 +124,7 @@ public class DialogBoxes {
         return selectedFile;
     }
     
-    public File saveRLEDialogBox() {
+    public void saveRLEDialogBox(FixedBoard board) {
         Stage mainStage = new Stage();
 
         FileChooser fileChooser = new FileChooser();
@@ -117,7 +132,16 @@ public class DialogBoxes {
         fileChooser.getExtensionFilters().add(
             new ExtensionFilter("RLE files", "*.rle"));
         File saveRLEFile = fileChooser.showSaveDialog(mainStage);
-        return saveRLEFile;
+        
+        if(saveRLEFile != null) {
+            RLEEncoder rleenc = new RLEEncoder(board, saveRLEFile);
+            if(!rleenc.encode()) {
+                viewControllerReference.setStatusBarText("Could not open file!");
+                return;
+            }
+            viewControllerReference.setStatusBarText("File saved to : " + 
+                    saveRLEFile.getAbsolutePath());
+        }
     }
 
 
@@ -209,35 +233,24 @@ public class DialogBoxes {
 
     public int[] openNewGameDialog() {
         int[] array = new int[2];
+        
         GridPane root = new GridPane();
         root.setPadding(new Insets(20, 150, 10, 10));
         root.setHgap(10);
         root.setVgap(10);
         Stage stage = new Stage();
         
-        Label label1 = new Label("Columns: ");
-        Label label2 = new Label("Rows: ");
-        GridPane.setConstraints(label1, 0, 0, 1, 1);
-        GridPane.setConstraints(label2, 0, 1, 1, 1);
-        root.getChildren().addAll(label1, label2);
+        Label rowLabel = new Label("Rows: ");
+        Label columnLabel = new Label("Columns: ");
+        GridPane.setConstraints(rowLabel, 0, 0, 1, 1);
+        GridPane.setConstraints(columnLabel, 0, 1, 1, 1);
+        root.getChildren().addAll(rowLabel, columnLabel);
         
-        TextField columns = new TextField();
-        columns.setPromptText("Enter a positiv integer.");
-        TextField rows = new TextField();
-        rows.setPromptText("Enter a positiv integer.");
-        GridPane.setConstraints(columns, 1, 0, 3, 1);
-        GridPane.setConstraints(rows, 1, 1, 3, 1);
-        root.getChildren().addAll(columns, rows);
-        
-        Label errorLabel1 = new Label();
-        Label errorLabel2 = new Label();
-        GridPane.setConstraints(errorLabel1, 4, 0);
-        GridPane.setConstraints(errorLabel2, 4, 1);
-        root.getChildren().addAll(errorLabel1, errorLabel2);
-        
-        
-        
-        
+        Spinner rows = new Spinner(1, 100000, 1, 1);
+        Spinner columns = new Spinner(1, 100000, 1, 1);
+        GridPane.setConstraints(rows, 1, 0, 3, 1);
+        GridPane.setConstraints(columns, 1, 1, 3, 1);
+        root.getChildren().addAll(rows, columns);
         
         Button okButton = new Button("OK");
         Button cancelButton = new Button("Cancel");
@@ -251,36 +264,16 @@ public class DialogBoxes {
         GridPane.setConstraints(hbox, 1, 3);
         
         okButton.setDefaultButton(true);
-        okButton.setOnAction(e -> {
-            boolean error = false;
-            try {
-                errorLabel1.setText("");
-                array[0] = Integer.parseInt(columns.getText());
-                if(array[0] <= 0) {
-                    throw new NumberFormatException();
-                }
-            } catch (NumberFormatException nfE) {
-                error = true;
-               errorLabel1.setText("You must enter an integer.");
-               
-            }
-            try {
-                errorLabel2.setText("");
-                array[1] = Integer.parseInt(rows.getText());
-                if(array[1] <= 0) {
-                    throw new NumberFormatException();
-                }
-            } catch(NumberFormatException nfE) {
-                error = true;
-                errorLabel2.setText("You must enter an integer.");
-            }
-            if(!error) {
-                stage.close();
-            }
+        okButton.setOnAction(e -> {     
+           array[0] = (int)rows.getValue();
+           array[1] = (int)columns.getValue();
+           stage.close();
         });
         
         
         cancelButton.setOnAction(e -> {
+            array[0] = 0;
+            array[1] = 0;
             stage.close();
         });
         
@@ -290,6 +283,34 @@ public class DialogBoxes {
         stage.showAndWait();
         
         return array;
+    }
+
+    public void openPatternEditor(Board board) {
+        Stage editor = new Stage();
+        editor.initModality(Modality.WINDOW_MODAL);
+        editor.initOwner(mainStage);
+        
+        try {
+            FXMLLoader loader;
+            loader = new FXMLLoader(getClass().getResource("PatternEditor.fxml"));
+            
+            BorderPane root = loader.load();
+            editor.setResizable(false);
+            
+            EditorController edController = loader.getController();
+            edController.setPattern(board);
+
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource(
+                    "patternEditor.css").toExternalForm());
+            
+            editor.setScene(scene);
+            editor.setTitle("Pattern Editor");
+            editor.show();
+        } catch (IOException e) {
+            DialogBoxes.infoBox("Error", "Could not open the Pattern Editor", 
+                    e.getMessage());
+        } 
     }
         
     

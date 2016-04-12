@@ -3,23 +3,14 @@ package GameOfLife;
 import java.util.Random;
 
 public class GameOfLife {
-    private FixedBoard board; 
+    private Board board; 
 
-    //Burde ikke lage brett i konstruktør, burde heller
-    //Være en egen funksjon så man slipper å slette og lage ny GameOfLife.
-    //Singleton?
-    public GameOfLife(boolean isDynamic, int rows, int columns) {        
-        board = new FixedBoard(rows, columns);
+    public void newEmptyGame(int rows, int columns) {        
+        board = new DynamicBoard(rows, columns);
     }
-
-    //Burde ikke lage brett i konstruktør, burde heller
-    //Være en egen funksjon så man slipper å slette og lage ny GameOfLife.
-    //Singleton?
-    public GameOfLife(byte[][] board, MetaData metadata) {
-        this.board = new FixedBoard(board, metadata);
-    }
-
-    public void populateRandomBoard() {
+    
+    public void newRandomGame(int rows, int columns) {
+        board = new DynamicBoard(rows, columns);
         Random random = new Random();
         for(int row = 0; row < board.getRows(); row++) {
             for(int col = 0; col < board.getColumns(); col++) {
@@ -28,29 +19,40 @@ public class GameOfLife {
         }
     }
 
-    /**
-     *
-     * @return
-     */
-    public FixedBoard getBoard() {
-    	return board;
-        
-    }
-    
-    public byte[][] getBoardReference() {
-    	return board.getBoardReference();
+    public void loadGame(byte[][] board, MetaData metadata) {
+        this.board = new DynamicBoard(board, metadata);
     }
 
-    public void update() {
-        board.nextGeneration();
+    public Board getBoard() {
+    	return board;
     }
     
     public MetaData getMetaData() {
         return board.getMetaData();
     }
     
+    public int getRows() {
+        return board.getRows();
+    }
+
+    public int getColumns() {
+        return board.getColumns();
+    }
+    
+    public byte getCellAliveState(int row, int column) {
+        return board.getCellAliveState(row, column);
+    }
+
+    public void setCellAliveState(int row, int column, byte isAlive) {
+        board.setCellAliveState(row, column, isAlive);
+    }
+
     public void resetGame() {
         board.resetBoard();
+    }
+    
+    public void update() {
+        board.nextGeneration();
     }
     
     /*
@@ -82,21 +84,5 @@ public class GameOfLife {
         }
         board.nextGenerationToCurrent();
     }*/
-
-    public byte getCellAliveState(int row, int column) {
-        return board.getCellAliveState(row, column);
-    }
-
-    public void setCellAliveState(int row, int column, byte isAlive) {
-        board.setCellAliveState(row, column, isAlive);
-    }
-
-    public int getRows() {
-        return board.getRows();
-    }
-
-    public int getColumns() {
-        return board.getColumns();
-    }
 
 }

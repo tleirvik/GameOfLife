@@ -40,8 +40,7 @@ public class EditorController {
 
     private double cellSize;
     private double cellSizeStrip;
-    private FixedBoard fixedBoard;
-    private byte[][] pattern;
+    private FixedBoard board;
     private MetaData metaData;
 
     /**
@@ -65,11 +64,11 @@ public class EditorController {
     
     @FXML
     public void handleMouseClick(MouseEvent e) {
-        int row = (int) (e.getY() / cellSize) + 1;
-        int col = (int) (e.getX() / cellSize) + 1;
+        int row = (int) (e.getY() / cellSize);
+        int col = (int) (e.getX() / cellSize);
         
-        if(row < pattern.length && col < pattern[0].length) {
-            pattern[row][col] = (pattern[row][col] == 1) ? (byte) 0 : (byte) 1;
+        if(row < board.getRows() && col < board.getColumns()) {
+            board.setCellAliveState(row, col,(board.getCellAliveState(row, col) == 1) ? (byte) 0 : (byte) 1);
             draw();
         }
     }
@@ -77,27 +76,36 @@ public class EditorController {
     
     
     // sette brettet her?
-    public void setPattern(byte[][] pattern, MetaData metaData) {
-        fixedBoard = new FixedBoard(pattern, metaData);
-        this.pattern = fixedBoard.getBoardReference();
-        this.metaData = metaData;
+    public void setPattern(Board board) {
+        final int rows = board.getRows();
+        final int columns = board.getColumns();
+        final byte[][] tempBoard = new byte[rows][columns];
+        
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
+                tempBoard[row][col] = board.getCellAliveState(row, col);
+            }
+        }
+        
+        metaData = board.getMetaData();
+        this.board = new FixedBoard(tempBoard, metaData);
 
-        double cellWidth = patternCanvas.getWidth() / (pattern[0].length - 2);
-        double cellHeight = patternCanvas.getHeight() / (pattern.length - 2);
-        this.cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
+        double cellWidth = patternCanvas.getWidth() / (rows);
+        double cellHeight = patternCanvas.getHeight() / (columns);
+        cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
 
         authorTextField.setText(metaData.getAuthor());
         descriptionTextField.setText(metaData.getComment());
         titleTextField.setText(metaData.getName());
-        rulesTextField.setText(metaData.getRuleString()[0] + " " + metaData.getRuleString()[1]);
+        rulesTextField.setText("S" + metaData.getRuleString()[0] + "/B" + metaData.getRuleString()[1]);
 
         draw();
     }
     
     @FXML
     public void updateStrip() {
-        final double stripCellSize = strip.getHeight() / (pattern.length - 2);
-        final double generationWidth = stripCellSize * (pattern[0].length - 2);
+        final double stripCellSize = strip.getHeight() / (board.getRows());
+        final double generationWidth = stripCellSize * (board.getColumns());
         final double padding = 25;
         strip.setWidth((generationWidth + padding) * 20);
         double offset_X = 0;
@@ -107,23 +115,25 @@ public class EditorController {
                 strip.heightProperty().doubleValue());
         
         for(int i = 0; i < 20; i++) {
-            fixedBoard.nextGeneration();
+            board.nextGeneration();
             drawStrip(gc, offset_X, stripCellSize);
             offset_X += generationWidth + padding;
         }
         
-        fixedBoard.resetBoard();
+        board.resetBoard();
     }
     
     private void drawStrip(GraphicsContext gc, double offset_X, double stripCellSize) {
         boolean isGenerationAlive = false;
         
+        final int rows = board.getRows();
+        final int columns = board.getColumns();
         double x = offset_X;
         double y = 0;
 
-        for(int row = 1; row < pattern.length - 1; row++) {
-            for(int col = 1; col < pattern[0].length - 1; col++) {
-                if (pattern[row][col] == 1) {
+        for(int row = 0; row < rows; row++) {
+            for(int col = 0; col < columns; col++) {
+                if (board.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, stripCellSize, stripCellSize);
                 }
                 x += stripCellSize; // Plusser på for neste kolonne
@@ -134,9 +144,8 @@ public class EditorController {
         
         final double start_x = offset_X;
         final double start_y = 0;
-        final double end_y = stripCellSize * (pattern.length -2);
-        final double end_x = offset_X + 
-                (stripCellSize * pattern[0].length -2);
+        final double end_y = stripCellSize * rows;
+        final double end_x = offset_X + stripCellSize * columns;
         
         // tegner en ramme rundt hver generasjon
         // topp
@@ -151,6 +160,9 @@ public class EditorController {
     
     // tegne mønsteret
     private void draw() {
+        final int rows = board.getRows();
+        final int columns = board.getColumns();
+        
         final GraphicsContext gc = patternCanvas.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, patternCanvas.getWidth(), 
@@ -160,9 +172,9 @@ public class EditorController {
         double y = 0;
         
         gc.setFill(Color.BLACK);
-        for(int row = 1; row < pattern.length - 1; row++) {
-            for(int col = 1; col < pattern[0].length - 1; col++) {
-                if (pattern[row][col] == 1) {
+        for(int row = 0; row < rows; row++) {
+            for(int col = 0; col < columns; col++) {
+                if (board.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, cellSize, cellSize);
                 }
                 x += cellSize; // Plusser på for neste kolonne
@@ -175,27 +187,29 @@ public class EditorController {
     
     // bør ha gridlines for å gjøre manipulering mer lesbar.
     private void drawGridLines(GraphicsContext gc) {
-        gc.setLineWidth(0.6);
-        gc.setStroke(Color.GRAY);
-        
+        final int rows = board.getRows();
+        final int columns = board.getColumns();
         final double height = getPatternHeight();
         final double width = getPatternWidth();
         
+        gc.setLineWidth(0.6);
+        gc.setStroke(Color.GRAY);
+        
         // For hver kolonne, tegn en vertikal strek
-        for(int col = 0; col <= pattern[0].length - 2; col++) {
+        for(int col = 0; col <= columns; col++) {
             gc.strokeLine(cellSize * col, 0, cellSize * col, height);   
         }
         
-        for(int row = 0; row <= pattern.length - 2; row++) {
+        for(int row = 0; row <= rows; row++) {
             gc.strokeLine(0, cellSize * row, width, cellSize * row);
         }
     }
     
     private double getPatternWidth() {
-        return cellSize * (pattern[0].length - 2);
+        return cellSize * board.getColumns();
     }
     
     private double getPatternHeight() {
-        return cellSize * (pattern.length - 2);
+        return cellSize * board.getRows();
     }
 }

@@ -8,10 +8,14 @@ package GameOfLife;
  * made for a board of a fixed size.
  * 
  */
-public class FixedBoard {
+public class FixedBoard extends Board{
     private final MetaData metadata;
     private final byte[][] currentGeneration;
     private final byte[][] firstGeneration;
+    
+    //=========================================================================
+    // Constructors
+    //=========================================================================
     
     /**
      * Constructs a board of a fixed size.
@@ -26,7 +30,7 @@ public class FixedBoard {
     }
 
     /**
-     * Constructs a boad with the given two-dimensional <code>byte</code>-array and
+     * Constructs a board with the given two-dimensional <code>byte</code>-array and
      * adds the metadata.
      * 
      * @param board The two-dimensional <code>byte</code>-array whose data
@@ -37,24 +41,28 @@ public class FixedBoard {
      * @see MetaData
      */
     public FixedBoard(byte[][] board, MetaData metadata) {
-    	this.metadata = metadata;
-    	currentGeneration = new byte[board.length][board[0].length];
-        firstGeneration = new byte[board.length][board[0].length];
+    	this.metadata =  metadata;
+    	currentGeneration = new byte[board.length + 2][board[0].length + 2];
+        firstGeneration = new byte[board.length + 2][board[0].length + 2];
 
-    	for(int row = 1; row < board.length - 1; row++) {
-            for(int col = 1; col < board[0].length - 1; col++) {
-                currentGeneration[row][col] = board[row][col];
-                firstGeneration[row][col] = board[row][col];
+    	for(int row = 0; row < board.length; row++) {
+            for(int col = 0; col < board[0].length; col++) {
+                currentGeneration[row + 1][col + 1] = board[row][col];
+                firstGeneration[row + 1][col + 1] = board[row][col];
             }
     	}
     }
+    
+    //=========================================================================
+    // Getters
+    //=========================================================================
 
     /**
      * 
      * @return The number of rows
      */
     public int getRows() {
-        return currentGeneration.length;
+        return currentGeneration.length - 2;
     }
 
     /**
@@ -62,7 +70,7 @@ public class FixedBoard {
      * @return The number of columns
      */
     public int getColumns() {
-        return currentGeneration[0].length;
+        return currentGeneration[0].length - 2;
     }
 
     /**
@@ -75,22 +83,7 @@ public class FixedBoard {
     public MetaData getMetaData() {
         return metadata;
     }
-
-    /**
-     * 
-     * @return The board's current generation
-     */
-    public byte[][] getBoardReference() {
-    	return currentGeneration;
-    }
     
-    public void resetBoard() {
-        for(int row = 1; row < firstGeneration.length - 1; row++) {
-            System.arraycopy(firstGeneration[row], 1, 
-                    currentGeneration[row], 1, firstGeneration[0].length - 1 - 1);
-    	}
-    }
-
     /**
      * Returns the <code>byte</code> value of the cell at the given position
      *
@@ -100,9 +93,13 @@ public class FixedBoard {
      * given position
      */
     public byte getCellAliveState(int row, int column) {
-        return currentGeneration[row][column];
+        return currentGeneration[row + 1][column + 1];
     }
-
+    
+    //=========================================================================
+    // Setters
+    //=========================================================================
+    
     /**
      * Sets the <code>byte</code> value of the cell at the given position
      * to the <code>byte</code> value given in aliveState. Throws a Runtime
@@ -115,13 +112,26 @@ public class FixedBoard {
      */
     public void setCellAliveState(int row, int column, byte aliveState) {
         if(aliveState == 0 || aliveState == 1) {
-            currentGeneration[row][column] = aliveState;
+            currentGeneration[row + 1][column + 1] = aliveState;
         } else {
             throw new RuntimeException("Invalid number in cell state: " + aliveState);
         }
     }
     
-    public void nextGeneration() {
+    //=========================================================================
+    // Generation-methods
+    //=========================================================================
+    
+    public void resetBoard() {
+        for(int row = 1; row < currentGeneration.length-1; row++) {
+            for(int col = 1; col < currentGeneration[0].length-1; col++) {
+                currentGeneration[row][col] = firstGeneration[row][col];
+            }
+        }
+    }
+    
+    @Override
+    public byte[][] countNeighbours() {
         byte[][] neighbourArray = new byte[currentGeneration.length][currentGeneration[0].length];
         
         for(int row = 1; row < currentGeneration.length-1; row++) {
@@ -138,6 +148,12 @@ public class FixedBoard {
                 }
             }
         }
+        return neighbourArray;
+    }
+    
+    @Override
+    public void nextGeneration() {
+        byte[][] neighbourArray = countNeighbours();
         
         for(int row = 1; row < currentGeneration.length-1; row++) {
             for(int col = 1; col < currentGeneration[0].length-1; col++) {
@@ -145,37 +161,11 @@ public class FixedBoard {
             }
         }
     }
-    
-    /*
-    /**
-     * Counts the amount of neighbours for the cell at the given position
-     * 
-     * @param row 
-     * @param col
-     * @return the amount of neighbours around the cell
-     *//*
-    public int countNeighbours(int row, int col) {        
-        return currentGeneration[row-1][col-1] + 
-                currentGeneration[row-1][col] + 
-                currentGeneration[row-1][col+1] + 
-                currentGeneration[row][col-1] + 
-                currentGeneration[row][col+1] + 
-                currentGeneration[row+1][col-1] + 
-                currentGeneration[row+1][col] + 
-                currentGeneration[row+1][col+1];
-    }*/
-    
-    /*
-    public void nextGeneration(int startRow, int endRow) {
-        for(int row = startRow; row < endRow; row++) {
-            for(int col = 0; col < currentGeneration[0].length; col++) {
-                currentGeneration[row][col] = ((countNeighbours(row,col) == 3) || 
-                        (currentGeneration[row][col] == 1 && 
-                        countNeighbours(row,col) == 2 )) ? (byte)1 : (byte)0;
-            }
-        }
-    }*/
 
+    //=========================================================================
+    // Misc.
+    //=========================================================================
+    
     /**
      *  Method that returns the game board as a String. Used for Unit Testing with JUnit 4
      *

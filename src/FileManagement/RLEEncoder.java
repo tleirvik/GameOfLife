@@ -1,6 +1,6 @@
 package FileManagement;
 
-import GameOfLife.FixedBoard;
+import GameOfLife.Board;
 import GameOfLife.MetaData;
 import util.DialogBoxes;
 
@@ -29,9 +29,9 @@ public class RLEEncoder {
      * @param b The board that we want to parse and save to file
      * @param f The file to save the board to
      */
-    public RLEEncoder(FixedBoard b, File f) {
+    public RLEEncoder(Board b, File f) {
         metadata = b.getMetaData();
-        board = b.getBoardReference();
+        board = new byte[b.getRows()][b.getColumns()];
         filePath = f.toPath();
         rleString = new StringBuffer();
         System.out.println(board.length + " " + board[0].length);
@@ -173,25 +173,3 @@ public class RLEEncoder {
 
     }
 }
-/*
-private void encodeBoard() {
-        int count = 1;
-        int currentCell = -1;
-
-        for (int row = 1; row < board.length - 1; row++) {
-            for (int col = 1; col < board[0].length - 1; col++) {
-                final int nextPosition = col+1;
-                currentCell = board[row][col]; // Henter cellen
-                if((nextPosition != board[0].length - 1) && (currentCell == board[row][nextPosition])) { // Hvis cellen matcher neste celle...
-                    count++; // Pluss på antall forekomster av cellen
-                } else {
-                    // Skriver inn antall forekomster (skipper om den bare forekommer en gang) og om den er død eller levende
-                    rleString.append(((count == 1) ? "" : Integer.toString(count)) + ((currentCell == 1) ? "o" : "b"));
-                    count = 1;
-                }
-            }
-            rleString.append("$");
-        }
-        rleString.append("!");
-    }
- */
