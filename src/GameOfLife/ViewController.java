@@ -281,7 +281,14 @@ public class ViewController {
     public void loadGameBoardFromDisk() {
         loadGameBoardFromRLE(false);
     }
-    
+    @FXML
+    public void handleMouseClick() {
+
+    }
+    @FXML
+    public void handleMouseDrag() {
+
+    }
     /**
      * Opens a currently loaded game, whether it is completely new
      * or loaded from a file.
@@ -300,7 +307,10 @@ public class ViewController {
         restartButton.setDisable(false);
         savePicker.setDisable(false);
     }
+    @FXML
+    public void openOptions() {
 
+    }
     /**
      * This method launches a FileChooser and lets the user specify a
      * filename and save the current board.
