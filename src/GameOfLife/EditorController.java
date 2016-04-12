@@ -96,6 +96,7 @@ public class EditorController {
     
     @FXML
     public void saveToGif() {
+        gifSaver = new GIFSaver();
         DialogBoxes box = new DialogBoxes();
         box.saveToGIFDialog(gifSaver);
     }

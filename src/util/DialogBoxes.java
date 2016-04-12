@@ -365,6 +365,7 @@ public class DialogBoxes {
         root.setPadding(new Insets(20, 150, 10, 10));
         root.setHgap(10);
         root.setVgap(10);
+        
         Stage stage = new Stage();
         
         final Label label1 = new Label("Width: ");
@@ -374,10 +375,10 @@ public class DialogBoxes {
         root.getChildren().addAll(label1, label2);
         
         final String INITIAL_VALUE = "50";
-        final Spinner spinnerWidth = new Spinner(10, 10000, 50, 10);
+        final Spinner spinnerWidth = new Spinner(10, 1000, 50, 10);
         spinnerWidth.setEditable(true);
         
-        final Spinner spinnerHeight = new Spinner(10, 10000, 50, 10);
+        final Spinner spinnerHeight = new Spinner(10, 1000, 50, 10);
         spinnerHeight.setEditable(true);
         
         GridPane.setConstraints(spinnerWidth, 1, 0, 3, 1);
@@ -409,34 +410,30 @@ public class DialogBoxes {
         
         final Label aliveCellColorLabel = new Label("Alive Cell Color");
         GridPane.setConstraints(aliveCellColorLabel, 0, 5);
+        
         final ColorPicker aliveCellColor = new ColorPicker(Color.GREEN);
         GridPane.setConstraints(aliveCellColor, 1, 5);
         root.getChildren().addAll(aliveCellColorLabel, aliveCellColor);
         
         final Label deadCellColorLabel = new Label("Dead Cell Color");
         GridPane.setConstraints(deadCellColorLabel, 0, 6);
+        
         final ColorPicker deadCellColor = new ColorPicker(Color.RED);
         GridPane.setConstraints(deadCellColor, 1, 6);
         root.getChildren().addAll(deadCellColorLabel, deadCellColor);
         
         
         final Button saveButton = new Button("Save");
-        final Button cancelButton = new Button("Cancel");
-        
-        HBox hbox = new HBox();
-        hbox.setSpacing(10);
-        hbox.setAlignment(Pos.BASELINE_RIGHT);
-        hbox.getChildren().addAll(saveButton, cancelButton);
-        root.getChildren().add(hbox);
-        
-        GridPane.setConstraints(hbox, 1, 8);
-        
         saveButton.setDefaultButton(true);
+        
         saveButton.setOnAction(e -> {
+            int width = 0;
+            int height = 0;
+            
             boolean error = false;
             try {
                 errorLabel1.setText("");
-                Integer.parseInt(spinnerWidth.getEditor().textProperty().get());
+                width = Integer.parseInt(spinnerWidth.getEditor().textProperty().get());
             } catch (NumberFormatException nfE) {
                 error = true;
                errorLabel1.setText("You must enter an integer.");
@@ -445,26 +442,41 @@ public class DialogBoxes {
             
             try {
                 errorLabel2.setText("");
-                Integer.parseInt(spinnerHeight.getEditor().textProperty().get());
+                height = Integer.parseInt(spinnerHeight.getEditor().textProperty().get());
             } catch (NumberFormatException nfE) {
                 error = true;
                 errorLabel2.setText("You must enter an integer.");
                 spinnerHeight.getEditor().textProperty().set(INITIAL_VALUE);
             }
             
-            if(!error) {
-                saver.setWidth((int) spinnerWidth.getValue());
-                saver.setHeight((int) spinnerHeight.getValue());
+            if (!error) {
+                if (width > 1000) {
+                    width = 50;
+                } else if (height > 1000) {
+                    height = 50;
+                }
+                saver.setWidth(width);
+                saver.setHeight(height);
                 saver.setColors(convertFXColorToAWTColor(backgroundColor.getValue()),
                     convertFXColorToAWTColor(aliveCellColor.getValue()), 
                     convertFXColorToAWTColor(deadCellColor.getValue()));
                 stage.close();
             }
         });
-
+        
+        final Button cancelButton = new Button("Cancel");
         cancelButton.setOnAction(e -> {
             stage.close();
         });
+        
+        // An HBox for the Save and Cancel button and adding the HBox to
+        // the grid.
+        HBox hbox = new HBox();
+        hbox.setSpacing(10);
+        hbox.setAlignment(Pos.BASELINE_RIGHT);
+        hbox.getChildren().addAll(saveButton, cancelButton);
+        GridPane.setConstraints(hbox, 1, 8);
+        root.getChildren().add(hbox);
         
         Scene scene = new Scene(root, 630, 400);
 
@@ -473,6 +485,13 @@ public class DialogBoxes {
         stage.showAndWait();
     }
     
+    /**
+     * This method convert JavaFX colors  to java.awt.Color to be used
+     * in GIFSaver
+     * @param c
+     * @return 
+     * @see GIFSaver
+     */
     private java.awt.Color convertFXColorToAWTColor(javafx.scene.paint.Color c) {
         int r = (int) c.getRed();
         int g = (int) c.getGreen();
