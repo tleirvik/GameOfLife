@@ -6,6 +6,7 @@ import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
 import javafx.animation.Timeline;
+import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -21,10 +22,9 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import util.DialogBoxes;
+import util.Stopwatch;
 
 import java.io.File;
-import javafx.application.Platform;
-import util.Stopwatch;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
