@@ -677,7 +677,7 @@ public class ViewController {
                 if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y)) {
                     int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - rows;
                     int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - columns;
-
+                    draw();
                     if(holdingPattern) {
 //                                // drawObject(row, column, pattern)
 //                                boolean[][] testArray = new boolean[][] {
