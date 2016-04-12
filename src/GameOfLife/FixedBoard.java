@@ -41,8 +41,8 @@ public class FixedBoard {
     	currentGeneration = new byte[board.length][board[0].length];
         firstGeneration = new byte[board.length][board[0].length];
 
-    	for(int row = 1; row < board.length - 1; row++) {
-            for(int col = 1; col < board[0].length - 1; col++) {
+    	for (int row = 1; row < board.length - 1; row++) {
+            for (int col = 1; col < board[0].length - 1; col++) {
                 currentGeneration[row][col] = board[row][col];
                 firstGeneration[row][col] = board[row][col];
             }
@@ -92,7 +92,7 @@ public class FixedBoard {
      * This method resets the board to the origin board
      */
     public void resetBoard() {
-        for(int row = 1; row < firstGeneration.length - 1; row++) {
+        for (int row = 1; row < firstGeneration.length - 1; row++) {
             System.arraycopy(firstGeneration[row], 1, 
                     currentGeneration[row], 1, firstGeneration[0].length - 1 - 1);
     	}
@@ -121,7 +121,7 @@ public class FixedBoard {
      * given position
      */
     public void setCellAliveState(int row, int column, byte aliveState) {
-        if(aliveState == 0 || aliveState == 1) {
+        if (aliveState == 0 || aliveState == 1) {
             currentGeneration[row][column] = aliveState;
         } else {
             throw new RuntimeException("Invalid number in cell state: " + aliveState);
@@ -137,24 +137,26 @@ public class FixedBoard {
     public void nextGeneration() {
         byte[][] neighbourArray = new byte[currentGeneration.length][currentGeneration[0].length];
         
-        for(int row = 1; row < currentGeneration.length-1; row++) {
-            for(int col = 1; col < currentGeneration[0].length-1; col++) {
-                if(currentGeneration[row][col] == 1) {
-                    neighbourArray[row-1][col-1]++;
-                    neighbourArray[row-1][col]++;
-                    neighbourArray[row-1][col+1]++; 
-                    neighbourArray[row][col-1]++;
-                    neighbourArray[row][col+1]++;
-                    neighbourArray[row+1][col-1]++;
-                    neighbourArray[row+1][col]++;
-                    neighbourArray[row+1][col+1]++;
+        for (int row = 1; row < currentGeneration.length - 1; row++) {
+            for (int col = 1; col < currentGeneration[0].length - 1; col++) {
+                if (currentGeneration[row][col] == 1) {
+                    neighbourArray[row - 1][col - 1]++;
+                    neighbourArray[row - 1][col]++;
+                    neighbourArray[row - 1][col + 1]++; 
+                    neighbourArray[row][col - 1]++;
+                    neighbourArray[row][col + 1]++;
+                    neighbourArray[row + 1][col - 1]++;
+                    neighbourArray[row + 1][col]++;
+                    neighbourArray[row + 1][col + 1]++;
                 }
             }
         }
         
-        for(int row = 1; row < currentGeneration.length-1; row++) {
-            for(int col = 1; col < currentGeneration[0].length-1; col++) {
-                currentGeneration[row][col] = ((neighbourArray[row][col]== 3) || (currentGeneration[row][col] == 1 && neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0;
+        for (int row = 1; row < currentGeneration.length-1; row++) {
+            for (int col = 1; col < currentGeneration[0].length-1; col++) {
+                currentGeneration[row][col] = ((neighbourArray[row][col]== 3) ||
+                        (currentGeneration[row][col] == 1 && 
+                        neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0;
             }
         }
     }

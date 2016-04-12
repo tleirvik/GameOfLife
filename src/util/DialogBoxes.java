@@ -1,5 +1,6 @@
 package util;
 
+import FileManagement.GIFSaver;
 import GameOfLife.MetaData;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
@@ -18,6 +19,12 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 import java.io.File;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.input.KeyEvent;
+import javafx.scene.paint.Color;
+import javafx.stage.Modality;
+
 
 /**
  * Utility class for handling dialog boxes
@@ -343,10 +350,134 @@ public class DialogBoxes {
         });
         
         Scene scene = new Scene(root, 560, 150);
-
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.setScene(scene);
         stage.showAndWait();
         
         return array;
+    }
+    
+    
+    
+    
+    public void saveToGIFDialog(GIFSaver saver) {
+        GridPane root = new GridPane();
+        root.setPadding(new Insets(20, 150, 10, 10));
+        root.setHgap(10);
+        root.setVgap(10);
+        Stage stage = new Stage();
+        
+        final Label label1 = new Label("Width: ");
+        final Label label2 = new Label("Height: ");
+        GridPane.setConstraints(label1, 0, 0, 1, 1);
+        GridPane.setConstraints(label2, 0, 1, 1, 1);
+        root.getChildren().addAll(label1, label2);
+        
+        final String INITIAL_VALUE = "50";
+        final Spinner spinnerWidth = new Spinner(10, 10000, 50, 10);
+        spinnerWidth.setEditable(true);
+        
+        final Spinner spinnerHeight = new Spinner(10, 10000, 50, 10);
+        spinnerHeight.setEditable(true);
+        
+        GridPane.setConstraints(spinnerWidth, 1, 0, 3, 1);
+        GridPane.setConstraints(spinnerHeight, 1, 1, 3, 1);
+        root.getChildren().addAll(spinnerWidth, spinnerHeight);
+        
+        final Label speed = new Label("Animation Speed: ");
+        
+        final Label speedLabel = new Label("Animation Speed in milliseconds");
+        GridPane.setConstraints(speedLabel, 0, 2, 2, 1);
+        root.getChildren().add(speedLabel);
+        
+
+        
+        final Label errorLabel1 = new Label();
+        final Label errorLabel2 = new Label();
+        GridPane.setConstraints(errorLabel1, 4, 0);
+        GridPane.setConstraints(errorLabel2, 4, 1);
+        root.getChildren().addAll(errorLabel1, errorLabel2);
+        
+        final Label backgroundColorLabel = new Label("Background color");
+        GridPane.setConstraints(backgroundColorLabel, 0, 4);
+        root.getChildren().add(backgroundColorLabel);
+        
+        final ColorPicker backgroundColor = new ColorPicker(Color.BLACK);
+        GridPane.setConstraints(backgroundColor, 1, 4);
+        root.getChildren().add(backgroundColor);
+        
+        
+        final Label aliveCellColorLabel = new Label("Alive Cell Color");
+        GridPane.setConstraints(aliveCellColorLabel, 0, 5);
+        final ColorPicker aliveCellColor = new ColorPicker(Color.GREEN);
+        GridPane.setConstraints(aliveCellColor, 1, 5);
+        root.getChildren().addAll(aliveCellColorLabel, aliveCellColor);
+        
+        final Label deadCellColorLabel = new Label("Dead Cell Color");
+        GridPane.setConstraints(deadCellColorLabel, 0, 6);
+        final ColorPicker deadCellColor = new ColorPicker(Color.RED);
+        GridPane.setConstraints(deadCellColor, 1, 6);
+        root.getChildren().addAll(deadCellColorLabel, deadCellColor);
+        
+        
+        final Button saveButton = new Button("Save");
+        final Button cancelButton = new Button("Cancel");
+        
+        HBox hbox = new HBox();
+        hbox.setSpacing(10);
+        hbox.setAlignment(Pos.BASELINE_RIGHT);
+        hbox.getChildren().addAll(saveButton, cancelButton);
+        root.getChildren().add(hbox);
+        
+        GridPane.setConstraints(hbox, 1, 8);
+        
+        saveButton.setDefaultButton(true);
+        saveButton.setOnAction(e -> {
+            boolean error = false;
+            try {
+                errorLabel1.setText("");
+                Integer.parseInt(spinnerWidth.getEditor().textProperty().get());
+            } catch (NumberFormatException nfE) {
+                error = true;
+               errorLabel1.setText("You must enter an integer.");
+               spinnerWidth.getEditor().textProperty().set(INITIAL_VALUE);
+            }
+            
+            try {
+                errorLabel2.setText("");
+                Integer.parseInt(spinnerHeight.getEditor().textProperty().get());
+            } catch (NumberFormatException nfE) {
+                error = true;
+                errorLabel2.setText("You must enter an integer.");
+                spinnerHeight.getEditor().textProperty().set(INITIAL_VALUE);
+            }
+            
+            if(!error) {
+                saver.setWidth((int) spinnerWidth.getValue());
+                saver.setHeight((int) spinnerHeight.getValue());
+                saver.setColors(convertFXColorToAWTColor(backgroundColor.getValue()),
+                    convertFXColorToAWTColor(aliveCellColor.getValue()), 
+                    convertFXColorToAWTColor(deadCellColor.getValue()));
+                stage.close();
+            }
+        });
+
+        cancelButton.setOnAction(e -> {
+            stage.close();
+        });
+        
+        Scene scene = new Scene(root, 630, 400);
+
+        stage.setScene(scene);
+        stage.initModality(Modality.APPLICATION_MODAL);
+        stage.showAndWait();
+    }
+    
+    private java.awt.Color convertFXColorToAWTColor(javafx.scene.paint.Color c) {
+        int r = (int) c.getRed();
+        int g = (int) c.getGreen();
+        int b = (int) c.getBlue();
+        
+        return new java.awt.Color(r, g, b);
     }
 }

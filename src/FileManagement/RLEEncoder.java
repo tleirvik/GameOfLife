@@ -147,7 +147,7 @@ public class RLEEncoder {
         int offset = 0;
         final int offsetValue = 79;
         final String tempRleString = rleString.toString();
-        while(offset < tempRleString.length()) {
+        while (offset < tempRleString.length()) {
             if(tempRleString.length() - offset < offsetValue) {
                 bw.write(rleString.toString(), offset, tempRleString.length() - offset);
                 return;

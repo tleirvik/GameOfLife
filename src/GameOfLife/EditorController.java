@@ -5,6 +5,7 @@
  */
 package GameOfLife;
 
+import FileManagement.GIFSaver;
 import java.io.File;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -17,6 +18,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import util.DialogBoxes;
 
 /**
  * FXML Controller class
@@ -49,6 +51,7 @@ public class EditorController {
     private FixedBoard fixedBoard;
     private byte[][] pattern;
     private MetaData metaData;
+    private GIFSaver gifSaver;
 
     /**
      * This method closes the editor window.
@@ -91,9 +94,11 @@ public class EditorController {
         }
     }
     
-    
-    
-    // sette brettet her?
+    @FXML
+    public void saveToGif() {
+        DialogBoxes box = new DialogBoxes();
+        box.saveToGIFDialog(gifSaver);
+    }
 
     /**
      * This method sets the pattern we want to edit in the pattern editor and populates the text fields
@@ -177,6 +182,11 @@ public class EditorController {
         final double end_x = offset_X +
                 stripCellSize * (pattern[0].length - 2);
         
+        drawPadding(gc, start_x, start_y, end_x, end_y);
+    }
+    
+    private void drawPadding(GraphicsContext gc, double start_x, double start_y, 
+            double end_x, double end_y) {
         // tegner en ramme rundt hver generasjon
         // topp
         gc.strokeLine(start_x, start_y, end_x, start_y);
