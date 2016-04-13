@@ -2,6 +2,7 @@ package GameOfLife;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * @author Robin
@@ -10,6 +11,11 @@ public class DynamicBoard extends Board {
     private final MetaData metadata;
     private final List<List<Byte>> currentGeneration;
     private final List<List<Byte>> firstGeneration;
+    int sum1 = 0;
+    int sum2 = 0;
+    int sum3 = 0;
+    int sum4 = 0;
+    final int total = sum1 + sum2 + sum3 + sum4;
     
     //=========================================================================
     // Constructors
@@ -113,114 +119,174 @@ public class DynamicBoard extends Board {
         System.out.println(currentGeneration.get(0).size());
         System.out.println(currentGeneration.size());
 
+        //Top
+        checkTop();
+
+        //Left
+
+        checkLeft();
+
+        //Right
+
+        checkRight();
+
+        //Bottom
+
+        // checkBottom();
+
+
+    }
+
+    private void checkTop() {
         final int rows = currentGeneration.size();
         final int columns = currentGeneration.get(0).size();
 
-        int sum1 = 0;
-        int sum2 = 0;
-        int sum3 = -1;
-
-        //Top
         sum1 = currentGeneration.get(0).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
         sum2 = currentGeneration.get(1).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
         sum3 = currentGeneration.get(2).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+        sum4 = currentGeneration.get(3).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
         System.out.println("sum øverste rad: " + sum1);
         System.out.println("sum nest øverste rad: " + sum2);
         System.out.println("sum tredje øverste rad: " + sum3);
 
-        if (sum1 == 0 && sum2 == 0) {
+        if(sum1 > 0) {
+            System.out.println("rows before add:" + currentGeneration.get(0).size());
+            System.out.println("cols before add:" + currentGeneration.size());
+            System.out.println("Adding three rows");
+
+            currentGeneration.add(0, new ArrayList<>());
+            currentGeneration.add(1, new ArrayList<>());
+            currentGeneration.add(2, new ArrayList<>());
+
+            for (int col = 0; col < columns; col++) {
+                currentGeneration.get(0).add((byte)0);
+                currentGeneration.get(1).add((byte)0);
+                currentGeneration.get(2).add((byte)0);
+            }
+            /*
+            int newArraySize = (int)Math.ceil((currentGeneration.size() * 3) / 2) +1;
+            int result = (int)Math.ceil(rows - newArraySize);
+
+            for (int i = 0; i < result; i++) {
+                currentGeneration.add(i, new ArrayList<>());
+                currentGeneration.get(i).add((byte)0);
+            }
+            */
+            System.out.println("rows after add:" + currentGeneration.get(0).size());
+            System.out.println("cols after add:" + currentGeneration.size());
+        } else if (sum2 > 0) {
+            System.out.println("rows before add:" + currentGeneration.get(0).size());
+            System.out.println("cols before add:" + currentGeneration.size());
+            System.out.println("Adding one row");
+            currentGeneration.add(0, new ArrayList<>());
+            for (int col = 0; col < columns; col++) {
+                currentGeneration.get(0).add((byte)0);
+            }
+        } else if (total == 0) {
             currentGeneration.remove(0);
             System.out.println("Removing");
             System.out.println("rows after remove:" + currentGeneration.get(0).size());
             System.out.println("cols after remove:" + currentGeneration.size());
-        } else if((sum2 + sum1) > 0) {
+        }
+    }
+
+
+    private void checkLeft() {
+        final int rows = currentGeneration.size();
+        final int columns = currentGeneration.get(0).size();
+
+        for (int row = 0; row < rows; row++) {
+
+            sum1 += currentGeneration.get(row).get(0);
+            sum2 += currentGeneration.get(row).get(1);
+            sum3 += currentGeneration.get(row).get(2);
+            sum4 += currentGeneration.get(row).get(3);
+            System.out.println("Left 1:" + sum1 + " 2:" + sum2);
+        }
+        if (sum1 > 0) {
+            for (int row = 0; row < rows; row++) {
+                currentGeneration.get(row).add(0, (byte) 0);
+                currentGeneration.get(row).add(1, (byte) 0);
+                currentGeneration.get(row).add(2, (byte) 0);
+            }
+        } else if (sum2 > 0) {
+            for (int row = 0; row < rows; row++) {
+                currentGeneration.get(row).add(0, (byte) 0);
+            }
+        } else if(total == 0){
+            for (int row = 0; row < rows; row++) {
+                currentGeneration.get(row).remove(0);
+                System.out.println("Removing left");
+                System.out.println("rows after remove:" + currentGeneration.get(0).size());
+                System.out.println("cols after remove:" + currentGeneration.size());
+            }
+        }
+    }
+
+    private void checkRight() {
+        final int rows = currentGeneration.size();
+        final int columns = currentGeneration.get(0).size();
+
+        for (int row = 0; row < rows; row++) {
+            sum1 += currentGeneration.get(row).get(columns - 1);
+            sum2 += currentGeneration.get(row).get(columns - 2);
+        }
+        if (sum1 > 0) {
+            for (int row = 0; row < rows; row++) {
+                currentGeneration.get(row).add(rows -1,(byte) 0);
+                currentGeneration.get(row).add(rows -2, (byte) 0);
+                currentGeneration.get(row).add(rows -3, (byte) 0);
+            }
+        } else if (sum2 > 0) {
+            for (int row = 0; row < rows; row++) {
+                currentGeneration.get(row).add((byte) 0);
+            }
+        } else if (total == 0){
+            for (int row = 0; row < rows; row++) {
+                currentGeneration.get(row).remove(columns - 1);
+                System.out.println("Removing left");
+                System.out.println("rows after remove:" + currentGeneration.get(0).size());
+                System.out.println("cols after remove:" + currentGeneration.size());
+            }
+        }
+    }
+    private void checkBottom() {
+        final int rows = currentGeneration.size();
+        final int columns = currentGeneration.get(0).size();
+
+        sum1 = currentGeneration.get(rows -1).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+        sum2 = currentGeneration.get(rows -2).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+        sum3 = currentGeneration.get(rows -3).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+        sum4 = currentGeneration.get(rows -4).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+        System.out.println("sum nederste rad: " + sum1);
+        System.out.println("sum nest nederste rad: " + sum2);
+        System.out.println("sum tredje nederste rad: " + sum3);
+
+        if (sum1 > 0) {
             System.out.println("rows before add:" + currentGeneration.get(0).size());
             System.out.println("cols before add:" + currentGeneration.size());
             System.out.println("Adding");
+            currentGeneration.add((rows-1), new ArrayList<>());
+            currentGeneration.add((rows-2), new ArrayList<>());
+            currentGeneration.add((rows-3), new ArrayList<>());
 
-            currentGeneration.add(0, new ArrayList<>());
-            // currentGeneration.get(0).forEach(i -> i.byteValue());
-            for (int col = 0; col < columns; col++) {
-                currentGeneration.get(0).add((byte)0);
+            for (int bottomCol = 0; bottomCol < columns; bottomCol++) {
+                currentGeneration.get(rows - 1).add((byte) 0);
+                currentGeneration.get(rows - 2).add((byte) 0);
+                currentGeneration.get(rows - 3).add((byte) 0);
             }
-            System.out.println("rows after add:" + currentGeneration.get(0).size());
-            System.out.println("cols after add:" + currentGeneration.size());
+        } else if(sum2 > 0) {
+            currentGeneration.add((rows-1), new ArrayList<>());
+            for (int bottomCol = 0; bottomCol < columns; bottomCol++) {
+                currentGeneration.get(rows - 1).add((byte) 0);
+            }
+        } else if (total == 0) {
+            currentGeneration.remove(rows - 1);
+            System.out.println("Removing bottom row");
+            System.out.println("Bottom rows after remove:" + currentGeneration.get(0).size());
+            System.out.println("Bottom cols after remove:" + currentGeneration.size());
         }
-
-        /*
-        if (sum1 > 0) {
-            currentGeneration.add(0, new ArrayList<>());
-            for (int col = 0; col < columns; col++) {
-                currentGeneration.get(0).add((byte) 0);
-            }
-            sum1 = 0;
-            sum2 = 0;
-*/
-
-
-        /*
-            //Left
-            for (int row = 0; row < rows; row++) {
-
-                sum1 += currentGeneration.get(row).get(0);
-                sum2 += currentGeneration.get(row).get(1);
-                System.out.println("Left 1:" + sum1 + " 2:" + sum2);
-            }
-
-
-            if (sum1 == 0 && sum2 == 0) {
-                for (int row = 0; row < rows; row++) {
-                    currentGeneration.get(row).remove(0);
-                    System.out.println("Removing left");
-                    System.out.println("rows after remove:" + currentGeneration.get(0).size());
-                    System.out.println("cols after remove:" + currentGeneration.size());
-                }
-            } else if (sum2 != 0) {
-                for (int row = 0; row < rows; row++) {
-                    currentGeneration.get(row).add(0, (byte) 0);
-                }
-            }
-            sum1 = 0;
-            sum2 = 0;
-
-
-        /*
-            //Right
-            for (int row = 0; row < rows; row++) {
-                sum1 += currentGeneration.get(row).get(columns - 1);
-                sum2 += currentGeneration.get(row).get(columns - 2);
-            }
-            if (sum1 == 0 && sum2 == 0) {
-                for (int row = 0; row < rows; row++) {
-                    currentGeneration.get(row).remove(columns - 1);
-                }
-            } else if (sum1 > 0) {
-                for (int row = 0; row < rows; row++) {
-                    currentGeneration.get(row).add((byte) 0);
-                }
-            }
-            sum1 = 0;
-            sum2 = 0;
-*/
-        /*
-            //Bottom
-            for (int col = 0; col < columns; col++) {
-                sum1 += currentGeneration.get(rows - 1).get(col);
-                sum2 += currentGeneration.get(rows - 2).get(col);
-            }
-            if (sum1 == 0 && sum2 == 0) {
-                currentGeneration.remove(rows - 1);
-            } else if (sum1 > 0) {
-                currentGeneration.add(new ArrayList<>());
-                for (int col = 0; col < columns; col++) {
-                    currentGeneration.get(rows - 1).add((byte) 0);
-                }
-            }
-            */
-
-        }
-
-    
+    }
     @Override
     public byte[][] countNeighbours() {
         byte[][] neighbourArray = new byte[currentGeneration.size()][currentGeneration.get(0).size()];
