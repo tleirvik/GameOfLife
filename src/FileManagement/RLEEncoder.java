@@ -112,31 +112,7 @@ public class RLEEncoder {
      *
      */
 
-    private void encodeBoard() {
-        // Bør bytte til StringBuilder fordi den er raskere StringBuffer
-        int count = 1;
-        byte previous = board[0][0];
 
-        for (int row = 1; row < board.length - 1; row++) {
-            for (int col = 1; col < board[0].length - 1; col++) {
-                final int nextPosition = col + 1;
-                final byte currentCell = board[row][col];
-
-                if (currentCell == previous && col < board[0].length) {
-                    count++;
-                } else {
-                    rleString.append(count > 1 ? count : "").append(previous == 1 ? "o" : "b");
-                    count = 1;
-                }
-                previous = currentCell;
-            }
-            rleString.append(count > 1 ? count : "").append(previous == 1 ? "o" : "b");
-            count = 1;
-            rleString.append("$");
-
-        }
-        rleString.append("!");
-    }
 
     private void writeMetadata(BufferedWriter bw) throws IOException {
         bw.write(rleString.toString());
@@ -158,6 +134,24 @@ public class RLEEncoder {
         }
 
     }
+
+    private void encodeBoard() {
+        int counter = 1;
+
+        for (int row = 1; row < board.length -1; row++) {
+            for (int column = 1; column < board[0].length -1; column++) {
+                if (column +1 < board[0].length && board[row][column] == board[row][column + 1]) {
+                    counter++;
+                } else {
+                    rleString.append(counter > 1 ? counter : "").append(board[row][column] == 1 ? "o" : "b");
+                    counter = 1;
+                }
+            }
+            rleString.append("$");
+        }
+        rleString.append("!");
+    }
+
 }
 /*
 private void encodeBoard() {
@@ -177,6 +171,34 @@ private void encodeBoard() {
                 }
             }
             rleString.append("$");
+        }
+        rleString.append("!");
+    }
+ */
+
+/*
+private void encodeBoard() {
+        // Bør bytte til StringBuilder fordi den er raskere StringBuffer
+        int count = 1;
+        byte previous = -1;
+
+        for (int row = 1; row < board.length - 1; row++) {
+            for (int col = 1; col < board[0].length - 1; col++) {
+                final int nextPosition = col + 1;
+                final byte currentCell = board[row][col];
+
+                if (currentCell == previous && col -1 < board[0].length) {
+                    count++;
+                } else {
+                    rleString.append(count > 1 ? count : "").append(previous == 1 ? "o" : "b");
+                    count = 1;
+                }
+                previous = currentCell;
+            }
+            rleString.append(count > 1 ? count : "").append(previous == 1 ? "o" : "b");
+            count = 1;
+            rleString.append("$");
+
         }
         rleString.append("!");
     }
