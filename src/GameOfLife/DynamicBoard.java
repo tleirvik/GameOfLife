@@ -117,8 +117,8 @@ public class DynamicBoard extends Board {
     }
     
     private void checkEdges() {
-        System.out.println(currentGeneration.get(0).size());
-        System.out.println(currentGeneration.size());
+        //System.out.println(currentGeneration.get(0).size());
+        //System.out.println(currentGeneration.size());
 
         /*
         Kanskje implementere en if-sjekk på om brettet er mindre enn x,y så resizer vi uansett ikke?
@@ -153,15 +153,17 @@ public class DynamicBoard extends Board {
         sum6 = currentGeneration.get(5).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
         int total = sum1 + sum2 + sum3 + sum4 + sum5 + sum6;
         int total2 = sum1 + sum2 + sum3;
+        /*
         System.out.println("total:" + total);
         System.out.println("sum øverste rad: " + sum1);
         System.out.println("sum nest øverste rad: " + sum2);
         System.out.println("sum tredje øverste rad: " + sum3);
-
+        */
         if (total2 != 0) {
-            System.out.println("rows before add:" + currentGeneration.get(0).size());
-            System.out.println("cols before add:" + currentGeneration.size());
-            System.out.println("Adding three rows");
+            System.out.println("Adding top row");
+            //System.out.println("rows before add:" + currentGeneration.get(0).size());
+            //System.out.println("cols before add:" + currentGeneration.size());
+
 
             currentGeneration.add(0, new ArrayList<>());
             //currentGeneration.add(1, new ArrayList<>());
@@ -181,16 +183,15 @@ public class DynamicBoard extends Board {
                 currentGeneration.get(i).add((byte)0);
             }
             */
-            System.out.println("rows after add:" + currentGeneration.get(0).size());
-            System.out.println("cols after add:" + currentGeneration.size());
+            //System.out.println("rows after add:" + currentGeneration.get(0).size());
+            //System.out.println("cols after add:" + currentGeneration.size());
         } else if (total == 0) {
             currentGeneration.remove(0);
-            System.out.println("Removing");
-            System.out.println("rows after remove:" + currentGeneration.get(0).size());
-            System.out.println("cols after remove:" + currentGeneration.size());
+            System.out.println("Removing top row");
+            //System.out.println("rows after remove:" + currentGeneration.get(0).size());
+            //System.out.println("cols after remove:" + currentGeneration.size());
         }
     }
-
 
     private void checkLeft() {
         final int rows = currentGeneration.size();
@@ -203,12 +204,13 @@ public class DynamicBoard extends Board {
             sum4 += currentGeneration.get(row).get(3);
             sum4 += currentGeneration.get(row).get(4);
             sum4 += currentGeneration.get(row).get(5);
-            System.out.println("Left 1:" + sum1 + " 2:" + sum2);
         }
+        // System.out.println("Left 1:" + sum1 + " 2:" + sum2);
         int total = sum1 + sum2 + sum3 + sum4 + sum5 + sum6;
         int total2 = sum1 + sum2 + sum3;
 
         if (total2 != 0) {
+            System.out.println("Adding left row");
             for (int row = 0; row < rows; row++) {
                 currentGeneration.get(row).add(0, (byte) 0);
                 // currentGeneration.get(row).add(1, (byte) 0);
@@ -218,13 +220,14 @@ public class DynamicBoard extends Board {
             for (int row = 0; row < rows; row++) {
                 currentGeneration.get(row).remove(0);
                 System.out.println("Removing left");
-                System.out.println("rows after remove:" + currentGeneration.get(0).size());
-                System.out.println("cols after remove:" + currentGeneration.size());
+                //System.out.println("rows after remove:" + currentGeneration.get(0).size());
+                //System.out.println("cols after remove:" + currentGeneration.size());
             }
         }
     }
 
     private void checkRight() {
+        // Feil i beregningen av totalt antall celler
         final int rows = currentGeneration.size();
         final int columns = currentGeneration.get(0).size();
         int total = sum1 + sum2 + sum3 + sum4 + sum5 + sum6;
@@ -240,25 +243,22 @@ public class DynamicBoard extends Board {
         System.out.println("Total sum right:" + total);
 
         if (total2 != 0) {
+            System.out.println("Adding right row");
             for (int row = 0; row < rows; row++) {
                 currentGeneration.get(row).add(rows -1, (byte) 0);
                 // currentGeneration.get(row).add(rows -2, (byte) 0);
                 // currentGeneration.get(row).add(rows -3, (byte) 0);
             }
-        } else if (total == 0) {
-            for (int row = 0; row < rows; row++) {
-                currentGeneration.get(row).add((byte) 0);
-            }
         } else if (total == 0){
             for (int row = 0; row < rows; row++) {
-                System.out.println("Removing right");
-                System.out.println("rows before remove:" + currentGeneration.get(0).size());
-                System.out.println("cols before remove:" + currentGeneration.size());
+                System.out.println("Removing right row");
+                //System.out.println("rows before remove:" + currentGeneration.get(0).size());
+                //System.out.println("cols before remove:" + currentGeneration.size());
                 for (int row2 = 0; row2 < rows; row2++) {
                     currentGeneration.get(row).remove(rows - 1);
                 }
-                System.out.println("rows after remove:" + currentGeneration.get(0).size());
-                System.out.println("cols after remove:" + currentGeneration.size());
+                //System.out.println("rows after remove:" + currentGeneration.get(0).size());
+                //System.out.println("cols after remove:" + currentGeneration.size());
             }
         }
     }
@@ -273,13 +273,14 @@ public class DynamicBoard extends Board {
         sum6 = currentGeneration.get(rows -6).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
         int total = sum1 + sum2 + sum3 + sum4 + sum5 + sum6;
         int total2 = sum1 + sum2 + sum3;
+        /*
         System.out.println("sum nederste rad: " + sum1);
         System.out.println("sum nest nederste rad: " + sum2);
         System.out.println("sum tredje nederste rad: " + sum3);
-
+        */
         if (total2 != 0) {
-            System.out.println("rows before add:" + currentGeneration.get(0).size());
-            System.out.println("cols before add:" + currentGeneration.size());
+            //System.out.println("rows before add:" + currentGeneration.get(0).size());
+            //System.out.println("cols before add:" + currentGeneration.size());
             System.out.println("Adding bottom rows");
             currentGeneration.add((rows-1), new ArrayList<>());
             //currentGeneration.add(new ArrayList<>());
@@ -293,8 +294,8 @@ public class DynamicBoard extends Board {
         } else if(total == 0) {
             currentGeneration.remove(rows - 1);
             System.out.println("Removing bottom row");
-            System.out.println("Bottom rows after remove:" + currentGeneration.get(0).size());
-            System.out.println("Bottom cols after remove:" + currentGeneration.size());
+            //System.out.println("Bottom rows after remove:" + currentGeneration.get(0).size());
+            //System.out.println("Bottom cols after remove:" + currentGeneration.size());
         }
     }
     @Override
