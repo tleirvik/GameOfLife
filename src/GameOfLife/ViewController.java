@@ -682,7 +682,7 @@ public class ViewController {
     }
 
     private void initializeKeyFrame(int fps) {
-        Duration duration = Duration.millis(1000/fps);
+        Duration duration = Duration.millis(1000/3);
         KeyFrame keyFrame;
         keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
             Stopwatch sw = new Stopwatch("Next generation threading");
