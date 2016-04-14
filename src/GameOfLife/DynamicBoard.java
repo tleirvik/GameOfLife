@@ -240,7 +240,14 @@ public class DynamicBoard extends Board {
             sum5 += currentGeneration.get(row).get(columns - 5);
             sum6 += currentGeneration.get(row).get(columns - 6);
         }
-        System.out.println("Total sum right:" + total);
+        System.out.println("Right total: " + total + " total2: " + total2 );
+        System.out.println("sum1 " + sum1);
+        System.out.println("sum2 " + sum2);
+        System.out.println("sum3 " + sum3);
+        System.out.println("sum4 " + sum4);
+        System.out.println("sum5 " + sum5);
+        System.out.println("sum6 " + sum6);
+
 
         if (total2 != 0) {
             System.out.println("Adding right row");
@@ -250,12 +257,12 @@ public class DynamicBoard extends Board {
                 // currentGeneration.get(row).add(rows -3, (byte) 0);
             }
         } else if (total == 0){
+            System.out.println("Removing right row");
             for (int row = 0; row < rows; row++) {
-                System.out.println("Removing right row");
                 //System.out.println("rows before remove:" + currentGeneration.get(0).size());
                 //System.out.println("cols before remove:" + currentGeneration.size());
                 for (int row2 = 0; row2 < rows; row2++) {
-                    currentGeneration.get(row).remove(rows - 1);
+                    currentGeneration.get(row2).remove(rows - 1);
                 }
                 //System.out.println("rows after remove:" + currentGeneration.get(0).size());
                 //System.out.println("cols after remove:" + currentGeneration.size());
