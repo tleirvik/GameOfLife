@@ -22,20 +22,20 @@
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" minWidth="810.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.ViewController">
 
     <top>
-      <MenuBar id="menuBar" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
+      <MenuBar id="menuBar" fx:id="menuBar" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
                   <MenuItem onAction="#newGame" text="New game..." />
-                  <MenuItem fx:id="filePicker" mnemonicParsing="false" onAction="#loadGameBoardFromDisk" text="Load Board from Disk..." />
+                  <MenuItem mnemonicParsing="false" onAction="#loadGameBoardFromDisk" text="Load Board from Disk..." />
                   <MenuItem onAction="#loadGameBoardFromURL" text="Load Board from URL..." />
-                  <MenuItem fx:id="savePicker" disable="true" onAction="#saveRLE" text="Save RLE As..." />
+                  <MenuItem onAction="#saveRLE" text="Save RLE As..." />
                   <MenuItem onAction="#closeApplication" text="Close" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-                <MenuItem fx:id="openPatternEditor" disable="true" onAction="#openPatternEditor" text="Pattern Editor" />
+                <MenuItem onAction="#openPatternEditor" text="Pattern Editor" />
               <MenuItem onAction="#openOptions" text="Options..." />
             </items>
           </Menu>
@@ -102,7 +102,7 @@
                </children>
             </VBox>
             <CheckBox id="text" fx:id="toggleGrid" mnemonicParsing="false" onAction="#handleToggleGrid" text="Turn off grid" />
-            <ToggleButton fx:id="toggleDrawMove" mnemonicParsing="false" onAction="#toggleDrawMove" text="Draw Mode" />
+            <ToggleButton fx:id="toggleDrawMove" mnemonicParsing="false" onAction="#toggleDrawMove" text="Move Mode" />
          </children>
          <padding>
             <Insets top="10.0" />
@@ -120,19 +120,19 @@
             <HBox id="bottom" alignment="CENTER" prefHeight="76.0" prefWidth="1000.0" spacing="10.0">
 
                 <children>
-                  <Button fx:id="playButton" alignment="CENTER" disable="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="100.0" text="Play" textOverrun="CENTER_WORD_ELLIPSIS">
+                  <Button alignment="CENTER" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#play" prefHeight="40.0" prefWidth="100.0" text="Play" textOverrun="CENTER_WORD_ELLIPSIS">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </Button>
 
 
-                  <Button fx:id="pauseButton" disable="true" ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#pause" prefHeight="40.0" prefWidth="100.0" text="Pause">
+                  <Button ellipsisString="" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#pause" prefHeight="40.0" prefWidth="100.0" text="Pause">
                      <HBox.margin>
                         <Insets left="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button fx:id="restartButton" disable="true" minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#restart" prefHeight="40.0" prefWidth="100.0" text="Restart" />
+                  <Button minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#restart" prefHeight="40.0" prefWidth="100.0" text="Restart" />
 
 
                   <ComboBox id="combobox" fx:id="patternList" minHeight="20.0" minWidth="100.0" prefHeight="40.0" prefWidth="100.0" promptText="Pattern">
@@ -144,15 +144,10 @@
                      <children>
                         <HBox spacing="5.0">
                            <children>
-                              <Label text="Generation: " />
                               <Label fx:id="generationCounter" />
                            </children>
                         </HBox>
-                        <HBox>
-                           <children>
-                              <Slider fx:id="generationSlider" />
-                           </children>
-                        </HBox>
+                        <HBox />
                      </children>
                      <HBox.margin>
                         <Insets />

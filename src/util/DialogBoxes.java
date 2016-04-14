@@ -25,6 +25,10 @@ import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
+import javafx.scene.input.KeyEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
@@ -103,15 +107,32 @@ public class DialogBoxes {
                         mainStage.close();
             }
         });
-
-        cancelButton.setOnAction(e -> {
+        
+        
+        cancelButton.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent e) {
+                mainStage.close();
+            }
+        });
+        
+        //====================================================================
+        //              KODE FOR Å LUKKE VINDU MED ESC
+        //====================================================================
+        scene.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>(){
+            public void handle(KeyEvent key) {
+                KeyCombination esc = new KeyCodeCombination(KeyCode.ESCAPE);
+                if(esc.match(key)) {
                     mainStage.close();
+                }
+            }
         });
 
         mainStage.setTitle("Enter URL");
         mainStage.setScene(scene);
         mainStage.showAndWait();
         return urlString.toString();
+        
     }
     
     public File fileChooser(List<ExtensionFilter> extFilter, boolean load) {

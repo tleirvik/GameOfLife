@@ -27,6 +27,9 @@ import util.Stopwatch;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -34,18 +37,12 @@ import java.util.List;
  */
 public class ViewController {
 
-    //================================================================================
+    //=========================================================================
     // JavaFX Fields
-    //================================================================================
+    //=========================================================================
 
-    @FXML private MenuItem openPatternEditor;
-    @FXML private MenuItem savePicker;
     
-    
-    @FXML private Button playButton;
-    @FXML private Button pauseButton;
-    @FXML private Button restartButton;
-    
+    @FXML private MenuBar menuBar;
 
     @FXML private ColorPicker gridColorPicker;
     @FXML private ColorPicker cellColorPicker;
@@ -64,9 +61,9 @@ public class ViewController {
     @FXML private Label statusBar;
 
 
-    //================================================================================
+    //=========================================================================
     // Property fields
-    //================================================================================
+    //=========================================================================
 
     final private DialogBoxes dialogBoxes = new DialogBoxes(this);
     final private Timeline timeline = new Timeline();
@@ -105,9 +102,9 @@ public class ViewController {
     private boolean holdingPattern = false; //Find out if user is holding pattern
     private boolean drawMode = false; //False for move, true for draw
     private boolean drawCell = false;
-    //================================================================================
+    //=========================================================================
     // Initializer
-    //================================================================================
+    //=========================================================================
     public void initialize() {
         initializeTimeline();
         initializeCellSizeSlider(1,1);
@@ -117,12 +114,13 @@ public class ViewController {
         openGame();
         
         initializeBindCanvasSize();
+        initializeKeyboardShortcuts();
         initializeMouseEventHandlers();
     }
     
-    //================================================================================
+    //=========================================================================
     // GUI Event handlers
-    //================================================================================
+    //=========================================================================
 
     /**
      * This method instansiates a new GameController
@@ -224,12 +222,6 @@ public class ViewController {
         setLowestCellSize();
         centerBoard();
         draw();
-        
-        openPatternEditor.setDisable(false);
-        playButton.setDisable(false);
-        pauseButton.setDisable(false);
-        restartButton.setDisable(false);
-        savePicker.setDisable(false);
     }
 
     /**
@@ -362,9 +354,9 @@ public class ViewController {
         draw();
     }
 
-	//================================================================================
+    //=========================================================================
     // Draw methods
-    //================================================================================
+    //=========================================================================
 
     //Strengt talt ikke nødvendig med 0, men man kan bytte det med noe annet
     private double getGridStartPosX() {
@@ -512,40 +504,37 @@ public class ViewController {
                     int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getRows();
 
                     if(holdingPattern) {
-//                                // drawObject(row, column, pattern)
-//                                boolean[][] testArray = new boolean[][] {
-//                                            {false, true, false},
-//                                            {false, false, true},
-//                                            {true, true, true}
-//                                };
-//
-//                                final int M = testArray.length;
-//                                final int N = testArray[0].length;
-//                                boolean[][] ret = new boolean[N][M];
-//                                for(int r = 0; r < M; r++) {
-//                                    for (int c = 0; c < N; c++) {
-//                                        ret[c][M-1-r] = testArray[r][c];
-//                                    }
-//                                }
+                        //drawObject(row, column, pattern)
+                        byte[][] testArray = new byte[][] {
+                                    {0, 1, 0},
+                                    {0, 0, 1},
+                                    {1, 1, 1}
+                        };
 
-//                                int mid = (0 + ret.length - 1) / 2;
-//
-//                                for(int i = 0; i < ret.length; i++) {
-//                                    for(int j = 0; j < ret[i].length; j++) {
-//                                        //gameCanvas.getGraphicsContext2D().drawImage(wImage, i, j);
-//                                        gController.setCellAliveStatus(row + i -mid, column + j -mid, ret[i][j]);
-//                                    }
-//                                }
-// holdingPattern = false;
+                        final int M = testArray.length;
+                        final int N = testArray[0].length;
+                        byte[][] ret = new byte[N][M];
+                        for(int r = 0; r < M; r++) {
+                            for (int c = 0; c < N; c++) {
+                                ret[c][M-1-r] = testArray[r][c];
+                            }
+                        }
+
+                        int mid = (0 + ret.length - 1) / 2;
+
+                        for(int i = 0; i < ret.length; i++) {
+                            for(int j = 0; j < ret[i].length; j++) {
+                                //gameCanvas.getGraphicsContext2D().drawImage(wImage, i, j);
+                                gol.setCellAliveState(row + i -mid, column + j -mid, ret[i][j]);
+                            }
+                        }
+                        holdingPattern = false;
                     } else {
                         drawCell = (gol.getCellAliveState(row, column) == 1);
                         gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
                     }
                     draw();
                 }
-
-                int row = 0;
-                int column = 0;
 
             } else {//FLYTTEFUNKSJON
                 offsetBegin_X = e.getX() - getGridStartPosX();
@@ -695,7 +684,7 @@ public class ViewController {
     }
 
     private void initializeKeyFrame(int fps) {
-        Duration duration = Duration.millis(1000/3);
+        Duration duration = Duration.millis(1000/fps);
         KeyFrame keyFrame;
         keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
             Stopwatch sw = new Stopwatch("Next generation threading");
@@ -725,5 +714,21 @@ public class ViewController {
     
     public void setStatusBarText(String s) {
         statusBar.setText(s);
+    }
+
+    private void initializeKeyboardShortcuts() {
+        Menu file = menuBar.getMenus().get(0);
+        Menu edit = menuBar.getMenus().get(1);
+        
+        //File Menu
+        file.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
+        file.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN));
+        file.getItems().get(2).setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
+        file.getItems().get(3).setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
+        file.getItems().get(4).setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN));
+        
+        //Edit Menu
+        edit.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN));
+        edit.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
     }
 }
