@@ -110,11 +110,21 @@ public class FixedBoard extends Board{
      * @param aliveState sets the <code>byte</code> value of a cell on the
      * given position
      */
+    @Override
     public void setCellAliveState(int row, int column, byte aliveState) {
         if(aliveState == 0 || aliveState == 1) {
             currentGeneration[row + 1][column + 1] = aliveState;
         } else {
             throw new RuntimeException("Invalid number in cell state: " + aliveState);
+        }
+    }
+    
+    @Override
+    public void setFirstGeneration() {
+        for (int row = 1; row < currentGeneration.length-1; row++) {
+            for (int col = 1; col < currentGeneration[0].length-1; col++) {
+                firstGeneration[row][col] = currentGeneration[row][col];
+            }
         }
     }
     

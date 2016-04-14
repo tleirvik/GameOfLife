@@ -19,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" minWidth="810.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.ViewController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" minWidth="810.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="GameOfLife.ViewController">
 
     <top>
       <MenuBar id="menuBar" fx:id="menuBar" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
@@ -36,6 +36,7 @@
           <Menu mnemonicParsing="false" text="Edit">
             <items>
                 <MenuItem onAction="#openPatternEditor" text="Pattern Editor" />
+                  <MenuItem onAction="#setReset" text="Set Reset State" />
               <MenuItem onAction="#openOptions" text="Options..." />
             </items>
           </Menu>
@@ -98,10 +99,10 @@
                   </Label>
                   <Slider fx:id="cellSizeSlider" orientation="VERTICAL" />
                   <Label fx:id="cellSizeLabel" text="Cell Size" />
-                  <Button mnemonicParsing="false" onAction="#handleFitToView" text="Fit to view" />
+                  <ToggleButton fx:id="fitToView" mnemonicParsing="false" text="Fit to view" />
                </children>
             </VBox>
-            <CheckBox id="text" fx:id="toggleGrid" mnemonicParsing="false" onAction="#handleToggleGrid" text="Turn off grid" />
+            <CheckBox fx:id="toggleGrid" mnemonicParsing="false" onAction="#handleToggleGrid" text="Turn off grid" />
             <ToggleButton fx:id="toggleDrawMove" mnemonicParsing="false" onAction="#toggleDrawMove" text="Move Mode" />
          </children>
          <padding>
@@ -132,7 +133,7 @@
                         <Insets left="10.0" />
                      </HBox.margin>
                   </Button>
-                  <Button minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#restart" prefHeight="40.0" prefWidth="100.0" text="Restart" />
+                  <Button minHeight="20.0" minWidth="100.0" mnemonicParsing="false" onAction="#reset" prefHeight="40.0" prefWidth="100.0" text="Reset Board" />
 
 
                   <ComboBox id="combobox" fx:id="patternList" minHeight="20.0" minWidth="100.0" prefHeight="40.0" prefWidth="100.0" promptText="Pattern">

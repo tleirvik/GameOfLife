@@ -22,6 +22,10 @@ public class GameOfLife {
     public void loadGame(byte[][] board, MetaData metadata) {
         this.board = new FixedBoard(board, metadata);
     }
+    
+    public void setFirstGeneration() {
+        board.setFirstGeneration();
+    }
 
     public Board getBoard() {
     	return board;
@@ -59,6 +63,7 @@ public class GameOfLife {
         board.nextGeneration();
     }
     
+    @Override
     public GameOfLife clone() {
         GameOfLife clone = new GameOfLife();
         Board boardClone = board.clone();

@@ -101,6 +101,15 @@ public class DynamicBoard extends Board {
         currentGeneration.get(row).set(column, aliveState);
     }
     
+    @Override
+    public void setFirstGeneration() {
+        for (int row = 0; row < currentGeneration.size(); row++) {
+            for (int col = 0; col < currentGeneration.get(0).size(); col++) {
+                firstGeneration.get(row).set(col, currentGeneration.get(row).get(col));
+            }
+        }
+    }
+    
     //=========================================================================
     // Generation-methods
     //=========================================================================

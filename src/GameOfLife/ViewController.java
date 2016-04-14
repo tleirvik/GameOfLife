@@ -30,6 +30,7 @@ import java.util.List;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
+import javafx.scene.layout.BorderPane;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -43,6 +44,7 @@ public class ViewController {
 
     
     @FXML private MenuBar menuBar;
+    @FXML private BorderPane root;
 
     @FXML private ColorPicker gridColorPicker;
     @FXML private ColorPicker cellColorPicker;
@@ -57,6 +59,7 @@ public class ViewController {
     @FXML private CheckBox toggleGrid;
     @FXML private Pane canvasParent;
     @FXML private Canvas gameCanvas;
+    @FXML private ToggleButton fitToView;
     @FXML private ToggleButton toggleDrawMove;
     @FXML private Label statusBar;
 
@@ -219,9 +222,7 @@ public class ViewController {
      * or loaded from a file.
      */
     public void openGame() {
-        setLowestCellSize();
-        centerBoard();
-        draw();
+        handleFitToView();
     }
 
     /**
@@ -263,10 +264,16 @@ public class ViewController {
     }
 
     @FXML
-    public void restart() {
+    public void reset() {
         timeline.stop();
         gol.resetGame();
         draw();
+    }
+    
+    @FXML
+    public void setReset() {
+        timeline.stop();
+        gol.setFirstGeneration();
     }
     
     @FXML
@@ -337,11 +344,11 @@ public class ViewController {
         double cellWidth = gameCanvas.getWidth() / (gol.getColumns());
         double cellHeight = gameCanvas.getHeight() / (gol.getRows());
 
-            if(cellWidth < cellHeight) {
-                cellSize = cellWidth;
-            } else {
-                cellSize = cellHeight;
-            }
+        if(cellWidth < cellHeight) {
+            cellSize = cellWidth;
+        } else {
+            cellSize = cellHeight;
+        }
        
         initializeCellSizeSlider(cellSize, cellSize);
         centerBoard();
@@ -369,11 +376,11 @@ public class ViewController {
     }
 
     private double getBoardWidth() {
-    	return cellSize * (gol.getColumns());
+    	return cellSize * gol.getColumns();
     }
 
     private double getBoardHeight() {
-    	return cellSize * (gol.getRows());
+    	return cellSize * gol.getRows();
     }
 
     private boolean isXInsideGrid(double posX) {
@@ -502,7 +509,6 @@ public class ViewController {
                 if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y)) {
                     int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getColumns();
                     int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getRows();
-
                     if(holdingPattern) {
                         //drawObject(row, column, pattern)
                         byte[][] testArray = new byte[][] {
@@ -524,13 +530,12 @@ public class ViewController {
 
                         for(int i = 0; i < ret.length; i++) {
                             for(int j = 0; j < ret[i].length; j++) {
-                                //gameCanvas.getGraphicsContext2D().drawImage(wImage, i, j);
                                 gol.setCellAliveState(row + i -mid, column + j -mid, ret[i][j]);
                             }
                         }
                         holdingPattern = false;
                     } else {
-                        drawCell = (gol.getCellAliveState(row, column) == 1);
+                        drawCell = (gol.getCellAliveState(row, column) != 1);
                         gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
                     }
                     draw();
@@ -668,21 +673,6 @@ public class ViewController {
         initializeKeyFrame(30);
     }
 
-    /**
-     * Calculates and sets the cell size that is required to show
-     * the entire board on the screen
-     */
-    private void setLowestCellSize() {
-        double cellWidth = gameCanvas.getWidth() / (gol.getRows()-2);
-        double cellHeight = gameCanvas.getHeight() / (gol.getColumns()-2);
-
-        if(cellWidth < cellHeight) {
-            initializeCellSizeSlider(cellWidth, cellWidth);
-        } else {
-            initializeCellSizeSlider(cellHeight, cellHeight);
-        }     
-    }
-
     private void initializeKeyFrame(int fps) {
         Duration duration = Duration.millis(1000/fps);
         KeyFrame keyFrame;
@@ -729,6 +719,7 @@ public class ViewController {
         
         //Edit Menu
         edit.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN));
-        edit.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
+        edit.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
+        edit.getItems().get(2).setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
     }
 }

@@ -21,4 +21,6 @@ public abstract class Board {
     
     public abstract Board clone();
     public abstract String toString();
+
+    public abstract void setFirstGeneration();
 }
