@@ -2,6 +2,7 @@ package GameOfLife;
 
 import FileManagement.FileLoader;
 import FileManagement.RLEDecoder;
+import FileManagement.RLEEncoder;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
@@ -17,7 +18,6 @@ import javafx.scene.input.MouseEvent;
 import javafx.scene.input.ScrollEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -25,6 +25,8 @@ import util.DialogBoxes;
 import util.Stopwatch;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -157,12 +159,14 @@ public class ViewController {
     @FXML
     public void openPatternEditor() {
         timeline.stop();
-        dialogBoxes.openPatternEditor(gol.getBoard());
+        dialogBoxes.openPatternEditor(gol);
     }
     
     public void loadGameBoardFromRLE(boolean online) {
         timeline.stop();
         statusBar.setText("");
+        
+        
         FileLoader fileLoader = new FileLoader();
                 
         if(online) {
@@ -176,15 +180,11 @@ public class ViewController {
                return;
             }
         } else {
-            Stage mainStage = (Stage) gameCanvas.getScene().getWindow();
-            
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Open Resource File");
-            fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("RLE files", "*.rle"),
-                new ExtensionFilter("All Files", "*.*"));
+            List<ExtensionFilter> extFilter = new ArrayList<>();
+            extFilter.add(new ExtensionFilter("RLE files", "*.rle"));
+            extFilter.add(new ExtensionFilter("All Files", "*.*"));
 
-            File selectedFile = fileChooser.showOpenDialog(mainStage);
+            File selectedFile = dialogBoxes.fileChooser(extFilter, true);
             
             if(selectedFile != null) {
                 if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
@@ -242,7 +242,20 @@ public class ViewController {
      */
     @FXML
     public void saveRLE() {
-        //dialogBoxes.saveRLEDialogBox(gol.getBoard());
+        List<ExtensionFilter> extFilter = new ArrayList<>();
+        extFilter.add(new ExtensionFilter("RLE files", "*.rle"));
+        extFilter.add(new ExtensionFilter("All Files", "*.*"));
+
+        File selectedFile = dialogBoxes.fileChooser(extFilter, false);
+                
+        if(selectedFile != null) {
+            RLEEncoder rleenc = new RLEEncoder(gol, selectedFile);
+            if(!rleenc.encode()) {
+                setStatusBarText("Could not open file!");
+                return;
+            }
+            setStatusBarText("File saved to : " + selectedFile.getAbsolutePath());
+        }        
     }
 
     @FXML

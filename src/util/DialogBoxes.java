@@ -1,45 +1,58 @@
 package util;
 
 import FileManagement.GIFSaver;
+import GameOfLife.EditorController;
+import GameOfLife.GameOfLife;
+import java.io.File;
 import GameOfLife.MetaData;
+import GameOfLife.ViewController;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
-import javafx.scene.control.*;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.Button;
+import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Spinner;
+import javafx.scene.control.TextArea;
+import javafx.scene.control.TextField;
+import javafx.scene.control.Tooltip;
+import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.stage.FileChooser;
-import javafx.stage.FileChooser.ExtensionFilter;
-import javafx.stage.Stage;
-
-import java.io.File;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.paint.Color;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Modality;
 
-
-/**
- * Utility class for handling dialog boxes
- *
- * @see GameOfLife.ViewController
- * @see GameOfLife.EditorController
- */
 public class DialogBoxes {
-
+    
+    private final ViewController viewControllerReference;
+    private Stage mainStage;
+    
+    public DialogBoxes(ViewController viewController) {
+        this.viewControllerReference = viewController;
+    }
+    
 	/**
      * Static function with the purpose of "throwing" dialog boxes
      * @param title The title of the dialog box
      * @param headerText The header text of the dialog box
      * @param contentText The content text of the dialog box
      */
+    
+    public void setMainStage(Stage mainStage) {
+        this.mainStage = mainStage;
+    }
 
     public static void infoBox(String title, String headerText, String contentText) {
     	Alert alert = new Alert(AlertType.WARNING);
@@ -49,13 +62,6 @@ public class DialogBoxes {
     	alert.showAndWait();
     }
 
-    /**
-     * This dialog box is used for user input of URL string in the RLE downloading and decoding
-     *
-     * @return The String the user specifies in the input dialog box
-     * @see FileManagement.RLEDecoder
-     * @see GameOfLife.ViewController
-     */
     public String urlDialogBox() {
         StringBuilder urlString = new StringBuilder();
 
@@ -107,82 +113,21 @@ public class DialogBoxes {
         mainStage.showAndWait();
         return urlString.toString();
     }
-
-    /**
-     * This dialog box is used for presenting statistics to the user
-     *
-     * @see Statistics
-     */
-    public void statisticsDialogBox() {
-        Stage mainStage = new Stage();
-        final NumberAxis xAxis = new NumberAxis();
-        final NumberAxis yAxis = new NumberAxis();
-        xAxis.setLabel("Number of Month");
-        //creating the chart
-        final LineChart<Number,Number> lineChart =
-                new LineChart<Number,Number>(xAxis,yAxis);
-
-        lineChart.setTitle("Stock Monitoring, 2010");
-        //defining a series
-        XYChart.Series series = new XYChart.Series();
-        series.setName("My portfolio");
-        //populating the series with data
-        series.getData().add(new XYChart.Data(1, 23));
-        series.getData().add(new XYChart.Data(2, 14));
-        series.getData().add(new XYChart.Data(3, 15));
-        series.getData().add(new XYChart.Data(4, 24));
-        series.getData().add(new XYChart.Data(5, 34));
-        series.getData().add(new XYChart.Data(6, 36));
-        series.getData().add(new XYChart.Data(7, 22));
-        series.getData().add(new XYChart.Data(8, 45));
-        series.getData().add(new XYChart.Data(9, 43));
-        series.getData().add(new XYChart.Data(10, 17));
-        series.getData().add(new XYChart.Data(11, 29));
-        series.getData().add(new XYChart.Data(12, 25));
-
-        Scene scene  = new Scene(lineChart,800,600);
-        lineChart.getData().add(series);
-
-        mainStage.setScene(scene);
-        mainStage.show();
-    }
-
-    /**
-     * This dialog box launches a file chooser and lets the user specify which file to load
-     * @return The user specified file
-     */
-    public File loadRLEDialogBox() {
+    
+    public File fileChooser(List<ExtensionFilter> extFilter, boolean load) {
         Stage mainStage = new Stage();
 
         FileChooser fileChooser = new FileChooser();
         fileChooser.setTitle("Open Resource File");
-        fileChooser.getExtensionFilters().addAll(
-                new ExtensionFilter("RLE files", "*.rle"),
-                new ExtensionFilter("All Files", "*.*"));
-
-        File selectedFile = fileChooser.showOpenDialog(mainStage);
-        return selectedFile;
-    }
-    /**
-     * This dialog box launches a file chooser and lets the user specify which file to save
-     * @return The user specified file
-     */
-    public File saveRLEDialogBox() {
-        Stage mainStage = new Stage();
-
-        FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Save RLE Pattern to file");
-        fileChooser.getExtensionFilters().add(
-            new ExtensionFilter("RLE files", "*.rle"));
-        File saveRLEFile = fileChooser.showSaveDialog(mainStage);
-        return saveRLEFile;
+        fileChooser.getExtensionFilters().addAll(extFilter);
+        
+        if(load) {
+            return fileChooser.showOpenDialog(mainStage);
+        } else {
+            return fileChooser.showSaveDialog(mainStage);
+        }
     }
 
-    /**
-     * This dialog box enables the user to edit the meta data for the game board
-     *
-     * @param metadata The meta data object to view or edit
-     */
     public void metaDataDialogBox(MetaData metadata) {
     	GridPane gp = new GridPane();
     	Scene scene = new Scene(gp, 720, 300);
@@ -269,42 +214,27 @@ public class DialogBoxes {
     	mainStage.showAndWait();
     }
 
-    /**
-     * This dialog box lets the user specify the number of rows and columns of the game board
-     *
-     * @return An array with the rows and columns values
-     *
-     * @see GameOfLife.GameOfLife
-     * @see GameOfLife.FixedBoard
-     */
     public int[] openNewGameDialog() {
         int[] array = new int[2];
+        
         GridPane root = new GridPane();
         root.setPadding(new Insets(20, 150, 10, 10));
         root.setHgap(10);
         root.setVgap(10);
         Stage stage = new Stage();
         
-        Label label1 = new Label("Columns: ");
-        Label label2 = new Label("Rows: ");
-        GridPane.setConstraints(label1, 0, 0, 1, 1);
-        GridPane.setConstraints(label2, 0, 1, 1, 1);
-        root.getChildren().addAll(label1, label2);
+        Label rowLabel = new Label("Rows: ");
+        Label columnLabel = new Label("Columns: ");
+        GridPane.setConstraints(rowLabel, 0, 0, 1, 1);
+        GridPane.setConstraints(columnLabel, 0, 1, 1, 1);
+        root.getChildren().addAll(rowLabel, columnLabel);
         
-        TextField columns = new TextField();
-        columns.setPromptText("Enter a positiv integer.");
-        TextField rows = new TextField();
-        rows.setPromptText("Enter a positiv integer.");
-        GridPane.setConstraints(columns, 1, 0, 3, 1);
-        GridPane.setConstraints(rows, 1, 1, 3, 1);
-        root.getChildren().addAll(columns, rows);
+        Spinner rows = new Spinner(1, 100000, 1, 1);
+        Spinner columns = new Spinner(1, 100000, 1, 1);
+        GridPane.setConstraints(rows, 1, 0, 3, 1);
+        GridPane.setConstraints(columns, 1, 1, 3, 1);
+        root.getChildren().addAll(rows, columns);
         
-        Label errorLabel1 = new Label();
-        Label errorLabel2 = new Label();
-        GridPane.setConstraints(errorLabel1, 4, 0);
-        GridPane.setConstraints(errorLabel2, 4, 1);
-        root.getChildren().addAll(errorLabel1, errorLabel2);
-
         Button okButton = new Button("OK");
         Button cancelButton = new Button("Cancel");
         
@@ -317,50 +247,57 @@ public class DialogBoxes {
         GridPane.setConstraints(hbox, 1, 3);
         
         okButton.setDefaultButton(true);
-        okButton.setOnAction(e -> {
-            boolean error = false;
-            try {
-                errorLabel1.setText("");
-                array[0] = Integer.parseInt(columns.getText());
-                if(array[0] <= 0) {
-                    throw new NumberFormatException();
-                }
-            } catch (NumberFormatException nfE) {
-                error = true;
-               errorLabel1.setText("You must enter an integer.");
-               
-            }
-            try {
-                errorLabel2.setText("");
-                array[1] = Integer.parseInt(rows.getText());
-                if(array[1] <= 0) {
-                    throw new NumberFormatException();
-                }
-            } catch(NumberFormatException nfE) {
-                error = true;
-                errorLabel2.setText("You must enter an integer.");
-            }
-            if(!error) {
-                stage.close();
-            }
+        okButton.setOnAction(e -> {     
+           array[0] = (int)rows.getValue();
+           array[1] = (int)columns.getValue();
+           stage.close();
         });
-
+        
+        
         cancelButton.setOnAction(e -> {
+            array[0] = 0;
+            array[1] = 0;
             stage.close();
         });
         
         Scene scene = new Scene(root, 560, 150);
-        stage.initModality(Modality.APPLICATION_MODAL);
+
         stage.setScene(scene);
         stage.showAndWait();
         
         return array;
     }
+
+    public void openPatternEditor(GameOfLife game) {
+        Stage editor = new Stage();
+        editor.initModality(Modality.WINDOW_MODAL);
+        editor.initOwner(mainStage);
+        
+        try {
+            FXMLLoader loader;
+            loader = new FXMLLoader(getClass().getResource("PatternEditor.fxml"));
+            
+            BorderPane root = loader.load();
+            editor.setResizable(false);
+            
+            EditorController edController = loader.getController();
+            edController.setPattern(game);
+            edController.setDialogBoxes(this);
+
+            Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource(
+                    "patternEditor.css").toExternalForm());
+            
+            editor.setScene(scene);
+            editor.setTitle("Pattern Editor");
+            editor.show();
+        } catch (IOException e) {
+            DialogBoxes.infoBox("Error", "Could not open the Pattern Editor", 
+                    e.getMessage());
+        } 
+    }
     
-    
-    
-    
-    public void saveToGIFDialog(GIFSaver saver) {
+     public void saveToGIFDialog(GIFSaver saver) {
         GridPane root = new GridPane();
         root.setPadding(new Insets(20, 150, 10, 10));
         root.setHgap(10);
@@ -384,13 +321,16 @@ public class DialogBoxes {
         GridPane.setConstraints(spinnerHeight, 1, 1, 3, 1);
         root.getChildren().addAll(spinnerWidth, spinnerHeight);
         
+        final Label saveToLabel = new Label("Save To: ");
+        final TextField saveToField = new TextField();
+        saveToField.setEditable(false);
+        final Button saveToButton = new Button("Browse");
+                
         final Label speed = new Label("Animation Speed: ");
         
         final Label speedLabel = new Label("Animation Speed in milliseconds");
         GridPane.setConstraints(speedLabel, 0, 2, 2, 1);
         root.getChildren().add(speedLabel);
-        
-
         
         final Label errorLabel1 = new Label();
         final Label errorLabel2 = new Label();
@@ -431,6 +371,13 @@ public class DialogBoxes {
         
         GridPane.setConstraints(hbox, 1, 8);
         
+        saveToButton.setOnAction(e -> {
+            List<ExtensionFilter> extFilter = new ArrayList<>();
+            extFilter.add(new ExtensionFilter("GIF files", "*.gif"));
+            extFilter.add(new ExtensionFilter("All Files", "*.*"));
+            saveToField.setText(fileChooser(extFilter, false).getAbsolutePath());
+        });
+        
         saveButton.setDefaultButton(true);
         saveButton.setOnAction(e -> {
             boolean error = false;
@@ -452,12 +399,19 @@ public class DialogBoxes {
                 spinnerHeight.getEditor().textProperty().set(INITIAL_VALUE);
             }
             
-            if(!error) {
+            File file = new File(saveToField.getText());
+            if (!file.isFile() && !file.canRead()) {
+                error = true;
+            }
+            
+            if (!error) {
                 saver.setWidth((int) spinnerWidth.getValue());
                 saver.setHeight((int) spinnerHeight.getValue());
                 saver.setColors(convertFXColorToAWTColor(backgroundColor.getValue()),
                     convertFXColorToAWTColor(aliveCellColor.getValue()), 
                     convertFXColorToAWTColor(deadCellColor.getValue()));
+                saver.setFile(file);
+                saver.saveToGif();
                 stage.close();
             }
         });

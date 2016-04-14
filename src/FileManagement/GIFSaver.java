@@ -7,6 +7,7 @@ package FileManagement;
 
 import GameOfLife.GameOfLife;
 import java.awt.Color;
+import java.io.File;
 import java.io.IOException;
 import lieng.GIFWriter;
 
@@ -20,6 +21,7 @@ public class GIFSaver {
     private Color aliveCellColor;
     private Color deadCellColor;
     private Color backgroundColor;
+    private File file;
     private int iterations;
     private int animationTimer;
     private int height;
@@ -35,33 +37,27 @@ public class GIFSaver {
         this.height = height;
     }
 
-    
-
     public void setWidth(int width) {
         this.width = width;
     }
-
     
-    private byte[][] board;
+    public void setFile(File file) {
+        this.file = file;
+    }
     
     public GIFSaver(GameOfLife game) {
         this.game = game;
-        board = game.getBoardReference();
-    }
-    
-    public GIFSaver() {
-        
     }
     
     public void saveToGif() {
         try {
-            GIFWriter writer = new GIFWriter(500, 500, 
-                    "/Users/stianreistadrogeberg/test.gif", 500);
-            writeGoLSequenceToGIF(writer, new GameOfLife(false, 10, 10), 3);
+            GIFWriter writer = new GIFWriter(width, height, 
+                    file.getAbsolutePath(), animationTimer);
+            writeGoLSequenceToGIF(writer, this.game, iterations);
             writer.close();
             
         } catch (IOException e) {
-            
+            System.out.println(e.getMessage());
         }
     }
     
@@ -75,9 +71,9 @@ public class GIFSaver {
             int y1 = 0;
             int y2 = stripCellSize;
 
-            for(int row = 1; row < board.length - 1; row++) {
-                for(int col = 1; col < board[0].length - 1; col++) {
-                    if (board[row][col] == 1) {
+            for(int row = 0; row < game.getRows(); row++) {
+                for(int col = 0; col < game.getColumns(); col++) {
+                    if (game.getCellAliveState(row, col) == 1) {
                         writer.fillRect(x1, x2, y1, y2, 
                                 java.awt.Color.BLUE);
                     } else {

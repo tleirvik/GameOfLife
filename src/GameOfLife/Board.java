@@ -18,6 +18,7 @@ public abstract class Board {
     public abstract void nextGeneration();
     //public void concurrentNextGeneration();
     //Annenhver rad/kolonne
-
+    
+    public abstract Board clone();
     public abstract String toString();
 }

@@ -43,9 +43,9 @@ public class EditorController {
 
     private double cellSize;
     private double cellSizeStrip;
-    private FixedBoard board;
+    private GameOfLife game;
     private MetaData metaData;
-    private GIFSaver gifSaver;
+    private DialogBoxes dialogBoxes;
 
     /**
      * This method closes the editor window.
@@ -71,35 +71,25 @@ public class EditorController {
         int row = (int) (e.getY() / cellSize);
         int col = (int) (e.getX() / cellSize);
         
-        if(row < board.getRows() && col < board.getColumns()) {
-            board.setCellAliveState(row, col,(board.getCellAliveState(row, col) == 1) ? (byte) 0 : (byte) 1);
+        if(row < game.getRows() && col < game.getColumns()) {
+            game.setCellAliveState(row, col,(game.getCellAliveState(row, col) == 1) ? (byte) 0 : (byte) 1);
             draw();
         }
     }
     
     @FXML
-    public void saveToGif() {
-        DialogBoxes box = new DialogBoxes();
-        box.saveToGIFDialog(gifSaver);
+    public void saveToGif() {  
+        dialogBoxes.saveToGIFDialog(new GIFSaver(game));
     }
     
     // sette brettet her?
-    public void setPattern(Board board) {
-        final int rows = board.getRows();
-        final int columns = board.getColumns();
-        final byte[][] tempBoard = new byte[rows][columns];
+    public void setPattern(GameOfLife game) {
+        this.game = game.clone();
         
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < columns; col++) {
-                tempBoard[row][col] = board.getCellAliveState(row, col);
-            }
-        }
+        metaData = game.getMetaData();
         
-        metaData = board.getMetaData();
-        this.board = new FixedBoard(tempBoard, metaData);
-
-        double cellWidth = patternCanvas.getWidth() / (rows);
-        double cellHeight = patternCanvas.getHeight() / (columns);
+        double cellWidth = patternCanvas.getWidth() / game.getRows();
+        double cellHeight = patternCanvas.getHeight() / game.getColumns();
         cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
 
         authorTextField.setText(metaData.getAuthor());
@@ -112,8 +102,8 @@ public class EditorController {
     
     @FXML
     public void updateStrip() {
-        final double stripCellSize = strip.getHeight() / (board.getRows());
-        final double generationWidth = stripCellSize * (board.getColumns());
+        final double stripCellSize = strip.getHeight() / game.getRows();
+        final double generationWidth = stripCellSize * game.getColumns();
         final double padding = 25;
         strip.setWidth((generationWidth + padding) * 20);
         double offset_X = 0;
@@ -123,25 +113,25 @@ public class EditorController {
                 strip.heightProperty().doubleValue());
         
         for(int i = 0; i < 20; i++) {
-            board.nextGeneration();
+            game.update();
             drawStrip(gc, offset_X, stripCellSize);
             offset_X += generationWidth + padding;
         }
         
-        board.resetBoard();
+        game.resetGame();
     }
     
     private void drawStrip(GraphicsContext gc, double offset_X, double stripCellSize) {
         boolean isGenerationAlive = false;
         
-        final int rows = board.getRows();
-        final int columns = board.getColumns();
+        final int rows = game.getRows();
+        final int columns = game.getColumns();
         double x = offset_X;
         double y = 0;
 
         for(int row = 0; row < rows; row++) {
             for(int col = 0; col < columns; col++) {
-                if (board.getCellAliveState(row, col) == 1) {
+                if (game.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, stripCellSize, stripCellSize);
                 }
                 x += stripCellSize; // Plusser på for neste kolonne
@@ -172,8 +162,8 @@ public class EditorController {
     
     // tegne mønsteret
     private void draw() {
-        final int rows = board.getRows();
-        final int columns = board.getColumns();
+        final int rows = game.getRows();
+        final int columns = game.getColumns();
         
         final GraphicsContext gc = patternCanvas.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
@@ -186,7 +176,7 @@ public class EditorController {
         gc.setFill(Color.BLACK);
         for(int row = 0; row < rows; row++) {
             for(int col = 0; col < columns; col++) {
-                if (board.getCellAliveState(row, col) == 1) {
+                if (game.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, cellSize, cellSize);
                 }
                 x += cellSize; // Plusser på for neste kolonne
@@ -199,8 +189,8 @@ public class EditorController {
     
     // bør ha gridlines for å gjøre manipulering mer lesbar.
     private void drawGridLines(GraphicsContext gc) {
-        final int rows = board.getRows();
-        final int columns = board.getColumns();
+        final int rows = game.getRows();
+        final int columns = game.getColumns();
         final double height = getPatternHeight();
         final double width = getPatternWidth();
         
@@ -218,10 +208,14 @@ public class EditorController {
     }
     
     private double getPatternWidth() {
-        return cellSize * board.getColumns();
+        return cellSize * game.getColumns();
     }
     
     private double getPatternHeight() {
-        return cellSize * board.getRows();
+        return cellSize * game.getRows();
+    }
+
+    public void setDialogBoxes(DialogBoxes dialogBoxes) {
+        this.dialogBoxes = dialogBoxes;
     }
 }

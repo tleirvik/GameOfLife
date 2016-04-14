@@ -50,4 +50,14 @@ public class MetaData {
 		this.survivalRule = SBrules[0];
 		this.birthRule = SBrules[1];
 	}
+        
+        @Override
+        public MetaData clone() {
+            MetaData clone = new MetaData();
+            clone.setAuthor(author);
+            clone.setComment(comment);
+            clone.setName(name);
+            clone.setRuleString(getRuleString());
+            return clone;
+        }
 }

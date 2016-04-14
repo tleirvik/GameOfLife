@@ -166,6 +166,13 @@ public class FixedBoard extends Board{
     // Misc.
     //=========================================================================
     
+    @Override
+    public FixedBoard clone() {
+        byte[][] boardClone = java.util.Arrays.stream(currentGeneration).map(el -> el.clone()).toArray($ -> currentGeneration.clone());
+        MetaData metaDataClone = metadata.clone();
+        return new FixedBoard(boardClone, metaDataClone);
+    }
+    
     /**
      *  Method that returns the game board as a String. Used for Unit Testing with JUnit 4
      *

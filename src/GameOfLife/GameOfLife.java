@@ -46,6 +46,10 @@ public class GameOfLife {
     public void setCellAliveState(int row, int column, byte isAlive) {
         board.setCellAliveState(row, column, isAlive);
     }
+    
+    public void setBoard(Board board) {
+        this.board = board;
+    }
 
     public void resetGame() {
         board.resetBoard();
@@ -53,6 +57,13 @@ public class GameOfLife {
     
     public void update() {
         board.nextGeneration();
+    }
+    
+    public GameOfLife clone() {
+        GameOfLife clone = new GameOfLife();
+        Board boardClone = board.clone();
+        clone.setBoard(board);
+        return clone;
     }
     
     /*

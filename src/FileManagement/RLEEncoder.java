@@ -1,6 +1,6 @@
 package FileManagement;
 
-import GameOfLife.Board;
+import GameOfLife.GameOfLife;
 import GameOfLife.MetaData;
 import util.DialogBoxes;
 
@@ -19,22 +19,21 @@ import java.nio.file.Path;
  * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
  */
 public class RLEEncoder {
-    private final byte[][] board;
     private final MetaData metadata;
     private final Path filePath;
     private final StringBuffer rleString;
+    private final GameOfLife game;
 
     /**
      * Constructor that creates an RLEDecoder object.
      * @param b The board that we want to parse and save to file
      * @param f The file to save the board to
      */
-    public RLEEncoder(Board b, File f) {
-        metadata = b.getMetaData();
-        board = new byte[b.getRows()][b.getColumns()];
+    public RLEEncoder(GameOfLife game, File f) {
+        metadata = game.getMetaData();
+        this.game = game;
         filePath = f.toPath();
         rleString = new StringBuffer();
-        System.out.println(board.length + " " + board[0].length);
     }
 
     /**
@@ -88,9 +87,9 @@ public class RLEEncoder {
      */
     private void encodeBoardSize() {
         rleString.append("x = ");
-        rleString.append(board[0].length - 2);
+        rleString.append(game.getColumns());
         rleString.append(", y = ");
-        rleString.append(board.length - 2);
+        rleString.append(game.getRows());
         rleString.append(", ");
     }
      /**
@@ -117,11 +116,11 @@ public class RLEEncoder {
         int count = 1;
         int previous = -1;
 
-        for (int row = 1; row < board.length - 1; row++) {
-            for (int col = 1; col < board[0].length - 1; col++) {
+        for (int row = 0; row < game.getRows(); row++) {
+            for (int col = 0; col < game.getColumns(); col++) {
                 final int nextPosition = col + 1;
-                final byte currentCell = board[row][col];
-                if (col < board[0].length && currentCell == nextPosition) {
+                final byte currentCell = game.getCellAliveState(row, col);
+                if (col < game.getColumns() && currentCell == nextPosition) {
                     count++;
                 } else {
                     rleString.append(count > 1 ? count : "" ).append(currentCell == 1 ? "o" : "b");
