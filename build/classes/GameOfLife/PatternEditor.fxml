@@ -34,22 +34,22 @@
                   <Insets top="20.0" />
                </VBox.margin>
             </HBox>
-            <TextField prefHeight="27.0" prefWidth="157.0" promptText="Title">
+            <TextField fx:id="titleTextField" prefHeight="27.0" prefWidth="157.0" promptText="Title">
                <VBox.margin>
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>
             </TextField>
-            <TextField promptText="Author">
+            <TextField fx:id="authorTextField" promptText="Author">
                <VBox.margin>
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>
             </TextField>
-            <TextField promptText="Description">
+            <TextField fx:id="descriptionTextField" promptText="Description">
                <VBox.margin>
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>
             </TextField>
-            <TextField promptText="Rules">
+            <TextField fx:id="rulesTextField" promptText="Rules">
                <VBox.margin>
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>
@@ -100,4 +100,25 @@
          </children>
       </VBox>
    </bottom>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem fx:id="saveToGif" mnemonicParsing="false" onAction="#saveToGif" text="Save To Gif" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Edit">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Delete" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Help">
+            <items>
+              <MenuItem mnemonicParsing="false" text="About" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
 </BorderPane>

@@ -12,7 +12,11 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -40,6 +44,7 @@ public class EditorController {
     @FXML private TextField titleTextField;
     @FXML private TextField descriptionTextField;
     @FXML private TextField rulesTextField;
+    @FXML private MenuItem saveToGif;
 
     private double cellSize;
     private double cellSizeStrip;
@@ -98,6 +103,8 @@ public class EditorController {
         rulesTextField.setText("S" + metaData.getRuleString()[0] + "/B" + metaData.getRuleString()[1]);
 
         draw();
+        
+        saveToGif.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN));
     }
     
     @FXML
