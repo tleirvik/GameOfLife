@@ -125,10 +125,12 @@ public class DynamicBoard extends Board {
      * given position
      */
     public void setCellAliveState(int row, int column, byte aliveState) {
-        if(aliveState != 0 || aliveState != 1) {
+        if(aliveState == 0 || aliveState == 1) {
+            currentGeneration.get(row).set(column, aliveState);
+        } else {
             throw new RuntimeException("Invalid number in cell state");
         }
-        currentGeneration.get(row).set(column, aliveState);
+        
     }
     
     //=========================================================================
@@ -293,9 +295,11 @@ public class DynamicBoard extends Board {
 
     @Override
     public void setFirstGeneration() {
+        firstGeneration.clear();
         for (int row = 0; row < currentGeneration.size(); row++) {
+            firstGeneration.add(new ArrayList<>());
             for (int col = 0; col < currentGeneration.get(0).size(); col++) {
-                firstGeneration.get(row).set(col, currentGeneration.get(row).get(col));
+                firstGeneration.get(row).add(col, currentGeneration.get(row).get(col));
             }
         }
     }

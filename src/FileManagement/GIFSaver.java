@@ -10,94 +10,164 @@ import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
 import lieng.GIFWriter;
+import util.DialogBoxes;
 
 /**
  *
- * @author stianreistadrogeberg
+ * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik
+ * 
+ * This class takes a pattern from a GameOfLife object and save this pattern
+ * as an animated sequence in a gif file.
+ * @see lieng.GIFWriter
  */
 public class GIFSaver {
-    private GIFWriter writer;
-    private GameOfLife game;
+    private final GameOfLife game;
     private Color aliveCellColor;
     private Color deadCellColor;
-    private Color backgroundColor;
     private File file;
     private int iterations;
     private int animationTimer;
     private int height;
     private int width;
+    private int cellSize;
 
 
-    public void setAnimationTimer(int animationTimer) {
-        this.animationTimer = animationTimer;
-    }
-
     
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    public void setWidth(int width) {
-        this.width = width;
-    }
-    
-    public void setFile(File file) {
-        this.file = file;
-    }
-    
-    public GIFSaver(GameOfLife game) {
-        this.game = game;
-    }
-    
+    /**
+     * 
+     */
     public void saveToGif() {
+        calculateCellSize();
         try {
-            GIFWriter writer = new GIFWriter(width, height, 
+            GIFWriter writer = new GIFWriter(width + 1, height + 1, 
                     file.getAbsolutePath(), animationTimer);
-            writeGoLSequenceToGIF(writer, this.game, iterations);
+            writeGoLSequenceToGIF(writer, game, iterations);
+            game.resetGame();
             writer.close();
             
         } catch (IOException e) {
-            System.out.println(e.getMessage());
+            DialogBoxes.infoBox("Error", "Could not save as .gif", 
+                    "Please try again");
         }
     }
     
+    /**
+     * This method calculate the size of a cell.
+     */
+    private void calculateCellSize() {
+        int cellWidth = width / game.getColumns();
+        int cellHeight = height / game.getRows();
+
+        if(cellWidth < cellHeight) {
+            cellSize = cellWidth;
+        } else {
+            cellSize = cellHeight;
+        }
+    }
+    
+    /**
+     * This method writes the current sequence to an gif image.
+     * 
+     * @param writer
+     * @param game
+     * @param counter
+     * @throws IOException 
+     */
     private void writeGoLSequenceToGIF(GIFWriter writer, GameOfLife game, 
-            int counter) throws IOException {
-
-        if(counter != 0) {         
-            final int stripCellSize = 20; // (int) (strip.getHeight() / (pattern.length - 2));
+        int counter) throws IOException {
+        
+        writer.setBackgroundColor(deadCellColor);
+        
+        if (counter != 0) {         
+            writer.createNextImage();
             int x1 = 0;
-            int x2 = stripCellSize;
+            int x2 = cellSize;
             int y1 = 0;
-            int y2 = stripCellSize;
+            int y2 = cellSize;
 
-            for(int row = 0; row < game.getRows(); row++) {
-                for(int col = 0; col < game.getColumns(); col++) {
+            for (int row = 0; row < game.getRows(); row++) {
+                for (int col = 0; col < game.getColumns(); col++) {
                     if (game.getCellAliveState(row, col) == 1) {
                         writer.fillRect(x1, x2, y1, y2, 
-                                java.awt.Color.BLUE);
-                    } else {
-                        writer.fillRect(x1, x2, y1, y2, 
-                                java.awt.Color.RED);
+                                aliveCellColor);
                     }
-                    x1 += stripCellSize;
-                    x2 += stripCellSize;
+                    x1 += cellSize;
+                    x2 += cellSize;
                 }
                 x1 = 0; // Reset X-verdien for neste rad
-                x2 = stripCellSize;
-                y1 += stripCellSize; // Plusser på for neste rad
-                y2 += stripCellSize;
+                x2 = cellSize;
+                y1 += cellSize; // Plusser på for neste rad
+                y2 += cellSize;
             }
-            writer.insertAndProceed();
+            writer.insertCurrentImage();
             game.update();
             writeGoLSequenceToGIF(writer, game, --counter);
         }
     }
+    
+    /**
+     * This method set the speed of the animation.
+     * 
+     * @param animationTimer 
+     */
+    public void setAnimationTimer(int animationTimer) {
+        this.animationTimer = animationTimer;
+    }
 
-    public void setColors(Color backgroundColor, 
-            Color aliveCellColor, Color deadCellColor) {
-        this.backgroundColor = backgroundColor;
+    /**
+     * Sets the height of the gif image.
+     * 
+     * @param height 
+     */
+    public void setHeight(int height) {
+        this.height = height;
+    }
+
+    /**
+     * Sets the width of th gif image.
+     * 
+     * @param width 
+     */
+    public void setWidth(int width) {
+        this.width = width;
+    }
+    
+    /**
+     * Sets the file to wich the pattern sequence will be written.
+     * 
+     * @param file 
+     */
+    public void setFile(File file) {
+        this.file = file;
+    }
+    
+    /**
+     * Sets the the current game.
+     * 
+     * @param game 
+     */
+    public GIFSaver(GameOfLife game) {
+        this.game = game;
+    }
+
+    /**
+     * Sets the colors alive cells and dead cells to be used in the gif image.
+     * 
+     * @param aliveCellColor
+     * @param deadCellColor 
+     */
+    public void setColors(Color aliveCellColor, Color deadCellColor) {
         this.aliveCellColor = aliveCellColor;
         this.deadCellColor = deadCellColor;
+        System.out.println("aliveCellColot -> " + deadCellColor);
+    }
+
+    /**
+     * Sets the number of iterations.
+     * 
+     * @param i 
+     */
+    public void setIterations(int i) {
+        iterations = i;
     }
 }
