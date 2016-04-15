@@ -84,13 +84,13 @@ public class EditorController {
     
     @FXML
     public void saveToGif() {  
+        game.setFirstGeneration();
         dialogBoxes.saveToGIFDialog(new GIFSaver(game));
     }
     
     // sette brettet her?
     public void setPattern(GameOfLife game) {
         this.game = game.clone();
-        
         metaData = game.getMetaData();
         
         double cellWidth = patternCanvas.getWidth() / game.getRows();
@@ -109,6 +109,7 @@ public class EditorController {
     
     @FXML
     public void updateStrip() {
+        game.setFirstGeneration();
         final double stripCellSize = strip.getHeight() / game.getRows();
         final double generationWidth = stripCellSize * game.getColumns();
         final double padding = 25;

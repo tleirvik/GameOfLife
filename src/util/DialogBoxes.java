@@ -21,6 +21,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Label;
 import javafx.scene.control.RadioButton;
+import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
@@ -322,9 +323,11 @@ public class DialogBoxes {
     
      public void saveToGIFDialog(GIFSaver saver) {
         GridPane root = new GridPane();
+        root.setAlignment(Pos.CENTER);
         root.setPadding(new Insets(20, 150, 10, 10));
         root.setHgap(10);
         root.setVgap(10);
+        
         Stage stage = new Stage();
         
         final Label label1 = new Label("Width: ");
@@ -334,57 +337,75 @@ public class DialogBoxes {
         root.getChildren().addAll(label1, label2);
         
         final String INITIAL_VALUE = "50";
-        final Spinner spinnerWidth = new Spinner(10, 10000, 50, 10);
+        final Spinner spinnerWidth = new Spinner(10, 10000, 200, 10);
         spinnerWidth.setEditable(true);
         
-        final Spinner spinnerHeight = new Spinner(10, 10000, 50, 10);
+        final Spinner spinnerHeight = new Spinner(10, 10000, 200, 10);
         spinnerHeight.setEditable(true);
         
         GridPane.setConstraints(spinnerWidth, 1, 0, 3, 1);
         GridPane.setConstraints(spinnerHeight, 1, 1, 3, 1);
         root.getChildren().addAll(spinnerWidth, spinnerHeight);
         
-        final Label speedLabel = new Label("Animation Speed (in ms): ");
-        GridPane.setConstraints(speedLabel, 0, 2, 2, 1);
+        final Label speedLabel = new Label("Animation Speed:");
+        GridPane.setConstraints(speedLabel, 0, 2);
         root.getChildren().add(speedLabel);
         
-        final Label saveToLabel = new Label("Save To: ");
-        final TextField saveToField = new TextField();
-        saveToField.setEditable(false);
-        final Button saveToButton = new Button("Browse");
-        GridPane.setConstraints(saveToLabel, 0, 3);
-        GridPane.setConstraints(saveToField, 0, 4, 2, 1);
-        GridPane.setConstraints(saveToButton, 3, 4);
-        root.getChildren().addAll(saveToLabel, saveToField, saveToButton);
-                
+        final Label sliderLabel = new Label("500 ms");
+        GridPane.setConstraints(sliderLabel,1 ,2);
+        root.getChildren().add(sliderLabel);
+        
+        final Slider animationSlider = new Slider();
+        animationSlider.setMin(125.0);
+        animationSlider.setMax(1000.0);
+        animationSlider.setValue(500.0);
+        animationSlider.setShowTickMarks(true);
+        animationSlider.setShowTickLabels(true);
+        animationSlider.setMajorTickUnit(100);
+        animationSlider.setMinorTickCount(0);
+        GridPane.setConstraints(animationSlider, 0, 3, 2, 1);
+        root.getChildren().add(animationSlider);
+        
+        animationSlider.valueProperty().addListener(e-> {
+            sliderLabel.setText(String.format("%d ms", 
+                    animationSlider.valueProperty().intValue()));
+        });
         
         
+        final Label iterLabel = new Label("Number of Iterations:");
+        GridPane.setConstraints(iterLabel, 0, 4);
         
+        final Slider iterSlider = new Slider();
+        iterSlider.setMin(2.0);
+        iterSlider.setMax(20.0);
+        iterSlider.setValue(10.0);
+        iterSlider.setShowTickMarks(true);
+        iterSlider.setShowTickLabels(true);
+        iterSlider.setMajorTickUnit(2);
+        iterSlider.setMinorTickCount(0);
         
-        final Label errorLabel1 = new Label();
-        final Label errorLabel2 = new Label();
-        GridPane.setConstraints(errorLabel1, 5, 0);
-        GridPane.setConstraints(errorLabel2, 5, 1);
-        root.getChildren().addAll(errorLabel1, errorLabel2);
+        GridPane.setConstraints(iterSlider,0, 5, 2, 1);
+        root.getChildren().addAll(iterLabel, iterSlider);
         
-        final Label backgroundColorLabel = new Label("Background color");
-        GridPane.setConstraints(backgroundColorLabel, 0, 5);
-        root.getChildren().add(backgroundColorLabel);
+        final Label iterations = new Label("10");
+        GridPane.setConstraints(iterations, 1, 4);
+        root.getChildren().add(iterations);
         
-        final ColorPicker backgroundColor = new ColorPicker(Color.BLACK);
-        GridPane.setConstraints(backgroundColor, 1, 5);
-        root.getChildren().add(backgroundColor);
+        iterSlider.valueProperty().addListener(e -> {
+            iterations.setText(String.format("%d", 
+                    iterSlider.valueProperty().intValue()));
+        });
         
         
         final Label aliveCellColorLabel = new Label("Alive Cell Color");
         GridPane.setConstraints(aliveCellColorLabel, 0, 6);
-        final ColorPicker aliveCellColor = new ColorPicker(Color.GREEN);
+        final ColorPicker aliveCellColor = new ColorPicker(Color.web("#ccffff"));
         GridPane.setConstraints(aliveCellColor, 1, 6);
         root.getChildren().addAll(aliveCellColorLabel, aliveCellColor);
         
         final Label deadCellColorLabel = new Label("Dead Cell Color");
         GridPane.setConstraints(deadCellColorLabel, 0, 7);
-        final ColorPicker deadCellColor = new ColorPicker(Color.RED);
+        final ColorPicker deadCellColor = new ColorPicker(Color.web("#003333"));
         GridPane.setConstraints(deadCellColor, 1, 7);
         root.getChildren().addAll(deadCellColorLabel, deadCellColor);
         
@@ -396,51 +417,31 @@ public class DialogBoxes {
         hbox.setSpacing(10);
         hbox.setAlignment(Pos.BASELINE_RIGHT);
         hbox.getChildren().addAll(saveButton, cancelButton);
+        GridPane.setConstraints(hbox, 1, 9);
         root.getChildren().add(hbox);
         
-        GridPane.setConstraints(hbox, 1, 9);
-        
-        saveToButton.setOnAction(e -> {
-            List<ExtensionFilter> extFilter = new ArrayList<>();
-            extFilter.add(new ExtensionFilter("GIF files", "*.gif"));
-            extFilter.add(new ExtensionFilter("All Files", "*.*"));
-            saveToField.setText(fileChooser(extFilter, false).getAbsolutePath());
-        });
         
         saveButton.setDefaultButton(true);
         saveButton.setOnAction(e -> {
             boolean error = false;
-            try {
-                errorLabel1.setText("");
-                Integer.parseInt(spinnerWidth.getEditor().textProperty().get());
-            } catch (NumberFormatException nfE) {
-                error = true;
-               errorLabel1.setText("You must enter an integer.");
-               spinnerWidth.getEditor().textProperty().set(INITIAL_VALUE);
-            }
             
-            try {
-                errorLabel2.setText("");
-                Integer.parseInt(spinnerHeight.getEditor().textProperty().get());
-            } catch (NumberFormatException nfE) {
-                error = true;
-                errorLabel2.setText("You must enter an integer.");
-                spinnerHeight.getEditor().textProperty().set(INITIAL_VALUE);
-            }
+            List<ExtensionFilter> extFilter = new ArrayList<>();
+            extFilter.add(new ExtensionFilter("GIF files", "*.gif"));
+            extFilter.add(new ExtensionFilter("All Files", "*.*"));
+            File file = fileChooser(extFilter, false);
             
-            File file = new File(saveToField.getText());
-            if (!file.isFile() && !file.canRead()) {
+            if (file == null) {
                 error = true;
             }
             
             if (!error) {
-                
-                
+                saver.setIterations(3);
+                saver.setAnimationTimer(animationSlider.valueProperty().intValue());
                 saver.setWidth((int) spinnerWidth.getValue());
                 saver.setHeight((int) spinnerHeight.getValue());
-                saver.setColors(convertFXColorToAWTColor(backgroundColor.getValue()),
-                    convertFXColorToAWTColor(aliveCellColor.getValue()), 
-                    convertFXColorToAWTColor(deadCellColor.getValue()));
+                saver.setIterations(iterSlider.valueProperty().intValue());
+                saver.setColors(convertFXColorToAWTColor(aliveCellColor.getValue()), 
+                        convertFXColorToAWTColor(deadCellColor.getValue()));
                 saver.setFile(file);
                 saver.saveToGif();
                 stage.close();
@@ -451,18 +452,20 @@ public class DialogBoxes {
             stage.close();
         });
         
-        Scene scene = new Scene(root, 630, 400);
+        Scene scene = new Scene(root, 550, 400);
 
         stage.setScene(scene);
         stage.initModality(Modality.APPLICATION_MODAL);
+        stage.setResizable(false);
         stage.showAndWait();
     }
     
     private java.awt.Color convertFXColorToAWTColor(javafx.scene.paint.Color c) {
-        int r = (int) c.getRed();
-        int g = (int) c.getGreen();
-        int b = (int) c.getBlue();
         
+        float r = (float) c.getRed();
+        float g = (float) c.getGreen();
+        float b = (float) c.getBlue();
+        float o = (float) c.getOpacity();
         return new java.awt.Color(r, g, b);
     }
 }
