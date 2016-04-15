@@ -262,7 +262,18 @@ public class DynamicBoard extends Board {
     //=========================================================================
     // Misc.
     //=========================================================================
-    
+
+    @Override
+    public DynamicBoard clone() {
+        byte[][] boardClone = new byte[getRows()][getColumns()];
+        MetaData metaDataClone = metadata.clone();
+        for (int row = 0; row < currentGeneration.size(); row++) {
+            for (int col = 0; col < currentGeneration.get(0).size(); col++) {
+                boardClone[row][col] = currentGeneration.get(row).get(col);
+            }
+        }
+        return new DynamicBoard(boardClone, metaDataClone);
+    }
     /**
      *  Method that returns the game board as a String. Used for Unit Testing with JUnit 4
      *
