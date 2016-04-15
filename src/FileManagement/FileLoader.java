@@ -58,6 +58,7 @@ public class FileLoader {
      * InputStreamReader. Instantiates a RLEDecoder object and calls the decode() method in RLEDecoder.
      * @param urlString String that represents the URL where the file resides
      * @return boolean True if the file is downloaded and is parsed by the RLEDecoder.
+     * @throws PatternFormatException Throws an exception if the method is unable to parse the RLE file
      */
     public boolean readGameBoardFromURL(String urlString) {
         try {

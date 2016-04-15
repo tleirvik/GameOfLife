@@ -6,31 +6,32 @@
 package GameOfLife;
 
 import java.io.File;
+
+import FileManagement.GIFSaver;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
+import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import util.DialogBoxes;
 
 /**
  * FXML Controller class
  *
  * @author Stian Reistad Røgeberg, Terje Leirvik, Robin Sean Aron Lundh
  * 
- * This controller class controls and handles all the actions performed in
- * the PatternEditor View.
- *
- * @see ViewController
- * @see FixedBoard
- * @see MetaData
- * @see FileManagement.RLEEncoder
- * @see FileManagement.FileLoader
+ * This controller class controls handles all the actions performed in
+ * the its related view.
  */
 public class EditorController {
     @FXML private BorderPane patternController;
@@ -43,12 +44,13 @@ public class EditorController {
     @FXML private TextField titleTextField;
     @FXML private TextField descriptionTextField;
     @FXML private TextField rulesTextField;
+    @FXML private MenuItem saveToGif;
 
     private double cellSize;
     private double cellSizeStrip;
-    private FixedBoard fixedBoard;
-    private byte[][] pattern;
+    private GameOfLife game;
     private MetaData metaData;
+    private DialogBoxes dialogBoxes;
 
     /**
      * This method closes the editor window.
@@ -58,14 +60,7 @@ public class EditorController {
         Stage s = (Stage) closeButton.getScene().getWindow();
         s.close();
     }
-
-    /**
-     * This method is called upon when the user clicks the Save button in the view. It instaniates a new
-     * FileLoader object and saves the pattern to a file
-     *
-     * @see FileManagement.FileLoader
-     * @see FileManagement.RLEEncoder
-     */
+    
     @FXML
     public void handleSaveButton() {
         Stage mainStage = (Stage) patternCanvas.getScene().getWindow();
@@ -75,60 +70,48 @@ public class EditorController {
             new FileChooser.ExtensionFilter("RLE files", "*.rle"));
         File saveRLEFile = fileChooser.showSaveDialog(mainStage);
     }
-
-    /**
-     * Method that handles mouse clicks on the canvas and sets a cells alive status when clicked
-     * @param e MouseEvent
-     */
+    
     @FXML
     public void handleMouseClick(MouseEvent e) {
-        int row = (int) (e.getY() / cellSize) + 1;
-        int col = (int) (e.getX() / cellSize) + 1;
+        int row = (int) (e.getY() / cellSize);
+        int col = (int) (e.getX() / cellSize);
         
-        if(row < pattern.length && col < pattern[0].length) {
-            pattern[row][col] = (pattern[row][col] == 1) ? (byte) 0 : (byte) 1;
+        if(row < game.getRows() && col < game.getColumns()) {
+            game.setCellAliveState(row, col,(game.getCellAliveState(row, col) == 1) ? (byte) 0 : (byte) 1);
             draw();
         }
     }
     
-    
+    @FXML
+    public void saveToGif() {  
+        game.setFirstGeneration();
+        dialogBoxes.saveToGIFDialog(new GIFSaver(game));
+    }
     
     // sette brettet her?
-
-    /**
-     * This method sets the pattern we want to edit in the pattern editor and populates the text fields
-     * in the view with the meta data
-     *
-     * @param pattern the byte[][] board we want to edit
-     * @param metaData the associated meta data to the board
-     */
-    public void setPattern(byte[][] pattern, MetaData metaData) {
-        fixedBoard = new FixedBoard(pattern, metaData);
-        this.pattern = fixedBoard.getBoardReference();
-        this.metaData = metaData;
-
-        double cellWidth = patternCanvas.getWidth() / (pattern[0].length - 2);
-        double cellHeight = patternCanvas.getHeight() / (pattern.length - 2);
-        this.cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
+    public void setPattern(GameOfLife game) {
+        this.game = game.clone();
+        metaData = game.getMetaData();
+        
+        double cellWidth = patternCanvas.getWidth() / game.getRows();
+        double cellHeight = patternCanvas.getHeight() / game.getColumns();
+        cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
 
         authorTextField.setText(metaData.getAuthor());
         descriptionTextField.setText(metaData.getComment());
         titleTextField.setText(metaData.getName());
-        rulesTextField.setText(metaData.getRuleString()[0] + " " + metaData.getRuleString()[1]);
+        rulesTextField.setText("S" + metaData.getRuleString()[0] + "/B" + metaData.getRuleString()[1]);
 
         draw();
+        
+        saveToGif.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN));
     }
-
-    /**
-     * This method handles the Update Strip button in the view and shows the patterns development
-     * in the next 20 generations and creates a visualization in the bottom of the screen
-     *
-     * @see FixedBoard
-     */
+    
     @FXML
     public void updateStrip() {
-        final double stripCellSize = strip.getHeight() / (pattern.length - 2);
-        final double generationWidth = stripCellSize * (pattern[0].length - 2);
+        game.setFirstGeneration();
+        final double stripCellSize = strip.getHeight() / game.getRows();
+        final double generationWidth = stripCellSize * game.getColumns();
         final double padding = 25;
         strip.setWidth((generationWidth + padding) * 20);
         double offset_X = 0;
@@ -138,31 +121,25 @@ public class EditorController {
                 strip.heightProperty().doubleValue());
         
         for(int i = 0; i < 20; i++) {
-            fixedBoard.nextGeneration();
+            game.update();
             drawStrip(gc, offset_X, stripCellSize);
             offset_X += generationWidth + padding;
         }
         
-        fixedBoard.resetBoard();
+        game.resetGame();
     }
-
-    /**
-     * Specialized draw method that visualizes the board on the screen with a frame to create
-     * a "film strip". Called from updateStrip()-method     *
-     *
-     * @param gc GraphicContext The specific Canvas we want to draw on
-     * @param offset_X The offset value
-     * @param stripCellSize The size of the cell we want to draw
-     * @see FixedBoard
-     */
+    
     private void drawStrip(GraphicsContext gc, double offset_X, double stripCellSize) {
-
+        boolean isGenerationAlive = false;
+        
+        final int rows = game.getRows();
+        final int columns = game.getColumns();
         double x = offset_X;
         double y = 0;
 
-        for(int row = 1; row < pattern.length - 1; row++) {
-            for(int col = 1; col < pattern[0].length - 1; col++) {
-                if (pattern[row][col] == 1) {
+        for(int row = 0; row < rows; row++) {
+            for(int col = 0; col < columns; col++) {
+                if (game.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, stripCellSize, stripCellSize);
                 }
                 x += stripCellSize; // Plusser på for neste kolonne
@@ -170,13 +147,16 @@ public class EditorController {
             x = offset_X; // Reset X-verdien for neste rad
             y += stripCellSize; // Plusser på for neste rad
         }
-        
+
         final double start_x = offset_X;
         final double start_y = 0;
-        final double end_y = stripCellSize * (pattern.length - 2);
-        final double end_x = offset_X +
-                stripCellSize * (pattern[0].length - 2);
-        
+        final double end_y = stripCellSize * rows;
+        final double end_x = offset_X + stripCellSize * columns;
+
+        drawPadding(gc, start_x, start_y, end_x, end_y);
+    }
+
+    public void drawPadding(GraphicsContext gc, double start_x, double start_y, double end_x, double end_y) {
         // tegner en ramme rundt hver generasjon
         // topp
         gc.strokeLine(start_x, start_y, end_x, start_y);
@@ -189,13 +169,10 @@ public class EditorController {
     }
     
     // tegne mønsteret
-
-    /**
-     * This method visualizes the game board on the screen and only draws cells that are alive(1)
-     *
-     * @see FixedBoard
-     */
     private void draw() {
+        final int rows = game.getRows();
+        final int columns = game.getColumns();
+        
         final GraphicsContext gc = patternCanvas.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
         gc.fillRect(0, 0, patternCanvas.getWidth(), 
@@ -205,9 +182,9 @@ public class EditorController {
         double y = 0;
         
         gc.setFill(Color.BLACK);
-        for(int row = 1; row < pattern.length - 1; row++) {
-            for(int col = 1; col < pattern[0].length - 1; col++) {
-                if (pattern[row][col] == 1) {
+        for(int row = 0; row < rows; row++) {
+            for(int col = 0; col < columns; col++) {
+                if (game.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, cellSize, cellSize);
                 }
                 x += cellSize; // Plusser på for neste kolonne
@@ -219,43 +196,34 @@ public class EditorController {
     }
     
     // bør ha gridlines for å gjøre manipulering mer lesbar.
-
-    /**
-     * This method draws grid lines on the canvas for increased visibility and usability
-     *
-     * @param gc GraphicContext The specific Canvas we want to draw on
-     */
     private void drawGridLines(GraphicsContext gc) {
-        gc.setLineWidth(0.6);
-        gc.setStroke(Color.GRAY);
-        
+        final int rows = game.getRows();
+        final int columns = game.getColumns();
         final double height = getPatternHeight();
         final double width = getPatternWidth();
         
+        gc.setLineWidth(0.6);
+        gc.setStroke(Color.GRAY);
+        
         // For hver kolonne, tegn en vertikal strek
-        for(int col = 0; col <= pattern[0].length - 2; col++) {
+        for(int col = 0; col <= columns; col++) {
             gc.strokeLine(cellSize * col, 0, cellSize * col, height);   
         }
         
-        for(int row = 0; row <= pattern.length - 2; row++) {
+        for(int row = 0; row <= rows; row++) {
             gc.strokeLine(0, cellSize * row, width, cellSize * row);
         }
     }
-
-    /**
-     * This method returns the patterns width
-     *
-     * @return Returns a double value of the patterns width
-     */
+    
     private double getPatternWidth() {
-        return cellSize * (pattern[0].length - 2);
+        return cellSize * game.getColumns();
     }
-    /**
-     * This method returns the patterns length
-     *
-     * @return Returns a double value of the patterns length
-     */
+    
     private double getPatternHeight() {
-        return cellSize * (pattern.length - 2);
+        return cellSize * game.getRows();
+    }
+
+    public void setDialogBoxes(DialogBoxes dialogBoxes) {
+        this.dialogBoxes = dialogBoxes;
     }
 }

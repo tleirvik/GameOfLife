@@ -1,6 +1,6 @@
 package FileManagement;
 
-import GameOfLife.FixedBoard;
+import GameOfLife.GameOfLife;
 import GameOfLife.MetaData;
 import util.DialogBoxes;
 
@@ -19,22 +19,21 @@ import java.nio.file.Path;
  * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
  */
 public class RLEEncoder {
-    private final byte[][] board;
     private final MetaData metadata;
     private final Path filePath;
     private final StringBuffer rleString;
+    private final GameOfLife game;
 
     /**
      * Constructor that creates an RLEDecoder object.
      * @param b The board that we want to parse and save to file
      * @param f The file to save the board to
      */
-    public RLEEncoder(FixedBoard b, File f) {
-        metadata = b.getMetaData();
-        board = b.getBoardReference();
+    public RLEEncoder(GameOfLife game, File f) {
+        metadata = game.getMetaData();
+        this.game = game;
         filePath = f.toPath();
         rleString = new StringBuffer();
-        System.out.println(board.length + " " + board[0].length);
     }
 
     /**
@@ -88,9 +87,9 @@ public class RLEEncoder {
      */
     private void encodeBoardSize() {
         rleString.append("x = ");
-        rleString.append(board[0].length - 2);
+        rleString.append(game.getColumns());
         rleString.append(", y = ");
-        rleString.append(board.length - 2);
+        rleString.append(game.getRows());
         rleString.append(", ");
     }
      /**
@@ -115,25 +114,39 @@ public class RLEEncoder {
     private void encodeBoard() {
         // Bør bytte til StringBuilder fordi den er raskere StringBuffer
         int count = 1;
-        byte previous = board[0][0];
+        int previous = -1;
 
-        for (int row = 1; row < board.length - 1; row++) {
-            for (int col = 1; col < board[0].length - 1; col++) {
+        for (int row = 0; row < game.getRows(); row++) {
+            for (int col = 0; col < game.getColumns(); col++) {
                 final int nextPosition = col + 1;
-                final byte currentCell = board[row][col];
-
-                if (currentCell == previous && col < board[0].length) {
+                final byte currentCell = game.getCellAliveState(row, col);
+                if (col < game.getColumns() && currentCell == nextPosition) {
                     count++;
                 } else {
-                    rleString.append(count > 1 ? count : "").append(previous == 1 ? "o" : "b");
+                    rleString.append(count > 1 ? count : "" ).append(currentCell == 1 ? "o" : "b");
                     count = 1;
                 }
-                previous = currentCell;
-            }
-            rleString.append(count > 1 ? count : "").append(previous == 1 ? "o" : "b");
-            count = 1;
-            rleString.append("$");
 
+                /*
+                while (col < board[0].length && currentCell == nextPosition) {
+                    count++;
+                }
+                */
+
+                if (count > 1) {
+                    rleString.append((count >1) ? count : "");
+                    rleString.append(currentCell == 1 ? "o" : "b");
+                    count = 1;
+                }
+                /*
+                else {
+                    rleString.append(currentCell == 1 ? "o" : "b");
+                }
+                //rleString.append(count).append(currentCell == 1 ? "o" : "b");
+                //rleString.append(count > 1 ? count : "" ).append(currentCell == 1 ? "o" : "b");
+                */
+            }
+            rleString.append("$");
         }
         rleString.append("!");
     }
@@ -159,25 +172,3 @@ public class RLEEncoder {
 
     }
 }
-/*
-private void encodeBoard() {
-        int count = 1;
-        int currentCell = -1;
-
-        for (int row = 1; row < board.length - 1; row++) {
-            for (int col = 1; col < board[0].length - 1; col++) {
-                final int nextPosition = col+1;
-                currentCell = board[row][col]; // Henter cellen
-                if((nextPosition != board[0].length - 1) && (currentCell == board[row][nextPosition])) { // Hvis cellen matcher neste celle...
-                    count++; // Pluss på antall forekomster av cellen
-                } else {
-                    // Skriver inn antall forekomster (skipper om den bare forekommer en gang) og om den er død eller levende
-                    rleString.append(((count == 1) ? "" : Integer.toString(count)) + ((currentCell == 1) ? "o" : "b"));
-                    count = 1;
-                }
-            }
-            rleString.append("$");
-        }
-        rleString.append("!");
-    }
- */

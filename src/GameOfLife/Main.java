@@ -2,6 +2,7 @@ package GameOfLife;
 
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
@@ -10,12 +11,12 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-            BorderPane root = FXMLLoader.load(getClass().
-                getResource("MainWindow.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("MainWindow.fxml"));
+            Parent root = (Parent)loader.load();
+            ViewController controller = (ViewController)loader.getController();
+            controller.setMainStageDialogBoxes(stage);
 
             Scene scene = new Scene(root);
-            /*scene.getStylesheets().add(getClass().getResource("grafikk.css").
-                toExternalForm());*/
 
             stage.setTitle("Game Of Life");
             stage.setScene(scene);
@@ -24,7 +25,6 @@ public class Main extends Application {
             stage.setMinWidth(810);
             
             stage.show();
-
 	}
 
     public static void main(String[] args) {

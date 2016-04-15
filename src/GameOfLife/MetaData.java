@@ -1,15 +1,14 @@
 package GameOfLife;
 
 /**
- * @version 1.0
+ * @author tleirvik, rlundh<p>
+ * @version 1.0<p>
  *
  * This class is a container class for a boards metadata<p>
- * Every board in Game Of Life has an associated meta data class<p>
  *
- * @see FixedBoard
- * @see FileManagement.RLEDecoder
- * @see FileManagement.RLEEncoder
- * @see FileManagement.FileLoader
+ * @see Board.java
+ * @see RLEDecoder.java
+ * @see RLEEncoder.java
  *
  */
 public class MetaData {
@@ -20,59 +19,25 @@ public class MetaData {
 	private String survivalRule;
 	private String birthRule;
 
-	/**
-	 * Method that returns the author of the pattern
-	 *
-	 * @return String The name of the author associated with the pattern
-     */
 	public String getAuthor() {
 		return author;
 	}
-	/**
-	 * Method that sets the author of the pattern
-     *
-     * @param author String value of the author
-	 */
 	public void setAuthor(String author) {
         this.author = author;
 	}
-	/**
-	 * Method that returns the name of the pattern
-     *
-	 * @return String The name of the pattern
-	 */
 	public String getName() {
         return name;
 	}
-	/**
-	 * Method that sets the name of the pattern
-     *
-     * @param name String value of the name
-	 */
 	public void setName(String name) {
         this.name = name;
 	}
-	/**
-	 * Method that returns the comments associated with the pattern
-     *
-	 * @return String The comments associated with the pattern
-	 */
 	public String getComment() {
         return comment;
 	}
-	/**
-	 * Method that sets the comments associated with the pattern
-     *
-     * @param comment String value of the comments
-	 */
 	public void setComment(String comment) {
         this.comment = comment;
 	}
-	/**
-	 * Method that returns the rule set associated with the pattern
-     *
-	 * @return String[] Array containing the rule set
-	 */
+
 	public String[] getRuleString() {
         String[] rules = {
                 survivalRule,
@@ -80,15 +45,19 @@ public class MetaData {
         };
 		return rules;
 	}
-
-    /**
-     * Method that sets the rule set associated with the pattern
-     *
-     * @param SBrules String value that represents the game rules
-     */
 	public void setRuleString(String[] SBrules) {
         System.out.println("RULESTRING IN METADATA = " + SBrules[0] + " " + SBrules[1]);
 		this.survivalRule = SBrules[0];
 		this.birthRule = SBrules[1];
 	}
+        
+        @Override
+        public MetaData clone() {
+            MetaData clone = new MetaData();
+            clone.setAuthor(author);
+            clone.setComment(comment);
+            clone.setName(name);
+            clone.setRuleString(getRuleString());
+            return clone;
+        }
 }
