@@ -139,12 +139,14 @@ public class DialogBoxes {
         Stage mainStage = new Stage();
 
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("Open Resource File");
+        
         fileChooser.getExtensionFilters().addAll(extFilter);
         
         if(load) {
+            fileChooser.setTitle("Open Resource File");
             return fileChooser.showOpenDialog(mainStage);
         } else {
+            fileChooser.setTitle("Save File");
             return fileChooser.showSaveDialog(mainStage);
         }
     }
@@ -342,42 +344,48 @@ public class DialogBoxes {
         GridPane.setConstraints(spinnerHeight, 1, 1, 3, 1);
         root.getChildren().addAll(spinnerWidth, spinnerHeight);
         
+        final Label speedLabel = new Label("Animation Speed (in ms): ");
+        GridPane.setConstraints(speedLabel, 0, 2, 2, 1);
+        root.getChildren().add(speedLabel);
+        
         final Label saveToLabel = new Label("Save To: ");
         final TextField saveToField = new TextField();
         saveToField.setEditable(false);
         final Button saveToButton = new Button("Browse");
+        GridPane.setConstraints(saveToLabel, 0, 3);
+        GridPane.setConstraints(saveToField, 0, 4, 2, 1);
+        GridPane.setConstraints(saveToButton, 3, 4);
+        root.getChildren().addAll(saveToLabel, saveToField, saveToButton);
                 
-        final Label speed = new Label("Animation Speed: ");
         
-        final Label speedLabel = new Label("Animation Speed in milliseconds");
-        GridPane.setConstraints(speedLabel, 0, 2, 2, 1);
-        root.getChildren().add(speedLabel);
+        
+        
         
         final Label errorLabel1 = new Label();
         final Label errorLabel2 = new Label();
-        GridPane.setConstraints(errorLabel1, 4, 0);
-        GridPane.setConstraints(errorLabel2, 4, 1);
+        GridPane.setConstraints(errorLabel1, 5, 0);
+        GridPane.setConstraints(errorLabel2, 5, 1);
         root.getChildren().addAll(errorLabel1, errorLabel2);
         
         final Label backgroundColorLabel = new Label("Background color");
-        GridPane.setConstraints(backgroundColorLabel, 0, 4);
+        GridPane.setConstraints(backgroundColorLabel, 0, 5);
         root.getChildren().add(backgroundColorLabel);
         
         final ColorPicker backgroundColor = new ColorPicker(Color.BLACK);
-        GridPane.setConstraints(backgroundColor, 1, 4);
+        GridPane.setConstraints(backgroundColor, 1, 5);
         root.getChildren().add(backgroundColor);
         
         
         final Label aliveCellColorLabel = new Label("Alive Cell Color");
-        GridPane.setConstraints(aliveCellColorLabel, 0, 5);
+        GridPane.setConstraints(aliveCellColorLabel, 0, 6);
         final ColorPicker aliveCellColor = new ColorPicker(Color.GREEN);
-        GridPane.setConstraints(aliveCellColor, 1, 5);
+        GridPane.setConstraints(aliveCellColor, 1, 6);
         root.getChildren().addAll(aliveCellColorLabel, aliveCellColor);
         
         final Label deadCellColorLabel = new Label("Dead Cell Color");
-        GridPane.setConstraints(deadCellColorLabel, 0, 6);
+        GridPane.setConstraints(deadCellColorLabel, 0, 7);
         final ColorPicker deadCellColor = new ColorPicker(Color.RED);
-        GridPane.setConstraints(deadCellColor, 1, 6);
+        GridPane.setConstraints(deadCellColor, 1, 7);
         root.getChildren().addAll(deadCellColorLabel, deadCellColor);
         
         
@@ -390,7 +398,7 @@ public class DialogBoxes {
         hbox.getChildren().addAll(saveButton, cancelButton);
         root.getChildren().add(hbox);
         
-        GridPane.setConstraints(hbox, 1, 8);
+        GridPane.setConstraints(hbox, 1, 9);
         
         saveToButton.setOnAction(e -> {
             List<ExtensionFilter> extFilter = new ArrayList<>();
@@ -426,6 +434,8 @@ public class DialogBoxes {
             }
             
             if (!error) {
+                
+                
                 saver.setWidth((int) spinnerWidth.getValue());
                 saver.setHeight((int) spinnerHeight.getValue());
                 saver.setColors(convertFXColorToAWTColor(backgroundColor.getValue()),
