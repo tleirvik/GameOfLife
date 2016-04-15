@@ -621,12 +621,12 @@ public class ViewController {
         cellSizeSlider.setMin(min);
     	cellSizeSlider.setMax(150);
     	cellSizeSlider.setValue(current);
-    	cellSizeLabel.setText(Double.toString(cellSizeSlider.getValue()));
+    	cellSizeLabel.setText(String.format("%.2f",cellSizeSlider.getValue()));
         
         cellSizeSlider.valueProperty().addListener((ObservableValue<?
                     extends Number> ov, Number old_size, Number new_size) -> {
-                cellSizeLabel.setText(Double.toString(new_size.intValue()));
-                cellSize = new_size.intValue();
+                cellSizeLabel.setText(String.format("%.2f", new_size.doubleValue()));
+                cellSize = new_size.doubleValue();
                 draw();
             });
     }
@@ -638,12 +638,11 @@ public class ViewController {
         fpsSlider.setShowTickMarks(true);
         fpsSlider.setShowTickLabels(true);
         fpsSlider.setMajorTickUnit(10);
-        fpsSlider.setMinorTickCount(0);
+        fpsSlider.setMinorTickCount(5);
         fpsLabel.setText("10");
         fpsSlider.valueChangingProperty().addListener((ObservableValue<? extends Boolean> obs, Boolean wasChanging, Boolean isChanging) -> {
-            if (!isChanging) {
+            
                 int newValue = (int)fpsSlider.getValue();
-                fpsLabel.setText(Integer.toString(newValue));
                 if(timeline.getStatus() == Animation.Status.RUNNING) {
                     timeline.stop();
                     initializeKeyFrame(newValue);
@@ -651,8 +650,7 @@ public class ViewController {
                 } else {
                     initializeKeyFrame(newValue);
                 }
-                
-            }
+            
         });
     }
 
