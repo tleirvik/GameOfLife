@@ -95,10 +95,11 @@ public class DynamicBoard extends Board {
      * given position
      */
     public void setCellAliveState(int row, int column, byte aliveState) {
-        if(aliveState != 0 || aliveState != 1) {
-            throw new RuntimeException("Invalid number in cell state");
+        if(aliveState == 0 || aliveState == 1) {
+            currentGeneration.get(row).set(column, aliveState);
+        } else {
+            throw new RuntimeException("Invalid number in cell state: " + aliveState);
         }
-        currentGeneration.get(row).set(column, aliveState);
     }
     
     @Override
