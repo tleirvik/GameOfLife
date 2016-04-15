@@ -227,6 +227,6 @@ public class EditorController {
         this.dialogBoxes = dialogBoxes;
     }
     public void initialize() {
-        game.getBoard().setIsDynamic(false);
+        //game.getBoard().setIsDynamic(false);
     }
 }
