@@ -5,8 +5,6 @@
  */
 package GameOfLife;
 
-import java.io.File;
-
 import FileManagement.GIFSaver;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
@@ -24,6 +22,8 @@ import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import util.DialogBoxes;
+
+import java.io.File;
 
 /**
  * FXML Controller class
@@ -225,5 +225,8 @@ public class EditorController {
 
     public void setDialogBoxes(DialogBoxes dialogBoxes) {
         this.dialogBoxes = dialogBoxes;
+    }
+    public void initialize() {
+        game.getBoard().setIsDynamic(false);
     }
 }

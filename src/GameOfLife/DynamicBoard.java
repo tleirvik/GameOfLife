@@ -15,6 +15,7 @@ public class DynamicBoard extends Board {
     private int sum3 = 0;
     private int sum4 = 0;
     private int sum5 = 0;
+    boolean isDynamic = true;
 
     
     //=========================================================================
@@ -48,20 +49,8 @@ public class DynamicBoard extends Board {
                 firstGeneration.get(row).add(board[row][col]);
             }
         }
-        /*
-        for (int i = 0; i < currentGeneration.size(); i++) {
-            System.out.println(currentGeneration.get(i).size());
-        }
-
-
-        for (int i = 0; i < currentGeneration.size(); i++) {
-            System.out.println(currentGeneration.get(i).size());
-        }
-        */
-
-
-
     }
+
     public void addFrame() {
         //int rows = currentGeneration.size();
         final int columns = currentGeneration.get(0).size();
@@ -159,7 +148,6 @@ public class DynamicBoard extends Board {
 
     private void checkTop() {
         final int columns = currentGeneration.get(0).size();
-
         sum1 = currentGeneration.get(0).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
         sum2 = currentGeneration.get(1).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
         sum3 = currentGeneration.get(2).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
@@ -247,8 +235,6 @@ public class DynamicBoard extends Board {
         int remove = sum1 + sum2 + sum3 + sum4 + sum5;
         int add = sum1 + sum2;
 
-
-
         if (add != 0) {
             for (List<Byte> e : currentGeneration) {
                 e.add((byte) 0);
@@ -283,7 +269,9 @@ public class DynamicBoard extends Board {
     
     @Override
     public void nextGeneration() {
-        checkEdges();
+        if (isDynamic) {
+            checkEdges();
+        }
         byte[][] neighbourArray = countNeighbours();
         
         for(int row = 0; row < currentGeneration.size(); row++) {
@@ -304,6 +292,9 @@ public class DynamicBoard extends Board {
         }
     }
 
+    public void setIsDynamic(boolean isDynamic) {
+        this.isDynamic = isDynamic;
+    }
     //=========================================================================
     // Misc.
     //=========================================================================

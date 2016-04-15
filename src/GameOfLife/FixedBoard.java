@@ -171,6 +171,9 @@ public class FixedBoard extends Board{
             }
         }
     }
+    public void setIsDynamic(boolean isDynamic) {
+
+    }
 
     //=========================================================================
     // Misc.

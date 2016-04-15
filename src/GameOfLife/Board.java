@@ -22,6 +22,7 @@ public abstract class Board {
     public abstract void nextGeneration();
     //public void concurrentNextGeneration();
     //Annenhver rad/kolonne
+    public abstract void setIsDynamic(boolean isDynamic);
     
     public abstract Board clone();
     public abstract String toString();
