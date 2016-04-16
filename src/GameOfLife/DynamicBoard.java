@@ -97,7 +97,7 @@ public class DynamicBoard extends Board {
      * given position
      */
     public byte getCellAliveState(int row, int column) {
-        return currentGeneration.get(row -1).get(column -1);
+        return currentGeneration.get(row).get(column);
     }
     
     //=========================================================================
