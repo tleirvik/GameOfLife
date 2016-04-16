@@ -1,14 +1,14 @@
 package GameOfLife;
 
 /**
- * @author tleirvik, rlundh<p>
+ * @author tleirvik, rlundh, srrogeberg<p>
  * @version 1.0<p>
  *
  * This class is a container class for a boards metadata<p>
  *
- * @see Board.java
- * @see RLEDecoder.java
- * @see RLEEncoder.java
+ * @see Board
+ * @see FileManagement.RLEDecoder
+ * @see FileManagement.RLEEncoder
  *
  */
 public class MetaData {
@@ -46,7 +46,6 @@ public class MetaData {
 		return rules;
 	}
 	public void setRuleString(String[] SBrules) {
-        System.out.println("RULESTRING IN METADATA = " + SBrules[0] + " " + SBrules[1]);
 		this.survivalRule = SBrules[0];
 		this.birthRule = SBrules[1];
 	}

@@ -94,6 +94,7 @@ public class ViewController {
     private boolean drawGrid = true;
     private boolean drawBackground = true;
     private boolean drawBoardBackground = true;
+    private boolean isDynamic = true;
 
     //
     //	CANVAS MOVE/DRAW FLAGS
@@ -345,10 +346,12 @@ public class ViewController {
         } else {
             cellSize = cellHeight;
         }
-       
+
         initializeCellSizeSlider(cellSize, cellSize);
         centerBoard();
         draw();
+        //isDynamic = false;
+
     }
 
     @FXML
@@ -393,6 +396,10 @@ public class ViewController {
     private void centerBoard() {
             offset_X = gameCanvas.getWidth() / 2 - (getBoardWidth() / 2);
             offset_Y = gameCanvas.getHeight() / 2 - (getBoardHeight() / 2);
+    }
+
+    public void drawFitToView() {
+        // FIXME: 15.04.2016 
     }
 
     private void draw() {
@@ -685,6 +692,13 @@ public class ViewController {
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
             }*/
+            /*
+            if (isDynamic) {
+                drawFitToView();
+            } else {
+                draw();
+            }
+            */
             draw();
             sw.stop();
         });

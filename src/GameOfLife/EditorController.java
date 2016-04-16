@@ -92,6 +92,7 @@ public class EditorController {
     public void setPattern(GameOfLife game) {
         this.game = game.clone();
         metaData = game.getMetaData();
+        game.getBoard().setIsDynamic(false);
         
         double cellWidth = patternCanvas.getWidth() / game.getRows();
         double cellHeight = patternCanvas.getHeight() / game.getColumns();

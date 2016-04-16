@@ -35,6 +35,7 @@ public class DynamicBoard extends Board {
                 firstGeneration.get(row).add((byte)0);
             }
         }
+        addFrame();
     }
         
     public DynamicBoard(byte[][] board, MetaData metadata) {
@@ -49,6 +50,7 @@ public class DynamicBoard extends Board {
                 firstGeneration.get(row).add(board[row][col]);
             }
         }
+        addFrame();
     }
 
     public void addFrame() {
@@ -130,9 +132,9 @@ public class DynamicBoard extends Board {
     public void resetBoard() {
         currentGeneration.clear();
         for(int row = 0; row < firstGeneration.size(); row++) {
+            currentGeneration.add(new ArrayList<>());
             for(int col = 0; col < firstGeneration.get(0).size(); col++) {
-                currentGeneration.add(new ArrayList<>());
-                currentGeneration.get(row).add(firstGeneration.get(row).get(col));
+                currentGeneration.get(row).add(col, firstGeneration.get(row).get(col));
             }
         }
     }
@@ -189,7 +191,11 @@ public class DynamicBoard extends Board {
 
     private void checkLeft() {
         final int rows = currentGeneration.size();
-
+        sum1 = 0;
+        sum2 = 0;
+        sum3 = 0;
+        sum4 = 0;
+        sum5 = 0;
         for (int row = 0; row < rows; row++) {
             sum1 += currentGeneration.get(row).get(0);
             sum2 += currentGeneration.get(row).get(1);
@@ -250,8 +256,8 @@ public class DynamicBoard extends Board {
     public byte[][] countNeighbours() {
         byte[][] neighbourArray = new byte[currentGeneration.size()][currentGeneration.get(0).size()];
         
-        for(int row = 0; row < currentGeneration.size(); row++) {
-            for(int col = 0; col < currentGeneration.get(0).size(); col++) {
+        for(int row = 0; row < currentGeneration.size() -1; row++) {
+            for(int col = 0; col < currentGeneration.get(0).size() -1; col++) {
                 if(currentGeneration.get(row).get(col) == 1) {
                     neighbourArray[row-1][col-1]++;
                     neighbourArray[row-1][col]++;
@@ -274,8 +280,8 @@ public class DynamicBoard extends Board {
         }
         byte[][] neighbourArray = countNeighbours();
         
-        for(int row = 0; row < currentGeneration.size(); row++) {
-            for(int col = 0; col < currentGeneration.get(0).size(); col++) {
+        for(int row = 0; row < currentGeneration.size() -1; row++) {
+            for(int col = 0; col < currentGeneration.get(0).size() -1; col++) {
                 currentGeneration.get(row).set(col,((neighbourArray[row][col]== 3) || (currentGeneration.get(row).get(col) == 1 && neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0);
             }
         }
@@ -284,10 +290,14 @@ public class DynamicBoard extends Board {
     @Override
     public void setFirstGeneration() {
         firstGeneration.clear();
-        for (int row = 0; row < currentGeneration.size(); row++) {
+        //firstGeneration.stream().forEach(System.out::println);
+        for (int row = 0; row < currentGeneration.size() -1; row++) {
             firstGeneration.add(new ArrayList<>());
-            for (int col = 0; col < currentGeneration.get(0).size(); col++) {
+            System.out.println("row " + row);
+            for (int col = 0; col < currentGeneration.get(0).size() -1; col++) {
+                System.out.println("col "  + col);
                 firstGeneration.get(row).add(col, currentGeneration.get(row).get(col));
+                System.out.println(firstGeneration.get(row).get(col));
             }
         }
     }
@@ -317,12 +327,14 @@ public class DynamicBoard extends Board {
      */
     @Override
     public String toString() {
+        //currentGeneration.stream().forEach(i -> System.out.println(i));
         StringBuilder sb = new StringBuilder();
-        /*for (int i = 0; i < currentGeneration.length; i++) {
-            for (int j = 0; j < currentGeneration[0].length; j++) {
-                sb.append(currentGeneration[i][j]);
+
+        for (int i = 0; i < currentGeneration.size(); i++) {
+            for (int j = 0; j < currentGeneration.get(0).size(); j++) {
+                sb.append(currentGeneration.get(i).get(j));
             }
-        }*/
+        }
         return sb.toString();
     }
     private int getIntValue(int row, int col) {
