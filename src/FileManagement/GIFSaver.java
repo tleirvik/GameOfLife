@@ -6,11 +6,12 @@
 package FileManagement;
 
 import GameOfLife.GameOfLife;
-import java.awt.Color;
-import java.io.File;
-import java.io.IOException;
 import lieng.GIFWriter;
 import util.DialogBoxes;
+
+import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 
 /**
  *
@@ -85,8 +86,8 @@ public class GIFSaver {
             int y1 = 0;
             int y2 = cellSize;
 
-            for (int row = 0; row < game.getRows(); row++) {
-                for (int col = 0; col < game.getColumns(); col++) {
+            for (int row = 0; row < game.getRows() -1; row++) {
+                for (int col = 0; col < game.getColumns() -1; col++) {
                     if (game.getCellAliveState(row, col) == 1) {
                         writer.fillRect(x1, x2, y1, y2, 
                                 aliveCellColor);
