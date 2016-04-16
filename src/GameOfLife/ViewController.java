@@ -398,10 +398,6 @@ public class ViewController {
             offset_Y = gameCanvas.getHeight() / 2 - (getBoardHeight() / 2);
     }
 
-    public void drawFitToView() {
-        // FIXME: 15.04.2016 
-    }
-
     private void draw() {
         final double start_X = Math.round(getGridStartPosX());
         final double start_Y = Math.round(getGridStartPosY());

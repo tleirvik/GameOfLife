@@ -47,7 +47,6 @@ public class EditorController {
     @FXML private MenuItem saveToGif;
 
     private double cellSize;
-    private double cellSizeStrip;
     private GameOfLife game;
     private MetaData metaData;
     private DialogBoxes dialogBoxes;
@@ -193,7 +192,10 @@ public class EditorController {
             x = 0; // Reset X-verdien for neste rad
             y += cellSize; // Plusser på for neste rad
         }
-        drawGridLines(gc);
+        if (!(game.getBoard().getRows() > 100)) {
+            drawGridLines(gc);
+        }
+
     }
     
     // bør ha gridlines for å gjøre manipulering mer lesbar.

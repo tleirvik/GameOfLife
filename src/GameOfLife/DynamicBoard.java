@@ -97,9 +97,7 @@ public class DynamicBoard extends Board {
      * given position
      */
     public byte getCellAliveState(int row, int column) {
-//        System.out.println("row: " + row);
-//        System.out.println("column: " + column);
-        return currentGeneration.get(row).get(column);
+        return currentGeneration.get(row -1).get(column -1);
     }
     
     //=========================================================================
@@ -117,7 +115,7 @@ public class DynamicBoard extends Board {
      */
     public void setCellAliveState(int row, int column, byte aliveState) {
         if(aliveState == 0 || aliveState == 1) {
-            currentGeneration.get(row).set(column, aliveState);
+            currentGeneration.get(row -1).set(column -1, aliveState);
         } else {
             throw new RuntimeException("Invalid number in cell state");
         }
@@ -293,11 +291,8 @@ public class DynamicBoard extends Board {
         //firstGeneration.stream().forEach(System.out::println);
         for (int row = 0; row < currentGeneration.size() -1; row++) {
             firstGeneration.add(new ArrayList<>());
-            System.out.println("row " + row);
             for (int col = 0; col < currentGeneration.get(0).size() -1; col++) {
-                System.out.println("col "  + col);
                 firstGeneration.get(row).add(col, currentGeneration.get(row).get(col));
-                System.out.println(firstGeneration.get(row).get(col));
             }
         }
     }

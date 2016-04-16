@@ -27,7 +27,6 @@ public class DynamicBoardTest {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
     };
 
-
     @Before
     public void setUp() throws Exception {
         metaData.setAuthor("Ola Nordmann");
@@ -44,6 +43,25 @@ public class DynamicBoardTest {
     }
 
     @Test
+    public void constructorTest1() throws Exception {
+        // Arrange
+
+        // Act
+
+        // Assert
+
+    }
+
+    @Test
+    public void constructorTest2() throws Exception {
+        // Arrange
+
+        // Act
+
+        // Assert
+
+    }
+    @Test
     public void addFrame() throws Exception {
         // Arrange
 
@@ -59,8 +77,8 @@ public class DynamicBoardTest {
         // Assert
         // Hvorfor legges to til på addFrame()?
 
-        /*assertEquals(13, rows);
-        assertEquals(13, columns);*/
+        assertEquals(15, rows);
+        assertEquals(15, columns);
     }
 
     @Test
@@ -133,7 +151,8 @@ public class DynamicBoardTest {
     @Test
     public void resetBoard() throws Exception {
         // Arrange
-
+        String startingBoardDynamicShrunk = "0000000000000000000000000000000000000000000000000100000000011100000" +
+                "000101000000000100000000000000000000000000000000000000";
         // Act
         String compareBefore = dynamicBoard.toString();
         dynamicBoard.nextGeneration();
@@ -144,49 +163,83 @@ public class DynamicBoardTest {
         // Assert
         assertEquals(compareBefore, compareBefore);
         assertNotEquals(compareAfter, compareBefore);
-        assertEquals(compareBefore, compareAfterReset);
+        assertEquals(startingBoardDynamicShrunk, compareAfterReset);
 
     }
 
     @Test
     public void countNeighbours() throws Exception {
         // Arrange
-
+        DynamicBoard smallDynamicBoard = new DynamicBoard(3, 3);
         // Act
+        //System.out.println(smallDynamicBoard.toString());
+        smallDynamicBoard.setCellAliveState(3, 3, (byte)1);
+        smallDynamicBoard.setCellAliveState(5, 4, (byte)1);
+        // System.out.println(smallDynamicBoard.toString());
+        byte[][] countNeighboursArray = smallDynamicBoard.countNeighbours();
 
         // Assert
+        for (int i = 0; i < countNeighboursArray.length; i++) {
+            for (int j = 0; j < countNeighboursArray[0].length; j++) {
+                System.out.print(countNeighboursArray[i][j]);
+            }
+            System.out.println();
+        }
     }
 
     @Test
-    public void nextGeneration() throws Exception {
+    public void nextGenerationWithoutDynamicExpandingArray() throws Exception {
         // Arrange
-
+        String exploderAfter10Generations = "000000000000000000111000000000100010000000010001000000110000011000" +
+                "100001000010010001010001001000010000100011000001100000010001000000001000100000000011100000000" +
+                "0000000000";
+        dynamicBoard = new DynamicBoard(inputArraySmallExploder, metaData);
+        dynamicBoard.setIsDynamic(false);
         // Act
-
+        for (int i = 0; i <= 9; i++) {
+            dynamicBoard.nextGeneration();
+        }
+        System.out.println(dynamicBoard.getRows());
         // Assert
+        assertEquals(exploderAfter10Generations, dynamicBoard.toString());
+    }
+
+    @Test
+    public void nextGenerationWithDynamicExpandingArray() throws Exception {
+        /*
+        // Arrange
+        String exploderAfter10Generations = "000000000000000000111000000000100010000000010001000000110000011000" +
+                "100001000010010001010001001000010000100011000001100000010001000000001000100000000011100000000" +
+                "0000000000";
+        dynamicBoard = new DynamicBoard(inputArraySmallExploder, new MetaData());
+        dynamicBoard.setIsDynamic(false);
+        System.out.println(dynamicBoard.getRows());
+        // Act
+        for (int i = 0; i <= 9; i++) {
+            dynamicBoard.nextGeneration();
+        }
+        System.out.println(dynamicBoard.getRows());
+        // Assert
+        assertEquals(exploderAfter10Generations, dynamicBoard.toString());
+        */
     }
 
     @Test
     public void setFirstGeneration() throws Exception {
         // Arrange
-
+        String startingBoardDynamicShrunkWithFrame = "00000000000000000000000000000000000000000000000000000000" +
+                "0000000000100000000001110000000001010000000000100000000000000000000000000000000000000000";
+        dynamicBoard = new DynamicBoard(inputArraySmallExploder, metaData);
         // Act
+        dynamicBoard.setFirstGeneration();
+        dynamicBoard.nextGeneration();
+        dynamicBoard.resetBoard();
 
         // Assert
+        assertEquals(startingBoardDynamicShrunkWithFrame, dynamicBoard.toString());
     }
 
     @Test
-    public void setIsDynamic() throws Exception {
-        // Arrange
-
-        // Act
-
-
-        // Assert
-    }
-
-    @Test
-
     public void testClone() throws Exception {
         // Arrange
         DynamicBoard cloneBoard = new DynamicBoard(inputArraySmallExploder, new MetaData());
