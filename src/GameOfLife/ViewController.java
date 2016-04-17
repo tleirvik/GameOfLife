@@ -577,36 +577,16 @@ public class ViewController {
             double scrollLocation_X = event.getX();
             double scrollLocation_Y = event.getY();
             double scrollAmount = event.getDeltaY();
-            double zoomFactor = 1.01;
+            double zoomFactor = 1.05;
 
             if(scrollAmount < 0) {
                 zoomFactor = 1 / zoomFactor;
             }
 
-            //Midtpunkter av Canvas
-            double center_X = gameCanvas.getWidth()  / 2;
-            double center_Y = gameCanvas.getHeight() / 2;
-
-            //Finner hvor startposisjonen ligger øverst i venstre hjørnet av Canvas.
-            double start_X = center_X - (getBoardWidth() / 2) - offset_X;
-            double start_Y = center_Y - (getBoardHeight() / 2) - offset_Y;
-
-
-            //Variablene brukt til å tegne firkanten. Plusses med bredden/høyden etter hver iterasjon i for-løkken
-            //offset-verdien bestemmer hvor grid-en skal tegnes avhengig av om brukeren har flyttet den ved å dra den (onDrag-funksjon)
-
-            //Finn ut om brukeren har musen over grid-et
-            if((isXInsideGrid(scrollLocation_X)) && (isYInsideGrid(scrollLocation_Y))) {
-                cellSizeSlider.setValue(cellSize*zoomFactor);
-                
-                offset_X += (scrollLocation_X - center_X);
-                offset_Y += (scrollLocation_Y - center_Y);
-                
-                draw();
-            } else {
-                cellSizeSlider.setValue(cellSize*zoomFactor);
-                draw();
-            }
+            offset_X -= (scrollLocation_X - offset_X) * (zoomFactor - 1);
+            offset_Y -= (scrollLocation_Y - offset_Y) * (zoomFactor - 1);
+            
+            cellSizeSlider.setValue(cellSize*zoomFactor);
         });
     }
 
