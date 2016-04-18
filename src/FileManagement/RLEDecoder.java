@@ -1,12 +1,12 @@
 package FileManagement;
 
+import GameOfLife.MetaData;
+import GameOfLife.PatternFormatException;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import GameOfLife.MetaData;
-import GameOfLife.PatternFormatException;
-import javafx.scene.control.Dialog;
 
 /**
  * This class handles the interpretation of RLE files. One method reads the meta data and creates the game board and
@@ -29,7 +29,7 @@ public class RLEDecoder {
      *
      * @param reader BufferedReader file to be parsed
      */
-    RLEDecoder(BufferedReader reader) {
+    public RLEDecoder(BufferedReader reader) {
         this.reader = reader;
     }
 
