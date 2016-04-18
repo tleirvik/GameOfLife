@@ -207,13 +207,13 @@ public class DynamicBoardTest {
 
     @Test
     public void nextGenerationWithDynamicExpandingArray() throws Exception {
-        /*
+
         // Arrange
         String exploderAfter10Generations = "000000000000000000111000000000100010000000010001000000110000011000" +
                 "100001000010010001010001001000010000100011000001100000010001000000001000100000000011100000000" +
                 "0000000000";
         dynamicBoard = new DynamicBoard(inputArraySmallExploder, new MetaData());
-        dynamicBoard.setIsDynamic(false);
+        dynamicBoard.setIsDynamic(true);
         System.out.println(dynamicBoard.getRows());
         // Act
         for (int i = 0; i <= 9; i++) {
@@ -222,7 +222,7 @@ public class DynamicBoardTest {
         System.out.println(dynamicBoard.getRows());
         // Assert
         assertEquals(exploderAfter10Generations, dynamicBoard.toString());
-        */
+
     }
 
     @Test

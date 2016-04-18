@@ -272,8 +272,8 @@ public class DialogBoxes {
         
         okButton.setDefaultButton(true);
         okButton.setOnAction(e -> {     
-           array[0] = (int)rows.getValue();
-           array[1] = (int)columns.getValue();
+           array[0] = (int)rows.getValue() -2;
+           array[1] = (int)columns.getValue() -2;
            stage.close();
         });
         

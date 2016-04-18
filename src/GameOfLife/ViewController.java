@@ -163,8 +163,8 @@ public class ViewController {
     public void loadGameBoardFromRLE(boolean online) {
         timeline.stop();
         statusBar.setText("");
-        
-        
+
+
         FileLoader fileLoader = new FileLoader();
                 
         if(online) {
