@@ -29,7 +29,7 @@ public class RLEDecoder {
      *
      * @param reader BufferedReader file to be parsed
      */
-    RLEDecoder(BufferedReader reader) {
+    public RLEDecoder(BufferedReader reader) {
         this.reader = reader;
     }
 

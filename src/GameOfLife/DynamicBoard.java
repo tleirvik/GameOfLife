@@ -285,6 +285,10 @@ public class DynamicBoard extends Board {
         }
     }
 
+    public native void nextGenerationConcurrent();
+    static {
+        System.loadLibrary("dynboard");
+    }
     @Override
     public void setFirstGeneration() {
         firstGeneration.clear();

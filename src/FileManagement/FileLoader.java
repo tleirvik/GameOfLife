@@ -23,6 +23,7 @@ import util.DialogBoxes;
  */
 public class FileLoader {
     private RLEDecoder rleDecoder;
+    public native void testJNI();
 
     /**
      *  This method takes a file as input and uses a BufferedReader to read the file. Instantiates a RLEDecoder object
