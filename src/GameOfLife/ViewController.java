@@ -194,6 +194,8 @@ public class ViewController {
         }
         
         gol.loadGame(fileLoader.getBoard(), fileLoader.getMetadata());
+        statusBar.setText("Title: " + fileLoader.getMetadata().getName() + " Author: " +
+                fileLoader.getMetadata().getAuthor() + " Comments: " + fileLoader.getMetadata().getComment() + " Rules: " + fileLoader.getMetadata().getRuleString());
         openGame();
     }
     
