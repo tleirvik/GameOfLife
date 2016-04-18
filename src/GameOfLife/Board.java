@@ -28,4 +28,5 @@ public abstract class Board {
     public abstract String toString();
 
     public abstract void setFirstGeneration();
+    public abstract void removeFrame();
 }

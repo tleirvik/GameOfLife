@@ -54,7 +54,6 @@ public class DynamicBoard extends Board {
     }
 
     public void addFrame() {
-        //int rows = currentGeneration.size();
         final int columns = currentGeneration.get(0).size();
         currentGeneration.add(0, new ArrayList<>());
         currentGeneration.add(new ArrayList<>());
@@ -70,7 +69,17 @@ public class DynamicBoard extends Board {
         for (List<Byte> e : currentGeneration) {
             e.add((byte) 0);
         }
-
+    }
+    @Override
+    public void removeFrame() {
+        currentGeneration.remove(0);
+        currentGeneration.remove(currentGeneration.size() -1);
+        for (List<Byte> e : currentGeneration) {
+            e.remove(0);
+        }
+        for (List<Byte> e : currentGeneration) {
+            e.remove(currentGeneration.size() - 1);
+        }
     }
     //=========================================================================
     // Getters

@@ -26,8 +26,7 @@ public class RLEEncoder {
 
     /**
      * Constructor that creates an RLEDecoder object.
-     * @param b The board that we want to parse and save to file
-     * @param f The file to save the board to
+     *
      */
     public RLEEncoder(GameOfLife game, File f) {
         metadata = game.getMetaData();
@@ -87,9 +86,9 @@ public class RLEEncoder {
      */
     private void encodeBoardSize() {
         rleString.append("x = ");
-        rleString.append(game.getColumns());
+        rleString.append(game.getColumns() -2);
         rleString.append(", y = ");
-        rleString.append(game.getRows());
+        rleString.append(game.getRows() -2);
         rleString.append(", ");
     }
      /**
@@ -112,43 +111,26 @@ public class RLEEncoder {
      */
 
     private void encodeBoard() {
-        // Bør bytte til StringBuilder fordi den er raskere StringBuffer
+        game.getBoard().removeFrame();
         int count = 1;
-        int previous = -1;
+        int currentCell = -1;
 
-        for (int row = 0; row < game.getRows(); row++) {
-            for (int col = 0; col < game.getColumns(); col++) {
-                final int nextPosition = col + 1;
-                final byte currentCell = game.getCellAliveState(row, col);
-                if (col < game.getColumns() && currentCell == nextPosition) {
+        for(int row = 0; row < game.getBoard().getRows(); row++) {
+            for (int col = 0; col < game.getBoard().getColumns(); col++) {
+                currentCell = game.getBoard().getCellAliveState(row, col);
+                if ((col != game.getBoard().getColumns() - 1) && (currentCell == game.getBoard().getCellAliveState(row, col+1 ))) {
                     count++;
                 } else {
-                    rleString.append(count > 1 ? count : "" ).append(currentCell == 1 ? "o" : "b");
+                    rleString.append(((count > 1) ? count : "") + ((currentCell == 1) ? "o" : "b"));
                     count = 1;
                 }
-
-                /*
-                while (col < board[0].length && currentCell == nextPosition) {
-                    count++;
-                }
-                */
-
-                if (count > 1) {
-                    rleString.append((count >1) ? count : "");
-                    rleString.append(currentCell == 1 ? "o" : "b");
-                    count = 1;
-                }
-                /*
-                else {
-                    rleString.append(currentCell == 1 ? "o" : "b");
-                }
-                //rleString.append(count).append(currentCell == 1 ? "o" : "b");
-                //rleString.append(count > 1 ? count : "" ).append(currentCell == 1 ? "o" : "b");
-                */
             }
-            rleString.append("$");
+            if (count > 1) {
+                rleString.append(((count > 1) ? count : "") + ((currentCell == 1) ? "o" : "b"));
+                count = 1;
+            }
+            rleString.append((row != game.getBoard().getRows()) ? "$" : "!");
         }
-        rleString.append("!");
     }
 
     private void writeMetadata(BufferedWriter bw) throws IOException {
