@@ -37,7 +37,7 @@ public class DynamicBoardTest {
         s[1] = "S23";
         metaData.setRuleString(s);
         dynamicBoard = new DynamicBoard(inputArraySmallExploder, metaData);
-
+        System.out.println(dynamicBoard.getBoundingBoxPattern());
         assertTrue(dynamicBoard instanceof DynamicBoard);
         // System.out.println(dynamicBoard.toString());
     }
@@ -133,7 +133,7 @@ public class DynamicBoardTest {
         assertEquals(cellState, 1);
 
     }
-
+    // Denne feiler og må sjekkes.
     @Test
     public void setCellAliveState() throws Exception {
         // Arrange
@@ -179,12 +179,14 @@ public class DynamicBoardTest {
         byte[][] countNeighboursArray = smallDynamicBoard.countNeighbours();
 
         // Assert
+        /*
         for (int i = 0; i < countNeighboursArray.length; i++) {
             for (int j = 0; j < countNeighboursArray[0].length; j++) {
                 System.out.print(countNeighboursArray[i][j]);
             }
             System.out.println();
         }
+        */
     }
 
     @Test
@@ -199,7 +201,6 @@ public class DynamicBoardTest {
         for (int i = 0; i <= 9; i++) {
             dynamicBoard.nextGeneration();
         }
-        System.out.println(dynamicBoard.getRows());
         // Assert
         assertEquals(exploderAfter10Generations, dynamicBoard.toString());
     }
@@ -247,7 +248,6 @@ public class DynamicBoardTest {
                 "00000000000000000000000000000000000000000000000";
         // Act
         cloneBoard.nextGeneration();
-        System.out.println();
         String compare = cloneBoard.toString();
 
         // Assert

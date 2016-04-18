@@ -167,24 +167,24 @@ public class DynamicBoard extends Board {
     }
 
     private void checkBottom() {
-        final int rows = currentGeneration.size();
-        final int columns = currentGeneration.get(0).size();
-        sum1 = currentGeneration.get(rows -1).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        sum2 = currentGeneration.get(rows -2).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        sum3 = currentGeneration.get(rows -3).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        sum4 = currentGeneration.get(rows -4).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        sum5 = currentGeneration.get(rows -5).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        int remove = sum1 + sum2 + sum3 + sum4 + sum5;
-        int add = sum1 + sum2;
+            final int rows = currentGeneration.size();
+            final int columns = currentGeneration.get(0).size();
+            sum1 = currentGeneration.get(rows -1).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+            sum2 = currentGeneration.get(rows -2).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+            sum3 = currentGeneration.get(rows -3).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+            sum4 = currentGeneration.get(rows -4).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+            sum5 = currentGeneration.get(rows -5).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+            int remove = sum1 + sum2 + sum3 + sum4 + sum5;
+            int add = sum1 + sum2;
 
-        if (add != 0) {
-            currentGeneration.add(new ArrayList<>());
-            for (int col = 0; col < columns; col++) {
-                currentGeneration.get(currentGeneration.size() - 1).add((byte)0);
+            if (add != 0) {
+                currentGeneration.add(new ArrayList<>());
+                for (int col = 0; col < columns; col++) {
+                    currentGeneration.get(currentGeneration.size() - 1).add((byte)0);
+                }
+            } else if(remove == 0) {
+                currentGeneration.remove(currentGeneration.size() - 1);
             }
-        } else if(remove == 0) {
-            currentGeneration.remove(currentGeneration.size() - 1);
-        }
     }
 
     private void checkLeft() {
@@ -274,7 +274,9 @@ public class DynamicBoard extends Board {
     @Override
     public void nextGeneration() {
         if (isDynamic) {
-            checkEdges();
+            if (currentGeneration.size() > 10 && currentGeneration.get(0).size() > 10) {
+                checkEdges();
+            }
         }
         byte[][] neighbourArray = countNeighbours();
         
@@ -314,6 +316,47 @@ public class DynamicBoard extends Board {
             }
         }
         return new DynamicBoard(boardClone, metaDataClone);
+    }
+
+    public String getBoundingBoxPattern() {
+        if(currentGeneration.size() == 0) return "";
+        int[] boundingBox = getBoundingBox();
+        String str = "";
+        for(int i = boundingBox[0]; i <= boundingBox[1]; i++) {
+            for(int j = boundingBox[2]; j <= boundingBox[3]; j++) {
+                if(currentGeneration.get(i).get(j) == 1) {
+                    str = str + "1";
+                } else {
+                    str = str + "0";
+                }
+            }
+        }
+        return str;
+    }
+    private int[] getBoundingBox() {
+        int[] boundingBox = new int[4]; // minrow maxrow mincolumn maxcolumn
+        boundingBox[0] = currentGeneration.size();
+        boundingBox[1] = 0;
+        boundingBox[2] = currentGeneration.get(0).size();
+        boundingBox[3] = 0;
+        for(int i = 0; i < currentGeneration.size(); i++) {
+            for(int j = 0; j < currentGeneration.get(i).size(); j++) {
+                if((currentGeneration.get(i).get(j) == 1)) continue;
+                if(i < boundingBox[0]) {
+                    boundingBox[0] = i;
+                }
+                if(i > boundingBox[1]) {
+                    boundingBox[1] = i;
+                }
+                if(j < boundingBox[2]) {
+                    boundingBox[2] = j;
+                }
+                if(j > boundingBox[3]) {
+                    boundingBox[3] = j;
+                }
+            }
+        }
+        return boundingBox;
     }
     /**
      *  Method that returns the game board as a String. Used for Unit Testing with JUnit 4
