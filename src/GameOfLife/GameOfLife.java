@@ -3,9 +3,9 @@ package GameOfLife;
 import java.util.Random;
 
 public class GameOfLife {
-    private Board board; 
+    private Board board;
 
-    public void newEmptyGame(int rows, int columns) {        
+    public void newEmptyGame(int rows, int columns) {
         board = new DynamicBoard(rows, columns);
     }
     
@@ -62,7 +62,15 @@ public class GameOfLife {
     public void update() {
         board.nextGeneration();
     }
-    
+
+    public int[][] updateWithStats(int iterations) {
+        int[][] statistics = new int[iterations][2];
+        for (int i = 0; i < iterations; i++) {
+            statistics[i] = board.getStatistics();
+            board.nextGeneration();
+        }
+        return statistics;
+    }
     @Override
     public GameOfLife clone() {
         GameOfLife clone = new GameOfLife();
@@ -70,35 +78,4 @@ public class GameOfLife {
         clone.setBoard(board);
         return clone;
     }
-    
-    /*
-    public void updateWithThreads(int num_Cores) {
-        Thread[] threads = new Thread[num_Cores];
-        
-        int rowsPerCore = board.getRows() / num_Cores;
-        int leftoverRows = board.getRows() % num_Cores;
-        int startRow = 0, endRow = rowsPerCore;
-        
-        for(int i = 0; i < num_Cores; i++) {
-            if(leftoverRows != 0) {
-                endRow++;
-                threads[i] = new Thread(new NextGenerationWorker(startRow, endRow, board));
-                leftoverRows--;
-            } else {
-                threads[i] = new Thread(new NextGenerationWorker(startRow, endRow, board));
-            }
-            threads[i].start();
-            startRow=endRow;
-            endRow+=rowsPerCore;
-        }
-        for(int i = 0; i < num_Cores; i++) {
-            try {
-                threads[i].join();
-            } catch (InterruptedException ex) {
-                Logger.getLogger(GameOfLife.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        }
-        board.nextGenerationToCurrent();
-    }*/
-
 }

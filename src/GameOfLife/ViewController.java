@@ -656,8 +656,8 @@ public class ViewController {
         Duration duration = Duration.millis(1000/fps);
         KeyFrame keyFrame;
         keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-            Stopwatch sw = new Stopwatch("Next generation threading");
-            sw.start();
+            //Stopwatch sw = new Stopwatch("Next generation threading");
+            // sw.start();
             //Thread newGenerationThread = new Thread() {
             //    public void run() {
                     gol.update();
@@ -678,7 +678,7 @@ public class ViewController {
             }
             */
             draw();
-            sw.stop();
+            // sw.stop();
         });
         timeline.getKeyFrames().clear();
         timeline.getKeyFrames().add(0, keyFrame);
