@@ -30,7 +30,6 @@
                   <MenuItem mnemonicParsing="false" onAction="#loadGameBoardFromDisk" text="Load Board from Disk..." />
                   <MenuItem onAction="#loadGameBoardFromURL" text="Load Board from URL..." />
                   <MenuItem onAction="#saveRLE" text="Save RLE As..." />
-                  <MenuItem onAction="#saveToWav" text="Save as Wav" />
                   <MenuItem onAction="#closeApplication" text="Close" />
             </items>
           </Menu>

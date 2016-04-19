@@ -3,6 +3,7 @@ package GameOfLife;
 import FileManagement.FileLoader;
 import FileManagement.RLEDecoder;
 import FileManagement.RLEEncoder;
+import Wav.WavFile;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
@@ -248,6 +249,49 @@ public class ViewController {
             }
             setStatusBarText("File saved to : " + selectedFile.getAbsolutePath());
         }        
+    }
+    
+    @FXML
+    public void saveAsWav() {
+        
+    }
+    
+    private void saveToWav() {
+        List<ExtensionFilter> extFilter = new ArrayList<>();
+            extFilter.add(new ExtensionFilter("WAV files", "*.wav"));
+            extFilter.add(new ExtensionFilter("All Files", "*.*"));
+        
+        File saveFile = dialogBoxes.fileChooser(extFilter, false);
+        
+        try {
+            int sampleRate = 44100;
+            double duration = 5.0;
+            long numFrames = (long) (duration * sampleRate);
+            
+            if (saveFile == null) {
+                return;
+            }
+            
+            WavFile wav = WavFile.newWavFile(saveFile, 2, numFrames, 16, sampleRate);
+            double[][] buffer = new double[2][100];
+            
+            long frameCounter = 0;
+            
+            while(frameCounter < numFrames) {
+                long remaining = wav.getFramesRemaining();
+                int toWrite = (remaining > 100) ? 100 : (int) remaining;
+                
+                for (int s = 0; s < toWrite; frameCounter++) {
+                    buffer[0][s] = Math.sin(2.0 * Math.PI * 440 * frameCounter);
+                    buffer[1][s] = Math.sin(2.0 * Math.PI * 500 + frameCounter);
+                }
+                
+                wav.writeFrames(buffer, toWrite);
+            }
+            wav.close();
+        } catch (Exception e) {
+            System.out.println(e);
+        }
     }
 
     @FXML
