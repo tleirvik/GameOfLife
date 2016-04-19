@@ -136,7 +136,20 @@ public class FixedBoard extends Board{
     //=========================================================================
     // Generation-methods
     //=========================================================================
-    
+
+    public  int countAliveCells() {
+        int aliveCells = 0;
+        for (int i = 0; i < currentGeneration.length; i++) {
+            for (int j = 0; j < currentGeneration[0].length; j++) {
+                if (currentGeneration[i][j] == 1) {
+                    aliveCells++;
+                }
+            }
+        }
+        return aliveCells;
+
+    }
+
     public void resetBoard() {
         for(int row = 1; row < currentGeneration.length-1; row++) {
             for(int col = 1; col < currentGeneration[0].length-1; col++) {

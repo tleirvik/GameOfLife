@@ -29,4 +29,5 @@ public abstract class Board {
 
     public abstract void setFirstGeneration();
     public abstract void removeFrame();
+    public abstract int countAliveCells();
 }

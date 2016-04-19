@@ -134,7 +134,18 @@ public class DynamicBoard extends Board {
     //=========================================================================
     // Generation-methods
     //=========================================================================
-    
+    public  int countAliveCells() {
+        int aliveCells = 0;
+        for (int i = 0; i < currentGeneration.size(); i++) {
+            for (int j = 0; j < currentGeneration.get(0).size(); j++) {
+                if (currentGeneration.get(i).get(j) == 1) {
+                    aliveCells++;
+                }
+            }
+        }
+        return aliveCells;
+    }
+
     @Override
     public void resetBoard() {
         currentGeneration.clear();

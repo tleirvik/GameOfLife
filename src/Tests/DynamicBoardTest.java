@@ -189,6 +189,19 @@ public class DynamicBoardTest {
         */
     }
 
+
+    @Test
+    public void removeFrame() {
+        // Arrange
+      String boardWithFramee = "00000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+              "0000000000000000010000000000000111000000000000101000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+        // Act
+        dynamicBoard = new DynamicBoard(inputArraySmallExploder, new MetaData());
+        dynamicBoard.addFrame();
+        System.out.println("rows: " + dynamicBoard.getRows() + " cols: " + dynamicBoard.getColumns());
+        // Assert
+        assertEquals(boardWithFramee, dynamicBoard.toString());
+    }
     @Test
     public void nextGenerationWithoutDynamicExpandingArray() throws Exception {
         // Arrange
