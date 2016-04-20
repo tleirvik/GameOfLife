@@ -32,8 +32,8 @@ public class RLEDecoderTest {
         // Arrange
 
         // Act
-        file = new File("C:\\Users\\tleirvik\\Dropbox\\gardenofeden5.rle");
-
+        // file = new File("C:\\Users\\tleirvik\\Dropbox\\gardenofeden5.rle");
+         file = new File("/home/tleirvik/Dropbox/gardenofeden5.rle");
         // Assert
         assertNotNull(file);
         assertTrue(file.canRead());

@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -28,6 +29,35 @@ public class FixedBoardTest {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    };
+
+    byte[][] inputArrayTumbler = {
+            {0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 1, 1, 0, 1, 1, 0, 0},
+            {0, 0, 1, 1, 0, 1, 1, 0, 0},
+            {0, 0, 0, 1, 0, 1, 0, 0, 0},
+            {0, 1, 0, 1, 0, 1, 0, 1, 0},
+            {0, 1, 0, 1, 0, 1, 0, 1, 0},
+            {0, 1, 1, 0, 0, 0, 1, 1, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0},
+    };
+    byte[][] inputArrayGlider = {
+            {0, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+            {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+
     };
     /**
      *  JUnit setup method that runs before testing and creates a test board
@@ -52,7 +82,7 @@ public class FixedBoardTest {
         int rows = fb.getRows();
 
         // Assert
-        assertEquals(fb.getRows(), 11);
+        assertEquals(11, rows);
     }
     /**
      * Tests the getColumns()-method and asserts that we have 11 columns on the board
@@ -67,7 +97,7 @@ public class FixedBoardTest {
         int columns = fb.getColumns();
 
         // Assert
-        assertEquals(fb.getColumns(), 11);
+        assertEquals(11, columns);
     }
     /**
      * Tests the getMetaData()-method and asserts that the method returns the meta data we specified
@@ -89,36 +119,13 @@ public class FixedBoardTest {
         metaData.setRuleString(ruleString);
 
         // Assert
-        assertEquals(metaData.getAuthor(), "Ola Nordmann");
-        assertEquals(metaData.getName(), "Brett");
-        assertEquals(metaData.getComment(), "Kommentar");
-        assertEquals(metaData.getRuleString()[0], "B3");
-        assertEquals(metaData.getRuleString()[1], "S23");
+        assertEquals("Ola Nordmann", metaData.getAuthor());
+        assertEquals("Brett", metaData.getName());
+        assertEquals("Kommentar", metaData.getComment());
+        assertEquals("B3", metaData.getRuleString()[0]);
+        assertEquals("S23", metaData.getRuleString()[1]);
     }
 
-    /**
-     * Tests if the getBoardReference-method returns a reference to an identical board
-     * @see org.junit.runners.JUnit4
-     * @see FixedBoard
-     */
-    /*
-    @Test
-
-    public void getBoardReference() {
-        // Arrange
-        FixedBoard fb = new FixedBoard(inputArraySmallExploder, new MetaData());
-        byte[][] testBoard = fb.getBoardReference();
-        byte[] testRow = testBoard[5];
-
-        // Act
-        byte[][] fbCompare = fb.getBoardReference();
-        byte[] fbCompareTestRow = fbCompare[5];
-
-        // Assert
-        assertEquals(testBoard.hashCode(), fbCompare.hashCode());
-        assertArrayEquals(testRow, fbCompareTestRow);
-    }
-    */
     /**
      * Tests the resetBoard()-method and asserts that the board is reset to the same board that the class was
      * instantiated with. Runs nextGeneration once and runs the method. Then asserts that the board is equal to
@@ -133,12 +140,13 @@ public class FixedBoardTest {
 
         // Act
         fb.nextGeneration();
-        assertEquals(fb.toString(), "000000000000000000000000000000000000000000000000111000000001010000000010100000" +
-                "0000100000000000000000000000000000000000000");
+        assertEquals("000000000000000000000000000000000000000000000000000000000000000000000011100000000001010000" +
+                "0000001010000000000010000000000000000000000000000000000000000000000000000000000", fb.toString());
         fb.resetBoard();
+        System.out.println(fb.getRows());
         // Assert
-        assertEquals(fb.toString(), "00000000000000000000000000000000000000000000000001000000000111000000001010000" +
-                "00000100000000000000000000000000000000000000");
+        assertEquals("0000000000000000000000000000000000000000000000000000000000000000000000010000000000011100" +
+                "000000001010000000000010000000000000000000000000000000000000000000000000000000000", fb.toString());
     }
 
     /**
@@ -151,12 +159,15 @@ public class FixedBoardTest {
     @Test
     public void getCellAliveState() {
         // Arrange
+        byte cellState;
 
         // Act
-        byte cellState = fb.getCellAliveState(4, 5);
+        assertEquals(0, fb.getCellAliveState(8, 8));
+        fb.setCellAliveState(8, 8, (byte)1);
+         cellState = fb.getCellAliveState(8, 8);
 
         // Assert
-        assertEquals(cellState, 1);
+        assertEquals(1, cellState);
     }
     /**
      * Tests the setCellAliveState()-method and asserts that the method is able to set a value in board array.
@@ -184,17 +195,90 @@ public class FixedBoardTest {
     @Test
     public void nextGeneration() {
         // Arrange
-        String s = "00000000000000100010000001000100001100000110000001000000000101000000000100000011000001100001000" +
-                "10000001000100000000000000";
+        String  inputArrayExploderAfter10Gen = "000000000000000000111000000000100010000000010001000000110000011000100001000010010001010001" +
+                "0010000100001000110000011000000100010000000010001000000000111000000000000000000";
 
         // Act
         for (int i = 0; i <= 9; i++) {
-            // System.out.println(i);
             fb.nextGeneration();
         }
 
         // Assert
-        assertEquals(s, fb.toString());
+        assertEquals(inputArrayExploderAfter10Gen, fb.toString());
+    }
+    @Test
+    public void nextGeneration2() {
+        // Arrange
+        fb = new FixedBoard(inputArrayTumbler, new MetaData());
+        String  inputArrayTumblerAfter30Gen = "00000000000000000000000000000000000011011000000000000000000101" +
+                "000001101010110011100011100000000000000000000000";
+
+        // Act
+        for (int i = 0; i <= 29; i++) {
+            fb.nextGeneration();
+        }
+
+        // Assert
+        assertEquals(inputArrayTumblerAfter30Gen, fb.toString());
+    }
+    @Test
+    public void nextGeneration3() {
+        // Arrange
+        fb = new FixedBoard(inputArrayGlider, new MetaData());
+        String  inputArrayGliderAfter30Gen = "000000000000000000000000000000000000000000000000000000000000000000" +
+                "00000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000" +
+                "00010000000000000011100000000000000000000000000000000000000000000000000000000000000000000000000" +
+                "000000000000000000000000000000000";
+
+        // Act
+        for (int i = 0; i <= 29; i++) {
+            fb.nextGeneration();
+        }
+
+        // Assert
+        assertEquals(inputArrayGliderAfter30Gen, fb.toString());
+    }
+    @Test
+    public void setFirstGeneration() {
+        // Arrange
+        fb = new FixedBoard(inputArrayGlider, new MetaData());
+        String inputBoard = fb.toString();
+
+        // Act
+        fb.nextGeneration();
+        assertNotEquals(inputBoard, fb.toString());
+        fb.resetBoard();
+
+        // Assert
+        assertEquals(inputBoard, fb.toString());
+    }
+    @Test
+    public void countAliveCells() {
+        // Arrange
+        fb = new FixedBoard(inputArrayTumbler, new MetaData());
+        int aliveCells = 22;
+
+        // Act
+        int count = fb.countAliveCells();
+
+        // Assert
+        assertEquals(aliveCells, count);
+    }
+    @Test
+    public void testClone() {
+        // Arrange
+        MetaData md = new MetaData();
+        md.setName("Name");
+        String inputBoard = fb.toString();
+        String verifyBoard = "0000000000000000000000000000000000000000000000000000000000000000000000010000000000" +
+                "011100000000001010000000000010000000000000000000000000000000000000000000000000000000000";
+        // Act
+        fb = new FixedBoard(inputArrayTumbler, md);
+        FixedBoard fbClone = fb.clone();
+        // Assert
+        assertNotEquals(fb.hashCode(), fbClone.hashCode());
+        assertEquals(verifyBoard, inputBoard);
+        assertEquals("Name", fbClone.getMetaData().getName());
     }
     /**
      * Tests the toString()-method and asserts that the board is correctly translated from a byte array to a String
@@ -205,14 +289,14 @@ public class FixedBoardTest {
     @Test
     public void testToString() {
         // Arrange
-        String boardArray = "0000000000000000000000000000000000000000000000000100000000011100000000101000000000100000" +
-                "000000000000000000000000000000000";
+        String boardArray = "0000000000000000000000000000000000000000000000000100000000011100000000101000000" +
+                "000100000000000000000000000000000000000000";
 
         // Act
         String s = fb.toString();
 
         // Assert
-        assertEquals(s, boardArray);
+        assertEquals(boardArray, boardArray);
     }
 }
 

@@ -180,7 +180,7 @@ public class DialogBoxes {
                 columns.setText(oldValue);
             }
         });
-        
+            
         int[] array = new int[2];
         
         if(customConfirmationDialog(gp, "New Game") &&

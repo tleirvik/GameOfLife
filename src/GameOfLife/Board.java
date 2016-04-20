@@ -20,13 +20,13 @@ public abstract class Board {
     
     public abstract byte[][] countNeighbours();
     public abstract void nextGeneration();
-    //public void concurrentNextGeneration();
-    //Annenhver rad/kolonne
-    public abstract void setIsDynamic(boolean isDynamic);
-    
+    public abstract void nextGenerationConcurrent();
+        
     public abstract Board clone();
     public abstract String toString();
 
     public abstract void setFirstGeneration();
     public abstract void removeFrame();
+    public abstract int countAliveCells();
+    public abstract int[] getStatistics();
 }

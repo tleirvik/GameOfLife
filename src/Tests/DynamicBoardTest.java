@@ -37,9 +37,10 @@ public class DynamicBoardTest {
         s[1] = "S23";
         metaData.setRuleString(s);
         dynamicBoard = new DynamicBoard(inputArraySmallExploder, metaData);
-        System.out.println(dynamicBoard.getBoundingBoxPattern());
+        //System.out.println(dynamicBoard.getBoundingBoxPattern());
         assertTrue(dynamicBoard instanceof DynamicBoard);
         // System.out.println(dynamicBoard.toString());
+        System.out.println(dynamicBoard.getBoundingBoxPattern());
     }
 
     @Test
@@ -69,7 +70,7 @@ public class DynamicBoardTest {
         assertEquals(13, dynamicBoard.getRows());
         assertEquals(13, dynamicBoard.getColumns());
 
-        dynamicBoard.addFrame();
+        //dynamicBoard.addFrame();
 
         int rows = dynamicBoard.getRows();
         int columns = dynamicBoard.getColumns();
@@ -138,16 +139,32 @@ public class DynamicBoardTest {
     public void setCellAliveState() throws Exception {
         // Arrange
         byte toSet = 1;
+        dynamicBoard = new DynamicBoard(10, 10);
+        dynamicBoard.setIsDynamic(false);
 
         // Act
         byte verify = dynamicBoard.getCellAliveState(3,3);
         assertEquals(verify, 0);
-        dynamicBoard.setCellAliveState(3,3, toSet);
 
+        dynamicBoard.setCellAliveState(3,3, toSet);
+        // Assert
+        System.out.println(dynamicBoard.toString());
+        assertEquals(1, dynamicBoard.getCellAliveState(1,1));
+    }
+
+    @Test
+    public void setCellAliveStateDynamic() throws Exception {
+        // Arrange
+        byte toSet = 1;
+
+        // Act
+        byte verify = dynamicBoard.getCellAliveState(3,3);
+        assertEquals(verify, 0);
+
+        dynamicBoard.setCellAliveState(3,3, toSet);
         // Assert
         assertEquals(dynamicBoard.getCellAliveState(3,3), 1);
     }
-
     @Test
     public void resetBoard() throws Exception {
         // Arrange
@@ -174,7 +191,9 @@ public class DynamicBoardTest {
         // Act
         //System.out.println(smallDynamicBoard.toString());
         smallDynamicBoard.setCellAliveState(3, 3, (byte)1);
-        smallDynamicBoard.setCellAliveState(5, 4, (byte)1);
+
+        // Sjekk denne under...
+        //smallDynamicBoard.setCellAliveState(5, 4, (byte)1);
         // System.out.println(smallDynamicBoard.toString());
         byte[][] countNeighboursArray = smallDynamicBoard.countNeighbours();
 
@@ -189,6 +208,19 @@ public class DynamicBoardTest {
         */
     }
 
+
+    @Test
+    public void removeFrame() {
+        // Arrange
+      String boardWithFramee = "00000000000000000000000000000000000000000000000000000000000000000000000000000000" +
+              "0000000000000000010000000000000111000000000000101000000000000010000000000000000000000000000000000000000000000000000000000000000000000000000000000";
+        // Act
+        dynamicBoard = new DynamicBoard(inputArraySmallExploder, new MetaData());
+        //dynamicBoard.addFrame();
+        // System.out.println("rows: " + dynamicBoard.getRows() + " cols: " + dynamicBoard.getColumns());
+        // Assert
+        assertEquals(boardWithFramee, dynamicBoard.toString());
+    }
     @Test
     public void nextGenerationWithoutDynamicExpandingArray() throws Exception {
         // Arrange

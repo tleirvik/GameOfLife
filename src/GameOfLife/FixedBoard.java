@@ -118,7 +118,11 @@ public class FixedBoard extends Board{
             throw new RuntimeException("Invalid number in cell state: " + aliveState);
         }
     }
-    
+
+    /**
+     *  This method saves the board to an array within this class for later
+     *  retrieval. Abstract method inherited from superclass Board
+     */
     @Override
     public void setFirstGeneration() {
         for (int row = 1; row < currentGeneration.length-1; row++) {
@@ -136,7 +140,25 @@ public class FixedBoard extends Board{
     //=========================================================================
     // Generation-methods
     //=========================================================================
-    
+
+    public  int countAliveCells() {
+        int aliveCells = 0;
+        for (int i = 0; i < currentGeneration.length; i++) {
+            for (int j = 0; j < currentGeneration[0].length; j++) {
+                if (currentGeneration[i][j] == 1) {
+                    aliveCells++;
+                }
+            }
+        }
+        return aliveCells;
+
+    }
+
+    @Override
+    public int[] getStatistics() {
+        return new int[0];
+    }
+
     public void resetBoard() {
         for(int row = 1; row < currentGeneration.length-1; row++) {
             for(int col = 1; col < currentGeneration[0].length-1; col++) {
@@ -176,8 +198,10 @@ public class FixedBoard extends Board{
             }
         }
     }
-    public void setIsDynamic(boolean isDynamic) {
-
+    
+    @Override
+    public void nextGenerationConcurrent() {
+        
     }
 
     //=========================================================================
@@ -186,7 +210,10 @@ public class FixedBoard extends Board{
     
     @Override
     public FixedBoard clone() {
-        byte[][] boardClone = java.util.Arrays.stream(currentGeneration).map(el -> el.clone()).toArray($ -> currentGeneration.clone());
+        byte[][] boardClone = java.util.Arrays
+                .stream(currentGeneration)
+                .map(el -> el.clone())
+                .toArray($ -> currentGeneration.clone());
         MetaData metaDataClone = metadata.clone();
         return new FixedBoard(boardClone, metaDataClone);
     }
