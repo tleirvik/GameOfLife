@@ -391,11 +391,16 @@ public class ViewController {
         double cellHeight = gameCanvas.getHeight() / (gol.getRows());
 
         if(cellWidth < cellHeight) {
+
             cellSize = cellWidth;
+            IMAGE_WIDTH = (int)cellSize;
+            IMAGE_HEIGHT = (int)cellSize;
         } else {
             cellSize = cellHeight;
+            IMAGE_WIDTH = (int)cellSize;
+            IMAGE_HEIGHT = (int)cellSize;
         }
-
+        imageData = new byte[IMAGE_WIDTH * IMAGE_HEIGHT * 3];
         initializeCellSizeSlider(cellSize, cellSize);
         centerBoard();
         draw();
@@ -446,9 +451,9 @@ public class ViewController {
             offset_X = gameCanvas.getWidth() / 2 - (getBoardWidth() / 2);
             offset_Y = gameCanvas.getHeight() / 2 - (getBoardHeight() / 2);
     }
-    private static final int IMAGE_WIDTH = 10;
-    private static final int IMAGE_HEIGHT = 10;
-    private byte imageData[] = new byte[IMAGE_WIDTH * IMAGE_HEIGHT * 3];
+    private   int IMAGE_WIDTH = 10;
+    private   int IMAGE_HEIGHT = 10;
+    private byte imageData[];
 
     private void createImageData() {
         int i = 0;
@@ -462,14 +467,44 @@ public class ViewController {
             }
         }
     }
+
     private void draw() {
+
+        double cellWidth = gameCanvas.getWidth() / (gol.getColumns());
+        double cellHeight = gameCanvas.getHeight() / (gol.getRows());
+
+        if(cellWidth < cellHeight) {
+            cellSize = cellWidth;
+        } else {
+            cellSize = cellHeight;
+        }
+
+        final double start_X = Math.round(getGridStartPosX());
+        final double start_Y = Math.round(getGridStartPosY());
+        double x = start_X;
+        double y = start_Y;
         final PixelWriter pixWriter = gameCanvas.getGraphicsContext2D().getPixelWriter();
         PixelFormat<ByteBuffer> pixelFormat = PixelFormat.getByteRgbInstance();
-        for (int y = 50; y < 150; y += IMAGE_HEIGHT) {
-            for (int x = 50; x < 150; x += IMAGE_WIDTH) {
-                pixWriter.setPixels(x, y, IMAGE_WIDTH,
-                        IMAGE_HEIGHT, pixelFormat, imageData,
-                        0, IMAGE_WIDTH * 3);
+
+            GraphicsContext gc = gameCanvas.getGraphicsContext2D();
+            gc.clearRect(0, 0, gameCanvas.widthProperty().doubleValue(),
+                gameCanvas.heightProperty().doubleValue());
+
+            final int boardRowLength = gol.getRows();
+            final int boardColumnLength = gol.getColumns();
+            final double boardWidth = getBoardWidth();
+            final double boardHeight = getBoardHeight();
+
+            for(int row = 0; row < boardRowLength; row++) {
+                for(int col = 0; col < boardColumnLength; col++ ) {
+                    if (gol.getCellAliveState(row, col) == 1) {
+                        pixWriter.setPixels((int)x, (int)y, IMAGE_WIDTH, IMAGE_HEIGHT, pixelFormat,
+                                imageData, 0 , IMAGE_WIDTH * 3);
+                    }
+                    x += cellSize; //Plusser på for neste kolonne
+                }
+                x = start_X; //Reset X-verdien for neste rad
+                y += cellSize; //Plusser på for neste rad
             }
         /*
         final double start_X = Math.round(getGridStartPosX());
@@ -513,7 +548,7 @@ public class ViewController {
             drawGridLines(gc);
         }*/
         }
-    }
+
 
     private void drawGridLines(GraphicsContext gc) {
     	gc.setLineWidth(stdGridLineWidth);
