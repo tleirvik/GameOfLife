@@ -35,7 +35,8 @@
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">
             <items>
-                <MenuItem onAction="#openPatternEditor" text="Pattern Editor" />
+                <MenuItem onAction="#openPatternEditor" text="Pattern Editor..." />
+                  <MenuItem onAction="#openMetadataDialog" text="Edit Metadata..." />
                   <MenuItem onAction="#setReset" text="Set Reset State" />
               <MenuItem onAction="#openOptions" text="Options..." />
             </items>
