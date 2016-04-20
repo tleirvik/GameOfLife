@@ -6,6 +6,7 @@ import org.junit.Before;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -239,16 +240,45 @@ public class FixedBoardTest {
     }
     @Test
     public void setFirstGeneration() {
+        // Arrange
+        fb = new FixedBoard(inputArrayGlider, new MetaData());
+        String inputBoard = fb.toString();
 
+        // Act
+        fb.nextGeneration();
+        assertNotEquals(inputBoard, fb.toString());
+        fb.resetBoard();
+
+        // Assert
+        assertEquals(inputBoard, fb.toString());
     }
     @Test
     public void countAliveCells() {
+        // Arrange
+        fb = new FixedBoard(inputArrayTumbler, new MetaData());
+        int aliveCells = 22;
 
+        // Act
+        int count = fb.countAliveCells();
+
+        // Assert
+        assertEquals(aliveCells, count);
     }
     @Test
-    @Override
-    public FixedBoard clone() {
-        return new FixedBoard(10, 10);
+    public void testClone() {
+        // Arrange
+        MetaData md = new MetaData();
+        md.setName("Name");
+        String inputBoard = fb.toString();
+        String verifyBoard = "0000000000000000000000000000000000000000000000000000000000000000000000010000000000" +
+                "011100000000001010000000000010000000000000000000000000000000000000000000000000000000000";
+        // Act
+        fb = new FixedBoard(inputArrayTumbler, md);
+        FixedBoard fbClone = fb.clone();
+        // Assert
+        assertNotEquals(fb.hashCode(), fbClone.hashCode());
+        assertEquals(verifyBoard, inputBoard);
+        assertEquals("Name", fbClone.getMetaData().getName());
     }
     /**
      * Tests the toString()-method and asserts that the board is correctly translated from a byte array to a String

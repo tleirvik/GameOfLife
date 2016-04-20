@@ -118,7 +118,11 @@ public class FixedBoard extends Board{
             throw new RuntimeException("Invalid number in cell state: " + aliveState);
         }
     }
-    
+
+    /**
+     *  This method saves the board to an array within this class for later
+     *  retrieval. Abstract method inherited from superclass Board
+     */
     @Override
     public void setFirstGeneration() {
         for (int row = 1; row < currentGeneration.length-1; row++) {
@@ -204,7 +208,10 @@ public class FixedBoard extends Board{
     
     @Override
     public FixedBoard clone() {
-        byte[][] boardClone = java.util.Arrays.stream(currentGeneration).map(el -> el.clone()).toArray($ -> currentGeneration.clone());
+        byte[][] boardClone = java.util.Arrays
+                .stream(currentGeneration)
+                .map(el -> el.clone())
+                .toArray($ -> currentGeneration.clone());
         MetaData metaDataClone = metadata.clone();
         return new FixedBoard(boardClone, metaDataClone);
     }
