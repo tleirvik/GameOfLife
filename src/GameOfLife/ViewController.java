@@ -15,6 +15,8 @@ import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
+import javafx.scene.image.PixelFormat;
+import javafx.scene.image.PixelWriter;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
@@ -26,6 +28,7 @@ import util.DialogBoxes;
 import util.Stopwatch;
 
 import java.io.File;
+import java.nio.ByteBuffer;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -443,8 +446,32 @@ public class ViewController {
             offset_X = gameCanvas.getWidth() / 2 - (getBoardWidth() / 2);
             offset_Y = gameCanvas.getHeight() / 2 - (getBoardHeight() / 2);
     }
+    private static final int IMAGE_WIDTH = 10;
+    private static final int IMAGE_HEIGHT = 10;
+    private byte imageData[] = new byte[IMAGE_WIDTH * IMAGE_HEIGHT * 3];
 
+    private void createImageData() {
+        int i = 0;
+        for (int y = 0; y < IMAGE_HEIGHT; y++) {
+            int r = y * 255 / IMAGE_HEIGHT;
+            for (int x = 0; x < IMAGE_WIDTH; x++) {
+                int g = x * 255 / IMAGE_WIDTH;
+                imageData[i] = (byte) r;
+                imageData[i + 1] = (byte) g;
+                i += 3;
+            }
+        }
+    }
     private void draw() {
+        final PixelWriter pixWriter = gameCanvas.getGraphicsContext2D().getPixelWriter();
+        PixelFormat<ByteBuffer> pixelFormat = PixelFormat.getByteRgbInstance();
+        for (int y = 50; y < 150; y += IMAGE_HEIGHT) {
+            for (int x = 50; x < 150; x += IMAGE_WIDTH) {
+                pixWriter.setPixels(x, y, IMAGE_WIDTH,
+                        IMAGE_HEIGHT, pixelFormat, imageData,
+                        0, IMAGE_WIDTH * 3);
+            }
+        /*
         final double start_X = Math.round(getGridStartPosX());
         final double start_Y = Math.round(getGridStartPosY());
         final int boardRowLength = gol.getRows();
@@ -484,6 +511,7 @@ public class ViewController {
 
         if(drawGrid) {
             drawGridLines(gc);
+        }*/
         }
     }
 
@@ -552,8 +580,8 @@ public class ViewController {
                 double bClick_Y = e.getY();
 
                 if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y)) {
-                    int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getColumns();
-                    int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getRows();
+                    int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
+                    int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
                     if(holdingPattern) {
                         //drawObject(row, column, pattern)
                         byte[][] testArray = new byte[][] {
@@ -700,12 +728,12 @@ public class ViewController {
         Duration duration = Duration.millis(1000/fps);
         KeyFrame keyFrame;
         keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-            //Stopwatch sw = new Stopwatch("Next generation threading");
-            // sw.start();
-            //Thread newGenerationThread = new Thread() {
-            //    public void run() {
+            Stopwatch sw = new Stopwatch("Next generation threading");
+            sw.start();
+            Thread newGenerationThread = new Thread() {
+                public void run() {
                     gol.update();
-            /*    }
+                }
             };
             newGenerationThread.start();
 
@@ -713,7 +741,7 @@ public class ViewController {
                 newGenerationThread.join();
             } catch (InterruptedException e1) {
                 e1.printStackTrace();
-            }*/
+            }
             /*
             if (isDynamic) {
                 drawFitToView();
@@ -722,7 +750,7 @@ public class ViewController {
             }
             */
             draw();
-            // sw.stop();
+            sw.stop();
         });
         timeline.getKeyFrames().clear();
         timeline.getKeyFrames().add(0, keyFrame);

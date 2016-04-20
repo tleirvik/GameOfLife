@@ -2,6 +2,8 @@ package GameOfLife;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Robin
@@ -329,6 +331,8 @@ public class DynamicBoard extends Board {
     
     @Override
     public void nextGeneration() {
+        nextGenerationConcurrent();
+        /*
         //if (isDynamic) {
         checkEdges();
 
@@ -337,6 +341,51 @@ public class DynamicBoard extends Board {
         for(int row = 0; row < currentGeneration.size() -1; row++) {
             for(int col = 0; col < currentGeneration.get(0).size() -1; col++) {
                 currentGeneration.get(row).set(col,((neighbourArray[row][col]== 3) || (currentGeneration.get(row).get(col) == 1 && neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0);
+            }
+        }
+        */
+    }
+    @Override
+    public void nextGenerationConcurrent() {
+        checkEdges();
+        byte[][] neighbourArray = countNeighbours();
+
+        int numWorkers = Runtime.getRuntime().availableProcessors();
+        final int[][] distribution = new int[4][2];
+
+        final int rowsPerThread = (getRows() - 2) / numWorkers;
+        int startRow = 1;
+        int endRow = startRow + rowsPerThread;
+        for (int i = 0; i < 4; i++) {
+            distribution[i][0] = startRow;
+            distribution[i][1] = endRow;
+
+            startRow = endRow;
+            endRow+= rowsPerThread;
+        }
+
+        ArrayList<Thread> workers = new ArrayList<>();
+        for (int i = 0; i < 4; i++) {
+            final int n = i;
+            workers.add(new Thread(() -> {
+                for(int row = distribution[n][0]; row < distribution[n][1]; row++) {
+                    for(int col = 1; col < currentGeneration.get(0).size() - 2; col++) {
+                        currentGeneration.get(row).set(col,((neighbourArray[row][col]== 3) || (currentGeneration.get(row).get(col) == 1 && neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0);
+
+                    }
+                }
+            }));
+        }
+
+        for (int i = 0; i < 4; i++) {
+            workers.get(i).start();
+        }
+
+        for (int i = 0; i < 4; i++) {
+            try {
+                workers.get(i).join();
+            } catch (InterruptedException ex) {
+                Logger.getLogger(DynamicBoard.class.getName()).log(Level.SEVERE, null, ex);
             }
         }
     }
