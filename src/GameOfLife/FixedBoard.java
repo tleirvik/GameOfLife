@@ -150,6 +150,11 @@ public class FixedBoard extends Board{
 
     }
 
+    @Override
+    public int[] getStatistics() {
+        return new int[0];
+    }
+
     public void resetBoard() {
         for(int row = 1; row < currentGeneration.length-1; row++) {
             for(int col = 1; col < currentGeneration[0].length-1; col++) {
