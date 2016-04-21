@@ -471,19 +471,37 @@ public class ViewController {
             gc.fillRect(start_X, start_Y, boardWidth, boardHeight);
         }
 
-        double x = start_X;
-        double y = start_Y;
+        //Finner ut hvor canvas 0,0 er i forhold til arrayet.
+        int rowStart = (int) ((0 - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
+        int rowEnd = (int) ((canvasParent.getHeight() - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
+        int columnStart = (int) ((0 - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
+        int columnEnd = (int) ((canvasParent.getWidth() - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
+
+        int startRow = 0;
+        int endRow = boardRowLength;
+        if(rowStart > 0) {
+            startRow = rowStart;
+        }
+        if(rowEnd < boardRowLength) {
+            endRow = rowEnd;
+        }
+
+        int startCol = 0;
+        int endCol = boardColumnLength;
+        if(columnStart > 0) {
+            startCol = columnStart;
+        }
+        if(columnEnd < boardColumnLength) {
+            endCol = columnEnd;
+        }
 
         gc.setFill(stdAliveCellColor);
-        for(int row = 0; row < boardRowLength; row++) {
-            for(int col = 0; col < boardColumnLength; col++ ) {
+        for(int row = startRow; row < endRow; row++) {
+            for(int col = startCol; col < endCol; col++ ) {
                 if (gol.getCellAliveState(row, col) == 1) {
-                    gc.fillRect(x, y, cellSize, cellSize);
+                    gc.fillRect(start_X + cellSize * col, start_Y + cellSize * row, cellSize, cellSize);
                 }
-                x += cellSize; //Plusser på for neste kolonne
             }
-            x = start_X; //Reset X-verdien for neste rad
-            y += cellSize; //Plusser på for neste rad
         }
 
         if(drawGrid) {
