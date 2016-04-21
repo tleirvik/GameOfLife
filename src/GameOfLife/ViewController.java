@@ -389,6 +389,19 @@ public class ViewController {
 
     @FXML
     public void handleFitToView() {
+        if(fitToView.isSelected()) {
+            //Fjern alle event handlers fra Game Canvas
+            gameCanvas.
+            fitToView();
+            draw();
+        } else {
+            //legg dem til igjen
+            initializeMouseEventHandlers();
+        }
+
+    }
+
+    public void fitToView() {
         double cellWidth = gameCanvas.getWidth() / (gol.getColumns());
         double cellHeight = gameCanvas.getHeight() / (gol.getRows());
 
@@ -399,9 +412,6 @@ public class ViewController {
         }
 
         centerBoard();
-        draw();
-        //isDynamic = false;
-
     }
 
     @FXML
@@ -451,19 +461,19 @@ public class ViewController {
     private void draw() {
         final double start_X = Math.round(getGridStartPosX());
         final double start_Y = Math.round(getGridStartPosY());
-        final int boardRowLength = gol.getRows();
-        final int boardColumnLength = gol.getColumns();
+        final int rows = gol.getRows();
+        final int columns = gol.getColumns();
         final double boardWidth = getBoardWidth();
         final double boardHeight = getBoardHeight();
+        final double canvasWidth = gameCanvas.getWidth();
+        final double canvasHeight = gameCanvas.getHeight();
 
         GraphicsContext gc = gameCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, gameCanvas.widthProperty().doubleValue(),
-                gameCanvas.heightProperty().doubleValue());
+        gc.clearRect(0, 0, canvasWidth, canvasHeight);
 
         if(drawBackground) {
             gc.setFill(stdBackgroundColor);
-            gc.fillRect(0, 0, gameCanvas.widthProperty().doubleValue(),
-                    gameCanvas.heightProperty().doubleValue());
+            gc.fillRect(0, 0, canvasWidth, canvasHeight);
         }
 
         if(drawBoardBackground) {
@@ -471,27 +481,27 @@ public class ViewController {
             gc.fillRect(start_X, start_Y, boardWidth, boardHeight);
         }
 
-        //Finner ut hvor canvas 0,0 er i forhold til arrayet.
+        //Burde være en translatePositionToIndexArray
         int rowStart = (int) ((0 - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
         int rowEnd = (int) ((canvasParent.getHeight() - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
         int columnStart = (int) ((0 - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
         int columnEnd = (int) ((canvasParent.getWidth() - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
 
         int startRow = 0;
-        int endRow = boardRowLength;
+        int endRow = rows;
         if(rowStart > 0) {
             startRow = rowStart;
         }
-        if(rowEnd < boardRowLength) {
+        if(rowEnd < rows) {
             endRow = rowEnd;
         }
 
         int startCol = 0;
-        int endCol = boardColumnLength;
+        int endCol = columns;
         if(columnStart > 0) {
             startCol = columnStart;
         }
-        if(columnEnd < boardColumnLength) {
+        if(columnEnd < columns) {
             endCol = columnEnd;
         }
 
@@ -703,6 +713,9 @@ public class ViewController {
         Duration duration = Duration.millis(1000/fps);
         KeyFrame keyFrame;
         keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
+            if(fitToView.isSelected()) {
+                fitToView();
+            }
             //Stopwatch sw = new Stopwatch("Next generation threading");
             // sw.start();
             //Thread newGenerationThread = new Thread() {
