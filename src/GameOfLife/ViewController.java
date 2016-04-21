@@ -161,6 +161,11 @@ public class ViewController {
         dialogBoxes.openPatternEditor(gol);
     }
     
+    @FXML
+    public void openMetadataDialog() {
+        dialogBoxes.metaDataDialogBox(gol.getMetaData());
+    }
+    
     public void loadGameBoardFromRLE(boolean online) {
         timeline.stop();
         statusBar.setText("");
