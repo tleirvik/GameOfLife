@@ -48,9 +48,10 @@ public class ViewController {
     @FXML private ColorPicker backgroundColorPicker;
     @FXML private ColorPicker boardColorPicker;
 
-    @FXML private Slider cellSizeSlider;
+    //@FXML private Slider cellSizeSlider;
+    //@FXML private Label cellSizeLabel;
     @FXML private Slider fpsSlider;
-    @FXML private Label cellSizeLabel;
+
     @FXML private Label fpsLabel;
 
     @FXML private CheckBox toggleGrid;
@@ -108,7 +109,6 @@ public class ViewController {
     //=========================================================================
     public void initialize() {
         initializeTimeline();
-        initializeCellSizeSlider(1,1);
         initializeFpsSlider();
         
         gol.newEmptyGame(20, 20);        
@@ -393,7 +393,6 @@ public class ViewController {
             cellSize = cellHeight;
         }
 
-        initializeCellSizeSlider(cellSize, cellSize);
         centerBoard();
         draw();
         //isDynamic = false;
@@ -623,7 +622,7 @@ public class ViewController {
             double scrollLocation_X = event.getX();
             double scrollLocation_Y = event.getY();
             double scrollAmount = event.getDeltaY();
-            double zoomFactor = 1.05;
+            double zoomFactor = 1.1;
 
             if(scrollAmount < 0) {
                 zoomFactor = 1 / zoomFactor;
@@ -631,29 +630,10 @@ public class ViewController {
 
             offset_X -= (scrollLocation_X - offset_X) * (zoomFactor - 1);
             offset_Y -= (scrollLocation_Y - offset_Y) * (zoomFactor - 1);
-            
-            cellSizeSlider.setValue(cellSize*zoomFactor);
-        });
-    }
 
-    /**
-     * Initializes the cellSizeSlider with the current value and minimum value
-     * 
-     * @param current
-     * @param min
-     */
-    private void initializeCellSizeSlider(double current, double min) {
-        cellSizeSlider.setMin(min);
-    	cellSizeSlider.setMax(150);
-    	cellSizeSlider.setValue(current);
-    	cellSizeLabel.setText(String.format("%.2f",cellSizeSlider.getValue()));
-        
-        cellSizeSlider.valueProperty().addListener((ObservableValue<?
-                    extends Number> ov, Number old_size, Number new_size) -> {
-                cellSizeLabel.setText(String.format("%.2f", new_size.doubleValue()));
-                cellSize = new_size.doubleValue();
-                draw();
-            });
+            cellSize *= zoomFactor;
+            draw();
+        });
     }
 
     private void initializeFpsSlider() {
