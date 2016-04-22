@@ -19,6 +19,13 @@ public class MetaData {
 	private String survivalRule;
 	private String birthRule;
 
+	public MetaData() {
+		author = "";
+		name = "";
+		comment = "";
+		survivalRule = "";
+		birthRule = "";
+	}
 	public String getAuthor() {
 		return author;
 	}
