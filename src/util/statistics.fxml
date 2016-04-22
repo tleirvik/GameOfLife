@@ -13,7 +13,7 @@
    <center>
       <LineChart fx:id="lineChart" title="Game Of Life Stats" BorderPane.alignment="CENTER">
         <xAxis>
-          <NumberAxis label="Game Of Life evolutions" side="BOTTOM" />
+          <NumberAxis label="Game Of Life evolutions" side="BOTTOM" fx:id="xAxe" />
         </xAxis>
         <yAxis>
           <NumberAxis side="LEFT" />
@@ -24,7 +24,7 @@
       <HBox alignment="BOTTOM_LEFT" spacing="15.0">
          <children>
             <TextField fx:id="numberOfIterations" prefHeight="27.0" prefWidth="146.0" promptText="Number of Iterations" BorderPane.alignment="CENTER" />
-            <Button mnemonicParsing="false" onAction="#viewStats" text="View Stats" />
+            <Button defaultButton="true" mnemonicParsing="false" onAction="#viewStats" text="View Stats" />
          </children>
       </HBox>
    </bottom>

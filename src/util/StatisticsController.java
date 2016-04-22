@@ -18,18 +18,18 @@ public class StatisticsController {
     private final XYChart.Series diffLivingCells = new XYChart.Series();
     private final XYChart.Series similarity = new XYChart.Series();
     private GameOfLife game;
-    private final NumberAxis xAxis = new NumberAxis();
-    private final NumberAxis yAxis = new NumberAxis();
     private int iterations;
     
     @FXML private TextField numberOfIterations;
     @FXML private LineChart lineChart;
+    @FXML private NumberAxis xAxis;
     
     public void initializeStatistics(GameOfLife game) {
         this.game = game.clone();
         livingCells.setName("Number of Living Cells");
         diffLivingCells.setName("Difference in living cells");
         similarity.setName("Similarity Measure");
+        //xAxis.setTickLabelFormatter(S);
         lineChart.getData().add(livingCells);
         lineChart.getData().add(diffLivingCells);
         lineChart.getData().add(similarity);
@@ -67,7 +67,11 @@ public class StatisticsController {
             if ((i + 1) < iterations) {
                 stats[1][i] = stats[0][i + 1] + stats[0][i];
             }
-            stats[2][i] = (int) (0.5 * stats[0][i] + 3.0 * stats[1][i] + 0.25 * stats[3][i]);
+            int similarity1 = (int) (0.5 * stats[0][0] + 3.0 * stats[1][i] + 0.25 * stats[3][i]);
+            int similarity2 = (int) (0.5 * stats[0][i] + 3.0 * stats[1][i] + 0.25 * stats[3][i]);
+            int calculateSimilarity = Math.min(similarity1, similarity2) / Math.max(similarity1, similarity2);
+            int calculatePercent = (int) Math.floor(calculateSimilarity * 100);
+            stats[2][i] = calculatePercent;
         }
         
         return stats;
