@@ -388,4 +388,32 @@ public class DialogBoxes {
             return fileChooser.showSaveDialog(mainStage);
         }
     }
+    
+    public void statistics(GameOfLife game) {
+        Stage editor = new Stage();
+        editor.initModality(Modality.WINDOW_MODAL);
+        editor.initOwner(mainStage);
+        
+        try {
+            FXMLLoader loader;
+            loader = new FXMLLoader(getClass().getResource("statistics.fxml"));
+            
+            BorderPane root = loader.load();
+            editor.setResizable(false);
+            
+            StatisticsController stats = loader.getController();
+            stats.initializeStatistics(game);
+
+            Scene scene = new Scene(root);
+//            scene.getStylesheets().add(getClass().getResource(
+//                    "patternEditor.css").toExternalForm());
+            
+            editor.setScene(scene);
+            editor.setTitle("Game Of Life Statistics");
+            editor.show();
+        } catch (IOException e) {
+            DialogBoxes.infoBox("Error", "Could not open Statistics", 
+                    e.getMessage());
+        } 
+    }
 }
