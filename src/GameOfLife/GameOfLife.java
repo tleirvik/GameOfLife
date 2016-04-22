@@ -63,14 +63,6 @@ public class GameOfLife {
         board.nextGeneration();
     }
 
-    public int[][] updateWithStats(int iterations) {
-        int[][] statistics = new int[iterations][2];
-        for (int i = 0; i < iterations; i++) {
-            statistics[i] = board.getStatistics();
-            board.nextGeneration();
-        }
-        return statistics;
-    }
     @Override
     public GameOfLife clone() {
         GameOfLife clone = new GameOfLife();

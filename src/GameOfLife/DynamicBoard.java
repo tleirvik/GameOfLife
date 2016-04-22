@@ -2,6 +2,8 @@ package GameOfLife;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * @author Robin
@@ -10,15 +12,8 @@ public class DynamicBoard extends Board {
     private final MetaData metadata;
     private final List<List<Byte>> currentGeneration;
     private final List<List<Byte>> firstGeneration;
-    private int sum1 = 0;
-    private int sum2 = 0;
-    private int sum3 = 0;
-    private int sum4 = 0;
-    private int sum5 = 0;
-    // boolean isDynamic = true;
     private final int MIN_ROW;
     private final int MIN_COL;
-
 
 
     //=========================================================================
@@ -56,41 +51,8 @@ public class DynamicBoard extends Board {
                 firstGeneration.get(row).add(board[row][col]);
             }
         }
-        //addFrame();
     }
-    /*
-    public void addFrame() {
-        final int columns = currentGeneration.get(0).size();
-        currentGeneration.add(0, new ArrayList<>());
-        currentGeneration.add(new ArrayList<>());
-        for (int col = 0; col < columns; col++) {
-            currentGeneration.get(0).add((byte)0);
-        }
-        for (int col = 0; col < currentGeneration.get(0).size(); col++) {
-            currentGeneration.get(currentGeneration.size() - 1).add((byte)0);
-        }
-        for (List<Byte> e : currentGeneration) {
-            e.add(0, (byte) 0);
-        }
-        for (List<Byte> e : currentGeneration) {
-            e.add((byte) 0);
-        }
-    }
-    */
-
-    @Override
-    public void removeFrame() {
-        /*
-        currentGeneration.remove(0);
-        currentGeneration.remove(currentGeneration.size() -1);
-        for (List<Byte> e : currentGeneration) {
-            e.remove(0);
-        }
-        for (List<Byte> e : currentGeneration) {
-            e.remove(currentGeneration.size() - 1);
-        }
-        */
-    }
+    
     //=========================================================================
     // Getters
     //=========================================================================
@@ -154,21 +116,6 @@ public class DynamicBoard extends Board {
     //=========================================================================
     // Generation-methods
     //=========================================================================
-    public int[] getStatistics() {
-        int livingCells = 0;
-        int livingCellsPosition = 0;
-
-        for (int i = 0; i < getRows(); i++) {
-            for (int j = 0; j < getColumns(); j++) {
-                if (currentGeneration.get(i).get(j) == 1) {
-                    livingCells++;
-                    livingCellsPosition += i + j;
-                }
-            }
-        }
-        int[] statArray = {livingCells, livingCellsPosition};
-        return statArray;
-    }
 
     public  int countAliveCells() {
         int aliveCells = 0;
@@ -193,31 +140,38 @@ public class DynamicBoard extends Board {
         }
     }
     
-    private void checkEdges() {
-        // Sexy one-liner som skriver ut hele array'et
-        //currentGeneration.stream().forEach(i -> System.out.println(i));
-        checkTop();
-        checkBottom();
-        checkLeft();
-        checkRight();
+    private void checkEdges() throws InterruptedException {
+        Thread top = new Thread(() -> checkTop());
+        Thread bottom = new Thread(() -> checkBottom());
+        Thread left = new Thread(() -> checkLeft());
+        Thread right = new Thread(() -> checkRight());
+        
+        top.run();
+        bottom.run();
+        top.join();
+        bottom.join();
+        left.run();
+        right.run();
+        left.join();
+        right.join();
     }
 
     private void checkTop() {
         final int columns = currentGeneration.get(0).size();
-        sum1 = currentGeneration.get(0).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        sum2 = currentGeneration.get(1).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        sum3 = currentGeneration.get(2).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        sum4 = currentGeneration.get(3).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        sum5 = currentGeneration.get(4).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        int remove = sum1 + sum2 + sum3 + sum4 + sum5;
-        int add = sum1 + sum2;
+        final int sum1 = currentGeneration.get(0).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+        final int sum2 = currentGeneration.get(1).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+        final int sum3 = currentGeneration.get(2).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+        //final int sum4 = currentGeneration.get(3).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+        //final int sum5 = currentGeneration.get(4).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+        final int remove = sum1 + sum2 + sum3;// + sum4 + sum5;
+        final int add = sum1 + sum2;
 
         if (add != 0) {
             currentGeneration.add(0, new ArrayList<>());
             for (int col = 0; col < columns; col++) {
                 currentGeneration.get(0).add((byte)0);
             }
-        } else if (remove == 0 && currentGeneration.size() < MIN_ROW) {
+        } else if (remove == 0 && currentGeneration.size() > MIN_ROW) {
             currentGeneration.remove(0);
         }
     }
@@ -225,47 +179,47 @@ public class DynamicBoard extends Board {
     private void checkBottom() {
             final int rows = currentGeneration.size();
             final int columns = currentGeneration.get(0).size();
-            sum1 = currentGeneration.get(rows -1).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-            sum2 = currentGeneration.get(rows -2).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-            sum3 = currentGeneration.get(rows -3).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-            sum4 = currentGeneration.get(rows -4).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-            sum5 = currentGeneration.get(rows -5).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-            int remove = sum1 + sum2 + sum3 + sum4 + sum5;
-            int add = sum1 + sum2;
+            final int sum1 = currentGeneration.get(rows -1).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+            final int sum2 = currentGeneration.get(rows -2).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+            final int sum3 = currentGeneration.get(rows -3).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+            //final int sum4 = currentGeneration.get(rows -4).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+            //final int sum5 = currentGeneration.get(rows -5).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+            final int remove = sum1 + sum2 + sum3;// + sum4 + sum5;
+            final int add = sum1 + sum2;
 
             if (add != 0) {
                 currentGeneration.add(new ArrayList<>());
                 for (int col = 0; col < columns; col++) {
                     currentGeneration.get(currentGeneration.size() - 1).add((byte)0);
                 }
-            } else if(remove == 0 && currentGeneration.size() < MIN_ROW) {
+            } else if(remove == 0 && currentGeneration.size() > MIN_ROW) {
                 currentGeneration.remove(currentGeneration.size() - 1);
             }
     }
 
     private void checkLeft() {
         final int rows = currentGeneration.size();
-        sum1 = 0;
-        sum2 = 0;
-        sum3 = 0;
-        sum4 = 0;
-        sum5 = 0;
+        int sum1 = 0;
+        int sum2 = 0;
+        int sum3 = 0;
+        //int sum4 = 0;
+        //int sum5 = 0;
         for (int row = 0; row < rows; row++) {
             sum1 += currentGeneration.get(row).get(0);
             sum2 += currentGeneration.get(row).get(1);
             sum3 += currentGeneration.get(row).get(2);
-            sum4 += currentGeneration.get(row).get(3);
-            sum5 += currentGeneration.get(row).get(4);
+            //sum4 += currentGeneration.get(row).get(3);
+            //sum5 += currentGeneration.get(row).get(4);
         }
-        int remove = sum1 + sum2 + sum3 + sum4 + sum5;
-        int add = sum1 + sum2;
+        final int remove = sum1 + sum2 + sum3;// + sum4 + sum5;
+        final int add = sum1 + sum2;
 
         if (add != 0) {
 
             for (List<Byte> e : currentGeneration) {
                 e.add(0, (byte) 0);
             }
-        } else if(remove == 0 && currentGeneration.get(0).size() < MIN_COL){
+        } else if(remove == 0 && currentGeneration.get(0).size() > MIN_COL){
             for (List<Byte> e : currentGeneration) {
                 e.remove(0);
             }
@@ -273,14 +227,11 @@ public class DynamicBoard extends Board {
     }
 
     private void checkRight() {
-        /*
-        Hvorfor må summene bare nulles i denne metoden?
-         */
-        sum1 = 0;
-        sum2 = 0;
-        sum3 = 0;
-        sum4 = 0;
-        sum5 = 0;
+        int sum1 = 0;
+        int sum2 = 0;
+        int sum3 = 0;
+        //int sum4 = 0;
+        //int sum5 = 0;
         final int rows = currentGeneration.size();
         final int columns = currentGeneration.get(0).size();
 
@@ -288,20 +239,20 @@ public class DynamicBoard extends Board {
             sum1 += e.get(columns - 1);
             sum2 += e.get(columns - 2);
             sum3 += e.get(columns - 3);
-            sum4 += e.get(columns - 4);
-            sum5 += e.get(columns - 5);
+            //sum4 += e.get(columns - 4);
+            //sum5 += e.get(columns - 5);
         }
 
-        int remove = sum1 + sum2 + sum3 + sum4 + sum5;
-        int add = sum1 + sum2;
+        final int remove = sum1 + sum2 + sum3;// + sum4 + sum5;
+        final int add = sum1 + sum2;
 
         if (add != 0) {
             for (List<Byte> e : currentGeneration) {
                 e.add((byte) 0);
             }
-        } else if (remove == 0 && currentGeneration.get(0).size() < MIN_COL){
+        } else if (remove == 0 && currentGeneration.get(0).size() > MIN_COL){
             for (List<Byte> e : currentGeneration) {
-                e.remove(rows - 1);
+                e.remove(columns - 1);
             }
         }
     }
@@ -329,8 +280,11 @@ public class DynamicBoard extends Board {
     
     @Override
     public void nextGeneration() {
-        //if (isDynamic) {
-        checkEdges();
+        try {
+            checkEdges();
+        } catch (InterruptedException ex) {
+            Logger.getLogger(DynamicBoard.class.getName()).log(Level.SEVERE, null, ex);
+        }
 
         byte[][] neighbourArray = countNeighbours();
         

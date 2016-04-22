@@ -132,11 +132,6 @@ public class FixedBoard extends Board{
         }
     }
 
-    @Override
-    public void removeFrame() {
-
-    }
-
     //=========================================================================
     // Generation-methods
     //=========================================================================
@@ -152,11 +147,6 @@ public class FixedBoard extends Board{
         }
         return aliveCells;
 
-    }
-
-    @Override
-    public int[] getStatistics() {
-        return new int[0];
     }
 
     public void resetBoard() {
