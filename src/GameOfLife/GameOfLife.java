@@ -6,11 +6,11 @@ public class GameOfLife {
     private Board board;
 
     public void newEmptyGame(int rows, int columns) {
-        board = new DynamicBoard(rows, columns);
+        board = new TorodialBoard(rows, columns);
     }
     
     public void newRandomGame(int rows, int columns) {
-        board = new DynamicBoard(rows, columns);
+        board = new TorodialBoard(rows, columns);
         Random random = new Random();
         for(int row = 0; row < board.getRows(); row++) {
             for(int col = 0; col < board.getColumns(); col++) {
@@ -20,7 +20,7 @@ public class GameOfLife {
     }
 
     public void loadGame(byte[][] board, MetaData metadata) {
-        this.board = new DynamicBoard(board, metadata);
+        this.board = new TorodialBoard(board, metadata);
     }
     
     public void setFirstGeneration() {

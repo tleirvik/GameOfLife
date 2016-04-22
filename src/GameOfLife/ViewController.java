@@ -593,8 +593,8 @@ public class ViewController {
                 double bClick_Y = e.getY();
 
                 if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y)) {
-                    int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getColumns();
-                    int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getRows();
+                    int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
+                    int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
                     if ((row < gol.getRows()-1) && (row > 0) && (column < gol.getColumns()-1) && (column > 0)) {
                         System.out.println("row " + row + " col " + column);
                         if(holdingPattern) {
