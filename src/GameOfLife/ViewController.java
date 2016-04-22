@@ -263,6 +263,12 @@ public class ViewController {
         
     }
     
+    @FXML
+    public void openStatistics() {
+        timeline.stop();
+        dialogBoxes.statistics(gol);
+    }
+    
     private void saveToWav() {
         List<ExtensionFilter> extFilter = new ArrayList<>();
             extFilter.add(new ExtensionFilter("WAV files", "*.wav"));
