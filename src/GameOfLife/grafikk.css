@@ -37,3 +37,10 @@
     -fx-color: #4169E1;
 }
 
+#fitToView {
+    -fx-graphic: url('/arrows.png');
+}
+
+#fitToView:selected {
+    -fx-graphic: url('/arrows.png');
+}

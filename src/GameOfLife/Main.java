@@ -18,6 +18,10 @@ public class Main extends Application {
 
             Scene scene = new Scene(root);
 
+            /*
+            scene.getStylesheets().add(getClass().getResource(
+                "grafikk.css").toExternalForm());
+                */
             stage.setTitle("Game Of Life");
             stage.setScene(scene);
             

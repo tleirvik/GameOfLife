@@ -227,7 +227,9 @@ public class ViewController {
      * or loaded from a file.
      */
     public void openGame() {
+        fitToView.setSelected(true);
         handleFitToView();
+        draw();
     }
 
     /**
@@ -391,8 +393,9 @@ public class ViewController {
     public void handleFitToView() {
         if(fitToView.isSelected()) {
             //Fjern alle event handlers fra Game Canvas
-            gameCanvas.
+
             fitToView();
+            centerBoard();
             draw();
         } else {
             //legg dem til igjen
@@ -578,6 +581,7 @@ public class ViewController {
 
     private void initializeMouseEventHandlers() {
         gameCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
+            fitToView.setSelected(false);
             if(drawMode) {
                 //TEGNEMODUS
                 double bClick_X = e.getX();
@@ -626,6 +630,7 @@ public class ViewController {
         ); // end eventhandler
 
         gameCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent e) -> {
+            fitToView.setSelected(false);
             if(drawMode) {
                 double bClick_X = e.getX();
                 double bClick_Y = e.getY();
