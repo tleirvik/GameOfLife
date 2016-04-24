@@ -595,7 +595,6 @@ public class ViewController {
                 if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y)) {
                     int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
                     int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
-                    // original---> if ((row < gol.getRows() - 1 ) && (row > 0) && (column < gol.getColumns() - 1) && (column > 0)) {
                     if ((row < gol.getRows()) && (row >= 0) && (column < gol.getColumns() ) && (column >= 0)) {
                         System.out.println("row " + row + " col " + column);
                         if(holdingPattern) {
@@ -653,13 +652,12 @@ public class ViewController {
                     // holder seg innenfor arrayets lengde
                     // tegner kun dersom man er innenfor lengde
                     System.out.println("row " + row + " col " + column);
-                    if((row < gol.getRows()-1) && (row > 0) && (column < gol.getColumns()-1) && (column > 0)) {
+                    if((row < gol.getRows()) && (row >= 0) && (column < gol.getColumns()) && (column >= 0)) {
                         gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
                         draw();
                     }
                 }
             } else {
-                fitToView.setSelected(false);
                 //FLYTTEFUNKSJON
                 offset_X = e.getX() - offsetBegin_X;
                 offset_Y = e.getY() - offsetBegin_Y;
@@ -668,6 +666,7 @@ public class ViewController {
         });
         
         gameCanvas.setOnScroll((ScrollEvent event) -> {
+            fitToView.setSelected(false);
             double scrollLocation_X = event.getX();
             double scrollLocation_Y = event.getY();
             double scrollAmount = event.getDeltaY();
