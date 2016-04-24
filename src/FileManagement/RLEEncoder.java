@@ -114,8 +114,14 @@ public class RLEEncoder {
             for (int col = 0; col < game.getColumns(); col++) {
                 final int nextPosition = col + 1;
                 final byte currentCell = game.getCellAliveState(row, col);
-                if (col < game.getColumns() && currentCell == nextPosition) {
+                if (col < game.getColumns() - 1 && currentCell == game.getCellAliveState(row, nextPosition)) {
                     count++;
+                    //Setningen under hindrer "støy" ved å ikke lese neste posisjon
+                    //om den allerede var lest i denne iterasjonen.
+                    //Dette skjer bare på slutten av en rad (spesifikt turingmaskinen)
+                    if(nextPosition == game.getColumns() - 1) {
+                        col++;
+                    }
                 } else {
                     rleString.append(count > 1 ? count : "" ).append(currentCell == 1 ? "o" : "b");
                     count = 1;
