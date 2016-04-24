@@ -86,9 +86,9 @@ public class RLEEncoder {
      */
     private void encodeBoardSize() {
         rleString.append("x = ");
-        rleString.append(game.getColumns() -2);
+        rleString.append(game.getColumns());
         rleString.append(", y = ");
-        rleString.append(game.getRows() -2);
+        rleString.append(game.getRows());
         rleString.append(", ");
     }
      /**
@@ -105,15 +105,10 @@ public class RLEEncoder {
         rleString.append("\r\n");
     }
 
-    /**
-     * This method parses the byte[][] game board and translates it to Run Length Encoding(RLE) format
-     *
-     */
 
     private void encodeBoard() {
         // Bør bytte til StringBuilder fordi den er raskere StringBuffer
         int count = 1;
-        int previous = -1;
 
         for (int row = 0; row < game.getRows(); row++) {
             for (int col = 0; col < game.getColumns(); col++) {
@@ -125,25 +120,6 @@ public class RLEEncoder {
                     rleString.append(count > 1 ? count : "" ).append(currentCell == 1 ? "o" : "b");
                     count = 1;
                 }
-
-                /*
-                while (col < board[0].length && currentCell == nextPosition) {
-                    count++;
-                }
-                */
-
-                if (count > 1) {
-                    rleString.append((count >1) ? count : "");
-                    rleString.append(currentCell == 1 ? "o" : "b");
-                    count = 1;
-                }
-                /*
-                else {
-                    rleString.append(currentCell == 1 ? "o" : "b");
-                }
-                //rleString.append(count).append(currentCell == 1 ? "o" : "b");
-                //rleString.append(count > 1 ? count : "" ).append(currentCell == 1 ? "o" : "b");
-                */
             }
             rleString.append("$");
         }
@@ -155,6 +131,7 @@ public class RLEEncoder {
         rleString.delete(0, rleString.length());
     }
 
+    //Lagrer BARE brettet med en grense på 80 tegn per linje
     private void writeBoard(BufferedWriter bw) throws IOException {
         int offset = 0;
         final int offsetValue = 79;
