@@ -1,6 +1,6 @@
-package GameOfLife.Board;    
+package GameOfLife.Boards;    
 
-import GameOfLife.Board.Board;
+import GameOfLife.Boards.Board;
 import GameOfLife.MetaData;
 import java.util.ArrayList;
 import java.util.List;

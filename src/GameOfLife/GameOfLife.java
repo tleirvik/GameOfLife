@@ -1,28 +1,60 @@
 package GameOfLife;
 
-import GameOfLife.Board.TorodialBoard;
-import GameOfLife.Board.Board;
+import GameOfLife.Boards.Board;
+import GameOfLife.Boards.FixedBoard;
+import GameOfLife.Boards.DynamicBoard;
+import GameOfLife.Boards.TorodialBoard;
+import GameOfLife.Boards.Board.BoardType;
 import java.util.Random;
 
 public class GameOfLife {
     private Board board;
 
-    public void newEmptyGame(int rows, int columns) {
-        board = new TorodialBoard(rows, columns);
+    private void newGame(int rows, int columns, BoardType type) {
+        switch(type) {
+            case FIXED: 
+                board = new FixedBoard(rows, columns);
+                break;
+                
+            case DYNAMIC:
+                board = new DynamicBoard(rows, columns);
+                break;
+                
+            case TORODIAL:
+                board = new TorodialBoard(rows, columns);
+                break;
+        }
     }
     
-    public void newRandomGame(int rows, int columns) {
-        board = new TorodialBoard(rows, columns);
+    public void newEmptyGame(int rows, int columns, BoardType type) {
+        newGame(rows, columns, type);
+    }
+    
+    public void newRandomGame(int rows, int columns, BoardType type) {
+        newGame(rows, columns, type);
         Random random = new Random();
         for(int row = 0; row < board.getRows(); row++) {
             for(int col = 0; col < board.getColumns(); col++) {
                 board.setCellAliveState(row,col,((random.nextInt(5) == 1) ? (byte)1 : (byte)0));
             }
         }
+        board.setFirstGeneration();
     }
 
-    public void loadGame(byte[][] board, MetaData metadata) {
-        this.board = new TorodialBoard(board, metadata);
+    public void loadGame(byte[][] board, MetaData metadata, BoardType type) {
+        switch(type) {
+            case FIXED: 
+                this.board = new FixedBoard(board, metadata);
+                break;
+                
+            case DYNAMIC:
+                this.board = new DynamicBoard(board, metadata);
+                break;
+                
+            case TORODIAL:
+                this.board = new TorodialBoard(board, metadata);
+                break;
+        }
     }
     
     public void setFirstGeneration() {
@@ -69,7 +101,7 @@ public class GameOfLife {
     public GameOfLife clone() {
         GameOfLife clone = new GameOfLife();
         Board boardClone = board.clone();
-        clone.setBoard(board);
+        clone.setBoard(boardClone);
         return clone;
     }
 }

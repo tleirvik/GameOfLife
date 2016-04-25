@@ -1,6 +1,6 @@
 package Tests;
 
-import GameOfLife.Board.FixedBoard;
+import GameOfLife.Boards.FixedBoard;
 import GameOfLife.MetaData;
 import org.junit.Before;
 import org.junit.Test;

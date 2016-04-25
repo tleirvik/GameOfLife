@@ -3,6 +3,7 @@ package GameOfLife;
 import FileManagement.FileLoader;
 import FileManagement.RLEDecoder;
 import FileManagement.RLEEncoder;
+import GameOfLife.Boards.Board.BoardType;
 import Wav.WavFile;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
@@ -23,7 +24,6 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import util.DialogBoxes;
-import util.Stopwatch;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -111,7 +111,7 @@ public class ViewController {
         initializeTimeline();
         initializeFpsSlider();
         
-        gol.newEmptyGame(20, 20);        
+        gol.newEmptyGame(20, 20, BoardType.FIXED);        
         openGame();
         
         initializeBindCanvasSize();
@@ -130,29 +130,9 @@ public class ViewController {
     @FXML
     public void newGame() {
         timeline.stop();
-        int[] rowCol = dialogBoxes.openNewGameDialog();
-        
-        if(rowCol[0] == 0 || rowCol[1] == 0) {
-            return;
-        } else {
-            gol.newEmptyGame(rowCol[0], rowCol[1]);        
-            openGame();
-        }
-    }
-    
-    @FXML
-    public void newRandomGame() {
-        timeline.stop();
-        int[] rowCol;
-    	rowCol = dialogBoxes.openNewGameDialog();
-        
-        if(rowCol == null) {
-            return;
-            
-        }
-        
-        gol.newRandomGame(rowCol[1], rowCol[0]);        
-        openGame();
+        dialogBoxes.openNewGameDialog(gol);
+        fitToView();
+        draw();
     }
     
     @FXML
@@ -199,7 +179,7 @@ public class ViewController {
             }
         }
         
-        gol.loadGame(fileLoader.getBoard(), fileLoader.getMetadata());
+        //gol.loadGame(fileLoader.getBoard(), fileLoader.getMetadata());
         statusBar.setText("Title: " + fileLoader.getMetadata().getName() + " Author: " +
                 fileLoader.getMetadata().getAuthor() + " Comments: " + fileLoader.getMetadata().getComment() + " Rules: " + fileLoader.getMetadata().getRuleString());
         openGame();
@@ -780,7 +760,8 @@ public class ViewController {
         
         //Edit Menu
         edit.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN));
-        edit.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
-        edit.getItems().get(2).setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
+        edit.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN));
+        edit.getItems().get(2).setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
+        edit.getItems().get(3).setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
     }
 }

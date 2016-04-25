@@ -1,6 +1,7 @@
 package util;
 
 import FileManagement.GIFSaver;
+import GameOfLife.Boards.Board.BoardType;
 import GameOfLife.EditorController;
 import GameOfLife.GameOfLife;
 import java.io.File;
@@ -10,8 +11,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import javafx.beans.value.ChangeListener;
-import javafx.beans.value.ObservableValue;
 import javafx.fxml.FXMLLoader;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -20,6 +19,8 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.CheckBox;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
@@ -158,18 +159,28 @@ public class DialogBoxes {
         }
     }
 
-    public int[] openNewGameDialog() {
+    public void openNewGameDialog(GameOfLife gol) {
         GridPane gp = new GridPane();
         
-        gp.add(new Label("Rows: "),0,0);
-        gp.add(new Label("Columns: "),0,1);
         
+        gp.add(new Label("Rows: "), 0, 0);
+        gp.add(new Label("Columns: "), 0, 1);
         TextField rows = new TextField();
         TextField columns = new TextField();
         gp.add(rows, 1, 0);
         gp.add(columns, 1, 1);
         
-         rows.textProperty().addListener((observable, oldValue, newValue) -> {
+        gp.add(new Label("Board Type: "), 0, 2);
+        ChoiceBox<BoardType> boardType = new ChoiceBox<>();
+        boardType.getItems().setAll(BoardType.values());
+        boardType.setValue(BoardType.FIXED);
+        gp.add(boardType, 1, 2);
+        
+        gp.add(new Label("Random Pattern: "), 0, 3);
+        CheckBox random = new CheckBox();
+        gp.add(random, 1, 3);
+        
+        rows.textProperty().addListener((observable, oldValue, newValue) -> {
             if(!newValue.matches("[0-9]*")) {
                 rows.setText(oldValue);
             }
@@ -180,19 +191,20 @@ public class DialogBoxes {
                 columns.setText(oldValue);
             }
         });
-            
-        int[] array = new int[2];
-        
+                    
         if(customConfirmationDialog(gp, "New Game") &&
-           rows.getText() == "" && columns.getText() == "") {
-            array[0] = Integer.parseInt(rows.getText());
-            array[1] = Integer.parseInt(columns.getText());
-        } else {
-            array[0] = 0;
-            array[1] = 0;
+           rows.getText() != "" && columns.getText() != "") {
+            int numRows = Integer.parseInt(rows.getText());
+            int numColumns = Integer.parseInt(columns.getText());
+            BoardType type = boardType.getValue();
+            boolean randomPattern = random.isSelected();
+            
+            if(randomPattern) {
+                gol.newRandomGame(numRows, numColumns, type);
+            } else {
+                gol.newEmptyGame(numRows, numColumns, type);
+            }
         }
-        
-        return array;
     }
 
     public void openPatternEditor(GameOfLife game) {

@@ -5,7 +5,7 @@
  */
 package GameOfLife;
 
-import GameOfLife.Board.Board;
+import GameOfLife.Boards.Board;
 import java.util.ArrayList;
 
 /**

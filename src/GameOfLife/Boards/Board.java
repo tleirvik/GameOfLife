@@ -1,4 +1,4 @@
-package GameOfLife.Board;
+package GameOfLife.Boards;
 
 import GameOfLife.MetaData;
 
@@ -27,4 +27,10 @@ public abstract class Board {
         
     public abstract Board clone();
     public abstract String toString();
+    
+    public enum BoardType {
+        FIXED,
+        DYNAMIC,
+        TORODIAL
+    }
 }

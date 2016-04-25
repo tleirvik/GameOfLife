@@ -1,6 +1,6 @@
 package Tests;
 
-import GameOfLife.Board.DynamicBoard;
+import GameOfLife.Boards.DynamicBoard;
 import GameOfLife.MetaData;
 import org.junit.Before;
 import org.junit.Test;
