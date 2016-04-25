@@ -1,4 +1,7 @@
-package GameOfLife;
+package GameOfLife.Board;
+
+import GameOfLife.Board.Board;
+import GameOfLife.MetaData;
 
 /**
  * @author Robin Sean Aron David Lundh, Terje Leirvik, Stian Reistad Røgeberg.

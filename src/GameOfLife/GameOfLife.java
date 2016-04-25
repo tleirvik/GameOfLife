@@ -1,5 +1,7 @@
 package GameOfLife;
 
+import GameOfLife.Board.TorodialBoard;
+import GameOfLife.Board.Board;
 import java.util.Random;
 
 public class GameOfLife {
