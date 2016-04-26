@@ -15,11 +15,12 @@ public class FixedBoard extends Board{
     private final MetaData metadata;
     private final byte[][] currentGeneration;
     private final byte[][] firstGeneration;
-    
+    private final byte[][]  neighbourArray;
+
     //=========================================================================
     // Constructors
     //=========================================================================
-    
+
     /**
      * Constructs a board of a fixed size.
      *
@@ -30,23 +31,25 @@ public class FixedBoard extends Board{
         metadata = new MetaData();
     	currentGeneration = new byte[rows + 2][columns + 2];
         firstGeneration = new byte[rows + 2][columns + 2];
+        neighbourArray = new byte[rows + 2][columns + 2];
     }
 
     /**
      * Constructs a board with the given two-dimensional <code>byte</code>-array and
      * adds the metadata.
-     * 
+     *
      * @param board The two-dimensional <code>byte</code>-array whose data
      * are to be placed in the FixedBoard.
      * @param metadata The <code>MetaData</code> object that contains the metadata
      * related to the new board.
-     * 
+     *
      * @see MetaData
      */
     public FixedBoard(byte[][] board, MetaData metadata) {
     	this.metadata =  metadata;
     	currentGeneration = new byte[board.length + 2][board[0].length + 2];
         firstGeneration = new byte[board.length + 2][board[0].length + 2];
+        neighbourArray = new byte[board.length + 2][board[0].length + 2];
 
     	for(int row = 0; row < board.length; row++) {
             for(int col = 0; col < board[0].length; col++) {
@@ -55,7 +58,7 @@ public class FixedBoard extends Board{
             }
     	}
     }
-    
+
     //=========================================================================
     // Getters
     //=========================================================================
@@ -161,12 +164,10 @@ public class FixedBoard extends Board{
     }
     
     @Override
-    public byte[][] countNeighbours() {
-        byte[][] neighbourArray = new byte[currentGeneration.length][currentGeneration[0].length];
-        
-        for(int row = 1; row < currentGeneration.length-1; row++) {
-            for(int col = 1; col < currentGeneration[0].length-1; col++) {
-                if(currentGeneration[row][col] == 1) {
+    public void countNeighbours() {
+        for(int row = 0; row < currentGeneration.length; row++) {
+            for(int col = 0; col < currentGeneration[0].length; col++) {
+                if(getCellAliveState(row, col) == 1) {
                     neighbourArray[row-1][col-1]++;
                     neighbourArray[row-1][col]++;
                     neighbourArray[row-1][col+1]++; 
@@ -178,23 +179,76 @@ public class FixedBoard extends Board{
                 }
             }
         }
-        return neighbourArray;
     }
-    
-    @Override
-    public void nextGeneration() {
-        byte[][] neighbourArray = countNeighbours();
-        
-        for(int row = 1; row < currentGeneration.length-1; row++) {
-            for(int col = 1; col < currentGeneration[0].length-1; col++) {
-                currentGeneration[row][col] = ((neighbourArray[row][col]== 3) || (currentGeneration[row][col] == 1 && neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0;
+
+    private void clearNeighbours() {
+        for(int row = 0; row < neighbourArray.length; row++) {
+            for(int col = 0; col < neighbourArray[0].length; col++) {
+                neighbourArray[row][col] = 0;
             }
         }
     }
+
+    private void clearNeighbours(int start, int stop) {
+        for(int row = start; row < stop; row++) {
+            for(int col = 0; col < neighbourArray[0].length; col++) {
+                neighbourArray[row][col] = 0;
+            }
+        }
+    }
+
+    @Override
+    public void countNeighboursConcurrent(int start, int stop) {
+        for(int row = start; row < stop; row++) {
+            for(int col = 1; col < currentGeneration[0].length -1; col++) {
+                if(currentGeneration[row][col] == 1) {
+                    if (row == start || row == stop -1) {
+                        synchronized (this) {
+                            updateNeighbours(row, col);
+
+                        }
+                    } else {
+                        updateNeighbours(row, col);
+                    }
+                }
+            }
+        }
+    }
+
+    private void updateNeighbours(int row, int col) {
+        neighbourArray[row-1][col-1]++;
+        neighbourArray[row-1][col]++;
+        neighbourArray[row-1][col+1]++;
+        neighbourArray[row][col-1]++;
+        neighbourArray[row][col+1]++;
+        neighbourArray[row+1][col-1]++;
+        neighbourArray[row+1][col]++;
+        neighbourArray[row+1][col+1]++;
+    }
+
+    @Override
+    public void nextGeneration() {
+        countNeighbours();
+        for(int row = 1; row < currentGeneration.length-1; row++) {
+            for(int col = 1; col < currentGeneration[0].length-1; col++) {
+                currentGeneration[row][col] = ((neighbourArray[row][col]== 3) ||
+                        (currentGeneration[row][col] == 1 &&
+                                neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0;
+            }
+        }
+        clearNeighbours();
+    }
     
     @Override
-    public void nextGenerationConcurrent() {
-        
+    public void nextGenerationConcurrent(int start, int stop) {
+        for(int row = start; row < stop; row++) {
+            for(int col = 1; col < currentGeneration[0].length-1; col++) {
+                currentGeneration[row][col] = ((neighbourArray[row][col]== 3) ||
+                        (currentGeneration[row][col] == 1 &&
+                                neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0;
+            }
+        }
+        clearNeighbours(start, stop);
     }
 
     //=========================================================================

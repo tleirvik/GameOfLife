@@ -195,7 +195,7 @@ public class DynamicBoardTest {
         // Sjekk denne under...
         //smallDynamicBoard.setCellAliveState(5, 4, (byte)1);
         // System.out.println(smallDynamicBoard.toString());
-        byte[][] countNeighboursArray = smallDynamicBoard.countNeighbours();
+        //byte[][] countNeighboursArray = smallDynamicBoard.countNeighbours();
 
         // Assert
         /*

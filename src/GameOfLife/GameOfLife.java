@@ -9,6 +9,7 @@ import java.util.Random;
 
 public class GameOfLife {
     private Board board;
+    private final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
 
     private void newGame(int rows, int columns, BoardType type) {
         switch(type) {
@@ -95,6 +96,17 @@ public class GameOfLife {
     
     public void update() {
         board.nextGeneration();
+    }
+
+    public void updateWithThreads() {
+        nextGenerationWorkers nextGenerationWorkers = new nextGenerationWorkers(NUM_THREADS, board);
+        try {
+            nextGenerationWorkers.runWorkers();
+        } catch (InterruptedException iE) {
+            System.out.println("Føkk! " + iE.getStackTrace());
+        }
+
+
     }
 
     @Override

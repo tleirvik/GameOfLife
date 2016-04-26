@@ -24,6 +24,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import util.DialogBoxes;
+import util.Stopwatch;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -706,29 +707,11 @@ public class ViewController {
             if(fitToView.isSelected()) {
                 fitToView();
             }
-            //Stopwatch sw = new Stopwatch("Next generation threading");
-            // sw.start();
-            //Thread newGenerationThread = new Thread() {
-            //    public void run() {
-                    gol.update();
-            /*    }
-            };
-            newGenerationThread.start();
-
-            try {
-                newGenerationThread.join();
-            } catch (InterruptedException e1) {
-                e1.printStackTrace();
-            }*/
-            /*
-            if (isDynamic) {
-                drawFitToView();
-            } else {
-                draw();
-            }
-            */
+            Stopwatch sw = new Stopwatch("Next generation threading");
+            sw.start();
+            gol.updateWithThreads();
             draw();
-            // sw.stop();
+            sw.stop();
         });
         timeline.getKeyFrames().clear();
         timeline.getKeyFrames().add(0, keyFrame);

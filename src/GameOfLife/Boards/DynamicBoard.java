@@ -16,6 +16,7 @@ public class DynamicBoard extends Board {
     private final List<List<Byte>> firstGeneration;
     private final int MIN_ROW;
     private final int MIN_COL;
+    private byte[][] neighbourArray;
 
 
     //=========================================================================
@@ -260,7 +261,7 @@ public class DynamicBoard extends Board {
     }
 
     @Override
-    public byte[][] countNeighbours() {
+    public void countNeighbours() {
         byte[][] neighbourArray = new byte[currentGeneration.size()][currentGeneration.get(0).size()];
         
         for(int row = 0; row < currentGeneration.size() -1; row++) {
@@ -277,9 +278,13 @@ public class DynamicBoard extends Board {
                 }
             }
         }
-        return neighbourArray;
     }
-    
+
+    @Override
+    public void countNeighboursConcurrent(int start, int stop) {
+
+    }
+
     @Override
     public void nextGeneration() {
         try {
@@ -288,7 +293,7 @@ public class DynamicBoard extends Board {
             Logger.getLogger(DynamicBoard.class.getName()).log(Level.SEVERE, null, ex);
         }
 
-        byte[][] neighbourArray = countNeighbours();
+        neighbourArray = new byte[currentGeneration.size()][currentGeneration.get(0).size()];
         
         for(int row = 0; row < currentGeneration.size() -1; row++) {
             for(int col = 0; col < currentGeneration.get(0).size() -1; col++) {
@@ -298,7 +303,7 @@ public class DynamicBoard extends Board {
     }
 
     @Override
-    public void nextGenerationConcurrent() {
+    public void nextGenerationConcurrent(int start, int stop) {
 
     }
 

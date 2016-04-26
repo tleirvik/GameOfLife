@@ -15,6 +15,7 @@ public class TorodialBoard extends Board{
     private final MetaData metadata;
     private final byte[][] currentGeneration;
     private final byte[][] firstGeneration;
+    private final byte[][] neighbourArray;
     
     //=========================================================================
     // Constructors
@@ -30,6 +31,7 @@ public class TorodialBoard extends Board{
         metadata = new MetaData();
     	currentGeneration = new byte[rows][columns];
         firstGeneration = new byte[rows][columns];
+        neighbourArray = new byte[rows][columns];
     }
 
     /**
@@ -47,8 +49,10 @@ public class TorodialBoard extends Board{
     	this.metadata =  metadata;
     	currentGeneration = new byte[board.length][board[0].length];
         firstGeneration = new byte[board.length][board[0].length];
+        neighbourArray = new byte[board.length][board[0].length];
 
-    	for(int row = 0; row < board.length; row++) {
+
+        for(int row = 0; row < board.length; row++) {
             for(int col = 0; col < board[0].length; col++) {
                 currentGeneration[row][col] = board[row][col];
                 firstGeneration[row][col] = board[row][col];
@@ -161,7 +165,7 @@ public class TorodialBoard extends Board{
     }
     
     @Override
-    public byte[][] countNeighbours() {
+    public void countNeighbours() {
         byte[][] neighbourArray = new byte[currentGeneration.length][currentGeneration[0].length];
         final int rowLength = currentGeneration.length - 1;
         final int colLength = currentGeneration[0].length - 1;
@@ -195,24 +199,28 @@ public class TorodialBoard extends Board{
                 }
             }
         }
-        return neighbourArray;
     }
-    
+
     @Override
     public void nextGeneration() {
-        byte[][] neighbourArray = countNeighbours();
-        
+        countNeighbours();
         for(int row = 0; row < currentGeneration.length; row++) {
             for(int col = 0; col < currentGeneration[0].length; col++) {
                 currentGeneration[row][col] = ((neighbourArray[row][col]== 3) || (currentGeneration[row][col] == 1 && neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0;
             }
         }
     }
-    
+
     @Override
-    public void nextGenerationConcurrent() {
-        
+    public void countNeighboursConcurrent(int start, int stop) {
+
     }
+
+    @Override
+    public void nextGenerationConcurrent(int start, int stop) {
+
+    }
+
 
     //=========================================================================
     // Misc.

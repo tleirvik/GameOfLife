@@ -20,9 +20,11 @@ public abstract class Board {
     
     public abstract void resetBoard();
     
-    public abstract byte[][] countNeighbours();
+    public abstract void countNeighbours();
+    public abstract void countNeighboursConcurrent(int start, int stop);
+
     public abstract void nextGeneration();
-    public abstract void nextGenerationConcurrent();
+    public abstract void nextGenerationConcurrent(int start, int stop);
     public abstract void setFirstGeneration();
         
     public abstract Board clone();
