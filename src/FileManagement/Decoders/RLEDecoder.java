@@ -1,4 +1,4 @@
-package FileManagement;
+package FileManagement.Decoders;
 
 import GameOfLife.MetaData;
 import GameOfLife.PatternFormatException;
@@ -19,10 +19,7 @@ import java.util.regex.Pattern;
  * JProfiler to measure performance increase upwards of 4000%!
  * @version 5.0 Fixed bug in RLE decoding where position near the edges didn't parse correctly
  */
-public class RLEDecoder {
-    private MetaData metadata;
-    private byte[][] board;
-    private final BufferedReader reader;
+public class RLEDecoder extends Decoder {
 
     /**
      * Constructs a RLEDecoder with a BufferedReader as input
@@ -30,7 +27,7 @@ public class RLEDecoder {
      * @param reader BufferedReader file to be parsed
      */
     public RLEDecoder(BufferedReader reader) {
-        this.reader = reader;
+        super(reader);
     }
 
     /**
@@ -198,22 +195,5 @@ public class RLEDecoder {
                 }
             }
         }
-    }
-
-    /**
-     * Method that returns the board contained in this class
-     * @return board Returns the boolean[][] board contained in this class
-     */
-    public byte[][] getBoard() {
-            return this.board;
-    }
-
-    /**
-     * Method that returns the associated MetaData object that we read from the RLE files
-     *
-     * @return metadata A MetaData object that contains relevant metadata about the board
-     */
-    public MetaData getMetadata() {
-        return this.metadata;
     }
 }

@@ -80,24 +80,8 @@ public class DialogBoxes {
         if (result.isPresent()){
             return result.get();
         } else {
-            return "";
+            return null;
         }        
-        
-        
-        /*
-        //====================================================================
-        //              KODE FOR Å LUKKE VINDU MED ESC
-        //====================================================================
-        scene.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>(){
-            public void handle(KeyEvent key) {
-                KeyCombination esc = new KeyCodeCombination(KeyCode.ESCAPE);
-                if(esc.match(key)) {
-                    mainStage.close();
-                }
-            }
-        });
-        */
-        
     }
     
     public boolean customConfirmationDialog(GridPane gp, String title) {

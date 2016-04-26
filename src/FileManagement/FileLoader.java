@@ -5,12 +5,21 @@
  */
 package FileManagement;
 
-import java.io.*;
+import FileManagement.Decoders.*;
+import FileManagement.Decoders.RLEDecoder;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import GameOfLife.MetaData;
 import GameOfLife.PatternFormatException;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileReader;
+import java.io.FilenameFilter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.nio.file.Files;
 import util.DialogBoxes;
 
 /**
@@ -22,8 +31,30 @@ import util.DialogBoxes;
  * @see RLEEncoder
  */
 public class FileLoader {
-    private RLEDecoder rleDecoder;
+    private File patternDirectory = new File("Patterns");
+    private Decoder decoder;
 
+    public void initialize() {
+        patternDirectory.mkdir(); //Returns true false if folder is created/exists
+        System.out.println(patternDirectory.getAbsolutePath());
+    }
+    
+    private String getFileExtension(String fileName) {
+            return fileName.substring(fileName.lastIndexOf("."));
+    }
+    
+    public File[] getPatternDirectoryFiles() {
+        FilenameFilter filter = new FilenameFilter() {
+            @Override
+            public boolean accept(File dir, String name) {
+                String fileExtension = getFileExtension(name);
+                //True om den er RLE, false hvis den er noe annet
+                return fileExtension.equals(".rle");
+            }
+        };
+        
+        return patternDirectory.listFiles(filter);
+    }
     /**
      *  This method takes a file as input and uses a BufferedReader to read the file. Instantiates a RLEDecoder object
      *  and calls the decode() method in RLEDecoder for interpreting the file.
@@ -37,8 +68,7 @@ public class FileLoader {
         }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()))) {
-            rleDecoder = new RLEDecoder(reader);
-            rleDecoder.decode();
+            readGameBoard(reader, getFileExtension(file.getName()));
         }  catch (FileNotFoundException fnfE) {
             DialogBoxes.infoBox("Error!", "File was not found", fnfE.getMessage());
             return false;
@@ -66,10 +96,19 @@ public class FileLoader {
             URLConnection conn = url.openConnection();
 
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-                rleDecoder = new RLEDecoder(reader);
-                rleDecoder.decode();
+                readGameBoard(reader, getFileExtension(url.getPath()));
+                
+                /*
+                //SAVE LOADED FILE TO FOLDER
+                //if(downloadFiles == true) {
+                String fileName = decoder.getMetadata().getName().replaceAll("[^a-zA-Z0-9]", "").toLowerCase(); //FILNAVNET
+                File pattern = new File(patternDirectory.getAbsolutePath() + "\\" + fileName + ".rle"); //HVOR DEN LAGRES
+                Files.copy(url.openStream(), pattern.toPath()); //KOPIERING HER
+                //SAVE LOADED FILE TO FOLDER
+                */
+                
             } catch (IOException ioE) {
-                DialogBoxes.infoBox("Error!", "", "");
+                DialogBoxes.infoBox("Error!", "", ioE.getMessage());
                 return false;
             }
         } catch (MalformedURLException muE) {
@@ -81,10 +120,36 @@ public class FileLoader {
                     "The following error occurred trying to interpret game rules: " + pfE.getMessage());
             return false;
         } catch (IOException ex) {
-            DialogBoxes.infoBox("Error!", "", "");
+            DialogBoxes.infoBox("Error!", "Unknown IO Exception:", ex.getMessage());
             return false;
         }
+        
         return true;
+    }
+    
+    public void readGameBoard(BufferedReader reader, String fileExtension) throws PatternFormatException, IOException {
+        if(fileExtension.matches(".rle")) {
+            decoder = new RLEDecoder(reader);
+            
+        } else if(fileExtension.matches(".life|.lif")) {
+            String patternType = reader.readLine();
+            
+            if(patternType.matches("#Life 1.05")) {
+                decoder = new Life105Decoder(reader);
+                
+            } else if(patternType.matches("#Life 1.06")) {
+                decoder = new Life106Decoder(reader);
+                
+            } else {
+                throw new PatternFormatException("The header does not contain '#Life 1.05' or '#Life 1.06' on line 1.");
+                
+            }
+        } else if(fileExtension.matches("Unknown")) { //ONLY FROM URL
+            //IMPLEMENT FUNCTIONALITY FOR USER TO INPUT FILE FORMAT (DIALOG?)
+            
+        }
+        
+        decoder.decode();
     }
 
     /**
@@ -94,7 +159,7 @@ public class FileLoader {
      * @see RLEDecoder
      */
     public MetaData getMetadata() {
-        return rleDecoder.getMetadata();
+        return decoder.getMetadata();
     }
 
     /**
@@ -104,6 +169,6 @@ public class FileLoader {
      * @see RLEDecoder
      */
     public byte[][] getBoard() {
-        return rleDecoder.getBoard();
+        return decoder.getBoard();
     }
 }

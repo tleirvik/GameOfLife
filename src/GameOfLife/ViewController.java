@@ -1,7 +1,7 @@
 package GameOfLife;
 
 import FileManagement.FileLoader;
-import FileManagement.RLEDecoder;
+import FileManagement.Decoders.RLEDecoder;
 import FileManagement.RLEEncoder;
 import GameOfLife.Boards.Board.BoardType;
 import Wav.WavFile;
@@ -38,20 +38,18 @@ public class ViewController {
     //=========================================================================
     // JavaFX Fields
     //=========================================================================
-
     
     @FXML private MenuBar menuBar;
     @FXML private BorderPane root;
 
+    @FXML private Button togglePlayButton;
+    
     @FXML private ColorPicker gridColorPicker;
     @FXML private ColorPicker cellColorPicker;
     @FXML private ColorPicker backgroundColorPicker;
     @FXML private ColorPicker boardColorPicker;
 
-    //@FXML private Slider cellSizeSlider;
-    //@FXML private Label cellSizeLabel;
     @FXML private Slider fpsSlider;
-
     @FXML private Label fpsLabel;
 
     @FXML private CheckBox toggleGrid;
@@ -69,6 +67,7 @@ public class ViewController {
     final private DialogBoxes dialogBoxes = new DialogBoxes(this);
     final private Timeline timeline = new Timeline();
     final private GameOfLife gol = new GameOfLife();
+    final private FileLoader fileLoader = new FileLoader();
 
     //Slidere kan manipulere disse verdiene
     private double cellSize = 10;
@@ -108,6 +107,7 @@ public class ViewController {
     // Initializer
     //=========================================================================
     public void initialize() {
+        fileLoader.initialize();
         initializeTimeline();
         initializeFpsSlider();
         
@@ -131,8 +131,12 @@ public class ViewController {
     public void newGame() {
         timeline.stop();
         dialogBoxes.openNewGameDialog(gol);
-        fitToView();
-        draw();
+        openGame();
+    }
+    
+    @FXML
+    public void openPatternList() {
+        //dialogBoxes.openPatternList();
     }
     
     @FXML
@@ -149,39 +153,38 @@ public class ViewController {
     public void loadGameBoardFromRLE(boolean online) {
         timeline.stop();
         statusBar.setText("");
-
-
-        FileLoader fileLoader = new FileLoader();
                 
         if(online) {
             String urlString = dialogBoxes.urlDialogBox();
-            if(!urlString.equals("")) {
-                if(!fileLoader.readGameBoardFromURL(urlString)) {
-                    statusBar.setText("Could not load file from URL!");
-                    return;
-                }
-            } else {
-               return;
+            if(urlString == null) {
+                return;
+            }
+            if(!fileLoader.readGameBoardFromURL(urlString)) {
+                statusBar.setText("Could not load file from URL!");
+                return;
             }
         } else {
             List<ExtensionFilter> extFilter = new ArrayList<>();
             extFilter.add(new ExtensionFilter("RLE files", "*.rle"));
-            extFilter.add(new ExtensionFilter("All Files", "*.*"));
+            extFilter.add(new ExtensionFilter("Life 1.0x Files", "*.lif", "*.life"));
 
             File selectedFile = dialogBoxes.fileChooser(extFilter, true);
             
-            if(selectedFile != null) {
-                if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
-                    return;
-                }
-            } else {
+            if(selectedFile == null) {
+                return;
+            }
+            if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
+                statusBar.setText("Could not load file from disk!");
                 return;
             }
         }
         
-        //gol.loadGame(fileLoader.getBoard(), fileLoader.getMetadata());
-        statusBar.setText("Title: " + fileLoader.getMetadata().getName() + " Author: " +
-                fileLoader.getMetadata().getAuthor() + " Comments: " + fileLoader.getMetadata().getComment() + " Rules: " + fileLoader.getMetadata().getRuleString());
+        gol.loadGame(fileLoader.getBoard(), fileLoader.getMetadata(), BoardType.FIXED);
+        
+        statusBar.setText("Title: " + fileLoader.getMetadata().getName() + ","
+                + " Author: " + fileLoader.getMetadata().getAuthor() + ","
+                + " Comments: " + fileLoader.getMetadata().getComment() + ","
+                + " Rules: " + fileLoader.getMetadata().getRuleString());
         openGame();
     }
     
@@ -208,7 +211,8 @@ public class ViewController {
      */
     public void openGame() {
         fitToView.setSelected(true);
-        handleFitToView();
+        fitToView();
+        centerBoard();
         draw();
     }
 
@@ -288,15 +292,14 @@ public class ViewController {
     }
 
     @FXML
-    public void play() {
+    public void togglePlay() {
         if(timeline.getStatus() != Status.RUNNING) {
+            togglePlayButton.setText("Pause");
             timeline.play();
+        } else {
+            togglePlayButton.setText("Play");
+            timeline.stop();
         }
-    }
-
-    @FXML
-    public void pause() {
-        timeline.stop();
     }
 
     @FXML
@@ -378,16 +381,10 @@ public class ViewController {
     @FXML
     public void handleFitToView() {
         if(fitToView.isSelected()) {
-            //Fjern alle event handlers fra Game Canvas
-
             fitToView();
             centerBoard();
             draw();
-        } else {
-            //legg dem til igjen
-            initializeMouseEventHandlers();
         }
-
     }
 
     public void fitToView() {
@@ -399,8 +396,6 @@ public class ViewController {
         } else {
             cellSize = cellHeight;
         }
-
-        centerBoard();
     }
 
     @FXML
