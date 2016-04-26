@@ -151,9 +151,10 @@ public class RLEDecoder extends Decoder {
         String line;
         int row = 0, col = 0;
         final char lineBreak = '$';
-
+        
+        int charNumber = 0; // Antall forekomster av en celle
+        
         while ((line = reader.readLine()) != null) {
-            int charNumber = 0; // Antall forekomster av en celle
             for (int j = 0; j < line.length(); j++) {
                 if (Character.isDigit(line.charAt(j))) {
                     if (charNumber == 0) {
