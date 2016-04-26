@@ -109,28 +109,46 @@ public class RLEEncoder {
     private void encodeBoard() {
         // Bør bytte til StringBuilder fordi den er raskere StringBuffer
         int count = 1;
+        int previous = -1;
+        
+        int o = 0;
+        int b = 0;
+        
+        byte currentCell = 0;
 
         for (int row = 0; row < game.getRows(); row++) {
             for (int col = 0; col < game.getColumns(); col++) {
-                final int nextPosition = col + 1;
-                final byte currentCell = game.getCellAliveState(row, col);
-                if (col < game.getColumns() - 1 && currentCell == game.getCellAliveState(row, nextPosition)) {
-                    count++;
-                    //Setningen under hindrer "støy" ved å ikke lese neste posisjon
-                    //om den allerede var lest i denne iterasjonen.
-                    //Dette skjer bare på slutten av en rad (spesifikt turingmaskinen)
-                    if(nextPosition == game.getColumns() - 1) {
-                        col++;
+                currentCell = game.getCellAliveState(row, col);
+                    
+                if (currentCell == 1) {
+                    o++;
+                    if (b != 0) {
+                        rleString.append((b > 1) ? b : "").append("b");
+                        b = 0;
                     }
-                } else {
-                    rleString.append(count > 1 ? count : "" ).append(currentCell == 1 ? "o" : "b");
-                    count = 1;
                 }
+
+                if (currentCell == 0) {
+                    b++;
+                    if (o != 0) {
+                        rleString.append((o > 1) ? o : "").append("o");
+                        o = 0;
+                    }
+                }
+            } // end inner loop
+            if (o > 0 ) {
+                rleString.append((o > 1) ? o : "").append("o");
+                o = 0; 
+            } else if( b > 0) {
+                rleString.append((b > 1) ? b : "").append("b");
+                b = 0;
             }
             rleString.append("$");
-        }
+        } // end outer loop
         rleString.append("!");
     }
+            
+
 
     private void writeMetadata(BufferedWriter bw) throws IOException {
         bw.write(rleString.toString());
