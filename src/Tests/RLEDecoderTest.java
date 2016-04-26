@@ -1,6 +1,6 @@
 package Tests;
 
-import FileManagement.RLEDecoder;
+import FileManagement.Decoders.RLEDecoder;
 import GameOfLife.MetaData;
 import org.junit.Before;
 import org.junit.Test;
