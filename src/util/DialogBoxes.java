@@ -1,6 +1,6 @@
 package util;
 
-import FileManagement.GIFSaver;
+import FileManagement.OtherFormats.GIFSaver;
 import GameOfLife.Boards.Board.BoardType;
 import GameOfLife.EditorController;
 import GameOfLife.GameOfLife;
@@ -221,143 +221,105 @@ public class DialogBoxes {
     }
     
      public void saveToGIFDialog(GIFSaver saver) {
-        GridPane root = new GridPane();
-        root.setAlignment(Pos.CENTER);
-        root.setPadding(new Insets(20, 150, 10, 10));
-        root.setHgap(10);
-        root.setVgap(10);
+        GridPane gp = new GridPane();
+
+        //=========================================
+        //  GIF-size
+        //=========================================
+        gp.add(new Label("Width: "), 0, 0, 1, 1);
+        gp.add(new Label("Height: "), 0, 1, 1, 1);
         
-        Stage stage = new Stage();
-        
-        final Label label1 = new Label("Width: ");
-        final Label label2 = new Label("Height: ");
-        GridPane.setConstraints(label1, 0, 0, 1, 1);
-        GridPane.setConstraints(label2, 0, 1, 1, 1);
-        root.getChildren().addAll(label1, label2);
-        
-        final String INITIAL_VALUE = "50";
         final Spinner spinnerWidth = new Spinner(10, 10000, 200, 10);
         spinnerWidth.setEditable(true);
+        TextField widthField = spinnerWidth.getEditor();
+        widthField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue.matches("[0-9]*")) {
+                widthField.setText(oldValue);
+            }
+        });
+        gp.add(spinnerWidth, 1, 0, 3, 1);
         
         final Spinner spinnerHeight = new Spinner(10, 10000, 200, 10);
         spinnerHeight.setEditable(true);
+        TextField heightField = spinnerHeight.getEditor();
+        heightField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if(!newValue.matches("[0-9]*")) {
+                heightField.setText(oldValue);
+            }
+        });
+        gp.add(spinnerHeight, 1, 1, 3, 1);
         
-        GridPane.setConstraints(spinnerWidth, 1, 0, 3, 1);
-        GridPane.setConstraints(spinnerHeight, 1, 1, 3, 1);
-        root.getChildren().addAll(spinnerWidth, spinnerHeight);
-        
-        final Label speedLabel = new Label("Animation Speed:");
-        GridPane.setConstraints(speedLabel, 0, 2);
-        root.getChildren().add(speedLabel);
+        //=========================================
+        //  Animation-speed
+        //=========================================
+        gp.add(new Label("Animation Speed:"), 0, 2);
         
         final Label sliderLabel = new Label("500 ms");
-        GridPane.setConstraints(sliderLabel,1 ,2);
-        root.getChildren().add(sliderLabel);
+        gp.add(sliderLabel,1 ,2);
         
-        final Slider animationSlider = new Slider();
-        animationSlider.setMin(125.0);
-        animationSlider.setMax(1000.0);
-        animationSlider.setValue(500.0);
+        final Slider animationSlider = new Slider(125,1000,500);
         animationSlider.setShowTickMarks(true);
         animationSlider.setShowTickLabels(true);
         animationSlider.setMajorTickUnit(100);
         animationSlider.setMinorTickCount(0);
-        GridPane.setConstraints(animationSlider, 0, 3, 2, 1);
-        root.getChildren().add(animationSlider);
+        gp.add(animationSlider, 0, 3, 2, 1);
         
         animationSlider.valueProperty().addListener(e-> {
             sliderLabel.setText(String.format("%d ms", 
                     animationSlider.valueProperty().intValue()));
         });
         
+        //=========================================
+        //  Iterations
+        //=========================================
+        gp.add(new Label("Number of Iterations:"), 0, 4);
         
-        final Label iterLabel = new Label("Number of Iterations:");
-        GridPane.setConstraints(iterLabel, 0, 4);
-        
-        final Slider iterSlider = new Slider();
-        iterSlider.setMin(2.0);
-        iterSlider.setMax(20.0);
-        iterSlider.setValue(10.0);
+        final Slider iterSlider = new Slider(2,20,10);
         iterSlider.setShowTickMarks(true);
         iterSlider.setShowTickLabels(true);
         iterSlider.setMajorTickUnit(2);
         iterSlider.setMinorTickCount(0);
-        
-        GridPane.setConstraints(iterSlider,0, 5, 2, 1);
-        root.getChildren().addAll(iterLabel, iterSlider);
+        gp.add(iterSlider,0, 5, 2, 1);
         
         final Label iterations = new Label("10");
-        GridPane.setConstraints(iterations, 1, 4);
-        root.getChildren().add(iterations);
+        gp.add(iterations, 1, 4);
         
         iterSlider.valueProperty().addListener(e -> {
             iterations.setText(String.format("%d", 
                     iterSlider.valueProperty().intValue()));
         });
         
-        
-        final Label aliveCellColorLabel = new Label("Alive Cell Color");
-        GridPane.setConstraints(aliveCellColorLabel, 0, 6);
+        //=========================================
+        //  GIF-colors
+        //=========================================
+        gp.add(new Label("Alive Cell Color"), 0, 6);
         final ColorPicker aliveCellColor = new ColorPicker(Color.web("#ccffff"));
-        GridPane.setConstraints(aliveCellColor, 1, 6);
-        root.getChildren().addAll(aliveCellColorLabel, aliveCellColor);
+        gp.add(aliveCellColor, 1, 6);
         
-        final Label deadCellColorLabel = new Label("Dead Cell Color");
-        GridPane.setConstraints(deadCellColorLabel, 0, 7);
+        gp.add(new Label("Dead Cell Color"), 0, 7);
         final ColorPicker deadCellColor = new ColorPicker(Color.web("#003333"));
-        GridPane.setConstraints(deadCellColor, 1, 7);
-        root.getChildren().addAll(deadCellColorLabel, deadCellColor);
+        gp.add(deadCellColor, 1, 7);
         
-        
-        final Button saveButton = new Button("Save");
-        final Button cancelButton = new Button("Cancel");
-        
-        HBox hbox = new HBox();
-        hbox.setSpacing(10);
-        hbox.setAlignment(Pos.BASELINE_RIGHT);
-        hbox.getChildren().addAll(saveButton, cancelButton);
-        GridPane.setConstraints(hbox, 1, 9);
-        root.getChildren().add(hbox);
-        
-        customConfirmationDialog(root, "");
-        
-        saveButton.setDefaultButton(true);
-        saveButton.setOnAction(e -> {
-            boolean error = false;
-            
+        if (customConfirmationDialog(gp, "Save To GIF")) {            
             List<ExtensionFilter> extFilter = new ArrayList<>();
             extFilter.add(new ExtensionFilter("GIF files", "*.gif"));
             extFilter.add(new ExtensionFilter("All Files", "*.*"));
             File file = fileChooser(extFilter, false);
             
             if (file == null) {
-                error = true;
+                return;
             }
             
-            if (!error) {
-                saver.setIterations(3);
-                saver.setAnimationTimer(animationSlider.valueProperty().intValue());
-                saver.setWidth((int) spinnerWidth.getValue());
-                saver.setHeight((int) spinnerHeight.getValue());
-                saver.setIterations(iterSlider.valueProperty().intValue());
-                saver.setColors(convertFXColorToAWTColor(aliveCellColor.getValue()), 
-                        convertFXColorToAWTColor(deadCellColor.getValue()));
-                saver.setFile(file);
-                saver.saveToGif();
-                stage.close();
-            }
-        });
-
-        cancelButton.setOnAction(e -> {
-            stage.close();
-        });
-        
-        Scene scene = new Scene(root, 550, 400);
-
-        stage.setScene(scene);
-        stage.initModality(Modality.APPLICATION_MODAL);
-        stage.setResizable(false);
-        stage.showAndWait();
+            saver.setIterations(3);
+            saver.setAnimationTimer(animationSlider.valueProperty().intValue());
+            saver.setWidth((int) spinnerWidth.getValue());
+            saver.setHeight((int) spinnerHeight.getValue());
+            saver.setIterations(iterSlider.valueProperty().intValue());
+            saver.setColors(convertFXColorToAWTColor(aliveCellColor.getValue()), 
+                    convertFXColorToAWTColor(deadCellColor.getValue()));
+            saver.setFile(file);
+            saver.saveToGif();
+        }
     }
     
     private java.awt.Color convertFXColorToAWTColor(javafx.scene.paint.Color c) {
@@ -401,8 +363,6 @@ public class DialogBoxes {
             stats.initializeStatistics(game);
 
             Scene scene = new Scene(root);
-//            scene.getStylesheets().add(getClass().getResource(
-//                    "patternEditor.css").toExternalForm());
             
             editor.setScene(scene);
             editor.setTitle("Game Of Life Statistics");
