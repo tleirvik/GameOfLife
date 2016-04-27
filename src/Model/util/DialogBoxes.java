@@ -185,7 +185,7 @@ public class DialogBoxes {
         
         try {
             FXMLLoader loader;
-            loader = new FXMLLoader(getClass().getResource("../View/PatternEditor.fxml"));
+            loader = new FXMLLoader(getClass().getResource("/View/PatternEditor.fxml"));
             
             BorderPane root = loader.load();
             editor.setResizable(false);
@@ -196,7 +196,7 @@ public class DialogBoxes {
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
-                    "patternEditor.css").toExternalForm());
+                    "/View/patternEditor.css").toExternalForm());
             
             editor.setScene(scene);
             editor.setTitle("Pattern Editor");

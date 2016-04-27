@@ -9,7 +9,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("../View/MainWindow.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MainWindow.fxml"));
             Parent root = (Parent)loader.load();
             ViewController controller = (ViewController)loader.getController();
             controller.setMainStageDialogBoxes(stage);
