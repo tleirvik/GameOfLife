@@ -34,6 +34,7 @@ public class nextGenerationWorkers {
         for (int i = 0; i < numWorkers; i++) {
             final int start = segments[i][0];
             final int stop = segments[i][1];
+            System.out.println("start:" + start + " stop:" + stop);
             neighbourWorkers.add(new Thread(() -> {
                 board.countNeighboursConcurrent(start,stop);
             }));
@@ -62,12 +63,20 @@ public class nextGenerationWorkers {
     }
 
     private void splitBoard() {
-        int rowLength = board.getRows(); // -1 for å lage en splitt mellom segmentene
+        int rowLength = board.getRows() +1;
         int chunkSize = rowLength / numWorkers;
         int rowsLeft = rowLength % numWorkers;
-        for (int i = 0; i < segments.length; i++) {
-            segments[i][0] = chunkSize * i;
+
+        segments[0][0] = 0;
+        segments[0][1] = chunkSize;
+
+        for (int i = 1; i < segments.length; i++) {
+            segments[i][0] = segments[i - 1][1];
             segments[i][1] = segments[i][0] + chunkSize;
+            if (rowsLeft > 0) {
+                segments[i][1]++;
+                rowsLeft--;
+            }
         }
     }
 }
