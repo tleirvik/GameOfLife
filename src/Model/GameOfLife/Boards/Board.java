@@ -21,7 +21,10 @@ public abstract class Board {
     public abstract void resetBoard();
     public abstract void setFirstGeneration();
         
+    @Override
     public abstract Board clone();
+    
+    @Override
     public abstract String toString();
     
     public enum BoardType {
@@ -29,5 +32,6 @@ public abstract class Board {
         DYNAMIC,
         TORODIAL
     }
+    
     public void beforeUpdate(){}
 }

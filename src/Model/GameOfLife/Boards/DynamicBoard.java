@@ -31,8 +31,8 @@ public class DynamicBoard extends Board {
             currentGeneration.add(new ArrayList<>());
             firstGeneration.add(new ArrayList<>());
             for (int col = 0; col < columns; col++) {
-                currentGeneration.get(row).add((byte)0);
-                firstGeneration.get(row).add((byte)0);
+                currentGeneration.get(row).add((byte) 0);
+                firstGeneration.get(row).add((byte) 0);
             }
         }
     }
@@ -43,10 +43,11 @@ public class DynamicBoard extends Board {
         this.metadata = metadata;
         currentGeneration = new ArrayList<>();
         firstGeneration = new ArrayList<>();
-        for(int row = 0; row < board.length; row++) {
+        
+        for (int row = 0; row < board.length; row++) {
             currentGeneration.add(new ArrayList<>());
             firstGeneration.add(new ArrayList<>());
-            for(int col = 0; col < board[0].length; col++) {
+            for (int col = 0; col < board[0].length; col++) {
                 currentGeneration.get(row).add(board[row][col]);
                 firstGeneration.get(row).add(board[row][col]);
             }
@@ -57,14 +58,17 @@ public class DynamicBoard extends Board {
     // Getters
     //=========================================================================
     
+    @Override
     public int getRows() {
         return currentGeneration.size();
     }
 
+    @Override
     public int getColumns() {
         return currentGeneration.get(0).size();
     }
     
+    @Override
     public MetaData getMetaData() {
         return metadata;
     }
@@ -77,6 +81,7 @@ public class DynamicBoard extends Board {
      * @return Returns the <code>byte</code> value of a cell on the
      * given position
      */
+    @Override
     public byte getCellAliveState(int row, int column) {
         //if (isDynamic) {
             return currentGeneration.get(row).get(column);
@@ -98,10 +103,12 @@ public class DynamicBoard extends Board {
      * @param row
      * @param column
      * given position
+     * @param aliveState
      */
+    @Override
     public void setCellAliveState(int row, int column, byte aliveState) {
 
-        if(aliveState == 0 || aliveState == 1) {
+        if (aliveState == 0 || aliveState == 1) {
             //if (isDynamic) {
                 currentGeneration.get(row).set(column, aliveState);
             //} else {
@@ -119,6 +126,7 @@ public class DynamicBoard extends Board {
 
     public  int countAliveCells() {
         int aliveCells = 0;
+        
         for (int i = 0; i < currentGeneration.size(); i++) {
             for (int j = 0; j < currentGeneration.get(0).size(); j++) {
                 if (currentGeneration.get(i).get(j) == 1) {
@@ -132,9 +140,10 @@ public class DynamicBoard extends Board {
     @Override
     public void resetBoard() {
         currentGeneration.clear();
-        for(int row = 0; row < firstGeneration.size(); row++) {
+        
+        for (int row = 0; row < firstGeneration.size(); row++) {
             currentGeneration.add(new ArrayList<>());
-            for(int col = 0; col < firstGeneration.get(0).size(); col++) {
+            for (int col = 0; col < firstGeneration.get(0).size(); col++) {
                 currentGeneration.get(row).add(col, firstGeneration.get(row).get(col));
             }
         }
@@ -160,7 +169,7 @@ public class DynamicBoard extends Board {
         if (add != 0) {
             currentGeneration.add(0, new ArrayList<>());
             for (int col = 0; col < columns; col++) {
-                currentGeneration.get(0).add((byte)0);
+                currentGeneration.get(0).add((byte) 0);
             }
         } else if (remove == 0 && currentGeneration.size() > MIN_ROW) {
             currentGeneration.remove(0);
@@ -207,13 +216,13 @@ public class DynamicBoard extends Board {
 
         if (add != 0) {
 
-            for (List<Byte> e : currentGeneration) {
+            currentGeneration.stream().forEach((e) -> {
                 e.add(0, (byte) 0);
-            }
+            });
         } else if(remove == 0 && currentGeneration.get(0).size() > MIN_COL){
-            for (List<Byte> e : currentGeneration) {
+            currentGeneration.stream().forEach((e) -> {
                 e.remove(0);
-            }
+            });
         }
     }
 
@@ -238,13 +247,13 @@ public class DynamicBoard extends Board {
         final int add = sum1 + sum2;
 
         if (add != 0) {
-            for (List<Byte> e : currentGeneration) {
+            currentGeneration.stream().forEach((e) -> {
                 e.add((byte) 0);
-            }
+            });
         } else if (remove == 0 && currentGeneration.get(0).size() > MIN_COL){
-            for (List<Byte> e : currentGeneration) {
+            currentGeneration.stream().forEach((e) -> {
                 e.remove(columns - 1);
-            }
+            });
         }
     }
 
@@ -256,17 +265,17 @@ public class DynamicBoard extends Board {
     public void countNeighbours() {
         byte[][] neighbourArray = new byte[currentGeneration.size()][currentGeneration.get(0).size()];
         
-        for(int row = 0; row < currentGeneration.size() -1; row++) {
-            for(int col = 0; col < currentGeneration.get(0).size() -1; col++) {
-                if(currentGeneration.get(row).get(col) == 1) {
-                    neighbourArray[row-1][col-1]++;
-                    neighbourArray[row-1][col]++;
-                    neighbourArray[row-1][col+1]++; 
-                    neighbourArray[row][col-1]++;
-                    neighbourArray[row][col+1]++;
-                    neighbourArray[row+1][col-1]++;
-                    neighbourArray[row+1][col]++;
-                    neighbourArray[row+1][col+1]++;
+        for (int row = 0; row < currentGeneration.size() - 1; row++) {
+            for (int col = 0; col < currentGeneration.get(0).size() - 1; col++) {
+                if (currentGeneration.get(row).get(col) == 1) {
+                    neighbourArray[row - 1][col - 1]++;
+                    neighbourArray[row - 1][col]++;
+                    neighbourArray[row - 1][col+1]++; 
+                    neighbourArray[row][col - 1]++;
+                    neighbourArray[row][col + 1]++;
+                    neighbourArray[row + 1][col - 1]++;
+                    neighbourArray[row + 1][col]++;
+                    neighbourArray[row + 1][col + 1]++;
                 }
             }
         }
@@ -281,9 +290,11 @@ public class DynamicBoard extends Board {
 
         neighbourArray = new byte[currentGeneration.size()][currentGeneration.get(0).size()];
         
-        for(int row = 0; row < currentGeneration.size() -1; row++) {
-            for(int col = 0; col < currentGeneration.get(0).size() -1; col++) {
-                currentGeneration.get(row).set(col,((neighbourArray[row][col]== 3) || (currentGeneration.get(row).get(col) == 1 && neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0);
+        for (int row = 0; row < currentGeneration.size() - 1; row++) {
+            for (int col = 0; col < currentGeneration.get(0).size() - 1; col++) {
+                currentGeneration.get(row).set(col,((neighbourArray[row][col] == 3) ||
+                        (currentGeneration.get(row).get(col) == 1 && 
+                                neighbourArray[row][col] == 2 )) ? (byte) 1 : (byte) 0);
             }
         }
     }
@@ -324,12 +335,16 @@ public class DynamicBoard extends Board {
     }
 
     public String getBoundingBoxPattern() {
-        if(currentGeneration.size() == 0) return "";
+        if (currentGeneration.isEmpty()) {
+            return "";
+        }
+        
         int[] boundingBox = getBoundingBox();
         String str = "";
-        for(int i = boundingBox[0]; i <= boundingBox[1]; i++) {
-            for(int j = boundingBox[2]; j <= boundingBox[3]; j++) {
-                if(currentGeneration.get(i).get(j) == 1) {
+        
+        for (int i = boundingBox[0]; i <= boundingBox[1]; i++) {
+            for (int j = boundingBox[2]; j <= boundingBox[3]; j++) {
+                if (currentGeneration.get(i).get(j) == 1) {
                     str = str + "1";
                 } else {
                     str = str + "0";
@@ -345,25 +360,29 @@ public class DynamicBoard extends Board {
         boundingBox[1] = 0;
         boundingBox[2] = currentGeneration.get(0).size();
         boundingBox[3] = 0;
-        for(int i = 0; i < currentGeneration.size(); i++) {
-            for(int j = 0; j < currentGeneration.get(i).size(); j++) {
-                if((currentGeneration.get(i).get(j) == 1)) continue;
-                if(i < boundingBox[0]) {
+        
+        for (int i = 0; i < currentGeneration.size(); i++) {
+            for (int j = 0; j < currentGeneration.get(i).size(); j++) {
+                if ((currentGeneration.get(i).get(j) == 1)) {
+                    continue;
+                }
+                if (i < boundingBox[0]) {
                     boundingBox[0] = i;
                 }
-                if(i > boundingBox[1]) {
+                if (i > boundingBox[1]) {
                     boundingBox[1] = i;
                 }
-                if(j < boundingBox[2]) {
+                if (j < boundingBox[2]) {
                     boundingBox[2] = j;
                 }
-                if(j > boundingBox[3]) {
+                if (j > boundingBox[3]) {
                     boundingBox[3] = j;
                 }
             }
         }
         return boundingBox;
     }
+    
     /**
      *  Method that returns the game board as a String. Used for Unit Testing with JUnit 4
      *
