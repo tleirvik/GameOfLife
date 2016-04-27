@@ -47,8 +47,8 @@ public class FixedBoard extends Board{
     	currentGeneration = new byte[board.length][board[0].length];
         firstGeneration = new byte[board.length][board[0].length];
 
-    	for(int row = 0; row < board.length; row++) {
-            for(int col = 0; col < board[0].length; col++) {
+    	for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[0].length; col++) {
                 currentGeneration[row][col] = board[row][col];
                 firstGeneration[row][col] = board[row][col];
             }
@@ -63,6 +63,7 @@ public class FixedBoard extends Board{
      * 
      * @return The number of rows
      */
+    @Override
     public int getRows() {
         return currentGeneration.length;
     }
@@ -71,6 +72,7 @@ public class FixedBoard extends Board{
      *
      * @return The number of columns
      */
+    @Override
     public int getColumns() {
         return currentGeneration[0].length;
     }
@@ -82,6 +84,7 @@ public class FixedBoard extends Board{
      * @return MetaData Meta data from the board contained in
      * the class
      */
+    @Override
     public MetaData getMetaData() {
         return metadata;
     }
@@ -94,6 +97,7 @@ public class FixedBoard extends Board{
      * @return Returns the <code>byte</code> value of a cell on the
      * given position
      */
+    @Override
     public byte getCellAliveState(int row, int column) {
         return currentGeneration[row][column];
     }
@@ -114,7 +118,7 @@ public class FixedBoard extends Board{
      */
     @Override
     public void setCellAliveState(int row, int column, byte aliveState) {
-        if(aliveState == 0 || aliveState == 1) {
+        if (aliveState == 0 || aliveState == 1) {
             currentGeneration[row][column] = aliveState;
         } else {
             throw new RuntimeException("Invalid number in cell state: " + aliveState);
@@ -138,9 +142,10 @@ public class FixedBoard extends Board{
     // Generation-methods
     //=========================================================================
 
+    @Override
     public void resetBoard() {
-        for(int row = 0; row < currentGeneration.length; row++) {
-            for(int col = 0; col < currentGeneration[0].length; col++) {
+        for (int row = 0; row < currentGeneration.length; row++) {
+            for (int col = 0; col < currentGeneration[0].length; col++) {
                 currentGeneration[row][col] = firstGeneration[row][col];
             }
         }
@@ -157,6 +162,7 @@ public class FixedBoard extends Board{
                 .map(el -> el.clone())
                 .toArray($ -> currentGeneration.clone());
         MetaData metaDataClone = metadata.clone();
+        
         return new FixedBoard(boardClone, metaDataClone);
     }
     
@@ -168,9 +174,9 @@ public class FixedBoard extends Board{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < currentGeneration.length; i++) {
+        for (byte[] currentGeneration1 : currentGeneration) {
             for (int j = 0; j < currentGeneration[0].length; j++) {
-                sb.append(currentGeneration[i][j]);
+                sb.append(currentGeneration1[j]);
             }
         }
         return sb.toString();
