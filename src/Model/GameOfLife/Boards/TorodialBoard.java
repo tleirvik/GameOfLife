@@ -51,8 +51,8 @@ public class TorodialBoard extends Board{
         neighbourArray = new byte[board.length][board[0].length];
 
 
-        for(int row = 0; row < board.length; row++) {
-            for(int col = 0; col < board[0].length; col++) {
+        for (int row = 0; row < board.length; row++) {
+            for (int col = 0; col < board[0].length; col++) {
                 currentGeneration[row][col] = board[row][col];
                 firstGeneration[row][col] = board[row][col];
             }
@@ -67,6 +67,7 @@ public class TorodialBoard extends Board{
      * 
      * @return The number of rows
      */
+    @Override
     public int getRows() {
         return currentGeneration.length;
     }
@@ -75,6 +76,7 @@ public class TorodialBoard extends Board{
      *
      * @return The number of columns
      */
+    @Override
     public int getColumns() {
         return currentGeneration[0].length;
     }
@@ -86,6 +88,7 @@ public class TorodialBoard extends Board{
      * @return MetaData Meta data from the board contained in
      * the class
      */
+    @Override
     public MetaData getMetaData() {
         return metadata;
     }
@@ -98,6 +101,7 @@ public class TorodialBoard extends Board{
      * @return Returns the <code>byte</code> value of a cell on the
      * given position
      */
+    @Override
     public byte getCellAliveState(int row, int column) {
         return currentGeneration[row][column];
     }
@@ -118,7 +122,7 @@ public class TorodialBoard extends Board{
      */
     @Override
     public void setCellAliveState(int row, int column, byte aliveState) {
-        if(aliveState == 0 || aliveState == 1) {
+        if (aliveState == 0 || aliveState == 1) {
             currentGeneration[row][column] = aliveState;
         } else {
             throw new RuntimeException("Invalid number in cell state: " + aliveState);
@@ -132,9 +136,8 @@ public class TorodialBoard extends Board{
     @Override
     public void setFirstGeneration() {
         for (int row = 0; row < currentGeneration.length; row++) {
-            for (int col = 0; col < currentGeneration[0].length; col++) {
-                firstGeneration[row][col] = currentGeneration[row][col];
-            }
+            System.arraycopy(currentGeneration[row], 0, 
+                    firstGeneration[row], 0, currentGeneration[0].length);
         }
     }
 
@@ -142,50 +145,54 @@ public class TorodialBoard extends Board{
     // Generation-methods
     //=========================================================================
 
-    public  int countAliveCells() {
+    public int countAliveCells() {
         int aliveCells = 0;
-        for (int i = 0; i < currentGeneration.length; i++) {
+        for (byte[] currentGeneration1 : currentGeneration) {
             for (int j = 0; j < currentGeneration[0].length; j++) {
-                if (currentGeneration[i][j] == 1) {
+                if (currentGeneration1[j] == 1) {
                     aliveCells++;
                 }
             }
         }
         return aliveCells;
-
     }
 
+    @Override
     public void resetBoard() {
         for(int row = 0; row < currentGeneration.length; row++) {
-            for(int col = 0; col < currentGeneration[0].length; col++) {
-                currentGeneration[row][col] = firstGeneration[row][col];
-            }
+            System.arraycopy(firstGeneration[row], 0, 
+                    currentGeneration[row], 0, currentGeneration[0].length);
         }
     }
     
     public void countNeighbours() {
-        byte[][] neighbourArray = new byte[currentGeneration.length][currentGeneration[0].length];
+        byte[][] neighbourArray = 
+                new byte[currentGeneration.length][currentGeneration[0].length];
+        
         final int rowLength = currentGeneration.length - 1;
         final int colLength = currentGeneration[0].length - 1;
-        for(int row = 0; row < currentGeneration.length; row++) {
-            for(int col = 0; col < currentGeneration[0].length; col++) {
-                if(currentGeneration[row][col] == 1) {
+        
+        for (int row = 0; row < currentGeneration.length; row++) {
+            for (int col = 0; col < currentGeneration[0].length; col++) {
+                if (currentGeneration[row][col] == 1) {
                     int MINUS_ROW = row-1;
                     int PLUS_ROW = row+1;
                     int MINUS_COL = col-1;
                     int PLUS_COL = col+1;
-                    if(row == 0) {
+                    
+                    if (row == 0) {
                         MINUS_ROW = rowLength;
                     }
-                    if(row == rowLength) {
+                    if (row == rowLength) {
                         PLUS_ROW = 0;
                     }
-                    if(col == 0) {
+                    if (col == 0) {
                         MINUS_COL = colLength;
                     }
-                    if(col == colLength) {
+                    if (col == colLength) {
                         PLUS_COL = 0;
                     }
+                    
                     neighbourArray[MINUS_ROW][MINUS_COL]++;
                     neighbourArray[MINUS_ROW][col]++;
                     neighbourArray[MINUS_ROW][PLUS_COL]++; 
@@ -201,9 +208,11 @@ public class TorodialBoard extends Board{
 
     public void nextGeneration() {
         countNeighbours();
-        for(int row = 0; row < currentGeneration.length; row++) {
-            for(int col = 0; col < currentGeneration[0].length; col++) {
-                currentGeneration[row][col] = ((neighbourArray[row][col]== 3) || (currentGeneration[row][col] == 1 && neighbourArray[row][col] == 2 )) ? (byte)1 : (byte)0;
+        for (int row = 0; row < currentGeneration.length; row++) {
+            for (int col = 0; col < currentGeneration[0].length; col++) {
+                currentGeneration[row][col] = ((neighbourArray[row][col] == 3) ||
+                        (currentGeneration[row][col] == 1 && 
+                        neighbourArray[row][col] == 2 )) ? (byte) 1 : (byte) 0;
             }
         }
     }
@@ -239,9 +248,9 @@ public class TorodialBoard extends Board{
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < currentGeneration.length; i++) {
+        for (byte[] currentGeneration1 : currentGeneration) {
             for (int j = 0; j < currentGeneration[0].length; j++) {
-                sb.append(currentGeneration[i][j]);
+                sb.append(currentGeneration1[j]);
             }
         }
         return sb.toString();
