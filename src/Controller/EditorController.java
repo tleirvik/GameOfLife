@@ -5,7 +5,7 @@
  */
 package Controller;
 
-import Model.FileManagement.GIFSaver;
+import Model.FileManagement.OtherFormats.GIFSaver;
 import Model.GameOfLife.GameOfLife;
 import Model.GameOfLife.MetaData;
 import javafx.fxml.FXML;

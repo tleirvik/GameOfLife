@@ -1,7 +1,7 @@
 package Model.util;
 
 import Controller.StatisticsController;
-import Model.FileManagement.GIFSaver;
+import Model.FileManagement.OtherFormats.GIFSaver;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Controller.EditorController;
 import Model.GameOfLife.GameOfLife;
