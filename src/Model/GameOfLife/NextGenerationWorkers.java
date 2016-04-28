@@ -14,7 +14,7 @@ import java.util.concurrent.CyclicBarrier;
  *
  * @author stianreistadrogeberg
  */
-public class nextGenerationWorkers {
+public class NextGenerationWorkers {
     private final Board board;
     private final Algorithm algorithm;
     private final ArrayList<Thread> workers;
@@ -22,7 +22,7 @@ public class nextGenerationWorkers {
     private int[][] segments;
     private CyclicBarrier barrier;
 
-    public nextGenerationWorkers(int numWorkers, Board board, Algorithm algorithm) {
+    public NextGenerationWorkers(int numWorkers, Board board, Algorithm algorithm) {
         this.numWorkers = numWorkers;
         this.algorithm = algorithm;
         barrier = new CyclicBarrier(numWorkers);

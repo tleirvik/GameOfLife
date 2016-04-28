@@ -13,7 +13,7 @@ public class GameOfLife {
     private Board board;
     private Algorithm algorithm;
     private final int NUM_THREADS = Runtime.getRuntime().availableProcessors();
-    private nextGenerationWorkers nextGenerationWorkers;
+    private NextGenerationWorkers nextGenerationWorkers;
 
     private void newGame(int rows, int columns, BoardType type) {
         switch(type) {
@@ -30,7 +30,7 @@ public class GameOfLife {
                 break;
         }
         algorithm = new Default(this.board);
-        nextGenerationWorkers = new nextGenerationWorkers(NUM_THREADS, board, algorithm);
+        nextGenerationWorkers = new NextGenerationWorkers(NUM_THREADS, board, algorithm);
 
     }
     

@@ -83,11 +83,7 @@ public class DialogBoxes {
 
         Optional<ButtonType> result = metadatabox.showAndWait();
         
-        if(result.get() == ButtonType.OK) {
-            return true;
-        } else {
-            return false;
-        }
+        return result.get() == ButtonType.OK;
     }
 
     public void metaDataDialogBox(MetaData metadata) {        
@@ -123,7 +119,7 @@ public class DialogBoxes {
     		metadata.setRuleString(SBrules);
     	});
         
-        if(customConfirmationDialog(gp, "Edit Metadata")) {
+        if (customConfirmationDialog(gp, "Edit Metadata")) {
             metadata.setAuthor(authorTextField.getText());
             metadata.setName(nameTextField.getText());
             metadata.setComment(commentTextArea.getText());
@@ -152,7 +148,7 @@ public class DialogBoxes {
         gp.add(random, 1, 3);
         
         rows.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.matches("[0-9]*")) {
+            if (!newValue.matches("[0-9]*")) {
                 rows.setText(oldValue);
             }
         });
@@ -163,14 +159,14 @@ public class DialogBoxes {
             }
         });
                     
-        if(customConfirmationDialog(gp, "New Game") &&
-           rows.getText() != "" && columns.getText() != "") {
+        if (customConfirmationDialog(gp, "New Game") &&
+           rows.getText() != "" && !"".equals(columns.getText())) {
             int numRows = Integer.parseInt(rows.getText());
             int numColumns = Integer.parseInt(columns.getText());
             BoardType type = boardType.getValue();
             boolean randomPattern = random.isSelected();
             
-            if(randomPattern) {
+            if (randomPattern) {
                 gol.newRandomGame(numRows, numColumns, type);
             } else {
                 gol.newEmptyGame(numRows, numColumns, type);
@@ -220,7 +216,7 @@ public class DialogBoxes {
         spinnerWidth.setEditable(true);
         TextField widthField = spinnerWidth.getEditor();
         widthField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.matches("[0-9]*")) {
+            if (!newValue.matches("[0-9]*")) {
                 widthField.setText(oldValue);
             }
         });
@@ -230,7 +226,7 @@ public class DialogBoxes {
         spinnerHeight.setEditable(true);
         TextField heightField = spinnerHeight.getEditor();
         heightField.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.matches("[0-9]*")) {
+            if (!newValue.matches("[0-9]*")) {
                 heightField.setText(oldValue);
             }
         });
@@ -325,7 +321,7 @@ public class DialogBoxes {
         
         fileChooser.getExtensionFilters().addAll(extFilter);
         
-        if(load) {
+        if (load) {
             fileChooser.setTitle("Open Resource File");
             return fileChooser.showOpenDialog(mainStage);
         } else {
