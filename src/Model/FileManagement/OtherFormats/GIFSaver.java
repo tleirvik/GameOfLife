@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Model.FileManagement;
+package Model.FileManagement.OtherFormats;
 
 import Model.GameOfLife.GameOfLife;
 import lieng.GIFWriter;
