@@ -14,12 +14,14 @@ public class Life105Decoder extends Decoder {
         super(reader);
     }
 
+    @Override
     public void decode() throws PatternFormatException, IOException {
         parseMetadata(reader);
         parseBoard(reader);
     }
 
-    private void parseMetadata(BufferedReader reader) throws PatternFormatException, IOException {
+    private void parseMetadata(BufferedReader reader) 
+            throws PatternFormatException, IOException {
         metadata = new MetaData();
         
         StringBuilder comment = new StringBuilder();
@@ -56,21 +58,32 @@ public class Life105Decoder extends Decoder {
         int colSize = 0;
         
         do {
-            if(line.equals("")) {
+            if (line.equals("")) {
                 continue; //IGNORER TOMME LINJER TOTALT
             }
             tempBoard.add(new ArrayList<>()); //legg til en rad
-            for(int i = 0; i < line.length(); i++) {
-                if(line.charAt(i) == '*') {
-                    tempBoard.get(row).add((byte) 1);
-                } else if(line.charAt(i) == '.') {
-                    tempBoard.get(row).add((byte) 0);
-                } else {
-                    throw new PatternFormatException("Line '" + line + "' on position '" + i + "' did not match character '*' or '.'!");
+            for (int i = 0; i < line.length(); i++) {
+//                 if (line.charAt(i) == '*') {
+//                    tempBoard.get(row).add((byte) 1);
+//                } else if(line.charAt(i) == '.') {
+//                    tempBoard.get(row).add((byte) 0);
+//                } else {
+//                    throw new PatternFormatException("Line '" + line + "' on position '" + i + "' did not match character '*' or '.'!");
+//                }
+                switch (line.charAt(i)) {
+                    case '*':
+                        tempBoard.get(row).add((byte) 1);
+                        break;
+                    case '.':
+                        tempBoard.get(row).add((byte) 0);
+                        break;
+                    default:
+                        throw new PatternFormatException("Line '" + line +
+                                "' on position '" + i + "' did not match character '*' or '.'!");
                 }
             }
             //Finner den største kolonnerekken og setter det til en variabel som kan brukes under
-            if(tempBoard.get(row).size() > colSize) {
+            if (tempBoard.get(row).size() > colSize) {
                 colSize = tempBoard.get(row).size();
             }
             row++;

@@ -48,7 +48,9 @@ public class RLEDecoder extends Decoder {
      * Exception
      * @throws PatternFormatException Throws an exception if the method is unable to
      *                                parse the RLE file
+     * @throws java.io.IOException
      */
+    @Override
     public void decode() throws PatternFormatException, IOException {
         parseMetadata(reader);
         parseBoard(reader);

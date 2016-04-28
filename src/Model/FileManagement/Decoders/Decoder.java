@@ -30,7 +30,7 @@ public abstract class Decoder {
      * @return board Returns the boolean[][] board contained in this class
      */
     public byte[][] getBoard() {
-            return board;
+        return board;
     }
     
     /**

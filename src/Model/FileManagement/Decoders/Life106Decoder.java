@@ -16,6 +16,7 @@ public class Life106Decoder extends Decoder {
         super(reader);
     }
 
+    @Override
     public void decode() throws PatternFormatException, IOException {
         System.out.println("DET SKJER!!!!!");
         parseMetadata();
@@ -53,22 +54,22 @@ public class Life106Decoder extends Decoder {
             aliveCellPositions.get(row).add(y);
             
             //Finn den laveste Y-posisjonen
-            if(y < lowestYNumber) {
+            if (y < lowestYNumber) {
                 lowestYNumber = y;
             }
             
             //Finn den laveste X-posisjonen
-            if(x < lowestXNumber) {
+            if (x < lowestXNumber) {
                 lowestXNumber = x;
             }
             
             //Finn den høyeste X-posisjonen
-            if(x > highestXNumber) {
+            if (x > highestXNumber) {
                 highestXNumber = x;
             }
             
             //Finn den høyeste Y-posisjonen
-            if(y > highestYNumber) {
+            if (y > highestYNumber) {
                 highestYNumber = y;
             }
             
@@ -77,7 +78,7 @@ public class Life106Decoder extends Decoder {
                 
         //Finn nummeret å legge til om den laveste posisjonen er negativ
         //(Slik at den laveste blir 0 igjen)
-        if(lowestXNumber < 0 || lowestYNumber < 0) {
+        if (lowestXNumber < 0 || lowestYNumber < 0) {
             int numberToIncreaseXBy = lowestXNumber * -1;
             int numberToIncreaseYBy = lowestYNumber * -1;
         
