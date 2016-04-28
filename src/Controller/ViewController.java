@@ -2,7 +2,7 @@ package Controller;
 
 import Model.FileManagement.FileLoader;
 import Model.FileManagement.Decoders.RLEDecoder;
-import Model.FileManagement.RLEEncoder;
+import Model.FileManagement.Encoders.RLEEncoder;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
 import Wav.WavFile;

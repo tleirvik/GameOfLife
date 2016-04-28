@@ -1,4 +1,4 @@
-package Model.FileManagement;
+package Model.FileManagement.Encoders;
 
 import Model.GameOfLife.GameOfLife;
 import Model.GameOfLife.MetaData;
@@ -21,18 +21,20 @@ import java.nio.file.Path;
 public class RLEEncoder {
     private final MetaData metadata;
     private final Path filePath;
-    private final StringBuffer rleString;
+    private final StringBuilder rleString;
     private final GameOfLife game;
 
     /**
      * Constructor that creates an RLEDecoder object.
      *
+     * @param game
+     * @param file
      */
-    public RLEEncoder(GameOfLife game, File f) {
+    public RLEEncoder(GameOfLife game, File file) {
         metadata = game.getMetaData();
         this.game = game;
-        filePath = f.toPath();
-        rleString = new StringBuffer();
+        filePath = file.toPath();
+        rleString = new StringBuilder();
     }
 
     /**
@@ -42,19 +44,19 @@ public class RLEEncoder {
      * @return true if the writing to file is successful
      */
     public boolean encode() {
-            Charset charset = Charset.forName("UTF-8");
+        Charset charset = Charset.forName("UTF-8");
 
-            try (BufferedWriter bw = Files.newBufferedWriter(filePath, charset)) {
-                    encodeMetaData();
-                    encodeBoardSize();
-                    encodeRuleString();
-                    writeMetadata(bw);
-                    encodeBoard();
-                    writeBoard(bw);
-            } catch (IOException ioE) {
+        try (BufferedWriter bw = Files.newBufferedWriter(filePath, charset)) {
+            encodeMetaData();
+            encodeBoardSize();
+            encodeRuleString();
+            writeMetadata(bw);
+            encodeBoard();
+            writeBoard(bw);
+        } catch (IOException ioE) {
             DialogBoxes.infoBox("Error!", "An unknown error occurred!", "The following error occurred when trying to save the game: " + ioE.getMessage());
             return false;
-            }
+        }
             return true;
     }
 
@@ -107,14 +109,13 @@ public class RLEEncoder {
 
 
     private void encodeBoard() {
-        // Bør bytte til StringBuilder fordi den er raskere StringBuffer
         int count = 1;
         int previous = -1;
         
         int o = 0;
         int b = 0;
         
-        byte currentCell = 0;
+        byte currentCell;
 
         for (int row = 0; row < game.getRows(); row++) {
             for (int col = 0; col < game.getColumns(); col++) {
@@ -160,8 +161,9 @@ public class RLEEncoder {
         int offset = 0;
         final int offsetValue = 79;
         final String tempRleString = rleString.toString();
-        while(offset < tempRleString.length()) {
-            if(tempRleString.length() - offset < offsetValue) {
+        
+        while (offset < tempRleString.length()) {
+            if (tempRleString.length() - offset < offsetValue) {
                 bw.write(rleString.toString(), offset, tempRleString.length() - offset);
                 return;
             }
