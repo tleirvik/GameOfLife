@@ -14,7 +14,7 @@ import java.util.concurrent.CyclicBarrier;
  *
  * @author stianreistadrogeberg
  */
-public class NextGenerationWorkers {
+public final class NextGenerationWorkers {
     private final Board board;
     private final Algorithm algorithm;
     private final ArrayList<Thread> workers;
@@ -47,21 +47,21 @@ public class NextGenerationWorkers {
             final int clearStart = segments[i][2];
             final int clearStop = segments[i][3];
             System.out.println("start:" + start + " stop:" + stop);
-            workers.set(i, new Thread(new nextGenerationRunnable(start, stop, clearStart, clearStop, barrier, algorithm)));
+            workers.set(i, new Thread(new NextGenerationRunnable(start, stop, clearStart, clearStop, barrier, algorithm)));
         }
     }
 
     public void runWorkers() throws InterruptedException {
-        for(Thread t : workers) {
+        workers.stream().forEach((t) -> {
             t.start();
-        }
+        });
 
         for(Thread t : workers) {
             t.join();
         }
     }
 
-    private void splitBoard() {
+    public void splitBoard() {
         int boardRowLength = board.getRows();
         int boardChunkSize = boardRowLength / numWorkers;
         int boardRowsLeft = boardRowLength % numWorkers;
@@ -91,7 +91,7 @@ public class NextGenerationWorkers {
             segments[segments.length-1][3]+= clearRowsLeft;
         }
     }
-    private static class nextGenerationRunnable implements Runnable {
+    private static class NextGenerationRunnable implements Runnable {
         private CyclicBarrier barrier;
         private final int start;
         private final int stop;
@@ -100,7 +100,7 @@ public class NextGenerationWorkers {
         private final Algorithm algorithm;
 
 
-        public nextGenerationRunnable(int start, int stop, int clearStart, int clearStop, CyclicBarrier barrier, Algorithm algorithm) {
+        public NextGenerationRunnable(int start, int stop, int clearStart, int clearStop, CyclicBarrier barrier, Algorithm algorithm) {
             this.barrier = barrier;
             this.start = start;
             this.stop = stop;

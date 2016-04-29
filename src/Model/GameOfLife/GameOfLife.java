@@ -103,18 +103,19 @@ public class GameOfLife {
     }
     
     public void update() {
+        algorithm.beforeUpdate();
         algorithm.update();
     }
 
     public void updateWithThreads() {
+        algorithm.beforeUpdate();
+        nextGenerationWorkers.splitBoard();
         nextGenerationWorkers.createWorkers();
         try {
             nextGenerationWorkers.runWorkers();
         } catch (InterruptedException iE) {
             System.out.println("Føkk! " + iE.getStackTrace());
         }
-
-
     }
 
     @Override
