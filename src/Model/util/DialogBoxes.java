@@ -337,7 +337,7 @@ public class DialogBoxes {
         
         try {
             FXMLLoader loader;
-            loader = new FXMLLoader(getClass().getResource("../View/statistics.fxml"));
+            loader = new FXMLLoader(getClass().getResource("/View/statistics.fxml"));
             
             BorderPane root = loader.load();
             editor.setResizable(false);

@@ -3,6 +3,7 @@ package Controller;
 import Model.FileManagement.FileLoader;
 import Model.FileManagement.Decoders.RLEDecoder;
 import Model.FileManagement.Encoders.RLEEncoder;
+import Model.FileManagement.OtherFormats.WavSaver;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
 import Wav.WavFile;
@@ -26,10 +27,14 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import Model.util.DialogBoxes;
 import Model.util.Stopwatch;
+import Wav.WavFileException;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -125,10 +130,17 @@ public class ViewController {
     // GUI Event handlers
     //=========================================================================
 
-    /**
-     * This method instansiates a new GameController
-     * and calls a dialog box for input.
-     */
+    @FXML
+    public void openAbout() {
+        try {
+            new WavSaver(gol, 20, null, 0, 0, 0, 0);
+        } catch (IOException ex) {
+            Logger.getLogger(ViewController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (WavFileException ex) {
+            Logger.getLogger(ViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+    }
+    
     @FXML
     public void newGame() {
         timeline.stop();
