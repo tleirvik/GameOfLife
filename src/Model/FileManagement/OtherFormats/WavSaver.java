@@ -52,6 +52,7 @@ public class WavSaver {
         long framesPerIteration = numFrames / iterations;// 1764000 / 20 = 88200 frames per iterasjon
                                                  
         long frameCounter = 0;
+        long totalFramesWritten = 0;
 
         //I løpet av en iterasjon av DENNE for-loopen må man ha skrevet 88200 frames
         for(int i = 0; i < iterations; i++) {
@@ -77,6 +78,7 @@ public class WavSaver {
                 // write the buffer
                 wavFile.writeFrames(buffer, toWrite);
             }
+            totalFramesWritten += frameCounter;
             frameCounter = 0;
         }
         
