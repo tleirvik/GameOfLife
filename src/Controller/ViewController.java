@@ -569,51 +569,44 @@ public class ViewController {
                 double bClick_X = e.getX();
                 double bClick_Y = e.getY();
 
-                if(isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y)) {
-                    int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
-                    int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
-                    if ((row < gol.getRows()) && (row >= 0) && (column < gol.getColumns() ) && (column >= 0)) {
-                        System.out.println("row " + row + " col " + column);
-                        if(holdingPattern) {
-                            //drawObject(row, column, pattern)
-                            byte[][] testArray = new byte[][] {
-                                        {0, 1, 0},
-                                        {0, 0, 1},
-                                        {1, 1, 1}
-                            };
+                int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
+                int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
+                /*
+                if(holdingPattern) {
+                //drawObject(row, column, pattern)
+                byte[][] testArray = new byte[][] {
+                            {0, 1, 0},
+                            {0, 0, 1},
+                            {1, 1, 1}
+                };
 
-                            final int M = testArray.length;
-                            final int N = testArray[0].length;
-                            byte[][] ret = new byte[N][M];
-                            for(int r = 0; r < M; r++) {
-                                for (int c = 0; c < N; c++) {
-                                    ret[c][M-1-r] = testArray[r][c];
-                                }
-                            }
-
-                            int mid = (0 + ret.length - 1) / 2;
-
-                            for(int i = 0; i < ret.length; i++) {
-                                for(int j = 0; j < ret[i].length; j++) {
-                                    gol.setCellAliveState(row + i -mid, column + j -mid, ret[i][j]);
-                                }
-                            }
-                            holdingPattern = false;
-                        } else {
-                            drawCell = (gol.getCellAliveState(row, column) != 1);
-                            gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
-                        }
-                        draw();
+                final int M = testArray.length;
+                final int N = testArray[0].length;
+                byte[][] ret = new byte[N][M];
+                for(int r = 0; r < M; r++) {
+                    for (int c = 0; c < N; c++) {
+                        ret[c][M-1-r] = testArray[r][c];
                     }
                 }
 
+                int mid = (0 + ret.length - 1) / 2;
+
+                for(int i = 0; i < ret.length; i++) {
+                    for(int j = 0; j < ret[i].length; j++) {
+                        gol.setCellAliveState(row + i -mid, column + j -mid, ret[i][j]);
+                    }
+                }
+                holdingPattern = false;
+                */
+                drawCell = (gol.getCellAliveState(row, column) != 1);
+                gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
+                draw();
             } else {//FLYTTEFUNKSJON
-                fitToView.setSelected(false);
-                offsetBegin_X = e.getX() - getGridStartPosX();
-                offsetBegin_Y = e.getY() - getGridStartPosY();
+                    fitToView.setSelected(false);
+                    offsetBegin_X = e.getX() - getGridStartPosX();
+                    offsetBegin_Y = e.getY() - getGridStartPosY();
             } // end if
-        } // end handle
-        ); // end eventhandler
+        }); // end eventhandler
 
         gameCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent e) -> {
             if(drawMode) {

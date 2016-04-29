@@ -99,7 +99,12 @@ public class FixedBoard extends Board{
      */
     @Override
     public byte getCellAliveState(int row, int column) {
-        return currentGeneration[row][column];
+        if (row > getRows()-1 || row < 0 || column > getColumns()-1 || column < 0) {
+            System.out.println("outside array");
+            return 0;
+        } else {
+            return currentGeneration[row][column];
+        }
     }
 
     //=========================================================================
@@ -118,11 +123,17 @@ public class FixedBoard extends Board{
      */
     @Override
     public void setCellAliveState(int row, int column, byte aliveState) {
-        if (aliveState == 0 || aliveState == 1) {
-            currentGeneration[row][column] = aliveState;
+        if (row > getRows()-1 || row < 0 || column > getColumns()-1 || column < 0) {
+            System.out.println("outside array");
+            return;
         } else {
-            throw new RuntimeException("Invalid number in cell state: " + aliveState);
+            if (aliveState == 0 || aliveState == 1) {
+                currentGeneration[row][column] = aliveState;
+            } else {
+                throw new RuntimeException("Invalid number in cell state: " + aliveState);
+            }
         }
+
     }
 
     /**

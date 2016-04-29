@@ -50,19 +50,19 @@ public class StatisticsController {
             drawStats(stats);
         }
     }
-    
+
     public int[][] collectStatistics(int iterations) {
         int[][] stats = new int[4][iterations];
-        
+
         for (int i = 0; i < iterations; i++) {
             final Pair<Integer, Integer> livingCellsData = getLivingCellsData();
             stats[0][i] = livingCellsData.getKey();
             stats[3][i] = livingCellsData.getValue();
             //game.getBoard().nextGeneration();
         }
-        
+
         game.resetGame();
-        
+
         for (int i = 0; i < iterations; i++) {
             if ((i + 1) < iterations) {
                 stats[1][i] = stats[0][i + 1] + stats[0][i];
@@ -73,10 +73,10 @@ public class StatisticsController {
             int calculatePercent = (int) Math.floor(calculateSimilarity * 100);
             stats[2][i] = calculatePercent;
         }
-        
+
         return stats;
     }
-        
+
     private void drawStats(int[][] stats) {
         livingCells.getData().clear();
         diffLivingCells.getData().clear();
@@ -87,11 +87,11 @@ public class StatisticsController {
             similarity.getData().add(new XYChart.Data(i, stats[2][i]));
         }
     }
-    
+
     private Pair<Integer,Integer> getLivingCellsData() {
         int livingCells = 0;
         int livingCellPosition = 0;
-        
+
         for (int i = 0; i < game.getBoard().getRows(); i++) {
             for (int j = 0; j < game.getBoard().getColumns(); j++) {
                 if(game.getCellAliveState(i, j) == 1) {
@@ -102,5 +102,5 @@ public class StatisticsController {
         }
         return new Pair(livingCells, livingCellPosition);
     }
-            
+
 }
