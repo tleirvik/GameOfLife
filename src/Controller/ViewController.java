@@ -607,8 +607,7 @@ public class ViewController {
                         draw();
                     }
                 }
-            } else {
-                //FLYTTEFUNKSJON
+            } else { //FLYTTEFUNKSJON
                 offset_X = e.getX() - offsetBegin_X;
                 offset_Y = e.getY() - offsetBegin_Y;
                 draw();
