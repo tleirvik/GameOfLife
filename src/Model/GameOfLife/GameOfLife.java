@@ -106,6 +106,8 @@ public class GameOfLife {
         algorithm.beforeUpdate();
         algorithm.update();
     }
+    
+    
 
     public void updateWithThreads() {
         algorithm.beforeUpdate();
@@ -117,12 +119,19 @@ public class GameOfLife {
             System.out.println("Føkk! " + iE.getStackTrace());
         }
     }
+    
+    public void setAlgorithm(Algorithm a) {
+        algorithm = a;
+    }
 
     @Override
     public GameOfLife clone() {
         GameOfLife clone = new GameOfLife();
         Board boardClone = board.clone();
         clone.setBoard(boardClone);
+        
+        clone.setAlgorithm(new Default(boardClone));
+        
         return clone;
     }
 }

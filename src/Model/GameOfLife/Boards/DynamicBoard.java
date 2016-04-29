@@ -281,28 +281,6 @@ public class DynamicBoard extends Board {
         }
     }
 
-    public void countNeighboursConcurrent(int start, int stop) {
-
-    }
-
-    public void nextGeneration() {
-        checkEdges();
-
-        neighbourArray = new byte[currentGeneration.size()][currentGeneration.get(0).size()];
-        
-        for (int row = 0; row < currentGeneration.size() - 1; row++) {
-            for (int col = 0; col < currentGeneration.get(0).size() - 1; col++) {
-                currentGeneration.get(row).set(col,((neighbourArray[row][col] == 3) ||
-                        (currentGeneration.get(row).get(col) == 1 && 
-                                neighbourArray[row][col] == 2 )) ? (byte) 1 : (byte) 0);
-            }
-        }
-    }
-
-    public void nextGenerationConcurrent(int start, int stop) {
-
-    }
-
     @Override
     public void setFirstGeneration() {
         firstGeneration.clear();
