@@ -83,12 +83,53 @@ public class DynamicBoard extends Board {
      */
     @Override
     public byte getCellAliveState(int row, int column) {
-        //if (isDynamic) {
-            return currentGeneration.get(row).get(column);
-       // } else {
-      //      return currentGeneration.get(row - 1).get(column - 1)
-        // }
+        if (row > getRows() -1 || row < 0 || column > getColumns() -1 || column < 0) {
+            if(row < 0) {
+                System.out.println("Legg på topp");
+                currentGeneration.add(0, new ArrayList<>());
+                for (int col = 0; col < currentGeneration.get(0).size(); col++) {
+                    currentGeneration.get(0).add((byte) 0);
+                }
+            }
+            if (row > getRows() -1) {
+                System.out.println("Legg på bunn");
+                currentGeneration.add(new ArrayList<>());
+                for (int col = 0; col < currentGeneration.get(0).size(); col++) {
+                    currentGeneration.get(currentGeneration.size() - 1).add((byte)0);
+                }
+            }
+            if (column > getColumns() -1) {
+                System.out.println("Legg på venstre");
+                currentGeneration.stream().forEach((e) -> {
+                    e.add((byte) 0);
+                });
 
+            }
+            if (column < 0) {
+                System.out.println("Legg på høyre");
+                for(List<Byte> e : currentGeneration) {
+                    e.add(0, (byte) 0);
+                }
+                /*currentGeneration.stream().forEach((e) -> {
+                    e.add(0, (byte) 0);
+                });*/
+            }
+            //Er det negativ row, legg på 0 posisjon
+            //er det mer enn getrows, legg på siste ( .add(arraylist<>(); )
+            //VIKTIG AT RAD SJEKKES FØR COLUMN
+            //er det negativ column, legg til på 0 posisjon
+            //er det mer enn getcolumns, legg på siste ( .add((byte) 0); )
+
+            // Vi trenger å kalkulere hvor mange rows/cols som skal legges til
+
+            // Lag egne add/remove metoder i dynboard
+
+            System.out.println("outside array");
+
+            return 0;
+        } else {
+            return currentGeneration.get(row).get(column);
+        }
     }
     
     //=========================================================================
@@ -148,7 +189,7 @@ public class DynamicBoard extends Board {
             }
         }
     }
-    
+
     private void checkEdges() {
         checkTop();
         checkBottom();
@@ -156,19 +197,35 @@ public class DynamicBoard extends Board {
         checkLeft();
     }
 
+    private void addRow(int numberOfRows, int position) {
+        if (position == 0) {
+            for (int i = 0; i < numberOfRows; i++) {
+                System.out.println("Adding top");
+                currentGeneration.add(0, new ArrayList<>());
+                for (int col = 0; col < currentGeneration.get(0).size(); col++) {
+                    currentGeneration.get(0).add((byte) 0);
+                }
+            }
+        } else if (position == 1) {
+            System.out.println("Adding bottom");
+            for (int i = 0; i < numberOfRows; i++) {
+                currentGeneration.add(new ArrayList<>());
+                for (int col = 0; col < currentGeneration.get(0).size(); col++) {
+                    currentGeneration.get(currentGeneration.size() - 1).add((byte) 0);
+                }
+            }
+        }
+    }
     private void checkTop() {
-        final int columns = currentGeneration.get(0).size();
         final int sum1 = currentGeneration.get(0).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
         final int sum2 = currentGeneration.get(1).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
         final int sum3 = currentGeneration.get(2).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        //final int sum4 = currentGeneration.get(3).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-        //final int sum5 = currentGeneration.get(4).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
         final int remove = sum1 + sum2 + sum3;// + sum4 + sum5;
         final int add = sum1 + sum2;
 
         if (add != 0) {
             currentGeneration.add(0, new ArrayList<>());
-            for (int col = 0; col < columns; col++) {
+            for (int col = 0; col < currentGeneration.get(0).size(); col++) {
                 currentGeneration.get(0).add((byte) 0);
             }
         } else if (remove == 0 && currentGeneration.size() > MIN_ROW) {
@@ -178,18 +235,24 @@ public class DynamicBoard extends Board {
 
     private void checkBottom() {
             final int rows = currentGeneration.size();
-            final int columns = currentGeneration.get(0).size();
-            final int sum1 = currentGeneration.get(rows -1).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-            final int sum2 = currentGeneration.get(rows -2).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-            final int sum3 = currentGeneration.get(rows -3).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-            //final int sum4 = currentGeneration.get(rows -4).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
-            //final int sum5 = currentGeneration.get(rows -5).stream().mapToInt(w -> Integer.parseInt(w.toString())).sum();
+            final int sum1 = currentGeneration.get(rows -1)
+                    .stream()
+                    .mapToInt(w -> Integer.parseInt(w.toString()))
+                    .sum();
+            final int sum2 = currentGeneration.get(rows -2)
+                    .stream()
+                    .mapToInt(w -> Integer.parseInt(w.toString()))
+                    .sum();
+            final int sum3 = currentGeneration.get(rows -3)
+                    .stream()
+                    .mapToInt(w -> Integer.parseInt(w.toString()))
+                    .sum();
             final int remove = sum1 + sum2 + sum3;// + sum4 + sum5;
             final int add = sum1 + sum2;
 
             if (add != 0) {
                 currentGeneration.add(new ArrayList<>());
-                for (int col = 0; col < columns; col++) {
+                for (int col = 0; col < currentGeneration.get(0).size(); col++) {
                     currentGeneration.get(currentGeneration.size() - 1).add((byte)0);
                 }
             } else if(remove == 0 && currentGeneration.size() > MIN_ROW) {
