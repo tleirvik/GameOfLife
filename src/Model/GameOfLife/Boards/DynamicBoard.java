@@ -100,24 +100,28 @@ public class DynamicBoard extends Board {
     public boolean checkArrayBoundaries(int row, int column) {
         if (row > getRows() - 1 || row < 0 || column > getColumns() - 1 || column < 0) {
             if (row < 0) {
-                //System.out.println("Adding top rows: " + Math.abs(row));
+                if (row < 0 && column > 0 && column <= getColumns()) {
+                    addTopRow(Math.abs(row));
+                }
+                if (row < 0 && column > getColumns()) {
+                    addTopRow(Math.abs(row));
+                    addRightColumn(column - getColumns());
+                }
+                if (row < 0 && column < 0) {
+                    addTopRow(Math.abs(row));
+                    addLeftColumn(Math.abs(column));
+                }
 
-                // Fungerer ikke
+               addTopRow(Math.abs(row));
             }
             if (row > getRows()) {
-                //addBottomRow(row - getRows());
+                addBottomRow(row - getRows());
             }
             if (column >= getColumns()) {
-                //System.out.println("Legger til " + (column - (getColumns() -1)));
-                //addColumn(column - getColumns(), false);
-                //addRightColumn(column - getColumns());
+                addRightColumn(column - getColumns());
             }
             if (column < 0) {
-
-                System.out.println("left row : " + Math.abs(column));
-                //addColumn(Math.abs(column), true);
-                //addTopRow(Math.abs(row));
-
+                addLeftColumn(Math.abs(column));
             }
             return true;
         } else {
@@ -142,37 +146,20 @@ public class DynamicBoard extends Board {
     public void setCellAliveState(int row, int column, byte aliveState) {
         if (checkArrayBoundaries(row, column)) {
             if (row < 0 && column > 0 && column <= getColumns()) {
-                System.out.println("row: " + Math.abs(row) + " col: " + column);
-                System.out.println(currentGeneration.get(0).size());
-                for (int i = 0; i < Math.abs(row) + 1; i++) {
-                    System.out.println("Adding top");
-                    currentGeneration.add(0, new ArrayList<>());
-                    for (int col = 0; col < currentGeneration.get(0).size(); col++) {
-                        System.out.println("col iter " + i);
-                        currentGeneration.get(0).add((byte) 0);
-                    }
-                }
-                System.out.println(currentGeneration.get(0).size());
-                //currentGeneration.get(0).set(column, aliveState);
+                currentGeneration.get(0).set(column, aliveState);
             }
 
             if (row >= getRows() && row >= 0) {
-                addBottomRow(row - getRows());
-                currentGeneration.get(row).set(column, aliveState);
+                currentGeneration.get(row -1).set(column, aliveState);
             }
 
             if (column < 0) {
                 // Feil. Legger til en for lite .... må fikses
-                System.out.println("COL: " + column);
-                addLeftColumn(Math.abs(column));
                 currentGeneration.get(row).set(0, aliveState);
             }
 
             if (column >= getColumns() && column > 0) {
                 // Feil. Legger til en for lite .... må fikses
-                //System.out.println("Adding rioght cols");
-                //System.out.println("Right row " + row+ " col: " + column);
-                addRightColumn(column - getColumns());
                 currentGeneration.get(row).set(column - 1, aliveState);
             }
         } else {
@@ -204,19 +191,15 @@ public class DynamicBoard extends Board {
     }
 
     private void addTopRow(int numberOfRows) {
-        /*
-        for (int i = 0; i < numberOfRows + 1; i++) {
-            System.out.println("Adding top");
+        for (int i = 0; i < numberOfRows; i++) {
             currentGeneration.add(0, new ArrayList<>());
-            for (int col = 0; col < getColumns(); col++) {
+            for (int col = 0; col < currentGeneration.get(currentGeneration.size() - 1).size(); col++) {
                 currentGeneration.get(0).add((byte) 0);
             }
         }
-        */
     }
     private void addBottomRow(int numberOfRows) {
-            System.out.println("Adding bottom");
-            for (int i = 0; i < numberOfRows +1; i++) {
+            for (int i = 0; i < numberOfRows; i++) {
                 currentGeneration.add(new ArrayList<>());
                 for (int col = 0; col < currentGeneration.get(0).size(); col++) {
                     currentGeneration.get(currentGeneration.size() - 1).add((byte) 0);
@@ -224,23 +207,19 @@ public class DynamicBoard extends Board {
         }
     }
 
-    private void removeRow(int numberOfRows, boolean position) {
-        if (position) {
-            for (int i = 0; i < numberOfRows +1; i++) {
-                System.out.println("Removing top");
-                currentGeneration.remove(0);
-            }
-        } else {
-            System.out.println("Removing bottom");
-            for (int i = 0; i < numberOfRows +1; i++) {
-                currentGeneration.remove(currentGeneration.size() - 1);
-            }
+    private void removeTopRow(int numberOfRows) {
+        for (int i = 0; i < numberOfRows +1; i++) {
+            currentGeneration.remove(0);
         }
     }
 
+    private void removeBottomRow(int numberOfRows) {
+        for (int i = 0; i < numberOfRows +1; i++) {
+            currentGeneration.remove(currentGeneration.size() - 1);
+        }
+    }
     private void addLeftColumn(int numberOfColumns) {
             for (int i = 0; i < numberOfColumns; i++) {
-                System.out.println("Adding left");
                 currentGeneration.stream().forEach((e) -> e.add(0, (byte) 0));
         }
     }
@@ -251,20 +230,16 @@ public class DynamicBoard extends Board {
         }
     }
 
+    private void removeLeftColumn(int numberOfColumns) {
+        for (int i = 0; i < numberOfColumns; i++) {
+            currentGeneration.stream().forEach((e) -> e.remove(0));
+        }
+    }
 
-
-    private void removeColumn(int numberOfColumns, boolean position) {
-        if (position) {
-            for (int i = 0; i < numberOfColumns; i++) {
-                System.out.println("Removing left");
-                // currentGeneration.stream().forEach((e) -> e.remove(0));
-            }
-        } else {
-            System.out.println("Removing right");
-            for (int i = 0; i < numberOfColumns; i++) {
-                //currentGeneration.remove(currentGeneration.size() - 1);
-                //currentGeneration.get(i).remove(currentGeneration.size() - 1);
-                currentGeneration.stream().forEach((e) -> e.remove(currentGeneration.size() -1));
+    private void removeRightColumn(int numberOfColumns) {
+        for (int i = 0; i < numberOfColumns; i++) {
+            for (List<Byte> e : currentGeneration) {
+                e.remove(currentGeneration.size() - 1);
             }
         }
     }
@@ -301,7 +276,7 @@ public class DynamicBoard extends Board {
         if (add != 0) {
             addTopRow(1);
         } else if (remove == 0 && currentGeneration.size() > MIN_ROW) {
-            removeRow(1, true);
+            removeTopRow(1);
         }
     }
 
@@ -338,7 +313,7 @@ public class DynamicBoard extends Board {
             if (add != 0) {
                 addTopRow(1);
             } else if(remove == 0 && currentGeneration.size() > MIN_ROW) {
-                removeRow(1, false);
+                removeBottomRow(1);
             }
     }
 
@@ -361,9 +336,9 @@ public class DynamicBoard extends Board {
         final int add = sum1 + sum2;
 
         if (add != 0) {
-            //addColumn(1, true);
+           addLeftColumn(1);
         } else if(remove == 0 && currentGeneration.get(0).size() > MIN_COL){
-            removeColumn(1, true);
+            removeLeftColumn(1);
         }
     }
 
@@ -388,9 +363,9 @@ public class DynamicBoard extends Board {
         final int add = sum1 + sum2;
 
         if (add != 0) {
-            //addColumn(1, false);
+            addRightColumn(1);
         } else if (remove == 0 && currentGeneration.get(0).size() > MIN_COL){
-            removeColumn(1, false);
+            removeRightColumn(1);
         }
     }
 

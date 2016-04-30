@@ -16,6 +16,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
@@ -573,23 +574,28 @@ public class ViewController {
 
     private void initializeMouseEventHandlers() {
         gameCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
-            if(drawMode) { //TEGNEMODUS
+            if (e.isPrimaryButtonDown()) {  //TEGNEMODUS
+                gameCanvas.getScene().setCursor(Cursor.CROSSHAIR);
+
                 double bClick_X = e.getX();
                 double bClick_Y = e.getY();
                 int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
                 int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
+                System.out.println("Click_ row: " + row + " col: " + column);
                 drawCell = (gol.getCellAliveState(row, column) != 1);
                 gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
                 draw();
-            } else {//FLYTTEFUNKSJON
+            } else if (e.isSecondaryButtonDown()) { //FLYTTEFUNKSJON
+                gameCanvas.getScene().setCursor(Cursor.HAND);
                 fitToView.setSelected(false);
                 offsetBegin_X = e.getX() - getGridStartPosX();
                 offsetBegin_Y = e.getY() - getGridStartPosY();
-            } // end if
+            }
         }); // end eventhandler
 
         gameCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent e) -> {
-            if(drawMode) {
+            if (e.isPrimaryButtonDown()) {  //TEGNEMODUS
+                gameCanvas.getScene().setCursor(Cursor.CROSSHAIR);
                 double bClick_X = e.getX();
                 double bClick_Y = e.getY();
 
@@ -597,7 +603,6 @@ public class ViewController {
 
                     int row    = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
                     int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
-
                     // unngår out of bounds exception,
                     // holder seg innenfor arrayets lengde
                     // tegner kun dersom man er innenfor lengde
@@ -607,13 +612,14 @@ public class ViewController {
                         draw();
                     }
                 }
-            } else { //FLYTTEFUNKSJON
+            } else if (e.isSecondaryButtonDown()) { //FLYTTEFUNKSJON
+                gameCanvas.getScene().setCursor(Cursor.HAND);
                 offset_X = e.getX() - offsetBegin_X;
                 offset_Y = e.getY() - offsetBegin_Y;
                 draw();
             } // end if
         });
-        
+
         gameCanvas.setOnScroll((ScrollEvent event) -> {
             fitToView.setSelected(false);
             double scrollLocation_X = event.getX();
