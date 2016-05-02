@@ -89,42 +89,25 @@ public class DynamicBoard extends Board {
         }
     }
 
-    public boolean checkArrayBoundaries(int row, int column) {
-        if (row > getRows() - 1 || row < 0 || column > getColumns() - 1 || column < 0) {
-            if (row < 0) {
-                if (row < 0 && column > getColumns()) {
-                    addTopRow(Math.abs(row));
-                    addRightColumn(Math.abs(column - getColumns()) -1 );
-                }
-                if (row < 0 && column > 0 && column <= getColumns()) {
-                    addTopRow(Math.abs(row));
-                }
-                if (row < 0 && column < 0) {
-                    addTopRow(Math.abs(row));
-                    addLeftColumn(Math.abs(column));
-                }
+    public boolean insideArrayBoundaries(int row, int column) {
+        //HØYRE
+        //VENSTRE
+        if (row >= getRows() || row < 0 || column >= getColumns() || column < 0) {
+
+            if(row < 0) {//Topp
+                addTopRow(Math.abs(row));
+            } else if(row >= getRows()) {//Bunn
+                addBottomRow(row - (getRows() - 1));
             }
-            if (column > getColumns() -1 && row > getRows() -1) {
-                addBottomRow(row - getRows());
-                addRightColumn(column - getColumns());
-            }
-            if (row > getRows() && column < 0) {
-                addBottomRow(row - getRows());
+
+            if(column < 0) { //Venstre
                 addLeftColumn(Math.abs(column));
+            } else if(column >= getColumns()) { //Høyre
+                addRightColumn(column - (getColumns() - 1));
             }
-            // TODO: 02.05.2016 Fikses.... 
-            if (row > getRows() -1 && column > 0 && column < getColumns() -1) {
-                addBottomRow(row - getRows() -1);
-            }
-            if (column > getColumns()) {
-                addRightColumn(column - getColumns());
-            }
-            if (column < 0) {
-                addLeftColumn(Math.abs(column));
-            }
-            return true;
-        } else {
             return false;
+        } else {
+            return true;
         }
     }
     //=========================================================================
@@ -143,13 +126,31 @@ public class DynamicBoard extends Board {
      */
     @Override
     public void setCellAliveState(int row, int column, byte aliveState) {
-        if (checkArrayBoundaries(row, column)) {
+        if (!insideArrayBoundaries(row, column)) {
+            //TODO: Kall metoden over slik at den viser at den øker arrayet
+            // TODO: 02.05.2016 LAg logikk i inside metoden som oversetter row col til min/max i ærrajet
+
+            if(row > getRows()) {
+                row = getRows()-1;
+            } else if(row < 0) {
+                row = 0;
+            }
+
+            if(column > getColumns()) {
+                column = getColumns()-1;
+            } else if(column < 0) {
+                column = 0;
+            }
+
+            currentGeneration.get(row).set(column, aliveState);
+
+            /*
             // Oppe, innenfor grid'en
             if (row < 0 && (column > 0 && column < getColumns())) {
                 currentGeneration.get(0).set(column, aliveState);
             }
             // Nede-innenfor grid'en
-            if (row > getRows() -1 & (column > 0 && column < getColumns() -1)) {
+            if (row >= getRows() & (column > 0 && column <= getColumns())) {
                 currentGeneration.get(getRows() -1).set(column, aliveState);
             }
             // Venstre-innenfor grid'en
@@ -175,7 +176,7 @@ public class DynamicBoard extends Board {
             // Venstre-utenfor oppe
             if (row < 0 && column < 0) {
                 currentGeneration.get(0).set(0, aliveState);
-            }
+            }*/
         } else {
             currentGeneration.get(row).set(column, aliveState);
         }
