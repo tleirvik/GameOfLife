@@ -82,42 +82,41 @@ public class DynamicBoard extends Board {
 
     @Override
     public byte getCellAliveState(int row, int column) {
-        if (checkArrayBoundaries(row, column)) {
+        if (row > getRows() - 1 || row < 0 || column > getColumns() - 1 || column < 0) {
             return (byte)0;
         } else {
             return currentGeneration.get(row).get(column);
         }
-            //Er det negativ row, legg på 0 posisjon
-            //er det mer enn getrows, legg på siste ( .add(arraylist<>(); )
-            //VIKTIG AT RAD SJEKKES FØR COLUMN
-            //er det negativ column, legg til på 0 posisjon
-            //er det mer enn getcolumns, legg på siste ( .add((byte) 0); )
-
-            // Vi trenger å kalkulere hvor mange rows/cols som skal legges til
-            // Lag egne add/remove metoder i dynboard
     }
 
     public boolean checkArrayBoundaries(int row, int column) {
         if (row > getRows() - 1 || row < 0 || column > getColumns() - 1 || column < 0) {
             if (row < 0) {
-                if (row < 0 && column > 0 && column <= getColumns()) {
-                    addTopRow(Math.abs(row));
-                }
                 if (row < 0 && column > getColumns()) {
                     addTopRow(Math.abs(row));
-                    addRightColumn(column - getColumns());
+                    addRightColumn(Math.abs(column - getColumns()) -1 );
+                }
+                if (row < 0 && column > 0 && column <= getColumns()) {
+                    addTopRow(Math.abs(row));
                 }
                 if (row < 0 && column < 0) {
                     addTopRow(Math.abs(row));
                     addLeftColumn(Math.abs(column));
                 }
-
-               addTopRow(Math.abs(row));
             }
-            if (row > getRows()) {
+            if (column > getColumns() -1 && row > getRows() -1) {
                 addBottomRow(row - getRows());
+                addRightColumn(column - getColumns());
             }
-            if (column >= getColumns()) {
+            if (row > getRows() && column < 0) {
+                addBottomRow(row - getRows());
+                addLeftColumn(Math.abs(column));
+            }
+            // TODO: 02.05.2016 Fikses.... 
+            if (row > getRows() -1 && column > 0 && column < getColumns() -1) {
+                addBottomRow(row - getRows() -1);
+            }
+            if (column > getColumns()) {
                 addRightColumn(column - getColumns());
             }
             if (column < 0) {
@@ -145,22 +144,37 @@ public class DynamicBoard extends Board {
     @Override
     public void setCellAliveState(int row, int column, byte aliveState) {
         if (checkArrayBoundaries(row, column)) {
-            if (row < 0 && column > 0 && column <= getColumns()) {
+            // Oppe, innenfor grid'en
+            if (row < 0 && (column > 0 && column < getColumns())) {
                 currentGeneration.get(0).set(column, aliveState);
             }
-
-            if (row >= getRows() && row >= 0) {
-                currentGeneration.get(row -1).set(column, aliveState);
+            // Nede-innenfor grid'en
+            if (row > getRows() -1 & (column > 0 && column < getColumns() -1)) {
+                currentGeneration.get(getRows() -1).set(column, aliveState);
             }
-
-            if (column < 0) {
-                // Feil. Legger til en for lite .... må fikses
+            // Venstre-innenfor grid'en
+            if (row > 0 && row < getRows() -1 && column < 0) {
                 currentGeneration.get(row).set(0, aliveState);
             }
-
-            if (column >= getColumns() && column > 0) {
-                // Feil. Legger til en for lite .... må fikses
-                currentGeneration.get(row).set(column - 1, aliveState);
+            // Høyre-innenfor grid'en
+            if (column > getColumns() -1 && (row > 0 && row < getRows() -1)) {
+                currentGeneration.get(row).set(getColumns() -1, aliveState);
+            }
+            // Høyre-utenfor oppe
+            if (row < 0 && column > getColumns() -1) {
+                currentGeneration.get(0).set(getColumns() -1, aliveState);
+            }
+            // Høyre-utenfor nede
+            if (column > getColumns() -1 && row > getRows() -1) {
+                currentGeneration.get(getRows() -1).set(getColumns() -1, aliveState);
+            }
+            // Venstre-utenfor nede
+            if (column < 0 && row >= (getRows() -1)) {
+                currentGeneration.get(getRows() -1).set(0, aliveState);
+            }
+            // Venstre-utenfor oppe
+            if (row < 0 && column < 0) {
+                currentGeneration.get(0).set(0, aliveState);
             }
         } else {
             currentGeneration.get(row).set(column, aliveState);
@@ -192,6 +206,7 @@ public class DynamicBoard extends Board {
 
     private void addTopRow(int numberOfRows) {
         for (int i = 0; i < numberOfRows; i++) {
+            System.out.println(i);
             currentGeneration.add(0, new ArrayList<>());
             for (int col = 0; col < currentGeneration.get(currentGeneration.size() - 1).size(); col++) {
                 currentGeneration.get(0).add((byte) 0);
@@ -208,13 +223,13 @@ public class DynamicBoard extends Board {
     }
 
     private void removeTopRow(int numberOfRows) {
-        for (int i = 0; i < numberOfRows +1; i++) {
+        for (int i = 0; i < numberOfRows; i++) {
             currentGeneration.remove(0);
         }
     }
 
     private void removeBottomRow(int numberOfRows) {
-        for (int i = 0; i < numberOfRows +1; i++) {
+        for (int i = 0; i < numberOfRows; i++) {
             currentGeneration.remove(currentGeneration.size() - 1);
         }
     }
