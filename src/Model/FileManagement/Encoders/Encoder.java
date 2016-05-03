@@ -1,14 +1,8 @@
-package FileManagement.Encoders;
+package Model.FileManagement.Encoders;
 
-import GameOfLife.GameOfLife;
-import GameOfLife.MetaData;
-import util.DialogBoxes;
-
-import java.io.BufferedWriter;
+import Model.GameOfLife.GameOfLife;
+import Model.GameOfLife.MetaData;
 import java.io.File;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
 import java.nio.file.Path;
 
 
@@ -22,13 +16,13 @@ public abstract class Encoder {
     protected final GameOfLife game;
     protected final MetaData metadata;
     protected final Path filePath;
-    protected final StringBuffer rleString;
+    protected final StringBuilder rleString;
     
     public Encoder(GameOfLife game, File f) {
         this.game = game;
         metadata = game.getMetaData();
         filePath = f.toPath();
-        rleString = new StringBuffer();
+        rleString = new StringBuilder();
     }
     
     public abstract boolean encode();

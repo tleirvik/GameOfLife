@@ -10,6 +10,7 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import javafx.scene.control.Alert;
 
 
 /**
@@ -18,11 +19,7 @@ import java.nio.file.Path;
  *
  * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
  */
-public class RLEEncoder {
-    private final MetaData metadata;
-    private final Path filePath;
-    private final StringBuilder rleString;
-    private final GameOfLife game;
+public class RLEEncoder extends Encoder {
 
     /**
      * Constructor that creates an RLEDecoder object.
@@ -30,11 +27,8 @@ public class RLEEncoder {
      * @param game
      * @param file
      */
-    public RLEEncoder(GameOfLife game, File file) {
-        metadata = game.getMetaData();
-        this.game = game;
-        filePath = file.toPath();
-        rleString = new StringBuilder();
+    public RLEEncoder(GameOfLife game, File f) {
+        super(game, f);
     }
 
     /**
@@ -54,7 +48,10 @@ public class RLEEncoder {
             encodeBoard();
             writeBoard(bw);
         } catch (IOException ioE) {
-            DialogBoxes.infoBox("Error!", "An unknown error occurred!", "The following error occurred when trying to save the game: " + ioE.getMessage());
+            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR,"Error!", 
+                    "An unknown error occurred!", 
+                    "The following error occurred when trying to save the game: " 
+                            + ioE.getMessage());
             return false;
         }
             return true;
@@ -65,7 +62,7 @@ public class RLEEncoder {
      *
      *This method is not meant to be called directly, but rather through the encode() method.
      */
-    public void encodeMetaData() {
+    private void encodeMetaData() {
         rleString.append("#N ");
         rleString.append(metadata.getName());
         rleString.append("\r\n");

@@ -3,12 +3,13 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package FileManagement;
+package Model.FileManagement;
 
 /**
  *
  * @author Robin
  */
 public enum ImageType {
+    JPEG,
     GIF;
 }

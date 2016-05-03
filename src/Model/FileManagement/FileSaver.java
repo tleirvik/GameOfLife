@@ -1,24 +1,23 @@
-package FileManagement;
+package Model.FileManagement;
 
-import FileManagement.Encoders.Encoder;
-import FileManagement.Encoders.RLEEncoder;
-import FileManagement.OtherFormats.GIFSaver;
-import GameOfLife.GameOfLife;
-import java.awt.Color;
+import Model.FileManagement.Decoders.Decoder;
+import Model.FileManagement.Decoders.RLEDecoder;
+import Model.FileManagement.Encoders.*;
+import Model.FileManagement.OtherFormats.Data.GIFData;
+import Model.FileManagement.OtherFormats.Data.ImageData;
+import Model.FileManagement.OtherFormats.GIFSaver;
+import Model.FileManagement.OtherFormats.ImageSaver;
+import Model.FileManagement.OtherFormats.JPEGSaver;
+import Model.GameOfLife.GameOfLife;
 import java.io.File;
 
 /**
- *
+ * Ansvaret for lagring av filer. Skal bedømme hvilken encoder som trengs for å 
+ * lagre filen
+ * 
  * @author Robin
  */
 public class FileSaver {
-    private File defaultFileDirectory = new File("Patterns");
-    private File defaultImageDirectory = new File("Images");
-    
-    public void initialize() {
-        defaultFileDirectory.mkdir();
-        defaultImageDirectory.mkdir();
-    }
     
     public void saveGame(EncodeType type, GameOfLife game, File f) {
         Encoder encoder = null;
@@ -30,28 +29,17 @@ public class FileSaver {
         encoder.encode();
     }
     
-    public void saveImage(ImageType type, GameOfLife game, File f) {
-        //ImageSaver imageSaver = null;
+    public void saveImage(ImageType type, ImageData data) {
+        ImageSaver saver = null;
         switch(type) {
+            case JPEG:
+                saver = new JPEGSaver(data);
+                break;
             case GIF:
-                GIFSaver gifSaver = new GIFSaver(game);
-                gifSaver.setAnimationTimer(0);//OHNO
-                gifSaver.setColors(Color.yellow, Color.yellow);//NONO
-                gifSaver.setFile(f);//EHH?!
-                gifSaver.setHeight(0);//HOW?
-                gifSaver.setWidth(0);//WHAT?!
-                gifSaver.saveToGif();//Åssen skal vi nå disse greiene over fra denne klassen?
-                //MÅ HA SAVEDIALOG I DENNE KLASSEN!
+                saver = new GIFSaver((GIFData) data);
                 break;
         }
-    }
-    
-    public File getDefaultFileDirectory() {
-        return defaultFileDirectory;
-    }
-    
-    public File getDefaultImageDirectory() {
-        return defaultImageDirectory;
+        saver.saveImage();
     }
     
 }
