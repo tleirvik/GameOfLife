@@ -33,5 +33,5 @@ public abstract class ImageSaver {
         cellSize = data.getCellSize();
     }
     
-    public abstract void saveImage();
+    public abstract boolean saveImage();
 }

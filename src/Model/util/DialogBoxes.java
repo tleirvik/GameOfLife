@@ -21,12 +21,6 @@ import javafx.stage.StageStyle;
 
 public class DialogBoxes {
     
-    private Stage mainStage;
-    
-    public void setMainStage(Stage mainStage) {
-        this.mainStage = mainStage;
-    }
-    
     //=========================================================================
     //                            STATIC METHODS
     //=========================================================================
@@ -110,8 +104,8 @@ public class DialogBoxes {
         dialog.getDialogPane().getButtonTypes().addAll(ok, cancel);
         
         Optional<ButtonType> result = dialog.showAndWait();
-        if (result.get() == ok && rows.getText().equals("") 
-                && columns.getText().equals("")) {
+        if (result.get() == ok && !rows.getText().equals("") 
+                && !columns.getText().equals("")) {
             int numRows = Integer.parseInt(rows.getText());
             int numColumns = Integer.parseInt(columns.getText());
             BoardType type = boardType.getValue();
@@ -175,10 +169,10 @@ public class DialogBoxes {
     //=========================================================================
     //                         FXML-based windows
     //=========================================================================
-    public void openPatternEditor(GameOfLife game) {
+    public void openPatternEditor(GameOfLife game, Stage owner) {
         Stage editor = new Stage();
         editor.initModality(Modality.WINDOW_MODAL);
-        editor.initOwner(mainStage);
+        editor.initOwner(owner);
         
         try {
             FXMLLoader loader;
@@ -204,10 +198,10 @@ public class DialogBoxes {
         } 
     }
     
-    public void statistics(GameOfLife game) {
+    public void statistics(GameOfLife game, Stage owner) {
         Stage editor = new Stage();
         editor.initModality(Modality.WINDOW_MODAL);
-        editor.initOwner(mainStage);
+        editor.initOwner(owner);
         
         try {
             FXMLLoader loader;

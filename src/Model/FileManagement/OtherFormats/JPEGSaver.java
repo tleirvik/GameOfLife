@@ -19,7 +19,7 @@ public class JPEGSaver extends ImageSaver {
         super(data);
     }
 
-    public void saveImage() {
+    public boolean saveImage() {
         BufferedImage boardImage = new BufferedImage(this.width, this.height,
                 BufferedImage.TYPE_INT_ARGB);
 
@@ -46,6 +46,7 @@ public class JPEGSaver extends ImageSaver {
             y1 += cellSize; // Plusser på for neste rad
             y2 += cellSize;
         }
-        
+        //TODO: DEN LAGRER INGEN TING!
+        return true;
     }
 }

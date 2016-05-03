@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controller;
 
 import Model.FileManagement.EncodeType;
@@ -14,6 +9,7 @@ import Model.GameOfLife.GameOfLife;
 import Model.GameOfLife.MetaData;
 import Model.GameOfLife.PatternFormatException;
 import Model.util.DialogBoxes;
+import static Model.util.DialogBoxes.customUtilityDialog;
 import java.io.File;
 import java.io.FilenameFilter;
 import java.io.IOException;
@@ -144,7 +140,7 @@ public class FileController {
             }
                         
             try {
-                fileLoader.loadGame(f, type);
+                fileLoader.loadBoard(f, type);
             } catch (IOException ex) {
                 //TODO: 01.05.2016 Endre alle exceptions til å enten bruke logger eller noe annet
                 Logger.getLogger(FileController.class.getName()).log(Level.SEVERE, null, ex);
@@ -192,37 +188,36 @@ public class FileController {
     //=========================================================================
     //                              SAVE
     //=========================================================================
-    public void saveBoard(Stage owner, GameOfLife game) {
+    public void saveBoard(GameOfLife game, EncodeType type, Stage owner) {
         List<FileChooser.ExtensionFilter> extFilter = new ArrayList<>();
+        //TODO: Lag en switch på type for extensionfilter
         extFilter.add(new ExtensionFilter("RLE files", "*.rle"));
         extFilter.add(new ExtensionFilter("All Files", "*.*"));
         
         File f = loadFileChooser(owner, extFilter);
-        List<String> extensions = fileChooser.getSelectedExtensionFilter()
-                .getExtensions();
         
-        EncodeType type = null;
-        switch(extensions.get(0)) {
-            case "*.rle":
-                type = EncodeType.RLE;
-                break;
-        }
         fileSaver.saveGame(type, game, f);
     }
     
-    public void saveImage(Stage owner, GameOfLife game) {
+    public void saveSound(GameOfLife game, Stage owner) {
+        WavData wavData = saveToWavDialog(game, owner);
+        
+        if (wavData == null) {
+            return;
+        }
+        fileSaver.saveSound(wavData);
+    }
+    
+    public void saveImage(GameOfLife game, Stage owner) {
         throw new UnsupportedOperationException("Not supported yet.");
-        // For JPEG, PNG
-        // TODO: 30.04.2016 Lag saveToImageDialog som lager og returnerer gridpane
-        // TODO: 30.04.2016 Omgjør saveToGIFDialog slik at den kjører saveToImageDialog og gjør om gridpane til å passe gif-saving
-        // TODO: 30.04.2016 Lag en customSaveImageDialog til å ta inn gridpane og returnere ImageData
+        //TODO: FIX HER For JPEG, PNG
     }
     
     
-    public void saveAnimation(Stage owner, GameOfLife game) {
+    public void saveAnimation(GameOfLife game, Stage owner) {
         //Can be updated to support other formats
-        GIFData gifData = saveToGIFDialog(owner, game);
-        if(gifData == null) {//Bruker avbrøt dialogboksen
+        GIFData gifData = saveToGIFDialog(game, owner);
+        if (gifData == null) {//Bruker avbrøt dialogboksen
             return;
         }
         fileSaver.saveImage(ImageType.GIF, gifData);
@@ -235,7 +230,76 @@ public class FileController {
         return fileChooser.showSaveDialog(owner);
     }
     
-    private GIFData saveToGIFDialog(Stage owner, GameOfLife game) {
+    private WavData saveToWavDialog(GameOfLife game, Stage owner) {
+        GridPane gp = new GridPane();
+
+        //=========================================
+        //  Duration in seconds
+        //=========================================
+        gp.add(new Label("Duration (in seconds): "), 0, 0);
+        
+        final Spinner spinnerDuration = new Spinner(1, 10000, 30, 10);
+        spinnerDuration.setEditable(true);
+        TextField durationField = spinnerDuration.getEditor();
+        durationField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("[0-9]*")) {
+                durationField.setText(oldValue);
+            }
+        });
+        gp.add(spinnerDuration, 1, 0, 3, 1);
+        
+        //=========================================
+        //  Iterations
+        //=========================================
+        gp.add(new Label("Number of Iterations:"), 0, 1);
+        
+        final Slider iterSlider = new Slider(2,20,10);
+        iterSlider.setShowTickMarks(true);
+        iterSlider.setShowTickLabels(true);
+        iterSlider.setMajorTickUnit(2);
+        iterSlider.setMinorTickCount(0);
+        gp.add(iterSlider,0, 5, 2, 1);
+        
+        final Label iterationsLabel = new Label("10");
+        gp.add(iterationsLabel, 1, 4);
+        
+        iterSlider.valueProperty().addListener(e -> {
+            iterationsLabel.setText(String.format("%d", 
+                    iterSlider.valueProperty().intValue()));
+        });
+        
+        Dialog dialog = customUtilityDialog("Save to WAV", null, gp, owner);
+        
+        ButtonType saveChanges = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveChanges, cancel);
+        
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.get() == saveChanges){
+            List<FileChooser.ExtensionFilter> extFilter = new ArrayList<>();
+            extFilter.add(new FileChooser.ExtensionFilter("GIF files", "*.gif"));
+            extFilter.add(new FileChooser.ExtensionFilter("All Files", "*.*"));
+            File file = saveFileChooser(owner, extFilter);
+            
+            if (file == null) {
+                return null;
+            }
+            
+            int iterations = (int) iterSlider.getValue();
+            int sampleRate = 44100;
+            int channels = 2;
+            int durationInSeconds = (int) spinnerDuration.getValue();
+            int bits = 16;
+            //TODO: Gjør mindre hardkodet
+            
+            return new WavData(game, iterations, sampleRate, channels, 
+                    durationInSeconds, bits, file);
+        }
+        
+        return null;
+    }
+    
+    private GIFData saveToGIFDialog(GameOfLife game, Stage owner) {
         GridPane gp = new GridPane();
 
         //=========================================
@@ -315,11 +379,18 @@ public class FileController {
         final ColorPicker deadCellColor = new ColorPicker(Color.web("#003333"));
         gp.add(deadCellColor, 1, 7);
         
-        if (true){//customConfirmationDialog(gp, "Save To GIF")) {
+        Dialog dialog = customUtilityDialog("Save to GIF", null, gp, owner);
+        
+        ButtonType saveChanges = new ButtonType("Save", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(saveChanges, cancel);
+        
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.get() == saveChanges){
             List<FileChooser.ExtensionFilter> extFilter = new ArrayList<>();
             extFilter.add(new FileChooser.ExtensionFilter("GIF files", "*.gif"));
             extFilter.add(new FileChooser.ExtensionFilter("All Files", "*.*"));
-            File file = null;//saveFileChooser(owner);
+            File file = saveFileChooser(owner, extFilter);
             
             if (file == null) {
                 return null;
@@ -329,13 +400,14 @@ public class FileController {
                             deadColor = convertFXColorToAWTColor(deadCellColor.getValue());
             int height = (int) spinnerHeight.getValue(),
                  width = (int) spinnerWidth.getValue();
-            int cellSize = (int) calculateSize(height, width, game.getRows(), game.getColumns());
+            int cellSize = (int) calculateSize(height, width, game.getRows(), 
+                    game.getColumns());
             int iterations = (int) iterSlider.getValue();
             int animationTimer = (int) animationSlider.getValue();
             
-            return new GIFData(game, aliveColor, deadColor, file, height, width, cellSize, iterations, animationTimer);
+            return new GIFData(game, aliveColor, deadColor, file, height, width, 
+                    cellSize, iterations, animationTimer);
         }
-        
         return null;
     }
     
@@ -348,7 +420,8 @@ public class FileController {
         return new java.awt.Color(r, g, b);
     }
 
-    private double calculateSize(double availibleHeight, double availibleWidth, int rows, int columns) {
+    private double calculateSize(double availibleHeight, double availibleWidth,
+            int rows, int columns) {
         double sizeHeight = availibleHeight / rows;
         double sizeWidth = availibleWidth / columns;
         return Math.min(sizeWidth, sizeHeight);

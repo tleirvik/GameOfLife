@@ -1,13 +1,13 @@
 package Model.FileManagement;
 
-import Model.FileManagement.Decoders.Decoder;
-import Model.FileManagement.Decoders.RLEDecoder;
 import Model.FileManagement.Encoders.*;
 import Model.FileManagement.OtherFormats.Data.GIFData;
 import Model.FileManagement.OtherFormats.Data.ImageData;
+import Model.FileManagement.OtherFormats.Data.WavData;
 import Model.FileManagement.OtherFormats.GIFSaver;
 import Model.FileManagement.OtherFormats.ImageSaver;
 import Model.FileManagement.OtherFormats.JPEGSaver;
+import Model.FileManagement.OtherFormats.WavSaver;
 import Model.GameOfLife.GameOfLife;
 import java.io.File;
 
@@ -19,17 +19,22 @@ import java.io.File;
  */
 public class FileSaver {
     
-    public void saveGame(EncodeType type, GameOfLife game, File f) {
+    public boolean saveGame(EncodeType type, GameOfLife game, File f) {
         Encoder encoder = null;
         switch(type) {
             case RLE:
                 encoder = new RLEEncoder(game, f);
                 break;
         }
-        encoder.encode();
+        return encoder.encode();
     }
     
-    public void saveImage(ImageType type, ImageData data) {
+    public boolean saveSound(WavData wav) {
+        WavSaver wavSaver = new WavSaver(wav);
+        return wavSaver.saveSound();
+    }
+    
+    public boolean saveImage(ImageType type, ImageData data) {
         ImageSaver saver = null;
         switch(type) {
             case JPEG:
@@ -39,7 +44,7 @@ public class FileSaver {
                 saver = new GIFSaver((GIFData) data);
                 break;
         }
-        saver.saveImage();
+        return saver.saveImage();
     }
     
 }

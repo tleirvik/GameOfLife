@@ -31,7 +31,7 @@ import javafx.scene.control.Alert;
 public class FileLoader {
     private Decoder decoder;
     
-    public boolean loadGame(File f, EncodeType type) throws IOException, PatternFormatException {
+    public boolean loadBoard(File f, EncodeType type) throws IOException, PatternFormatException {
         if (!f.canRead()) {
             DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", "Could not read file!",
                     "Please check your file permissions!");
@@ -39,7 +39,7 @@ public class FileLoader {
         }
 
         try (BufferedReader reader = new BufferedReader(new FileReader(f.getAbsolutePath()))) {
-
+            decodeBoard(reader, type);
         }  catch (FileNotFoundException fnfE) {
             DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", "File was not found", fnfE.getMessage());
             return false;
@@ -56,7 +56,6 @@ public class FileLoader {
             //TODO: 01.05.2016 Logger skal byttes ut?
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
                 decodeBoard(reader, type);
-                
             } catch (PatternFormatException ex) {
                 Logger.getLogger(FileLoader.class.getName()).log(Level.SEVERE, null, ex);
             }
@@ -68,24 +67,23 @@ public class FileLoader {
     }
     
     private void decodeBoard(BufferedReader reader, EncodeType type) throws IOException, PatternFormatException {
-        Decoder decoder = null;
-            switch(type) {
-                case RLE:
-                    decoder = new RLEDecoder(reader);
-                    break;
-                case LIFE105: //Switch-fall
-                case LIFE106:
-                    String encodeType = reader.readLine();
-                    if(encodeType.matches("#Life 1.05")) {
-                        
-                    } else if(encodeType.matches("#Life 1.06")) {
-                        
-                    } else {
-                        //TODO: 01.05.2016 Kunne ikke finne ut typen fil-dialogboks her
-                    }
-                    break;
-            }
-            decoder.decode();
+        switch(type) {
+            case RLE:
+                decoder = new RLEDecoder(reader);
+                break;
+            case LIFE105: //Switch-fall
+            case LIFE106:
+                String encodeType = reader.readLine();
+                if(encodeType.matches("#Life 1.05")) {
+
+                } else if(encodeType.matches("#Life 1.06")) {
+
+                } else {
+                    //TODO: 01.05.2016 Kunne ikke finne ut typen fil-dialogboks her
+                }
+                break;
+        }
+        decoder.decode();
     }
 
     /**

@@ -38,7 +38,7 @@ public class GIFSaver extends ImageSaver {
     /**
      * 
      */
-    public void saveImage() {
+    public boolean saveImage() {
         try {
             GIFWriter writer = new GIFWriter(width + 1, height + 1, 
                     file.getAbsolutePath(), animationTimer);
@@ -47,9 +47,9 @@ public class GIFSaver extends ImageSaver {
             writer.close();
             
         } catch (IOException e) {
-            //DialogBoxes.infoBox("Error", "Could not save as .gif", 
-              //      "Please try again");
+            return false;
         }
+        return true;
     }
     
     /**

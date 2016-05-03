@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.canvas.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -16,6 +9,7 @@
 <?import javafx.scene.control.Menu?>
 <?import javafx.scene.control.MenuBar?>
 <?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.SeparatorMenuItem?>
 <?import javafx.scene.control.Slider?>
 <?import javafx.scene.control.ToggleButton?>
 <?import javafx.scene.effect.Blend?>
@@ -25,10 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" 
-            minWidth="810.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" 
-            prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" 
-            xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ViewController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" minWidth="810.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ViewController">
 
     <top>
         <MenuBar id="menuBar" fx:id="menuBar" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
@@ -38,7 +29,19 @@
                           <MenuItem onAction="#newGame" text="New game..." />
                           <MenuItem mnemonicParsing="false" onAction="#loadGameBoardFromDisk" text="Load Board from Disk..." />
                           <MenuItem onAction="#loadGameBoardFromURL" text="Load Board from URL..." />
-                          <MenuItem onAction="#saveRLE" text="Save RLE As..." />
+                  <MenuItem mnemonicParsing="false" onAction="#loadGameBoardToMouse" text="Load Board to Mouse" />
+                  <Menu mnemonicParsing="false" text="Save Board As">
+                    <items>
+                      <MenuItem mnemonicParsing="false" onAction="#saveBoardAsRLE" text="RLE" />
+                                <MenuItem onAction="#saveBoardAsLife105" text="Life 1.05" />
+                        <MenuItem onAction="#saveBoardAsLife106" text="Life 1.06" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem onAction="#saveBoardAsWAV" text="WAV" />
+                        <SeparatorMenuItem mnemonicParsing="false" />
+                        <MenuItem onAction="#saveBoardAsJPEG" text="JPEG" />
+                        <MenuItem onAction="#saveBoardAsGIF" text="GIF" />
+                    </items>
+                  </Menu>
                           <MenuItem onAction="#closeApplication" text="Close" />
                     </items>
                 </Menu>
@@ -77,32 +80,28 @@
                         </Label>
                   
                         <Label id="text" text="Background:" />
-                        <ColorPicker id="picker" fx:id="backgroundColorPicker" 
-                                   onAction="#changeBackgroundColor" prefHeight="25.0" prefWidth="50.0">
+                        <ColorPicker id="picker" fx:id="backgroundColorPicker" onAction="#changeBackgroundColor" prefHeight="25.0" prefWidth="50.0">
                             <VBox.margin>
                                 <Insets bottom="4.0" />
                             </VBox.margin>
                         </ColorPicker>
 
                         <Label id="text" text="Board:" />
-                        <ColorPicker id="picker" fx:id="boardColorPicker" 
-                                   onAction="#changeBoardColor" prefHeight="25.0" prefWidth="50.0">
+                        <ColorPicker id="picker" fx:id="boardColorPicker" onAction="#changeBoardColor" prefHeight="25.0" prefWidth="50.0">
                             <VBox.margin>
                                 <Insets bottom="4.0" />
                             </VBox.margin>
                         </ColorPicker>
 
                         <Label id="text" text="Cell:" />
-                        <ColorPicker id="picker" fx:id="cellColorPicker" 
-                                   onAction="#changeCellColor" prefHeight="25.0" prefWidth="50.0">
+                        <ColorPicker id="picker" fx:id="cellColorPicker" onAction="#changeCellColor" prefHeight="25.0" prefWidth="50.0">
                             <VBox.margin>
                                 <Insets bottom="4.0" />
                             </VBox.margin>
                         </ColorPicker>
 
                         <Label id="text" text="Grid:" />
-                        <ColorPicker id="picker" fx:id="gridColorPicker" 
-                                     onAction="#changeGridColor" prefHeight="25.0" prefWidth="50.0">
+                        <ColorPicker id="picker" fx:id="gridColorPicker" onAction="#changeGridColor" prefHeight="25.0" prefWidth="50.0">
                             <effect>
                                <Blend mode="BLUE" />
                             </effect>
@@ -116,10 +115,7 @@
                     </children>
                 </VBox>
 
-                <CheckBox fx:id="toggleGrid" 
-                          onAction="#handleToggleGrid" text="Turn off grid" />
-                <ToggleButton fx:id="toggleDrawMove" mnemonicParsing="false" 
-                          onAction="#toggleDrawMove" text="Move Mode" />
+                <CheckBox fx:id="toggleGrid" onAction="#handleToggleGrid" text="Turn off grid" />
             </children>
             
             <padding>
@@ -133,24 +129,19 @@
         <VBox BorderPane.alignment="TOP_CENTER">
          
             <children>
-                <HBox id="bottom" alignment="CENTER" prefHeight="76.0" prefWidth="1000.0" spacing="10.0">
+                <HBox id="bottom" alignment="CENTER" prefHeight="76.0" prefWidth="1000.0" spacing="20.0">
 
                     <children>
-                        <Button fx:id="togglePlayButton" alignment="CENTER" minHeight="20.0" 
-                                minWidth="100.0" onAction="#togglePlay" 
-                                prefHeight="40.0" prefWidth="100.0" text="Play" textOverrun="CENTER_WORD_ELLIPSIS">
+                        <Button fx:id="togglePlayButton" alignment="CENTER" minHeight="20.0" minWidth="80.0" onAction="#togglePlay" prefHeight="30.0" prefWidth="80.0" text="Play" textOverrun="CENTER_WORD_ELLIPSIS">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>
                         </Button>
 
-                        <Button minHeight="20.0" minWidth="100.0" onAction="#reset" 
-                                prefHeight="40.0" prefWidth="100.0" text="Reset Board" />
-                        <Button layoutX="419.0" layoutY="28.0" minHeight="20.0" minWidth="100.0" 
-                                onAction="#openPatternList" prefHeight="40.0" prefWidth="100.0" text="Pattern" />
+                        <Button minHeight="20.0" minWidth="80.0" onAction="#reset" prefHeight="30.0" prefWidth="80.0" text="Reset Board" />
+                        <Button layoutX="419.0" layoutY="28.0" minHeight="20.0" minWidth="80.0" onAction="#openPatternList" prefHeight="30.0" prefWidth="80.0" text="Pattern" />
 
-                        <Button minHeight="20.0" onAction="#openStatistics" 
-                                prefHeight="40.0" text="Stats" />
+                        <Button minHeight="20.0" minWidth="80.0" onAction="#openStatistics" prefHeight="30.0" prefWidth="80.0" text="Stats" />
 
                         <VBox alignment="CENTER" spacing="5.0">
                             <children>

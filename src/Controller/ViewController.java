@@ -1,6 +1,7 @@
 package Controller;
 
 import Model.FileManagement.Decoders.RLEDecoder;
+import Model.FileManagement.EncodeType;
 import Model.FileManagement.OtherFormats.WavSaver;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
@@ -65,45 +66,33 @@ public class ViewController {
     // Property fields
     //=========================================================================
 
-    final private DialogBoxes dialogBoxes = new DialogBoxes();
-    final private Timeline timeline = new Timeline();
-    final private GameOfLife gol = new GameOfLife();
-    final private FileController fileController = new FileController();
+    private final DialogBoxes dialogBoxes = new DialogBoxes();
+    private final Timeline timeline = new Timeline();
+    private final GameOfLife gol = new GameOfLife();
+    private final FileController fileController = new FileController();
 
-    //Slidere kan manipulere disse verdiene
     private double cellSize = 10;
 
-    //Standard farger (Om ikke annet er spesifisert)
+    //Standard colors (Can be changed during runtime)
     private Color stdAliveCellColor = Color.BLACK;
     private Color stdBoardColor = Color.GHOSTWHITE;
     private Color stdBackgroundColor = Color.LIGHTGREY;
     private Color stdGridColor = Color.GREY;
 
-    //Gridtykkelse
-    private double stdGridLineWidth = 1;
+    private final double stdGridLineWidth = 1;
 
-    //Variabler trengt for å kalkulere differansen
-    //mellom start og slutt for å finne ut hvor langt brukeren har dratt brettet
+    //Used to calculate the offset_X and offset_Y values
     private double offsetBegin_X = 0;
     private double offsetBegin_Y = 0;
 
-    //Offset-verdi som blir enten positiv eller negativ avhengig av
-    //hvordan brukeren flytter (canvas onDrag) grid-en
-    //Jobber på at den forskyver startposisjonen øverst i venstre hjørne
     private double offset_X = 0;
     private double offset_Y = 0;
 
     private boolean drawGrid = true;
-    private boolean drawBackground = true;
-    private boolean drawBoardBackground = true;
-    private boolean isDynamic = true;
 
-    //
-    //	CANVAS MOVE/DRAW FLAGS
-    //
-    private boolean holdingPattern = true; //Find out if user is holding pattern
-    private boolean drawMode = false; //False for move, true for draw
+    private byte[][] holdingPattern = null;
     private boolean drawCell = false;
+    
     //=========================================================================
     // Initializer
     //=========================================================================
@@ -111,7 +100,7 @@ public class ViewController {
         initializeTimeline();
         initializeFpsSlider();
         
-        gol.newEmptyGame(20, 20, BoardType.FIXED);        
+        gol.newEmptyGame(20, 20, BoardType.DYNAMIC);        
         openGame();
         
         initializeBindCanvasSize();
@@ -130,7 +119,9 @@ public class ViewController {
     @FXML
     public void newGame() {
         timeline.stop();
-        dialogBoxes.openNewGameDialog(gol, (Stage) gameCanvas.getScene().getWindow());
+        dialogBoxes.openNewGameDialog(gol, 
+                (Stage) gameCanvas.getScene().getWindow());
+        
         openGame();
     }
     
@@ -145,27 +136,73 @@ public class ViewController {
     @FXML
     public void loadGameBoardFromDisk() {
         timeline.stop();
-        if(fileController.loadBoard((Stage) gameCanvas.getScene().getWindow(), false)) {
-           gol.loadGame(fileController.getBoard(), fileController.getMetadata(), BoardType.FIXED); 
+        if(fileController.loadBoard((Stage) gameCanvas.getScene()
+                .getWindow(), false)) {
+           gol.loadGame(fileController.getBoard(), 
+                   fileController.getMetadata(), BoardType.FIXED); 
         }
     }
-    @FXML// TODO: 30.04.2016 Hvordan hentes egentlig GOL-objektet til ViewController?
+    
+    @FXML
+    public void loadGameBoardToMouse() {
+        timeline.stop();
+        if(fileController.loadBoard((Stage) gameCanvas.getScene()
+                .getWindow(), false)) {
+           holdingPattern = fileController.getBoard(); 
+        }
+    }
+    
+    @FXML
     public void loadGameBoardFromURL() {
         timeline.stop();
-        if(fileController.loadBoard((Stage) gameCanvas.getScene().getWindow(), true)) {
-           gol.loadGame(fileController.getBoard(), fileController.getMetadata(), BoardType.FIXED); 
+        if(fileController.loadBoard((Stage) gameCanvas.getScene()
+                .getWindow(), true)) {
+           gol.loadGame(fileController.getBoard(), 
+                   fileController.getMetadata(), BoardType.FIXED); 
         }
     }
     
+    //TODO: Load game board to mouse pointer (holdingpattern = fileController.getBoard())
+    
+    //==================
+    //  SAVE BOARD AS
+    //==================
+    
     @FXML
-    public void saveRLE() {
-        // TODO: 30.04.2016 Save board as... som navn på MenuItem
-        fileController.saveBoard((Stage) gameCanvas.getScene().getWindow(), gol);
+    public void saveBoardAsRLE() {
+        //TODO Endre saveBoard() til å ta inn filtype RLE
+        fileController.saveBoard(gol, EncodeType.RLE, 
+                (Stage) gameCanvas.getScene().getWindow());
     }
     
     @FXML
-    public void saveAsWav() {
-        // TODO: 30.04.2016 implementer knapp
+    public void saveBoardAsLife105() {
+        fileController.saveBoard(gol, EncodeType.LIFE105, 
+                (Stage) gameCanvas.getScene().getWindow());
+    }
+    
+    @FXML
+    public void saveBoardAsLife106() {
+        fileController.saveBoard(gol, EncodeType.LIFE106, 
+                (Stage) gameCanvas.getScene().getWindow());
+    }
+    
+    @FXML
+    public void saveBoardAsWAV() {
+        fileController.saveSound(gol, 
+                (Stage) gameCanvas.getScene().getWindow());
+    }
+    
+    @FXML
+    public void saveBoardAsJPEG() {
+        fileController.saveImage(gol, 
+                (Stage) gameCanvas.getScene().getWindow());
+    }
+    
+    @FXML
+    public void saveBoardAsGIF() {
+        fileController.saveAnimation(gol, 
+                (Stage) gameCanvas.getScene().getWindow());
     }
     
     @FXML
@@ -181,12 +218,14 @@ public class ViewController {
     @FXML
     public void openPatternEditor() {
         timeline.stop();
-        //dialogBoxes.openPatternEditor(gol, (Stage) gameCanvas.getScene().getWindow());
+        dialogBoxes.openPatternEditor(gol, 
+                (Stage)gameCanvas.getScene().getWindow());
     }
     
     @FXML
     public void openMetadataDialog() {
-        dialogBoxes.metaDataDialogBox(gol.getMetaData(), (Stage) gameCanvas.getScene().getWindow());
+        dialogBoxes.metaDataDialogBox(gol.getMetaData(), 
+                (Stage)gameCanvas.getScene().getWindow());
     }
     
     @FXML
@@ -207,14 +246,7 @@ public class ViewController {
     
     @FXML
     public void openAbout() {
-       
-        try {
-            new WavSaver(gol, 30, null, 0, 0, 0, 0);
-        } catch (IOException ex) {
-            Logger.getLogger(ViewController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (WavFileException ex) {
-            Logger.getLogger(ViewController.class.getName()).log(Level.SEVERE, null, ex);
-        }
+        //TODO: FIKS ABOUT
         
     }
     
@@ -281,20 +313,6 @@ public class ViewController {
         draw();
     }
     
-    //Funksjon som skal gi brukeren mulighet til å flytte grid-en
-    //Endrer offset-verdiene over for å tilby dette til draw()-funksjonene
-
-    @FXML
-    void toggleDrawMove(ActionEvent event) {
-    	drawMode = !drawMode;
-
-    	if(drawMode) {
-            toggleDrawMove.setText("Draw Mode");
-        } else {
-            toggleDrawMove.setText("Move Mode");
-        }
-    }
-    
     //=================================
     //         BOTTOM CONTROLS
     //=================================
@@ -319,13 +337,14 @@ public class ViewController {
     
     @FXML
     public void openPatternList() {
+        //TODO: IMPLEMENTER DROPDOWN ELLER DIALOGBOKS
         //dialogBoxes.openPatternList();
     }
     
     @FXML
     public void openStatistics() {
         timeline.stop();
-        //dialogBoxes.statistics(gol, (Stage) gameCanvas.getScene().getWindow());
+        dialogBoxes.statistics(gol, (Stage) gameCanvas.getScene().getWindow());
     }
     
     // TODO: 30.04.2016 Bedre tittel her
@@ -359,16 +378,6 @@ public class ViewController {
     // Draw methods
     //=========================================================================
 
-    //Strengt talt ikke nødvendig med 0, men man kan bytte det med noe annet
-    private double getGridStartPosX() {
-    	return 0 + offset_X;
-    }
-
-    //Strengt talt ikke nødvendig med 0, men man kan bytte det med noe annet
-    private double getGridStartPosY() {
-    	return 0 + offset_Y;
-    }
-
     private double getBoardWidth() {
     	return cellSize * gol.getColumns();
     }
@@ -379,11 +388,11 @@ public class ViewController {
 
     // TODO 30.04.2016 Fjern isXInsideGrid og isYInsideGrid
     private boolean isXInsideGrid(double posX) {
-    	return ((posX >= getGridStartPosX()) && (posX <= getGridStartPosX() + getBoardWidth()));
+    	return ((posX >= offset_X) && (posX <= offset_X + getBoardWidth()));
     }
 
     private boolean isYInsideGrid(double posY) {
-    	return ((posY >= getGridStartPosY()) && (posY <= getGridStartPosY() + getBoardHeight()));
+    	return ((posY >= offset_Y) && (posY <= offset_Y + getBoardHeight()));
     }
 
     /**
@@ -395,8 +404,8 @@ public class ViewController {
     }
 
     private void draw() {
-        final double start_X = Math.round(getGridStartPosX());
-        final double start_Y = Math.round(getGridStartPosY());
+        final double start_X = Math.round(offset_X);
+        final double start_Y = Math.round(offset_Y);
         final int rows = gol.getRows();
         final int columns = gol.getColumns();
         final double boardWidth = getBoardWidth();
@@ -407,21 +416,17 @@ public class ViewController {
         GraphicsContext gc = gameCanvas.getGraphicsContext2D();
         gc.clearRect(0, 0, canvasWidth, canvasHeight);
 
-        if(drawBackground) {
-            gc.setFill(stdBackgroundColor);
-            gc.fillRect(0, 0, canvasWidth, canvasHeight);
-        }
-
-        if(drawBoardBackground) {
-            gc.setFill(stdBoardColor);
-            gc.fillRect(start_X, start_Y, boardWidth, boardHeight);
-        }
+        gc.setFill(stdBackgroundColor);
+        gc.fillRect(0, 0, canvasWidth, canvasHeight);
+        
+        gc.setFill(stdBoardColor);
+        gc.fillRect(start_X, start_Y, boardWidth, boardHeight);
 
         //Burde være en translatePositionToIndexArray
-        int rowStart = (int) ((0 - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
-        int rowEnd = (int) ((canvasParent.getHeight() - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
-        int columnStart = (int) ((0 - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
-        int columnEnd = (int) ((canvasParent.getWidth() - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
+        int rowStart = (int) ((0 - (offset_Y - getBoardHeight())) / cellSize) - gol.getRows();
+        int rowEnd = (int) ((canvasParent.getHeight() - (offset_Y - getBoardHeight())) / cellSize) - gol.getRows();
+        int columnStart = (int) ((0 - (offset_X - getBoardWidth())) / cellSize) - gol.getColumns();
+        int columnEnd = (int) ((canvasParent.getWidth() - (offset_X - getBoardWidth())) / cellSize) - gol.getColumns();
 
         int startRow = 0;
         int endRow = rows;
@@ -461,8 +466,8 @@ public class ViewController {
         final int boardRowLength = gol.getRows();
         final int boardColumnLength = gol.getColumns();
 
-    	double start_X = getGridStartPosX();
-        double start_Y = getGridStartPosY();
+    	double start_X = offset_X;
+        double start_Y = offset_Y;
 
         // Slutten av strekene vil være startposisjonen + bredden/høyde til alle cellene lagt sammen
         double end_X = start_X + getBoardWidth();
@@ -502,34 +507,16 @@ public class ViewController {
 
                 double bClick_X = e.getX();
                 double bClick_Y = e.getY();
-                int row = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
-                int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
+                int row = (int) ((bClick_Y - (offset_Y - getBoardHeight())) / cellSize) - gol.getRows();
+                int column = (int) ((bClick_X - (offset_X - getBoardWidth())) / cellSize) - gol.getColumns();
                 System.out.println("Click_ row: " + row + " col: " + column);
                 drawCell = (gol.getCellAliveState(row, column) != 1);
 
                 double oldBoardHeight = getBoardHeight();
                 double oldBoardWidth = getBoardWidth();
 
-
-                gol.setCellAliveState(row, column, (drawCell ? (byte) 1 : (byte) 0));
-
-                double newBoardHeight = getBoardHeight();
-                double newBoardWidth = getBoardWidth();
-
-                if(row < 0) {
-                    offset_Y -= newBoardHeight - oldBoardHeight;
-                }
-                if(column < 0) {
-                    offset_X -= newBoardWidth - oldBoardWidth;
-                }
-                if(holdingPattern) {
-                    //drawObject(row, column, pattern)
-                    byte[][] testArray = new byte[][] {
-                            {0, 1, 0},
-                            {0, 0, 1},
-                            {1, 1, 1}
-                    };
-
+                if (holdingPattern != null) {
+                    /*
                     final int M = testArray.length;
                     final int N = testArray[0].length;
                     byte[][] ret = new byte[N][M];
@@ -537,26 +524,37 @@ public class ViewController {
                         for (int c = 0; c < N; c++) {
                             ret[c][M-1-r] = testArray[r][c];
                         }
-                    }
+                    }*/
 
-                    int mid = (0 + ret.length - 1) / 2;
+                    int midRow = (holdingPattern.length - 1) / 2;
+                    int midColumn = (holdingPattern[0].length - 1) / 2;
 
-                    for(int i = 0; i < ret.length; i++) {
-                        for(int j = 0; j < ret[i].length; j++) {
-                            gol.setCellAliveState(row + i -mid, column + j -mid, ret[i][j]);
+                    for(int i = 0; i < holdingPattern.length; i++) {
+                        for(int j = 0; j < holdingPattern[i].length; j++) {
+                            gol.setCellAliveState(row + i - midRow, 
+                                    column + j - midColumn, 
+                                    holdingPattern[i][j]);
                         }
                     }
-                    holdingPattern = false;
                 } else {
-                    drawCell = (gol.getCellAliveState(row, column) != 1);
-                    gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
+                    gol.setCellAliveState(row, column, (drawCell ? (byte) 1 : (byte) 0));
+                }
+
+                double newBoardHeight = getBoardHeight();
+                double newBoardWidth = getBoardWidth();
+
+                if (row < 0) {
+                    offset_Y -= newBoardHeight - oldBoardHeight;
+                }
+                if (column < 0) {
+                    offset_X -= newBoardWidth - oldBoardWidth;
                 }
                 draw();
             } else if (e.isSecondaryButtonDown()) { //FLYTTEFUNKSJON
                 gameCanvas.getScene().setCursor(Cursor.HAND);
                 fitToView.setSelected(false);
-                offsetBegin_X = e.getX() - getGridStartPosX();
-                offsetBegin_Y = e.getY() - getGridStartPosY();
+                offsetBegin_X = e.getX() - offset_X;
+                offsetBegin_Y = e.getY() - offset_Y;
             }
         }); // end eventhandler
 
@@ -566,10 +564,10 @@ public class ViewController {
                 double bClick_X = e.getX();
                 double bClick_Y = e.getY();
 
-                if( isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y) && !holdingPattern ) {
+                if ( isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y) ) {
 
-                    int row    = (int) ((bClick_Y - (getGridStartPosY() - getBoardHeight())) / cellSize) - gol.getRows();
-                    int column = (int) ((bClick_X - (getGridStartPosX() - getBoardWidth())) / cellSize) - gol.getColumns();
+                    int row    = (int) ((bClick_Y - (offset_Y - getBoardHeight())) / cellSize) - gol.getRows();
+                    int column = (int) ((bClick_X - (offset_X - getBoardWidth())) / cellSize) - gol.getColumns();
                     // unngår out of bounds exception,
                     // holder seg innenfor arrayets lengde
                     // tegner kun dersom man er innenfor lengde
