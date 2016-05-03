@@ -38,7 +38,8 @@ public class GameOfLife {
         Random random = new Random();
         for(int row = 0; row < board.getRows(); row++) {
             for(int col = 0; col < board.getColumns(); col++) {
-                board.setCellAliveState(row,col,((random.nextInt(5) == 1) ? (byte)1 : (byte)0));
+                board.setCellAliveState(row,col,
+                        ((random.nextInt(5) == 1) ? (byte)1 : (byte)0));
             }
         }
         board.setFirstGeneration();
@@ -55,6 +56,7 @@ public class GameOfLife {
                 break;
         }
         algorithm = new Default(this.board);
+        nextGenerationWorkers = new NextGenerationWorkers(NUM_THREADS, this.board, algorithm);
     }
     
     public void setFirstGeneration() {

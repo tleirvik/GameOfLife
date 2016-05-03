@@ -3,7 +3,6 @@ package Model.FileManagement;
 import Model.FileManagement.Decoders.*;
 import Model.FileManagement.Decoders.RLEDecoder;
 import Model.FileManagement.Encoders.RLEEncoder;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import Model.GameOfLife.MetaData;
@@ -16,8 +15,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 
 import Model.util.DialogBoxes;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 
 /**
@@ -31,39 +28,55 @@ import javafx.scene.control.Alert;
 public class FileLoader {
     private Decoder decoder;
     
-    public boolean loadBoard(File f, EncodeType type) throws IOException, PatternFormatException {
+    public boolean loadBoard(File f, EncodeType type) {
         if (!f.canRead()) {
-            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", "Could not read file!",
-                    "Please check your file permissions!");
+            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
+                    "Could not read file!", "Please check your file permissions!");
             return false;
         }
 
-        try (BufferedReader reader = new BufferedReader(new FileReader(f.getAbsolutePath()))) {
+        try (BufferedReader reader = new BufferedReader(
+                new FileReader(f.getAbsolutePath()))) {
             decodeBoard(reader, type);
         }  catch (FileNotFoundException fnfE) {
-            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", "File was not found", fnfE.getMessage());
+            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
+                    "File was not found", fnfE.getMessage());
             return false;
         } catch (IOException ioE) {
-            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", "An unknown Input/Output error occurred", ioE.getMessage());
+            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
+                    "An unknown Input/Output error occurred", ioE.getMessage());
+            return false;
+        } catch (PatternFormatException pfE) {
+            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
+                    "The board could not be parsed correctly", pfE.getMessage());
             return false;
         }
         return true;
     }
     
-    public void loadBoardFromURL(URL url, EncodeType type) {
+    public boolean loadBoardFromURL(URL url, EncodeType type) {
+        URLConnection conn;
         try {
-            URLConnection conn = url.openConnection();
-            //TODO: 01.05.2016 Logger skal byttes ut?
-            try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
-                decodeBoard(reader, type);
-            } catch (PatternFormatException ex) {
-                Logger.getLogger(FileLoader.class.getName()).log(Level.SEVERE, null, ex);
-            }
-        } catch (MalformedURLException ex) {
-            Logger.getLogger(FileLoader.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (IOException ex) {
-            Logger.getLogger(FileLoader.class.getName()).log(Level.SEVERE, null, ex);
+            conn = url.openConnection();
+        } catch (IOException ioE) {
+            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
+                    "An unknown Input/Output error occurred", ioE.getMessage());
+            return false;
         }
+        
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(conn.getInputStream()))) {
+            decodeBoard(reader, type);
+        } catch (PatternFormatException ex) {
+            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
+                    "The board could not be parsed correctly", ex.getMessage());
+            return false;
+        } catch (IOException ioE) {
+            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
+                    "An unknown Input/Output error occurred", ioE.getMessage());
+            return false;
+        }
+        
+        return true;
     }
     
     private void decodeBoard(BufferedReader reader, EncodeType type) throws IOException, PatternFormatException {

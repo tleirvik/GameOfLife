@@ -5,6 +5,7 @@
  */
 package Controller;
 
+import Model.FileManagement.EncodeType;
 import Model.GameOfLife.Boards.Board;
 import Model.GameOfLife.GameOfLife;
 import Model.GameOfLife.MetaData;
@@ -45,7 +46,6 @@ public class EditorController {
     @FXML private TextField titleTextField;
     @FXML private TextField descriptionTextField;
     @FXML private TextField rulesTextField;
-    @FXML private MenuItem saveToGif;
 
     private double cellSize;
     private GameOfLife game;
@@ -70,13 +70,10 @@ public class EditorController {
     }
     
     @FXML
-    public void handleSaveButton() {
-        Stage mainStage = (Stage) patternCanvas.getScene().getWindow();
-        FileChooser fileChooser = new FileChooser();
-    	fileChooser.setTitle("Save RLE Pattern to file");
-        fileChooser.getExtensionFilters().add(
-            new FileChooser.ExtensionFilter("RLE files", "*.rle"));
-        File saveRLEFile = fileChooser.showSaveDialog(mainStage);
+    public void saveBoard() {
+        Stage owner = (Stage) patternCanvas.getScene().getWindow();
+        trim();
+        fileController.saveBoard(game, EncodeType.RLE, owner);
     }
     
     @FXML
@@ -99,15 +96,18 @@ public class EditorController {
     private void trim() {
         int[] bBox = game.getBoard().getBoundingBox();
         
-        byte[][] trimmedBoard = new byte[bBox[1] - bBox[0]][bBox[3] - bBox[2]];
+        int trimmedBoardRows = (bBox[1] - bBox[0]) + 1;
+        int trimmedBoardColumns = (bBox[3] - bBox[2]) + 1;
         
-        for (int oldRow = bBox[0], newRow = 0; oldRow < bBox[1]; oldRow++, newRow++) {
-            for (int oldColumn = bBox[2], newColumn = 0; oldColumn < bBox[3]; oldColumn++, newColumn++) {
+        byte[][] trimmedBoard = new byte[trimmedBoardRows][trimmedBoardColumns];
+        
+        for (int oldRow = bBox[0], newRow = 0; oldRow <= bBox[1]; oldRow++, newRow++) {
+            for (int oldColumn = bBox[2], newColumn = 0; oldColumn <= bBox[3]; oldColumn++, newColumn++) {
                 trimmedBoard[newRow][newColumn] = 
                         game.getCellAliveState(oldRow, oldColumn);
             }
         }
-        
+        System.out.println(trimmedBoard.length + " " + trimmedBoard[0].length);
         game.loadGame(trimmedBoard, game.getMetaData(), Board.BoardType.FIXED);
     }
     
@@ -126,7 +126,7 @@ public class EditorController {
 
         draw();
         
-        saveToGif.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN));
+        //saveToGif.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN));
     }
     
     @FXML

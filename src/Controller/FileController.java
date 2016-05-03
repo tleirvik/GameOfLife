@@ -5,6 +5,7 @@ import Model.FileManagement.FileLoader;
 import Model.FileManagement.FileSaver;
 import Model.FileManagement.ImageType;
 import Model.FileManagement.OtherFormats.Data.*;
+import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
 import Model.GameOfLife.MetaData;
 import Model.GameOfLife.PatternFormatException;
@@ -16,22 +17,28 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.ColorPicker;
 import javafx.scene.control.Dialog;
 import javafx.scene.control.Label;
+import javafx.scene.control.RadioButton;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Slider;
 import javafx.scene.control.Spinner;
 import javafx.scene.control.TextField;
+import javafx.scene.control.ToggleGroup;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
@@ -80,76 +87,43 @@ public class FileController {
     //=========================================================================
     //                              LOAD
     //=========================================================================
-    public boolean loadBoard(Stage owner, boolean online) {
-        if(online) {
-            String urlString = urlDialogBox(owner);
-            if(urlString == null) { //User closed dialog without entering a URL
-                return false;
-            }
-            
-            URL url;
-            try {
-                url = new URL(urlString);
-            } catch (MalformedURLException ex) {
-                DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Invalid URL", 
-                        null, "The submitted text is not a valid URL");
-                return false;
-            }
-            
-            //Finn ut filtypen
-            EncodeType type = null;
-            String fileExtension = getFileExtension(urlString);
-            System.out.println(fileExtension);
-            for (EncodeType e : EncodeType.values()) {
-                if(Arrays.asList(e.getFileExtensions()).contains(fileExtension)) {
-                    type = e;
-                    break;
-                }
-             }
-           
-           if(type == null) {
-               DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Unknown encoding",
-                       "The file's encoding could not be determined", 
-                       "This program only supports files ending with .rle, .lif and .life");
-               return false;
-           }
-           
-           fileLoader.loadBoardFromURL(url, type);
-        } else {
-            List<ExtensionFilter> extFilter = new ArrayList<>();
-            
-            //Itererer igjennom Encode-enumene og legger til alle
-            for (EncodeType e : EncodeType.values()) {
-                extFilter.add(new ExtensionFilter(e.getName(), e.getFileExtensions()));
-            }
-            
-            File f = loadFileChooser(owner, extFilter);
-            
-            if(f == null) {
-                return false;
-            }
-            
-            //Finn ut hva brukeren valgte som encoding
-            EncodeType type = null;
-            ExtensionFilter extensionFilter = fileChooser.getSelectedExtensionFilter();
-            for (EncodeType e : EncodeType.values()) {
-                if(extensionFilter.getDescription().matches(e.getName())) {
-                    type = e;
-                    break;
-                }
-            }
-                        
-            try {
-                fileLoader.loadBoard(f, type);
-            } catch (IOException ex) {
-                //TODO: 01.05.2016 Endre alle exceptions til å enten bruke logger eller noe annet
-                Logger.getLogger(FileController.class.getName()).log(Level.SEVERE, null, ex);
-            } catch (PatternFormatException ex) {
-                Logger.getLogger(FileController.class.getName()).log(Level.SEVERE, null, ex);
-            }
+    public void loadBoard(GameOfLife gol, byte[][] holdingPattern,Stage owner) {
+        boolean loadSuccessful;
+        
+        Object[] args = loadBoardDialog(owner);
+        
+        if(args == null) {
+            return;
         }
         
-        return true;
+        EncodeType encodetype = (EncodeType) args[0];
+        
+        if(args[1].equals("DISK")) {
+            String filePath = (String) args[2];
+            loadSuccessful = fileLoader.loadBoard(new File(filePath), encodetype);
+
+        } else {
+            String urlString = (String) args[2];
+            URL url = null;
+            try {
+                url = new URL(urlString);
+            } catch (MalformedURLException muE) {
+                DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
+                    "'" + urlString + "' is not a valid URL", muE.getMessage());
+            }
+            loadSuccessful = fileLoader.loadBoardFromURL(url, encodetype);
+        }
+        
+        if(!loadSuccessful) {
+            return;
+        }
+        
+        if(args[3].equals("NEW BOARD")) {
+            BoardType boardType = (BoardType) args[4];
+            gol.loadGame(fileLoader.getBoard(), fileLoader.getMetadata(), boardType);
+        } else {
+            holdingPattern = fileLoader.getBoard();
+        }
     }
     
     private File loadFileChooser(Stage owner, List<ExtensionFilter> extFilter) {
@@ -157,6 +131,121 @@ public class FileController {
         fileChooser.getExtensionFilters().addAll(extFilter);
         fileChooser.setTitle("Open Resource File");
         return fileChooser.showOpenDialog(owner);
+    }
+    
+    private Object[] loadBoardDialog(Stage owner) {
+        GridPane gp = new GridPane();
+        
+        gp.add(new Label("Encode Type: "), 0, 0);
+        ChoiceBox<EncodeType> encodeType = new ChoiceBox<>();
+        encodeType.getItems().setAll(EncodeType.values());
+        encodeType.setValue(EncodeType.RLE);
+        gp.add(encodeType, 1, 0);
+        
+        ToggleGroup diskOrURL = new ToggleGroup();
+        
+        Label loadBoardFrom = new Label("Load Board From: ");
+        loadBoardFrom.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        gp.add(loadBoardFrom,0, 1);
+        //===================
+        //       DISK
+        //===================
+        RadioButton selectDisk = new RadioButton();
+        selectDisk.setUserData("DISK");
+        selectDisk.setToggleGroup(diskOrURL);
+        selectDisk.setText("From Disk");
+        selectDisk.setSelected(true);
+        gp.add(selectDisk, 0, 2);
+        
+        TextField filePath = new TextField();
+        filePath.setEditable(false);
+        filePath.setPromptText("Browse for file");
+        gp.add(filePath, 1, 2, 2, 1);
+        Button browse = new Button("Browse");
+        gp.add(browse, 3, 2);
+        
+        browse.setOnAction(e -> {
+            EncodeType type = encodeType.getValue();
+            List<ExtensionFilter> extFilter = new ArrayList<>();
+            extFilter.add(new ExtensionFilter(type.getName(),type.getFileExtensions()));
+            File file = loadFileChooser((Stage)browse.getScene().getWindow(), extFilter);
+            filePath.setText(file.getAbsolutePath());
+        });
+        
+        //===================
+        //        URL
+        //===================
+        RadioButton selectURL = new RadioButton();
+        selectURL.setUserData("URL");
+        selectURL.setToggleGroup(diskOrURL);
+        selectURL.setText("From URL");
+        gp.add(selectURL, 0, 4);
+        
+        TextField url = new TextField();
+        url.setPromptText("Enter URL");
+        gp.add(url, 1, 4, 2, 1);
+        url.setDisable(true);
+        
+        diskOrURL.selectedToggleProperty().addListener(e -> {
+            boolean disable = selectURL.isSelected();
+            filePath.setDisable(disable);
+            browse.setDisable(disable);
+            url.setDisable(!disable);
+        });
+        
+        gp.add(new Separator(), 0, 6, 4, 1);
+        
+        Label loadBoardInto = new Label("Load Board Into: ");
+        loadBoardInto.setFont(Font.font("Arial", FontWeight.BOLD, 14));
+        gp.add(loadBoardInto,0, 7);
+        
+        ToggleGroup loadType = new ToggleGroup();
+        
+        //===================
+        //   TO NEW BOARD
+        //===================
+        RadioButton newBoard = new RadioButton();
+        newBoard.setToggleGroup(loadType);
+        newBoard.setText("New Board");
+        newBoard.setSelected(true);
+        gp.add(newBoard, 0, 8);
+        
+        gp.add(new Label("Board Type: "), 1, 9);
+        ChoiceBox<BoardType> boardType = new ChoiceBox<>();
+        boardType.getItems().setAll(BoardType.values());
+        boardType.setValue(BoardType.DYNAMIC);
+        gp.add(boardType, 2, 9);
+        
+        //===================
+        // DROP FROM MOUSE POINTER
+        //===================
+        RadioButton droppablePattern = new RadioButton();
+        droppablePattern.setToggleGroup(loadType);
+        droppablePattern.setText("Droppable from Mouse Pointer");
+        gp.add(droppablePattern, 0, 10, 2, 1);
+        
+        loadType.selectedToggleProperty().addListener(e -> {
+            boardType.setDisable(droppablePattern.isSelected());
+        });
+        
+        Dialog dialog = DialogBoxes.customUtilityDialog("Load board", null, gp, 
+                owner);
+        
+        ButtonType open = new ButtonType("Open", ButtonBar.ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(open, cancel);
+        
+        Optional<ButtonType> result = dialog.showAndWait();
+        if(result.get() == open) {
+            Object[] args = new Object[4];
+            
+            args[0] = encodeType.getValue();
+            if()
+            
+            return args;
+        } else {
+            return;
+        }
     }
     
     private String urlDialogBox(Stage owner) {
@@ -194,7 +283,11 @@ public class FileController {
         extFilter.add(new ExtensionFilter("RLE files", "*.rle"));
         extFilter.add(new ExtensionFilter("All Files", "*.*"));
         
-        File f = loadFileChooser(owner, extFilter);
+        File f = saveFileChooser(owner, extFilter);
+        
+        if (f == null) {
+            return;
+        }
         
         fileSaver.saveGame(type, game, f);
     }

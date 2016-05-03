@@ -59,14 +59,6 @@
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>
             </TextField>
-            <Button mnemonicParsing="false" onAction="#handleSaveButton" text="Save Pattern">
-               <VBox.margin>
-                  <Insets left="15.0" right="15.0" />
-               </VBox.margin>
-               <font>
-                  <Font size="15.0" />
-               </font>
-            </Button>
             <Button fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" text="Close">
                <VBox.margin>
                   <Insets left="15.0" right="15.0" />
@@ -105,7 +97,7 @@
         <menus>
           <Menu mnemonicParsing="false" text="File">
             <items>
-              <MenuItem fx:id="saveToGif" mnemonicParsing="false" onAction="#saveToGif" text="Save To Gif" />
+              <MenuItem mnemonicParsing="false" onAction="#saveBoard" text="Save Board..." />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">

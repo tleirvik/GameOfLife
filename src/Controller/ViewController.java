@@ -136,18 +136,17 @@ public class ViewController {
     @FXML
     public void loadGameBoardFromDisk() {
         timeline.stop();
-        if(fileController.loadBoard((Stage) gameCanvas.getScene()
-                .getWindow(), false)) {
+        if (fileController.loadBoard((Stage) gameCanvas.getScene().getWindow())) {
            gol.loadGame(fileController.getBoard(), 
                    fileController.getMetadata(), BoardType.FIXED); 
+           draw();
         }
     }
     
     @FXML
     public void loadGameBoardToMouse() {
         timeline.stop();
-        if(fileController.loadBoard((Stage) gameCanvas.getScene()
-                .getWindow(), false)) {
+        if(fileController.loadBoard((Stage) gameCanvas.getScene().getWindow())) {
            holdingPattern = fileController.getBoard(); 
         }
     }
@@ -155,8 +154,7 @@ public class ViewController {
     @FXML
     public void loadGameBoardFromURL() {
         timeline.stop();
-        if(fileController.loadBoard((Stage) gameCanvas.getScene()
-                .getWindow(), true)) {
+        if(fileController.loadBoard((Stage) gameCanvas.getScene().getWindow())) {
            gol.loadGame(fileController.getBoard(), 
                    fileController.getMetadata(), BoardType.FIXED); 
         }
