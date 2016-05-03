@@ -8,6 +8,7 @@ package Controller;
 import Model.FileManagement.OtherFormats.GIFSaver;
 import Model.GameOfLife.GameOfLife;
 import Model.GameOfLife.MetaData;
+import Model.util.DialogBoxes;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
@@ -23,9 +24,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import Model.util.DialogBoxes;
 
 import java.io.File;
+import java.util.Hashtable;
+import java.util.Vector;
 
 /**
  * FXML Controller class
@@ -52,6 +54,7 @@ public class EditorController {
     private GameOfLife game;
     private MetaData metaData;
     private DialogBoxes dialogBoxes;
+    public static Hashtable<String, Vector<String>> markovChain = new Hashtable<String, Vector<String>>();
 
     /**
      * This method closes the editor window.
@@ -231,6 +234,8 @@ public class EditorController {
         this.dialogBoxes = dialogBoxes;
     }
     public void initialize() {
+        markovChain.put("_start", new Vector<String>());
+        markovChain.put("_stop", new Vector<String>());
         //game.getBoard().setIsDynamic(false);
     }
 }
