@@ -177,6 +177,36 @@ public class FixedBoard extends Board{
         return new FixedBoard(boardClone, metaDataClone);
     }
     
+    @Override
+    public int[] getBoundingBox() {
+        int[] boundingBox = new int[4]; // minrow maxrow mincolumn maxcolumn
+        boundingBox[0] = currentGeneration.length;
+        boundingBox[1] = 0;
+        boundingBox[2] = currentGeneration[0].length;
+        boundingBox[3] = 0;
+        
+        for (int i = 0; i < currentGeneration.length; i++) {
+            for (int j = 0; j < currentGeneration[0].length; j++) {
+                if ((currentGeneration[i][j] == 0)) {
+                    continue;
+                }
+                if (i < boundingBox[0]) {
+                    boundingBox[0] = i;
+                }
+                if (i > boundingBox[1]) {
+                    boundingBox[1] = i;
+                }
+                if (j < boundingBox[2]) {
+                    boundingBox[2] = j;
+                }
+                if (j > boundingBox[3]) {
+                    boundingBox[3] = j;
+                }
+            }
+        }
+        return boundingBox;
+    }
+    
     /**
      *  Method that returns the game board as a String. Used for Unit Testing with JUnit 4
      *

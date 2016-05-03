@@ -5,7 +5,6 @@ import Model.GameOfLife.Algorithms.Default;
 import Model.GameOfLife.Boards.Board;
 import Model.GameOfLife.Boards.FixedBoard;
 import Model.GameOfLife.Boards.DynamicBoard;
-import Model.GameOfLife.Boards.TorodialBoard;
 import Model.GameOfLife.Boards.Board.BoardType;
 import java.util.Random;
 
@@ -23,10 +22,6 @@ public class GameOfLife {
                 
             case DYNAMIC:
                 board = new DynamicBoard(rows, columns);
-                break;
-                
-            case TORODIAL:
-                board = new TorodialBoard(rows, columns);
                 break;
         }
         algorithm = new Default(this.board);
@@ -57,10 +52,6 @@ public class GameOfLife {
                 
             case DYNAMIC:
                 this.board = new DynamicBoard(board, metadata);
-                break;
-                
-            case TORODIAL:
-                this.board = new TorodialBoard(board, metadata);
                 break;
         }
         algorithm = new Default(this.board);

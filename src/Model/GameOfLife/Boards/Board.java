@@ -24,13 +24,11 @@ public abstract class Board {
     @Override
     public abstract Board clone();
     
-    @Override
-    public abstract String toString();
+    public abstract int[] getBoundingBox();
     
     public enum BoardType {
         FIXED,
-        DYNAMIC,
-        TORODIAL
+        DYNAMIC
     }
     
     public void beforeUpdate(){}

@@ -418,27 +418,8 @@ public class DynamicBoard extends Board {
         return new DynamicBoard(boardClone, metaDataClone);
     }
 
-    public String getBoundingBoxPattern() {
-        if (currentGeneration.isEmpty()) {
-            return "";
-        }
-        
-        int[] boundingBox = getBoundingBox();
-        String str = "";
-        
-        for (int i = boundingBox[0]; i <= boundingBox[1]; i++) {
-            for (int j = boundingBox[2]; j <= boundingBox[3]; j++) {
-                if (currentGeneration.get(i).get(j) == 1) {
-                    str = str + "1";
-                } else {
-                    str = str + "0";
-                }
-            }
-        }
-        return str;
-    }
 
-    private int[] getBoundingBox() {
+    public int[] getBoundingBox() {
         int[] boundingBox = new int[4]; // minrow maxrow mincolumn maxcolumn
         boundingBox[0] = currentGeneration.size();
         boundingBox[1] = 0;
@@ -447,7 +428,7 @@ public class DynamicBoard extends Board {
         
         for (int i = 0; i < currentGeneration.size(); i++) {
             for (int j = 0; j < currentGeneration.get(i).size(); j++) {
-                if ((currentGeneration.get(i).get(j) == 1)) {
+                if ((currentGeneration.get(i).get(j) == 0)) {
                     continue;
                 }
                 if (i < boundingBox[0]) {

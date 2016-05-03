@@ -5,7 +5,7 @@
  */
 package Controller;
 
-import Model.FileManagement.OtherFormats.GIFSaver;
+import Model.GameOfLife.Boards.Board;
 import Model.GameOfLife.GameOfLife;
 import Model.GameOfLife.MetaData;
 import javafx.fxml.FXML;
@@ -23,7 +23,6 @@ import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
-import Model.util.DialogBoxes;
 
 import java.io.File;
 
@@ -51,7 +50,15 @@ public class EditorController {
     private double cellSize;
     private GameOfLife game;
     private MetaData metaData;
-    private DialogBoxes dialogBoxes;
+    private FileController fileController;
+    
+    public void initializeEditor(GameOfLife game, FileController fileController) {
+        this.game = game.clone();
+        this.fileController = fileController;
+        
+        setPattern();
+    }
+    
 
     /**
      * This method closes the editor window.
@@ -84,13 +91,28 @@ public class EditorController {
     }
     
     @FXML
-    public void saveToGif() {  
+    public void saveToGif() { 
+        trim();
         game.setFirstGeneration();
     }
     
+    private void trim() {
+        int[] bBox = game.getBoard().getBoundingBox();
+        
+        byte[][] trimmedBoard = new byte[bBox[1] - bBox[0]][bBox[3] - bBox[2]];
+        
+        for (int oldRow = bBox[0], newRow = 0; oldRow < bBox[1]; oldRow++, newRow++) {
+            for (int oldColumn = bBox[2], newColumn = 0; oldColumn < bBox[3]; oldColumn++, newColumn++) {
+                trimmedBoard[newRow][newColumn] = 
+                        game.getCellAliveState(oldRow, oldColumn);
+            }
+        }
+        
+        game.loadGame(trimmedBoard, game.getMetaData(), Board.BoardType.FIXED);
+    }
+    
     // sette brettet her?
-    public void setPattern(GameOfLife game) {
-        this.game = game.clone();
+    public void setPattern() {
         metaData = game.getMetaData();
         
         double cellWidth = patternCanvas.getWidth() / game.getRows();
@@ -224,12 +246,5 @@ public class EditorController {
     
     private double getPatternHeight() {
         return cellSize * game.getRows();
-    }
-
-    public void setDialogBoxes(DialogBoxes dialogBoxes) {
-        this.dialogBoxes = dialogBoxes;
-    }
-    public void initialize() {
-        //game.getBoard().setIsDynamic(false);
     }
 }
