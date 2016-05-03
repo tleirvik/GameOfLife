@@ -1,13 +1,12 @@
 package Controller;
 
 import Model.FileManagement.Decoders.RLEDecoder;
-import Model.FileManagement.Encoders.RLEEncoder;
-import Model.FileManagement.FileLoader;
+import Model.FileManagement.OtherFormats.WavSaver;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
 import Model.util.DialogBoxes;
 import Model.util.Stopwatch;
-import Wav.WavFile;
+import Wav.WavFileException;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
@@ -24,13 +23,12 @@ import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -67,10 +65,10 @@ public class ViewController {
     // Property fields
     //=========================================================================
 
-    final private DialogBoxes dialogBoxes = new DialogBoxes(this);
+    final private DialogBoxes dialogBoxes = new DialogBoxes();
     final private Timeline timeline = new Timeline();
     final private GameOfLife gol = new GameOfLife();
-    final private FileLoader fileLoader = new FileLoader();
+    final private FileController fileController = new FileController();
 
     //Slidere kan manipulere disse verdiene
     private double cellSize = 10;
@@ -110,7 +108,6 @@ public class ViewController {
     // Initializer
     //=========================================================================
     public void initialize() {
-        fileLoader.initialize();
         initializeTimeline();
         initializeFpsSlider();
         
@@ -125,83 +122,16 @@ public class ViewController {
     //=========================================================================
     // GUI Event handlers
     //=========================================================================
-
-    @FXML
-    public void openAbout() {
-       /*
-        try {
-            new WavSaver(gol, 20, null, 0, 0, 0, 0);
-        } catch (IOException ex) {
-            Logger.getLogger(ViewController.class.getName()).log(Level.SEVERE, null, ex);
-        } catch (WavFileException ex) {
-            Logger.getLogger(ViewController.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        */
-    }
+    
+    //=================================
+    //            FILE MENU
+    //=================================
     
     @FXML
     public void newGame() {
         timeline.stop();
-        dialogBoxes.openNewGameDialog(gol);
+        dialogBoxes.openNewGameDialog(gol, (Stage) gameCanvas.getScene().getWindow());
         openGame();
-    }
-    
-    @FXML
-    public void openPatternList() {
-        //dialogBoxes.openPatternList();
-    }
-    
-    @FXML
-    public void openPatternEditor() {
-        timeline.stop();
-        dialogBoxes.openPatternEditor(gol);
-    }
-    
-    @FXML
-    public void openMetadataDialog() {
-        dialogBoxes.metaDataDialogBox(gol.getMetaData());
-    }
-    
-    public void loadGameBoardFromRLE(boolean online) {
-        timeline.stop();
-        statusBar.setText("");
-                
-        if(online) {
-            String urlString = dialogBoxes.urlDialogBox();
-            if(urlString == null) {
-                return;
-            }
-            if(!fileLoader.readGameBoardFromURL(urlString)) {
-                statusBar.setText("Could not load file from URL!");
-                return;
-            }
-        } else {
-            List<ExtensionFilter> extFilter = new ArrayList<>();
-            extFilter.add(new ExtensionFilter("RLE files", "*.rle"));
-            extFilter.add(new ExtensionFilter("Life 1.0x Files", "*.lif", "*.life"));
-
-            File selectedFile = dialogBoxes.fileChooser(extFilter, true);
-            
-            if(selectedFile == null) {
-                return;
-            }
-            if (!fileLoader.readGameBoardFromDisk(selectedFile)) {
-                statusBar.setText("Could not load file from disk!");
-                return;
-            }
-        }
-        
-        gol.loadGame(fileLoader.getBoard(), fileLoader.getMetadata(), BoardType.FIXED);
-        
-        statusBar.setText("Title: " + fileLoader.getMetadata().getName() + ","
-                + " Author: " + fileLoader.getMetadata().getAuthor() + ","
-                + " Comments: " + fileLoader.getMetadata().getComment() + ","
-                + " Rules: " + fileLoader.getMetadata().getRuleString());
-        openGame();
-    }
-    
-    public void loadGameBoardFromURL() {
-        loadGameBoardFromRLE(true);
     }
     
     /**
@@ -214,111 +144,49 @@ public class ViewController {
      */
     @FXML
     public void loadGameBoardFromDisk() {
-        loadGameBoardFromRLE(false);
+        timeline.stop();
+        if(fileController.loadBoard((Stage) gameCanvas.getScene().getWindow(), false)) {
+           gol.loadGame(fileController.getBoard(), fileController.getMetadata(), BoardType.FIXED); 
+        }
+    }
+    @FXML// TODO: 30.04.2016 Hvordan hentes egentlig GOL-objektet til ViewController?
+    public void loadGameBoardFromURL() {
+        timeline.stop();
+        if(fileController.loadBoard((Stage) gameCanvas.getScene().getWindow(), true)) {
+           gol.loadGame(fileController.getBoard(), fileController.getMetadata(), BoardType.FIXED); 
+        }
     }
     
-    /**
-     * Opens a currently loaded game, whether it is completely new
-     * or loaded from a file.
-     */
-    public void openGame() {
-        fitToView.setSelected(true);
-        fitToView();
-        centerBoard();
-        draw();
-    }
-
-    /**
-     * This method launches a FileChooser and lets the user specify a
-     * filename and save the current board.
-     * If the file is not null it creates an object of type RLEEncoder and
-     * calls the method encode().
-     *
-     * @see RLEDecoder
-     */
     @FXML
     public void saveRLE() {
-        List<ExtensionFilter> extFilter = new ArrayList<>();
-        extFilter.add(new ExtensionFilter("RLE files", "*.rle"));
-        extFilter.add(new ExtensionFilter("All Files", "*.*"));
-
-        File selectedFile = dialogBoxes.fileChooser(extFilter, false);
-                
-        if(selectedFile != null) {
-            RLEEncoder rleenc = new RLEEncoder(gol, selectedFile);
-            if(!rleenc.encode()) {
-                setStatusBarText("Could not open file!");
-                return;
-            }
-            setStatusBarText("File saved to : " + selectedFile.getAbsolutePath());
-        }        
+        // TODO: 30.04.2016 Save board as... som navn på MenuItem
+        fileController.saveBoard((Stage) gameCanvas.getScene().getWindow(), gol);
     }
     
     @FXML
     public void saveAsWav() {
-        
+        // TODO: 30.04.2016 implementer knapp
     }
     
     @FXML
-    public void openStatistics() {
-        timeline.stop();
-        dialogBoxes.statistics(gol);
+    public void closeApplication() {
+        Platform.exit();
     }
     
-    private void saveToWav() {
-        List<ExtensionFilter> extFilter = new ArrayList<>();
-            extFilter.add(new ExtensionFilter("WAV files", "*.wav"));
-            extFilter.add(new ExtensionFilter("All Files", "*.*"));
-        
-        File saveFile = dialogBoxes.fileChooser(extFilter, false);
-        
-        try {
-            int sampleRate = 44100;
-            double duration = 5.0;
-            long numFrames = (long) (duration * sampleRate);
-            
-            if (saveFile == null) {
-                return;
-            }
-            
-            WavFile wav = WavFile.newWavFile(saveFile, 2, numFrames, 16, sampleRate);
-            double[][] buffer = new double[2][100];
-            
-            long frameCounter = 0;
-            
-            while(frameCounter < numFrames) {
-                long remaining = wav.getFramesRemaining();
-                int toWrite = (remaining > 100) ? 100 : (int) remaining;
-                
-                for (int s = 0; s < toWrite; frameCounter++) {
-                    buffer[0][s] = Math.sin(2.0 * Math.PI * 440 * frameCounter);
-                    buffer[1][s] = Math.sin(2.0 * Math.PI * 500 + frameCounter);
-                }
-                
-                wav.writeFrames(buffer, toWrite);
-            }
-            wav.close();
-        } catch (Exception e) {
-            System.out.println(e);
-        }
-    }
-
+    
+    //=================================
+    //            EDIT MENU
+    //=================================
+    
     @FXML
-    public void togglePlay() {
-        if(timeline.getStatus() != Status.RUNNING) {
-            togglePlayButton.setText("Pause");
-            timeline.play();
-        } else {
-            togglePlayButton.setText("Play");
-            timeline.stop();
-        }
-    }
-
-    @FXML
-    public void reset() {
+    public void openPatternEditor() {
         timeline.stop();
-        gol.resetGame();
-        draw();
+        //dialogBoxes.openPatternEditor(gol, (Stage) gameCanvas.getScene().getWindow());
+    }
+    
+    @FXML
+    public void openMetadataDialog() {
+        dialogBoxes.metaDataDialogBox(gol.getMetaData(), (Stage) gameCanvas.getScene().getWindow());
     }
     
     @FXML
@@ -327,11 +195,33 @@ public class ViewController {
         gol.setFirstGeneration();
     }
     
+    // TODO: 30.04.2016 Options-meny for å sette boolske flagg (med checkbokser)
     @FXML
-    public void closeApplication() {
-        Platform.exit();
-    }
+    private void openOptions() {
 
+    }
+    
+    //=================================
+    //            HELP MENU
+    //=================================
+    
+    @FXML
+    public void openAbout() {
+       
+        try {
+            new WavSaver(gol, 30, null, 0, 0, 0, 0);
+        } catch (IOException ex) {
+            Logger.getLogger(ViewController.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (WavFileException ex) {
+            Logger.getLogger(ViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
+        
+    }
+    
+    //=================================
+    //            SIDEBAR
+    //=================================
+    
     /**
      *  Method that changes the background color according to
      *  the value selected from the ColorPicker
@@ -375,7 +265,22 @@ public class ViewController {
         stdGridColor = gridColorPicker.getValue();
         draw();
     }
-
+    
+    @FXML
+    public void handleFitToView() {
+        if(fitToView.isSelected()) {
+            fitToView();
+            centerBoard();
+            draw();
+        }
+    }
+    
+    @FXML
+    public void handleToggleGrid() {
+        drawGrid = !toggleGrid.isSelected();
+        draw();
+    }
+    
     //Funksjon som skal gi brukeren mulighet til å flytte grid-en
     //Endrer offset-verdiene over for å tilby dette til draw()-funksjonene
 
@@ -389,14 +294,54 @@ public class ViewController {
             toggleDrawMove.setText("Move Mode");
         }
     }
-
+    
+    //=================================
+    //         BOTTOM CONTROLS
+    //=================================
+    
     @FXML
-    public void handleFitToView() {
-        if(fitToView.isSelected()) {
-            fitToView();
-            centerBoard();
-            draw();
+    public void togglePlay() {
+        if(timeline.getStatus() != Status.RUNNING) {
+            togglePlayButton.setText("Pause");
+            timeline.play();
+        } else {
+            togglePlayButton.setText("Play");
+            timeline.stop();
         }
+    }
+    
+    @FXML
+    public void reset() {
+        timeline.stop();
+        gol.resetGame();
+        draw();
+    }
+    
+    @FXML
+    public void openPatternList() {
+        //dialogBoxes.openPatternList();
+    }
+    
+    @FXML
+    public void openStatistics() {
+        timeline.stop();
+        //dialogBoxes.statistics(gol, (Stage) gameCanvas.getScene().getWindow());
+    }
+    
+    // TODO: 30.04.2016 Bedre tittel her
+    //=========================================================================
+    // GAME RELATED
+    //=========================================================================
+    
+    /**
+     * Opens a currently loaded game, whether it is completely new
+     * or loaded from a file.
+     */
+    public void openGame() {
+        fitToView.setSelected(true);
+        fitToView();
+        centerBoard();
+        draw();
     }
 
     public void fitToView() {
@@ -408,12 +353,6 @@ public class ViewController {
         } else {
             cellSize = cellHeight;
         }
-    }
-
-    @FXML
-    public void handleToggleGrid() {
-        drawGrid = !toggleGrid.isSelected();
-        draw();
     }
 
     //=========================================================================
@@ -438,6 +377,7 @@ public class ViewController {
     	return cellSize * gol.getRows();
     }
 
+    // TODO 30.04.2016 Fjern isXInsideGrid og isYInsideGrid
     private boolean isXInsideGrid(double posX) {
     	return ((posX >= getGridStartPosX()) && (posX <= getGridStartPosX() + getBoardWidth()));
     }
@@ -550,27 +490,10 @@ public class ViewController {
                 (getBoardHeight() / 2) - 2, 5, 5);
 
     }
-  //================================================================================
-  // Dialog boxes
-  //================================================================================
-
     
-
-    /**
-     * This method launches a dialog box where the user can specify
-     * meta data for the game board.
-     * Sets the meta data object with the information the user provides.
-     *
-     * @return void
-     */
-    private void metaDataDialogBox() {
-    	dialogBoxes.metaDataDialogBox(gol.getMetaData());
-    }
-
-    @FXML
-    private void openOptions() {
-
-    }
+    //================================================================================
+    // Initialize-methods
+    //================================================================================
 
     private void initializeMouseEventHandlers() {
         gameCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
@@ -738,10 +661,6 @@ public class ViewController {
         });
         timeline.getKeyFrames().clear();
         timeline.getKeyFrames().add(0, keyFrame);
-    }
-    
-    public void setMainStageDialogBoxes(Stage mainStage) {
-        dialogBoxes.setMainStage(mainStage);
     }
     
     public void setStatusBarText(String s) {

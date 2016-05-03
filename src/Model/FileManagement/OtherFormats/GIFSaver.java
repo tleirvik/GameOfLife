@@ -5,12 +5,11 @@
  */
 package Model.FileManagement.OtherFormats;
 
+import Model.FileManagement.OtherFormats.Data.GIFData;
 import Model.GameOfLife.GameOfLife;
 import lieng.GIFWriter;
 import Model.util.DialogBoxes;
 
-import java.awt.*;
-import java.io.File;
 import java.io.IOException;
 
 /**
@@ -21,24 +20,25 @@ import java.io.IOException;
  * as an animated sequence in a gif file.
  * @see lieng.GIFWriter
  */
-public class GIFSaver {
-    private final GameOfLife game;
-    private Color aliveCellColor;
-    private Color deadCellColor;
-    private File file;
-    private int iterations;
-    private int animationTimer;
-    private int height;
-    private int width;
-    private int cellSize;
+public class GIFSaver extends ImageSaver {
+    private final int iterations;
+    private final int animationTimer;
 
-
+    /**
+     * Sets the the current game.
+     * 
+     * @param game 
+     */
+    public GIFSaver(GIFData gifData) {
+        super(gifData);
+        iterations = gifData.getIterations();
+        animationTimer = gifData.getAnimationTimer();
+    }
     
     /**
      * 
      */
-    public void saveToGif() {
-        calculateCellSize();
+    public void saveImage() {
         try {
             GIFWriter writer = new GIFWriter(width + 1, height + 1, 
                     file.getAbsolutePath(), animationTimer);
@@ -47,22 +47,8 @@ public class GIFSaver {
             writer.close();
             
         } catch (IOException e) {
-            DialogBoxes.infoBox("Error", "Could not save as .gif", 
-                    "Please try again");
-        }
-    }
-    
-    /**
-     * This method calculate the size of a cell.
-     */
-    private void calculateCellSize() {
-        int cellWidth = width / game.getColumns();
-        int cellHeight = height / game.getRows();
-
-        if(cellWidth < cellHeight) {
-            cellSize = cellWidth;
-        } else {
-            cellSize = cellHeight;
+            //DialogBoxes.infoBox("Error", "Could not save as .gif", 
+              //      "Please try again");
         }
     }
     
@@ -105,70 +91,5 @@ public class GIFSaver {
             writeGoLSequenceToGIF(writer, game, --counter);
         }
     }
-    
-    /**
-     * This method set the speed of the animation.
-     * 
-     * @param animationTimer 
-     */
-    public void setAnimationTimer(int animationTimer) {
-        this.animationTimer = animationTimer;
-    }
 
-    /**
-     * Sets the height of the gif image.
-     * 
-     * @param height 
-     */
-    public void setHeight(int height) {
-        this.height = height;
-    }
-
-    /**
-     * Sets the width of th gif image.
-     * 
-     * @param width 
-     */
-    public void setWidth(int width) {
-        this.width = width;
-    }
-    
-    /**
-     * Sets the file to wich the pattern sequence will be written.
-     * 
-     * @param file 
-     */
-    public void setFile(File file) {
-        this.file = file;
-    }
-    
-    /**
-     * Sets the the current game.
-     * 
-     * @param game 
-     */
-    public GIFSaver(GameOfLife game) {
-        this.game = game;
-    }
-
-    /**
-     * Sets the colors alive cells and dead cells to be used in the gif image.
-     * 
-     * @param aliveCellColor
-     * @param deadCellColor 
-     */
-    public void setColors(Color aliveCellColor, Color deadCellColor) {
-        this.aliveCellColor = aliveCellColor;
-        this.deadCellColor = deadCellColor;
-        System.out.println("aliveCellColot -> " + deadCellColor);
-    }
-
-    /**
-     * Sets the number of iterations.
-     * 
-     * @param i 
-     */
-    public void setIterations(int i) {
-        iterations = i;
-    }
 }
