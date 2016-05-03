@@ -12,7 +12,6 @@ public class Main extends Application {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MainWindow.fxml"));
             Parent root = (Parent)loader.load();
             ViewController controller = (ViewController)loader.getController();
-            controller.setMainStageDialogBoxes(stage);
 
             Scene scene = new Scene(root);
 

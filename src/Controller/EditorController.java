@@ -89,7 +89,6 @@ public class EditorController {
     @FXML
     public void saveToGif() {  
         game.setFirstGeneration();
-        dialogBoxes.saveToGIFDialog(new GIFSaver(game));
     }
     
     // sette brettet her?

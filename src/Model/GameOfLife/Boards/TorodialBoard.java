@@ -255,4 +255,14 @@ public class TorodialBoard extends Board{
         }
         return sb.toString();
     }
+
+    @Override
+    public int[] getBoundingBox() {
+        return new int[0];
+    }
+
+    @Override
+    public String getBoundingBoxPattern() {
+        return null;
+    }
 }

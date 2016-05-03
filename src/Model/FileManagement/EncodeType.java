@@ -1,0 +1,32 @@
+/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package Model.FileManagement;
+
+/**
+ *
+ * @author Robin
+ */
+public enum EncodeType {
+    RLE("RLE",  new String[]{"*.rle"}),
+    LIFE105 ("Life 1.05", new String[]{"*.lif","*.life"} ),
+    LIFE106 ("Life 1.06", new String[]{"*.lif","*.life"} );
+    
+    private String name;
+    private String[] fileExtensions;
+    
+    EncodeType(String name, String[] fileExtensions ){
+        this.name = name;
+        this.fileExtensions = fileExtensions;
+    }
+    
+    public String getName() {
+        return name;
+    }
+    
+    public String[] getFileExtensions(){
+        return fileExtensions;
+    }
+}
