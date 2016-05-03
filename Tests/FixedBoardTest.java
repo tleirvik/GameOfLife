@@ -262,20 +262,33 @@ public class FixedBoardTest {
     }
 
     @Test
-    public void testClone() {
+    public void testClone() throws Exception {
         // Arrange
-        MetaData md = new MetaData();
-        md.setName("Name");
-        String inputBoard = fb.toString();
-        String verifyBoard = "0000000000000000000000000000000000000000000000000000000000000000000000010000000000" +
-                "011100000000001010000000000010000000000000000000000000000000000000000000000000000000000";
+        MetaData metaData = new MetaData();
+        metaData.setAuthor("Ola Nordmann");
+        metaData.setComment("Kommentar");
+        metaData.setName("Pattern name");
+        String[] s = new String[2];
+        s[0] = "B3";
+        s[1] = "S23";
+        metaData.setRuleString(s);
+        fb = new FixedBoard(inputArraySmallExploder, metaData);
+        String startingBoardDynamic = "00000000000000000000000000000000000000000000000001000000000111000000001010" +
+                "00000000100000000000000000000000000000000000000";
+
         // Act
-        fb = new FixedBoard(inputArrayTumbler, md);
-        FixedBoard fbClone = fb.clone();
+        FixedBoard cloneBoard = fb.clone();
+        String compare = cloneBoard.toString();
+
         // Assert
-        assertNotEquals(fb.hashCode(), fbClone.hashCode());
-        assertEquals(verifyBoard, inputBoard);
-        assertEquals("Name", fbClone.getMetaData().getName());
+        assertNotEquals(cloneBoard.hashCode(), fb.hashCode());
+        assertEquals(cloneBoard.toString(), fb.toString());
+        assertEquals(startingBoardDynamic, cloneBoard.toString());
+        assertEquals("Ola Nordmann", fb.getMetaData().getAuthor());
+        assertEquals("Pattern name", fb.getMetaData().getName());
+        assertEquals("Kommentar", fb.getMetaData().getComment());
+        assertEquals("B3", fb.getMetaData().getRuleString()[0]);
+        assertEquals("S23", fb.getMetaData().getRuleString()[1]);
     }
     /**
      * Tests the toString()-method and asserts that the board is correctly translated from a byte array to a String
@@ -290,7 +303,7 @@ public class FixedBoardTest {
                 "000100000000000000000000000000000000000000";
 
         // Act
-        String s = fb.toString();
+        String s = gol.getBoard().toString();
 
         // Assert
         assertEquals(boardArray, boardArray);

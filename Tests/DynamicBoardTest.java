@@ -1,10 +1,9 @@
-import Model.GameOfLife.*;
 import Model.GameOfLife.Boards.Board;
 import Model.GameOfLife.Boards.DynamicBoard;
+import Model.GameOfLife.GameOfLife;
+import Model.GameOfLife.MetaData;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.util.stream.IntStream;
 
 import static org.junit.Assert.*;
 
@@ -92,7 +91,7 @@ public class DynamicBoardTest {
         int rows = db.getRows();
 
         // Assert
-        assertEquals(11, rows);
+        assertEquals(10, rows);
     }
 
     @Test
@@ -103,7 +102,7 @@ public class DynamicBoardTest {
         int columns = db.getColumns();
 
         // Assert
-        assertEquals(11, columns);
+        assertEquals(10, columns);
     }
 
     @Test
@@ -161,10 +160,10 @@ public class DynamicBoardTest {
 
         // Act
         byte verify = db.getCellAliveState(3,3);
-        assertEquals(0, verify);
-
         db.setCellAliveState(150,150, toSet);
+
         // Assert
+        assertEquals(0, verify);
         assertEquals(db.getCellAliveState(150,150), (byte)1);
         assertEquals(151, db.getRows());
         assertEquals(151, db.getColumns());
@@ -292,9 +291,7 @@ public class DynamicBoardTest {
                 "01000000000100000000000000000000000000000000000000";
 
         // Act
-        //gol.setCellAliveState(5, 0, (byte)1);
-        gol.setCellAliveState(11, 5, (byte)1);
-        //gol.setCellAliveState(5, 10, (byte)1);
+        gol.setCellAliveState(10, 5, (byte)1);
         gol.update();
         System.out.println(gol.getRows() + " : " + gol.getColumns());
         System.out.println(gol.getBoard().toString());
@@ -351,15 +348,21 @@ public class DynamicBoardTest {
         // Act
         gol.setCellAliveState(0, 5, (byte)1);
         gol.setCellAliveState(10, 5, (byte)1);
-        gol.setCellAliveState(5, 5, (byte)1);
+        gol.setCellAliveState(5, 0, (byte)1);
         gol.setCellAliveState(5, 10, (byte)1);
+        System.out.println(gol.getRows());
+        System.out.println(gol.getColumns());
+
+        System.out.println(gol.getBoard().toString());
+
         gol.update();
         System.out.println(gol.getRows());
+        System.out.println(gol.getColumns());
         System.out.println(gol.getBoard().toString());
 
         // Nede har ikke ekspandert
-        // Høyre har eksp
-        // Venstre har eksp
+        // Høyre OK
+        // Venstre OK
         // Topp har ekspandert for mye
         // Assert
         assertEquals(verify, gol.getBoard().toString());

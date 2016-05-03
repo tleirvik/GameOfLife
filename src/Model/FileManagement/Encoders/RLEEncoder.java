@@ -105,7 +105,7 @@ public class RLEEncoder extends Encoder {
     }
 
 
-    private void encodeBoard() {
+    public void encodeBoard() {
         int count = 1;
         int previous = -1;
         
@@ -169,5 +169,9 @@ public class RLEEncoder extends Encoder {
             offset += offsetValue;
         }
 
+    }
+    @Override
+    public String toString() {
+        return rleString.toString();
     }
 }
