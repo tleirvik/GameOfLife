@@ -3,6 +3,7 @@ package Model.util;
 import Controller.StatisticsController;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Controller.EditorController;
+import Controller.FileController;
 import Model.GameOfLife.GameOfLife;
 import Model.GameOfLife.MetaData;
 import javafx.fxml.FXMLLoader;
@@ -169,7 +170,8 @@ public class DialogBoxes {
     //=========================================================================
     //                         FXML-based windows
     //=========================================================================
-    public void openPatternEditor(GameOfLife game, Stage owner) {
+    public void openPatternEditor(GameOfLife game, FileController fileController, 
+            Stage owner) {
         Stage editor = new Stage();
         editor.initModality(Modality.WINDOW_MODAL);
         editor.initOwner(owner);
@@ -182,8 +184,7 @@ public class DialogBoxes {
             editor.setResizable(false);
             
             EditorController edController = loader.getController();
-            edController.setPattern(game);
-            edController.setDialogBoxes(this);
+            edController.initializeEditor(game, fileController);
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(

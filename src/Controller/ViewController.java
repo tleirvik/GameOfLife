@@ -218,7 +218,7 @@ public class ViewController {
     @FXML
     public void openPatternEditor() {
         timeline.stop();
-        dialogBoxes.openPatternEditor(gol, 
+        dialogBoxes.openPatternEditor(gol, fileController, 
                 (Stage)gameCanvas.getScene().getWindow());
     }
     
