@@ -134,34 +134,11 @@ public class ViewController {
      * @see RLEDecoder
      */
     @FXML
-    public void loadGameBoardFromDisk() {
+    public void loadBoard() {
         timeline.stop();
-        if (fileController.loadBoard((Stage) gameCanvas.getScene().getWindow())) {
-           gol.loadGame(fileController.getBoard(), 
-                   fileController.getMetadata(), BoardType.FIXED); 
-           draw();
-        }
+        fileController.loadBoard(gol, holdingPattern, (Stage) gameCanvas.getScene().getWindow());
     }
-    
-    @FXML
-    public void loadGameBoardToMouse() {
-        timeline.stop();
-        if(fileController.loadBoard((Stage) gameCanvas.getScene().getWindow())) {
-           holdingPattern = fileController.getBoard(); 
-        }
-    }
-    
-    @FXML
-    public void loadGameBoardFromURL() {
-        timeline.stop();
-        if(fileController.loadBoard((Stage) gameCanvas.getScene().getWindow())) {
-           gol.loadGame(fileController.getBoard(), 
-                   fileController.getMetadata(), BoardType.FIXED); 
-        }
-    }
-    
-    //TODO: Load game board to mouse pointer (holdingpattern = fileController.getBoard())
-    
+        
     //==================
     //  SAVE BOARD AS
     //==================
@@ -670,9 +647,8 @@ public class ViewController {
         //File Menu
         file.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
         file.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN));
-        file.getItems().get(2).setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
-        file.getItems().get(3).setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
-        file.getItems().get(4).setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN));
+        file.getItems().get(2).setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
+        file.getItems().get(3).setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN));
         
         //Edit Menu
         edit.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN));

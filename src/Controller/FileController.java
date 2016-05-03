@@ -205,6 +205,7 @@ public class FileController {
         //   TO NEW BOARD
         //===================
         RadioButton newBoard = new RadioButton();
+        selectDisk.setUserData("NEW BOARD");
         newBoard.setToggleGroup(loadType);
         newBoard.setText("New Board");
         newBoard.setSelected(true);
@@ -220,6 +221,7 @@ public class FileController {
         // DROP FROM MOUSE POINTER
         //===================
         RadioButton droppablePattern = new RadioButton();
+        selectDisk.setUserData("MOUSE POINTER");
         droppablePattern.setToggleGroup(loadType);
         droppablePattern.setText("Droppable from Mouse Pointer");
         gp.add(droppablePattern, 0, 10, 2, 1);
@@ -240,39 +242,30 @@ public class FileController {
             Object[] args = new Object[4];
             
             args[0] = encodeType.getValue();
-            if()
+            
+            args[1] = (String) diskOrURL.getSelectedToggle().getUserData();
+            if(args[1].equals("DISK")) {
+                if(filePath.getText().equals("")) {
+                    return null;
+                }
+                args[2] = filePath.getText();
+            } else {
+                if(url.getText().equals("")) {
+                    return null;
+                }
+                args[2] = url.getText();
+            }
+            
+            args[3] = (String) loadType.getSelectedToggle().getUserData();
+            if(args[3].equals("NEW BOARD")) {
+                args[4] = boardType.getValue();
+            }
             
             return args;
-        } else {
-            return;
-        }
-    }
-    
-    private String urlDialogBox(Stage owner) {
-        GridPane gp = new GridPane();
-        
-        gp.add(new Label("URL: "), 0, 0);
-        TextField url = new TextField();
-        url.setPromptText("Enter URL");
-        gp.add(url, 1, 0);
-        
-        Dialog dialog = DialogBoxes.customUtilityDialog("Load board from URL", 
-                "Please enter the URL", gp, owner);
-        
-        ButtonType open = new ButtonType("Open", ButtonBar.ButtonData.OK_DONE);
-        ButtonType cancel = new ButtonType("Cancel", ButtonBar.ButtonData.CANCEL_CLOSE);
-        dialog.getDialogPane().getButtonTypes().addAll(open, cancel);
-        
-        Optional<ButtonType> result = dialog.showAndWait();
-        if(result.get() == open && !url.getText().equals("")) {
-            return url.getText();
         } else {
             return null;
         }
     }
-    
-    
-    
     
     //=========================================================================
     //                              SAVE

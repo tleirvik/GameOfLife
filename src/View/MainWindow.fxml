@@ -1,12 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import javafx.geometry.*?>
-<?import javafx.scene.canvas.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.effect.*?>
-<?import javafx.scene.layout.*?>
-<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -26,7 +19,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" minWidth="810.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ViewController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" minWidth="810.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ViewController">
 
     <top>
         <MenuBar id="menuBar" fx:id="menuBar" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
@@ -34,9 +27,7 @@
                 <Menu text="File">
                     <items>
                           <MenuItem onAction="#newGame" text="New game..." />
-                          <MenuItem mnemonicParsing="false" onAction="#loadGameBoardFromDisk" text="Load Board from Disk..." />
-                          <MenuItem onAction="#loadGameBoardFromURL" text="Load Board from URL..." />
-                  <MenuItem mnemonicParsing="false" onAction="#loadGameBoardToMouse" text="Load Board to Mouse" />
+                          <MenuItem mnemonicParsing="false" onAction="#loadBoard" text="Load Board..." />
                   <Menu mnemonicParsing="false" text="Save Board As">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#saveBoardAsRLE" text="RLE" />
