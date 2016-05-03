@@ -101,7 +101,7 @@ public class ViewController {
     //
     //	CANVAS MOVE/DRAW FLAGS
     //
-    private boolean holdingPattern = true; //Find out if user is holding pattern
+    private boolean holdingPattern = false; //Find out if user is holding pattern
     private boolean drawMode = false; //False for move, true for draw
     private boolean drawCell = false;
     //=========================================================================
@@ -521,35 +521,6 @@ public class ViewController {
                 }
                 if(column < 0) {
                     offset_X -= newBoardWidth - oldBoardWidth;
-                }
-                if(holdingPattern) {
-                    //drawObject(row, column, pattern)
-                    byte[][] testArray = new byte[][] {
-                            {0, 1, 0},
-                            {0, 0, 1},
-                            {1, 1, 1}
-                    };
-
-                    final int M = testArray.length;
-                    final int N = testArray[0].length;
-                    byte[][] ret = new byte[N][M];
-                    for(int r = 0; r < M; r++) {
-                        for (int c = 0; c < N; c++) {
-                            ret[c][M-1-r] = testArray[r][c];
-                        }
-                    }
-
-                    int mid = (0 + ret.length - 1) / 2;
-
-                    for(int i = 0; i < ret.length; i++) {
-                        for(int j = 0; j < ret[i].length; j++) {
-                            gol.setCellAliveState(row + i -mid, column + j -mid, ret[i][j]);
-                        }
-                    }
-                    holdingPattern = false;
-                } else {
-                    drawCell = (gol.getCellAliveState(row, column) != 1);
-                    gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
                 }
                 draw();
             } else if (e.isSecondaryButtonDown()) { //FLYTTEFUNKSJON

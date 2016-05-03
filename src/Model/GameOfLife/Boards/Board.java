@@ -34,4 +34,6 @@ public abstract class Board {
     }
     
     public void beforeUpdate(){}
+    public abstract int[] getBoundingBox();
+    public abstract String getBoundingBoxPattern();
 }

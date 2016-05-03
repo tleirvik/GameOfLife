@@ -1,7 +1,8 @@
-package Tests;
 
-import GameOfLife.FixedBoard;
-import GameOfLife.MetaData;
+import Model.GameOfLife.Boards.Board;
+import Model.GameOfLife.Boards.FixedBoard;
+import Model.GameOfLife.GameOfLife;
+import Model.GameOfLife.MetaData;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -17,6 +18,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class FixedBoardTest {
     private FixedBoard fb;
+    private GameOfLife gol;
     byte[][] inputArraySmallExploder = {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -66,9 +68,14 @@ public class FixedBoardTest {
      */
     @Before
     public void setUp() {
-        fb = new FixedBoard(inputArraySmallExploder, new MetaData());
-        assertTrue(fb instanceof FixedBoard);
+        gol = new GameOfLife();
+        gol.loadGame(inputArraySmallExploder, new MetaData(), Board.BoardType.FIXED);
+        //fb = new FixedBoard(inputArraySmallExploder, new MetaData());
+        assertTrue(gol instanceof GameOfLife);
+        assertTrue(gol.getBoard() instanceof Board);
+
     }
+
     /**
      * Test the getRows()-method and asserts that we have 11 rows on the board
      * @see org.junit.runners.JUnit4
@@ -79,7 +86,7 @@ public class FixedBoardTest {
         // Arrange
 
         // Act
-        int rows = fb.getRows();
+        int rows = gol.getRows();
 
         // Assert
         assertEquals(11, rows);
@@ -94,7 +101,7 @@ public class FixedBoardTest {
         // Arrange
 
         // Act
-        int columns = fb.getColumns();
+        int columns = gol.getColumns();
 
         // Assert
         assertEquals(11, columns);
@@ -117,13 +124,13 @@ public class FixedBoardTest {
                 "B3","S23"
         };
         metaData.setRuleString(ruleString);
-
+        gol.loadGame(inputArraySmallExploder, metaData, Board.BoardType.FIXED);
         // Assert
-        assertEquals("Ola Nordmann", metaData.getAuthor());
-        assertEquals("Brett", metaData.getName());
-        assertEquals("Kommentar", metaData.getComment());
-        assertEquals("B3", metaData.getRuleString()[0]);
-        assertEquals("S23", metaData.getRuleString()[1]);
+        assertEquals("Ola Nordmann", gol.getMetaData().getAuthor());
+        assertEquals("Brett", gol.getMetaData().getName());
+        assertEquals("Kommentar", gol.getMetaData().getComment());
+        assertEquals("B3", gol.getMetaData().getRuleString()[0]);
+        assertEquals("S23", gol.getMetaData().getRuleString()[1]);
     }
 
     /**
@@ -138,15 +145,16 @@ public class FixedBoardTest {
     public void resetBoard() {
         // Arrange
 
+
         // Act
-        fb.nextGeneration();
-        assertEquals("000000000000000000000000000000000000000000000000000000000000000000000011100000000001010000" +
-                "0000001010000000000010000000000000000000000000000000000000000000000000000000000", fb.toString());
-        fb.resetBoard();
-        System.out.println(fb.getRows());
+        gol.update();
+        assertEquals("00000000000000000000000000000000000000000000000011100000000101000000001010000000001000000000" +
+                "00000000000000000000000000000", gol.getBoard().toString());
+        gol.resetGame();
+        System.out.println(gol.getRows());
         // Assert
-        assertEquals("0000000000000000000000000000000000000000000000000000000000000000000000010000000000011100" +
-                "000000001010000000000010000000000000000000000000000000000000000000000000000000000", fb.toString());
+        assertEquals("000000000000000000000000000000000000000000000000010000000001110000000010100000000010000000" +
+                "0000000000000000000000000000000", gol.getBoard().toString());
     }
 
     /**
@@ -162,9 +170,9 @@ public class FixedBoardTest {
         byte cellState;
 
         // Act
-        assertEquals(0, fb.getCellAliveState(8, 8));
-        fb.setCellAliveState(8, 8, (byte)1);
-         cellState = fb.getCellAliveState(8, 8);
+        assertEquals(0, gol.getCellAliveState(8, 8));
+        gol.setCellAliveState(8, 8, (byte)1);
+         cellState = gol.getCellAliveState(8, 8);
 
         // Assert
         assertEquals(1, cellState);
@@ -180,9 +188,9 @@ public class FixedBoardTest {
         // Arrange
 
         // Act
-        fb.setCellAliveState(4 ,5, (byte)0);
+        gol.setCellAliveState(4 ,5, (byte)0);
         // Assert
-        assertEquals(fb.getCellAliveState(4, 5), 0);
+        assertEquals(gol.getCellAliveState(4, 5), 0);
     }
     /**
      * Tests the nextGeneration()-method(Game Of Life game rules) and runs the method 10 times and asserts that we have
@@ -195,75 +203,64 @@ public class FixedBoardTest {
     @Test
     public void nextGeneration() {
         // Arrange
-        String  inputArrayExploderAfter10Gen = "000000000000000000111000000000100010000000010001000000110000011000100001000010010001010001" +
-                "0010000100001000110000011000000100010000000010001000000000111000000000000000000";
+        String  inputArrayExploderAfter10Gen = "00001110000000100010000001000100001100000110100001000011000101" +
+                "00011000010000101100000110000100010000001000100000001110000";
 
         // Act
         for (int i = 0; i <= 9; i++) {
-            fb.nextGeneration();
+            gol.update();
         }
 
         // Assert
-        assertEquals(inputArrayExploderAfter10Gen, fb.toString());
+        assertEquals(inputArrayExploderAfter10Gen, gol.getBoard().toString());
     }
     @Test
     public void nextGeneration2() {
         // Arrange
-        fb = new FixedBoard(inputArrayTumbler, new MetaData());
-        String  inputArrayTumblerAfter30Gen = "00000000000000000000000000000000000011011000000000000000000101" +
-                "000001101010110011100011100000000000000000000000";
+        gol.loadGame(inputArrayTumbler, new MetaData(), Board.BoardType.FIXED);
+
+        String  inputArrayTumblerAfter30Gen = "0000000000000000000011011000000000000001010001101010111110001" +
+                "11000000000";
 
         // Act
         for (int i = 0; i <= 29; i++) {
-            fb.nextGeneration();
+            gol.update();
         }
 
         // Assert
-        assertEquals(inputArrayTumblerAfter30Gen, fb.toString());
+        assertEquals(inputArrayTumblerAfter30Gen, gol.getBoard().toString());
     }
     @Test
     public void nextGeneration3() {
         // Arrange
-        fb = new FixedBoard(inputArrayGlider, new MetaData());
-        String  inputArrayGliderAfter30Gen = "000000000000000000000000000000000000000000000000000000000000000000" +
-                "00000000000000000000000000000000000000000000000000000000000000000000000000000000100000000000000" +
-                "00010000000000000011100000000000000000000000000000000000000000000000000000000000000000000000000" +
-                "000000000000000000000000000000000";
+        gol.loadGame(inputArrayGlider, new MetaData(), Board.BoardType.FIXED);
+        String  inputArrayGliderAfter30Gen = "000000000000000000000000000000000000000000000000000000000000000000000" +
+                "00000000000000000000000000000000000000000000010000000000000001000000000000111000000000000000000000" +
+                "0000000000000000000000000000000000000000000000000000000000";
 
         // Act
         for (int i = 0; i <= 29; i++) {
-            fb.nextGeneration();
+            gol.update();
         }
 
         // Assert
-        assertEquals(inputArrayGliderAfter30Gen, fb.toString());
+        assertEquals(inputArrayGliderAfter30Gen, gol.getBoard().toString());
     }
     @Test
     public void setFirstGeneration() {
         // Arrange
-        fb = new FixedBoard(inputArrayGlider, new MetaData());
-        String inputBoard = fb.toString();
+        gol.loadGame(inputArrayGlider, new MetaData(), Board.BoardType.FIXED);
+        String inputBoard = gol.getBoard().toString();
 
         // Act
-        fb.nextGeneration();
-        assertNotEquals(inputBoard, fb.toString());
-        fb.resetBoard();
+        gol.update();
+        assertNotEquals(inputBoard, gol.getBoard().toString());
+        gol.resetGame();
 
         // Assert
-        assertEquals(inputBoard, fb.toString());
+        assertEquals(inputBoard, gol.getBoard().toString());
     }
-    @Test
-    public void countAliveCells() {
-        // Arrange
-        fb = new FixedBoard(inputArrayTumbler, new MetaData());
-        int aliveCells = 22;
 
-        // Act
-        int count = fb.countAliveCells();
-
-        // Assert
-        assertEquals(aliveCells, count);
-    }
     @Test
     public void testClone() {
         // Arrange

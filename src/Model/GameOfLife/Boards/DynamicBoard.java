@@ -128,7 +128,7 @@ public class DynamicBoard extends Board {
     public void setCellAliveState(int row, int column, byte aliveState) {
         if (!insideArrayBoundaries(row, column)) {
             //TODO: Kall metoden over slik at den viser at den øker arrayet
-            // TODO: 02.05.2016 LAg logikk i inside metoden som oversetter row col til min/max i ærrajet
+            // TODO: 02.05.2016 Lag logikk i inside metoden som oversetter row col til min/max i ærrajet
 
             if(row > getRows()) {
                 row = getRows()-1;
@@ -141,42 +141,7 @@ public class DynamicBoard extends Board {
             } else if(column < 0) {
                 column = 0;
             }
-
             currentGeneration.get(row).set(column, aliveState);
-
-            /*
-            // Oppe, innenfor grid'en
-            if (row < 0 && (column > 0 && column < getColumns())) {
-                currentGeneration.get(0).set(column, aliveState);
-            }
-            // Nede-innenfor grid'en
-            if (row >= getRows() & (column > 0 && column <= getColumns())) {
-                currentGeneration.get(getRows() -1).set(column, aliveState);
-            }
-            // Venstre-innenfor grid'en
-            if (row > 0 && row < getRows() -1 && column < 0) {
-                currentGeneration.get(row).set(0, aliveState);
-            }
-            // Høyre-innenfor grid'en
-            if (column > getColumns() -1 && (row > 0 && row < getRows() -1)) {
-                currentGeneration.get(row).set(getColumns() -1, aliveState);
-            }
-            // Høyre-utenfor oppe
-            if (row < 0 && column > getColumns() -1) {
-                currentGeneration.get(0).set(getColumns() -1, aliveState);
-            }
-            // Høyre-utenfor nede
-            if (column > getColumns() -1 && row > getRows() -1) {
-                currentGeneration.get(getRows() -1).set(getColumns() -1, aliveState);
-            }
-            // Venstre-utenfor nede
-            if (column < 0 && row >= (getRows() -1)) {
-                currentGeneration.get(getRows() -1).set(0, aliveState);
-            }
-            // Venstre-utenfor oppe
-            if (row < 0 && column < 0) {
-                currentGeneration.get(0).set(0, aliveState);
-            }*/
         } else {
             currentGeneration.get(row).set(column, aliveState);
         }
@@ -359,7 +324,6 @@ public class DynamicBoard extends Board {
     }
 
     private void checkRight() {
-        System.out.println("curgen size: " + currentGeneration.get(0).size());
         int sum1 = 0;
         int sum2 = 0;
         int sum3 = 0;
@@ -438,7 +402,7 @@ public class DynamicBoard extends Board {
         return str;
     }
 
-    private int[] getBoundingBox() {
+    public int[] getBoundingBox() {
         int[] boundingBox = new int[4]; // minrow maxrow mincolumn maxcolumn
         boundingBox[0] = currentGeneration.size();
         boundingBox[1] = 0;
@@ -446,8 +410,8 @@ public class DynamicBoard extends Board {
         boundingBox[3] = 0;
         
         for (int i = 0; i < currentGeneration.size(); i++) {
-            for (int j = 0; j < currentGeneration.get(i).size(); j++) {
-                if ((currentGeneration.get(i).get(j) == 1)) {
+            for (int j = 0; j < currentGeneration.get(0).size(); j++) {
+                if ((currentGeneration.get(i).get(j) != 1)) {
                     continue;
                 }
                 if (i < boundingBox[0]) {
