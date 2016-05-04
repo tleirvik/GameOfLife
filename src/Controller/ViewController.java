@@ -641,6 +641,10 @@ public class ViewController {
     private void initializeKeyboardShortcuts() {
         Menu file = menuBar.getMenus().get(0);
         Menu edit = menuBar.getMenus().get(1);
+
+        final String os = System.getProperty ("os.name");
+        if (os != null && os.startsWith ("Mac"))
+            menuBar.useSystemMenuBarProperty ().set (true);
         
         //File Menu
         file.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
