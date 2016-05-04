@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controller;
 
 import Model.FileManagement.EncodeType;
@@ -16,8 +11,6 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
-import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
@@ -29,21 +22,20 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 
 /**
- * FXML Controller class
+ * FXML Controller class.
  *
- * @author Stian Reistad Røgeberg, Terje Leirvik, Robin Sean Aron Lundh
- * 
- * This controller class controls handles all the actions performed in
+ * This controller class handles all the actions performed in
  * the its related view.
+ * 
+ * @author Stian Reistad Rogeberg.
+ * @author Terje Leirvik.
+ * @author Robin Sean Aron Lundh.
  */
 public class EditorController {
     @FXML private MenuBar menuBar;
-    @FXML private BorderPane patternController;
     @FXML private Canvas patternCanvas;
     @FXML private Canvas strip;
     @FXML private Button closeButton;
-    @FXML private Button updateStripBtn;
-    @FXML private HBox stripBox;
     @FXML private TextField authorTextField;
     @FXML private TextField titleTextField;
     @FXML private TextField descriptionTextField;
@@ -54,18 +46,26 @@ public class EditorController {
     private MetaData metaData;
     private FileController fileController;
     
+    /**
+     * This method clones a game from the main view. It also initializes
+     * som keyboard shurtcuts and sets the pattern.
+     * 
+     * @param game is the game to be cloned the main view.
+     * @param fileController is a reference to the class that takes care of
+     * saving and reading files.
+     * 
+     * @see FileController
+     */
     public void initializeEditor(GameOfLife game, FileController fileController) {
         this.game = game.clone();
         this.fileController = fileController;
         
         initializeKeyboardShortcuts();
-        
         setPattern();
     }
-    
-
+   
     /**
-     * This method closes the editor window.
+     * This method closes the editor.
      */
     @FXML
     public void handleCloseButton() {
@@ -73,6 +73,9 @@ public class EditorController {
         s.close();
     }
     
+    /**
+     * This method will save the board if it is not empty.
+     */
     @FXML
     public void saveBoard() {
         Stage owner = (Stage) patternCanvas.getScene().getWindow();
@@ -82,6 +85,11 @@ public class EditorController {
         fileController.saveBoard(game, EncodeType.RLE, owner);
     }
     
+    /**
+     * This method calculates where to draw a cell when the user clicks on
+     * the canvas.
+     * @param e is the mouse event that was triggered.
+     */
     @FXML
     public void handleMouseClick(MouseEvent e) {
         int row = (int) (e.getY() / cellSize);
@@ -93,11 +101,18 @@ public class EditorController {
         }
     }
     
+    /**
+     * This method saves the current pattern to the .gif format.
+     * @see GifSaver
+     */
     @FXML
     public void saveToGif() {
         int rows = game.getRows();
         int cols = game.getColumns();
         if (rows <= 0 || cols <= cols) {
+            DialogBoxes.openAlertDialog(Alert.AlertType.WARNING, "Empty Board", 
+                    "Error Saving Empty Board as GIF", 
+                    "The current board is empty.");
             return;
         }
         fileController.saveAnimation(game, 
@@ -105,6 +120,37 @@ public class EditorController {
         game.setFirstGeneration();
     }
     
+    /**
+     * This method updates the strip view with the current pattern when the 
+     * user clicks a button.
+     */
+    @FXML
+    public void updateStrip() {
+        game.setFirstGeneration();
+        final double stripCellSize = strip.getHeight() / game.getRows();
+        final double generationWidth = stripCellSize * game.getColumns();
+        final double padding = 25;
+        strip.setWidth((generationWidth + padding) * 20);
+        double offset_X = 0;
+        
+        final GraphicsContext gc = strip.getGraphicsContext2D();
+        gc.clearRect(0, 0, strip.widthProperty().doubleValue(), 
+                strip.heightProperty().doubleValue());
+        
+        for (int i = 0; i < 20; i++) {
+            game.update();
+            drawStrip(gc, offset_X, stripCellSize);
+            offset_X += generationWidth + padding;
+        }
+        
+        game.resetGame();
+    }
+    
+    /**
+     * This method ignores empty rows and creates a new trimmed board with
+     * the pattern.
+     * @return boolean true if the board is not empty.
+     */
     private boolean trim() {
         int[] bBox = game.getBoard().getBoundingBox();
         
@@ -129,7 +175,9 @@ public class EditorController {
         return true;
     }
     
-    // sette brettet her?
+    /**
+     * This method sets the pattern with meta data.
+     */
     public void setPattern() {
         metaData = game.getMetaData();
         
@@ -140,48 +188,34 @@ public class EditorController {
         authorTextField.setText(metaData.getAuthor());
         descriptionTextField.setText(metaData.getComment());
         titleTextField.setText(metaData.getName());
-        rulesTextField.setText("S" + metaData.getRuleString()[0] + "/B" + metaData.getRuleString()[1]);
+        rulesTextField.setText("S" + metaData.getRuleString()[0] + "/B" + 
+                metaData.getRuleString()[1]);
 
         draw();
     }
     
-    @FXML
-    public void updateStrip() {
-        game.setFirstGeneration();
-        final double stripCellSize = strip.getHeight() / game.getRows();
-        final double generationWidth = stripCellSize * game.getColumns();
-        final double padding = 25;
-        strip.setWidth((generationWidth + padding) * 20);
-        double offset_X = 0;
-        
-        final GraphicsContext gc = strip.getGraphicsContext2D();
-        gc.clearRect(0, 0, strip.widthProperty().doubleValue(), 
-                strip.heightProperty().doubleValue());
-        
-        for(int i = 0; i < 20; i++) {
-            game.update();
-            drawStrip(gc, offset_X, stripCellSize);
-            offset_X += generationWidth + padding;
-        }
-        
-        game.resetGame();
-    }
-    
+    /**
+     * This method draws the pattern to the strip view.
+     * 
+     * @param gc is a buffer used to draw on a canvas.
+     * @param offset_X is the x position from where to draw.
+     * @param stripCellSize is the size of the cells.
+     */
     private void drawStrip(GraphicsContext gc, double offset_X, double stripCellSize) {        
         final int rows = game.getRows();
         final int columns = game.getColumns();
         double x = offset_X;
         double y = 0;
 
-        for(int row = 0; row < rows; row++) {
-            for(int col = 0; col < columns; col++) {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
                 if (game.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, stripCellSize, stripCellSize);
                 }
-                x += stripCellSize; // Plusser på for neste kolonne
+                x += stripCellSize;
             }
-            x = offset_X; // Reset X-verdien for neste rad
-            y += stripCellSize; // Plusser på for neste rad
+            x = offset_X;
+            y += stripCellSize;
         }
 
         final double start_x = offset_X;
@@ -192,19 +226,30 @@ public class EditorController {
         drawPadding(gc, start_x, start_y, end_x, end_y);
     }
 
-    public void drawPadding(GraphicsContext gc, double start_x, double start_y, double end_x, double end_y) {
-        // tegner en ramme rundt hver generasjon
-        // topp
+    /**
+     * This method draws padding around each generations in the strip view.
+     * 
+     * @param gc is a buffer used to draw on a canvas.
+     * @param start_x is the x-position from where to start drawing the padding.
+     * @param start_y is the y-position from where to start drawing the padding.
+     * @param end_x is x-position where to stop drawing the padding.
+     * @param end_y is y-position where to stop drawing the padding.
+     */
+    private void drawPadding(GraphicsContext gc, double start_x, double start_y,
+            double end_x, double end_y) {
+        // top
         gc.strokeLine(start_x, start_y, end_x, start_y);
-        // venstre
+        // left
         gc.strokeLine(start_x, start_y, start_x, end_y);
-        // høyre
+        // right
         gc.strokeLine(end_x, start_y, end_x, end_y);
-        // bunn
+        // bottom
         gc.strokeLine(start_x, end_y, end_x, end_y);
     }
     
-    // tegne mønsteret
+    /**
+     * This method draws the pattern.
+     */
     private void draw() {
         final int rows = game.getRows();
         final int columns = game.getColumns();
@@ -218,8 +263,8 @@ public class EditorController {
         double y = 0;
         
         gc.setFill(Color.BLACK);
-        for(int row = 0; row < rows; row++) {
-            for(int col = 0; col < columns; col++) {
+        for (int row = 0; row < rows; row++) {
+            for (int col = 0; col < columns; col++) {
                 if (game.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, cellSize, cellSize);
                 }
@@ -231,10 +276,12 @@ public class EditorController {
         if (!(game.getBoard().getRows() > 100)) {
             drawGridLines(gc);
         }
-
     }
     
-    // bør ha gridlines for å gjøre manipulering mer lesbar.
+    /**
+     * This method will draw gridlines if the pattern is over a specific size.
+     * @param gc is a buffer used to draw on a canvas.
+     */
     private void drawGridLines(GraphicsContext gc) {
         final int rows = game.getRows();
         final int columns = game.getColumns();
@@ -254,18 +301,29 @@ public class EditorController {
         }
     }
     
+    /**
+     * This method returns the width of the pattern.
+     * 
+     * @return a double value of the width.
+     */
     private double getPatternWidth() {
         return cellSize * game.getColumns();
     }
     
+    /**
+     * This method returns the height of the pattern.
+     * 
+     * @return a double value of the height.
+     */
     private double getPatternHeight() {
         return cellSize * game.getRows();
     }
     
+    /**
+     * This method initializes keyboard shortcuts.
+     */
     private void initializeKeyboardShortcuts() {
         Menu file = menuBar.getMenus().get(0);
-        Menu edit = menuBar.getMenus().get(1);
-        
         //File Menu
         file.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN));
     }
