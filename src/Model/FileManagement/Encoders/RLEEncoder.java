@@ -175,4 +175,8 @@ public class RLEEncoder extends Encoder {
             offset += offsetValue;
         }
     }
+    @Override
+    public String toString() {
+        return rleString.toString();
+    }
 }
