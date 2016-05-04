@@ -191,7 +191,6 @@ public class GameOfLife {
         try {
             nextGenerationWorkers.runWorkers();
         } catch (InterruptedException iE) {
-            System.out.println("Føkk! " + iE.getStackTrace());
         }
     }
 

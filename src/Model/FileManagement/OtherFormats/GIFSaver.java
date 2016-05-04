@@ -1,21 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Model.FileManagement.OtherFormats;
 
 import Model.FileManagement.OtherFormats.Data.GIFData;
 import Model.GameOfLife.GameOfLife;
 import lieng.GIFWriter;
-import Model.util.DialogBoxes;
 
 import java.io.IOException;
 
 /**
- *
- * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik
- * 
  * This class takes a pattern from a Model.GameOfLife object and save this pattern
  * as an animated sequence in a gif file.
  * @see lieng.GIFWriter
@@ -30,7 +21,7 @@ public class GIFSaver extends ImageSaver {
     /**
      * Sets the the current game.
      * 
-     * @param gifData 
+     * @param gifData The container for the image data
      */
     public GIFSaver(GIFData gifData) {
         super(gifData);
@@ -39,8 +30,9 @@ public class GIFSaver extends ImageSaver {
     }
     
     /**
-     * 
-     * @return 
+     *  This method saves the image to file
+     *
+     * @return true if the image is saved, otherwise false
      */
     @Override
     public boolean saveImage() {
@@ -60,10 +52,10 @@ public class GIFSaver extends ImageSaver {
     /**
      * This method writes the current sequence to an gif image.
      * 
-     * @param writer
-     * @param game
-     * @param counter
-     * @throws IOException 
+     * @param writer The {@link GIFWriter} to use
+     * @param game The {@link GameOfLife}
+     * @param counter The number of iterations
+     * @throws IOException If an unspecified I/O error occures
      */
     private void writeGoLSequenceToGIF(GIFWriter writer, GameOfLife game, 
         int counter) throws IOException {
@@ -98,10 +90,19 @@ public class GIFSaver extends ImageSaver {
         }
     }
 
-    private double calculateSize(double availibleHeight, double availibleWidth,
+    /**
+     * This method calculates the size of an element based on the given paramteres
+     *
+     * @param availableHeight The available height for the collection of elements
+     * @param availableWidth The available width for the collection of elements
+     * @param rows The given rows
+     * @param columns The given columns
+     * @return The miniumum size for each element required to show all elements
+     */
+    private double calculateSize(double availableHeight, double availableWidth,
             int rows, int columns) {
-        double sizeHeight = availibleHeight / rows;
-        double sizeWidth = availibleWidth / columns;
+        double sizeHeight = availableHeight / rows;
+        double sizeWidth = availableWidth / columns;
         return Math.min(sizeWidth, sizeHeight);
     }
 }

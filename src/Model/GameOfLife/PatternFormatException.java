@@ -4,9 +4,6 @@ package Model.GameOfLife;
  * This class is a Throwable that indicates that an error in interpreting a file or
  * a stream of RLE format
  *
- * Denne klasse trenger noe mer funksjonalitet for å kunne forsvare dens eksistens, men
- * siden den er et krav så må vi implementere den.
- *
  * @see    java.lang.Error
  */
 public class PatternFormatException extends Exception {

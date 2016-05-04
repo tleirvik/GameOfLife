@@ -9,20 +9,36 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+/**
+ * The {@link Life106Decoder} class
+ */
 public class Life106Decoder extends Decoder {
     private String line;
-    
+
+    /**
+     * Constructs a {@link Life106Decoder} object with the specified parameters
+     * @param reader
+     */
     public Life106Decoder(BufferedReader reader) {
         super(reader);
     }
 
+    /**
+     * Decodes the file using {@link #parseMetadata()} and {@link #parseBoard(BufferedReader)}
+     * @throws PatternFormatException If the pattern is not recognized
+     * @throws IOException If an unspecified I/O error occurs
+     */
     @Override
     public void decode() throws PatternFormatException, IOException {
-        System.out.println("DET SKJER!!!!!");
         parseMetadata();
         parseBoard(reader);
     }
 
+    /**
+     * Parses the meta data from the file
+     * @throws PatternFormatException If the pattern is not recognized
+     * @throws IOException If an unspecified I/O error occurs
+     */
     private void parseMetadata() throws PatternFormatException, IOException {
         metadata = new MetaData();
         
@@ -32,13 +48,19 @@ public class Life106Decoder extends Decoder {
         metadata.setComment(comment.toString());
     }
 
+    /**
+     * This method interprets the file and translates it into a game board
+     * @param reader The {@link BufferedReader} to use
+     * @throws PatternFormatException If the pattern is not recognized
+     * @throws IOException If an unspecified I/O error occurs
+     */
     private void parseBoard(BufferedReader reader) throws PatternFormatException, IOException {
         ArrayList<ArrayList<Integer>> aliveCellPositions = new ArrayList<>();
         
-        int lowestXNumber = 0; //Kan være et negativt tall. Skal omgjøres til 0
-        int lowestYNumber = 0; //Kan være et negativt tall. Skal omgjøres til 0
-        int highestXNumber = 0; //Skal være grensen til hvor stort Arrayet skal være
-        int highestYNumber = 0; //Skal være grensen til hvor stort Arrayet skal være
+        int lowestXNumber = 0;
+        int lowestYNumber = 0;
+        int highestXNumber = 0;
+        int highestYNumber = 0;
         
         int row = 0;
         
@@ -53,22 +75,18 @@ public class Life106Decoder extends Decoder {
             aliveCellPositions.get(row).add(x);
             aliveCellPositions.get(row).add(y);
             
-            //Finn den laveste Y-posisjonen
             if (y < lowestYNumber) {
                 lowestYNumber = y;
             }
             
-            //Finn den laveste X-posisjonen
             if (x < lowestXNumber) {
                 lowestXNumber = x;
             }
             
-            //Finn den høyeste X-posisjonen
             if (x > highestXNumber) {
                 highestXNumber = x;
             }
             
-            //Finn den høyeste Y-posisjonen
             if (y > highestYNumber) {
                 highestYNumber = y;
             }
@@ -76,8 +94,6 @@ public class Life106Decoder extends Decoder {
             row++;
         }
                 
-        //Finn nummeret å legge til om den laveste posisjonen er negativ
-        //(Slik at den laveste blir 0 igjen)
         if (lowestXNumber < 0 || lowestYNumber < 0) {
             int numberToIncreaseXBy = lowestXNumber * -1;
             int numberToIncreaseYBy = lowestYNumber * -1;
@@ -90,11 +106,10 @@ public class Life106Decoder extends Decoder {
             }
         }
         
-        //Finner differansen av den laveste og høyeste posisjonen
         int boardYSize = lowestYNumber*-1 + highestYNumber + 1;
         int boardXSize = lowestXNumber*-1 + highestXNumber + 1;
         
-        //Husk, raddominante arrays brukes her (y går opp i sky :) )
+        //Husk, raddominante arrays brukes her (y gaar opp i sky :) )
         board = new byte[boardYSize][boardXSize];
         for (int i = 0; i < aliveCellPositions.size(); i++) {
             int x = aliveCellPositions.get(i).get(0);

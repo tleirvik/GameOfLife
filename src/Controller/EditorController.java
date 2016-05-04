@@ -268,10 +268,10 @@ public class EditorController {
                 if (game.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, cellSize, cellSize);
                 }
-                x += cellSize; // Plusser på for neste kolonne
+                x += cellSize;
             }
-            x = 0; // Reset X-verdien for neste rad
-            y += cellSize; // Plusser på for neste rad
+            x = 0;
+            y += cellSize;
         }
         if (!(game.getBoard().getRows() > 100)) {
             drawGridLines(gc);

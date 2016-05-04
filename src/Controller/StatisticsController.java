@@ -12,7 +12,6 @@ import javafx.util.Pair;
 /**
  * FXML Controller class
  *
- * @author Stian Reistad Røgeberg, Terje Leirvik, Robin Sean Aron David Lundh
  */
 public class StatisticsController {
     private final XYChart.Series livingCells = new XYChart.Series();

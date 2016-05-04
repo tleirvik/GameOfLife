@@ -1,16 +1,12 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Model.FileManagement.OtherFormats.Data;
 
 import Model.GameOfLife.GameOfLife;
 import java.io.File;
 
 /**
+ * This class generates a sound interpretation of a game board
  *
- * @author Robin
+ * @see Model.FileManagement.OtherFormats.WavSaver
  */
 public class WavData {
     private final GameOfLife game;
@@ -20,7 +16,17 @@ public class WavData {
     private final int durationInSeconds;
     private final int bits;
     private final File file;
-    
+
+    /**
+     * Creates an object of {@link WavData} with the specified parameters
+     * @param game The {@link GameOfLife} to use
+     * @param iterations The number of iterations
+     * @param sampleRate The sample rate to use
+     * @param channels The number of channels to use
+     * @param durationInSeconds The duation in seconds
+     * @param bits The bit rate
+     * @param file The file to use
+     */
     public WavData(GameOfLife game, int iterations, int sampleRate, int channels, 
             int durationInSeconds, int bits, File file) {
         this.game = game;
@@ -33,13 +39,15 @@ public class WavData {
     }
 
     /**
-     * @return the game
+     * Returns the {@link GameOfLife} object
+     * @return The game
      */
     public GameOfLife getGame() {
         return game;
     }
 
     /**
+     * The number of iterations
      * @return the iterations
      */
     public int getIterations() {
@@ -47,6 +55,7 @@ public class WavData {
     }
 
     /**
+     * Returns the sample rate
      * @return the samplerate
      */
     public int getSamplerate() {
@@ -54,6 +63,7 @@ public class WavData {
     }
 
     /**
+     * Returns the number of channels
      * @return the channels
      */
     public int getChannels() {
@@ -61,6 +71,7 @@ public class WavData {
     }
 
     /**
+     * Returns the duration in seconds
      * @return the durationInSeconds
      */
     public int getDurationInSeconds() {
@@ -68,6 +79,7 @@ public class WavData {
     }
 
     /**
+     * Returns the bit rate used
      * @return the bits
      */
     public int getBits() {
@@ -75,6 +87,7 @@ public class WavData {
     }
 
     /**
+     * Returns the file
      * @return the file
      */
     public File getFile() {

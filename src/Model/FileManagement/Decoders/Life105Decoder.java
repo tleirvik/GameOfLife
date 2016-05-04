@@ -7,19 +7,34 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ * The {@link Life105Decoder} class
+ */
 public class Life105Decoder extends Decoder {
     private String line;
-    
+    /**
+     * Constructs a {@link Life105Decoder} object with the specified parameters
+     * @param reader
+     */
     public Life105Decoder(BufferedReader reader) {
         super(reader);
     }
 
+    /**
+     * Decodes the file using {@link #parseMetadata(BufferedReader)} and {@link #parseBoard(BufferedReader)}
+     * @throws PatternFormatException If the pattern is not recognized
+     * @throws IOException If an unspecified I/O error occurs
+     */
     @Override
     public void decode() throws PatternFormatException, IOException {
         parseMetadata(reader);
         parseBoard(reader);
     }
-
+    /**
+     * Parses the meta data from the file
+     * @throws PatternFormatException If the pattern is not recognized
+     * @throws IOException If an unspecified I/O error occurs
+     */
     private void parseMetadata(BufferedReader reader) 
             throws PatternFormatException, IOException {
         metadata = new MetaData();
@@ -50,7 +65,12 @@ public class Life105Decoder extends Decoder {
         }
         metadata.setComment(comment.toString());
     }
-
+    /**
+     * This method interprets the file and translates it into a game board
+     * @param reader The {@link BufferedReader} to use
+     * @throws PatternFormatException If the pattern is not recognized
+     * @throws IOException If an unspecified I/O error occurs
+     */
     private void parseBoard(BufferedReader reader) throws PatternFormatException, IOException {
         ArrayList<ArrayList<Byte>> tempBoard = new ArrayList<>();
                 
@@ -59,17 +79,10 @@ public class Life105Decoder extends Decoder {
         
         do {
             if (line.equals("")) {
-                continue; //IGNORER TOMME LINJER TOTALT
+                continue;
             }
             tempBoard.add(new ArrayList<>()); //legg til en rad
             for (int i = 0; i < line.length(); i++) {
-//                 if (line.charAt(i) == '*') {
-//                    tempBoard.get(row).add((byte) 1);
-//                } else if(line.charAt(i) == '.') {
-//                    tempBoard.get(row).add((byte) 0);
-//                } else {
-//                    throw new PatternFormatException("Line '" + line + "' on position '" + i + "' did not match character '*' or '.'!");
-//                }
                 switch (line.charAt(i)) {
                     case '*':
                         tempBoard.get(row).add((byte) 1);
@@ -82,7 +95,6 @@ public class Life105Decoder extends Decoder {
                                 "' on position '" + i + "' did not match character '*' or '.'!");
                 }
             }
-            //Finner den største kolonnerekken og setter det til en variabel som kan brukes under
             if (tempBoard.get(row).size() > colSize) {
                 colSize = tempBoard.get(row).size();
             }
@@ -96,7 +108,5 @@ public class Life105Decoder extends Decoder {
                 board[row][col] = tempBoard.get(row).get(col);
             }
         }
-        
-        
     }
 }

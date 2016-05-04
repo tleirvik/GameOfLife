@@ -11,8 +11,6 @@ import java.util.regex.Pattern;
 /**
  * This class handles the interpretation of RLE files. One method reads the meta data and creates the game board and
  * the second method translates the files to our byte[][] game board.
- * 
- * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
  *
  * @version 4.0 This class has been the focus of our attention for some time and we developed several versions and
  * this is as of now our final version. Changed the interpretation logic from regex to if-else branching and we used
@@ -24,7 +22,7 @@ public class RLEDecoder extends Decoder {
     /**
      * Constructs a RLEDecoder with a BufferedReader as input
      *
-     * @param reader BufferedReader file to be parsed
+     * @param reader The {@link BufferedReader} file to be parsed
      */
     public RLEDecoder(BufferedReader reader) {
         super(reader);
@@ -48,7 +46,7 @@ public class RLEDecoder extends Decoder {
      * Exception
      * @throws PatternFormatException Throws an exception if the method is unable to
      *                                parse the RLE file
-     * @throws java.io.IOException
+     * @throws java.io.IOException If an unspecified I/O error occurs
      */
     @Override
     public void decode() throws PatternFormatException, IOException {

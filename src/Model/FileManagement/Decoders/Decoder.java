@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Model.FileManagement.Decoders;
 
 import Model.GameOfLife.MetaData;
@@ -11,18 +6,26 @@ import java.io.BufferedReader;
 import java.io.IOException;
 
 /**
- *
- * @author Robin
+ * The {@link Decoder} class
  */
 public abstract class Decoder {
     protected MetaData metadata;
     protected byte[][] board;
     protected final BufferedReader reader;
-    
+
+    /**
+     * Creates a {@link Decoder} class with the specified parameters
+     * @param reader
+     */
     public Decoder(BufferedReader reader) {
         this.reader = reader;
     }
-    
+
+    /**
+     * The abstract decode method that every decoder must implement
+     * @throws PatternFormatException If the pattern is not recognized
+     * @throws IOException If an unspecified I/O error occurs
+     */
     public abstract void decode() throws PatternFormatException, IOException;
     
     /**
@@ -35,7 +38,6 @@ public abstract class Decoder {
     
     /**
      * Method that returns the associated MetaData object that we read from the RLE files
-     *
      * @return metadata A MetaData object that contains relevant metadata about the board
      */
     public MetaData getMetadata() {

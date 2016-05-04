@@ -20,7 +20,6 @@ import javafx.scene.control.Alert;
 /**
  * This class opens a file from disk or a an URL. It passes the file to the RLEDecoder for decoding of the RLE file
  *
- * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
  * @version 3.0 Created this class to separate file handling from the decoder and encoder
  * @see RLEDecoder
  * @see RLEEncoder

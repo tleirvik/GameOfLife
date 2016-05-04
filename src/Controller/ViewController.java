@@ -24,7 +24,7 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-
+// TODO: 04.05.2016 Sjekk om pakkenavn skal skrives med smaa bokstaver
 
 /**
  * This is a controller class for the main view.
@@ -158,7 +158,7 @@ public class ViewController {
      */
     @FXML
     public void saveBoardAsRLE() {
-        //TODO Endre saveBoard() til å ta inn filtype RLE
+        //TODO Endre saveBoard() til aa ta inn filtype RLE
         fileController.saveBoard(gol, EncodeType.RLE, 
                 (Stage) gameCanvas.getScene().getWindow());
     }
@@ -677,7 +677,7 @@ public class ViewController {
                 fitToView();
                 centerBoard();
             }
-            // TODO: 04.05.2016 Mulighet for å velge concurrency
+            // TODO: 04.05.2016 Mulighet for aa velge concurrency
             Stopwatch sw = new Stopwatch("Next generation threading");
             sw.start();
             gol.update();

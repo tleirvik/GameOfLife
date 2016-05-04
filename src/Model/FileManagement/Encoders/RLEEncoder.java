@@ -15,23 +15,21 @@ import javafx.scene.control.Alert;
  * This class handles the interpretation of the board and translates it to Run Length Encoding format
  * Three methods that interprets the meta data and one method that parses the byte[][] board
  *
- * @author Stian Reistad Røgeberg, Robin Sean Aron David Lundh, Terje Leirvik.
  */
 public class RLEEncoder extends Encoder {
 
     /**
-     * Constructor that creates an RLEDecoder object.
+     * Constructor that creates a RLEDecoder object.
      *
-     * @param game
-     * @param file
+     * @param game The {@link GameOfLife} object to decode
+     * @param file The {@link File} to save
      */
     public RLEEncoder(GameOfLife game, File f) {
         super(game, f);
     }
 
     /**
-     * Creates a StringBuffer and encodes the board as well as the associated metadata before writing
-     * the string to the file specified in the constructor.
+     * This is the public interface that starts the decoding of the file
      *
      * @return true if the writing to file is successful
      */
@@ -56,7 +54,7 @@ public class RLEEncoder extends Encoder {
     }
 
     /**
-     * Encodes the associated metadata and adds it to the StringBuffer.<p>
+     * Encodes the associated metadata and adds it to the {@link StringBuilder}.<p>
      *
      *This method is not meant to be called directly, but rather through the encode() method.
      */
@@ -77,7 +75,7 @@ public class RLEEncoder extends Encoder {
     }
 
      /**
-     * Encodes the board size and adds it to the StringBuffer.<p>
+     * Encodes the board size and adds it to the {@link StringBuilder}.<p>
      *
      *This method is not meant to be called directly, but rather through the encode() method.
      */
@@ -89,7 +87,7 @@ public class RLEEncoder extends Encoder {
         rleString.append(", ");
     }
      /**
-     * Encodes the game's rule string and adds it to the StringBuffer.<p>
+     * Encodes the game's rule string and adds it to the {@link StringBuilder}.<p>
      *
      *This method is not meant to be called directly, but rather through the encode() method.
      */
@@ -102,7 +100,9 @@ public class RLEEncoder extends Encoder {
         rleString.append("\r\n");
     }
 
-
+    /**
+     * This method encodes the file to RLE format using a {@link StringBuilder}
+     */
     private void encodeBoard() {
         int count = 1;
         int previous = -1;
@@ -143,15 +143,23 @@ public class RLEEncoder extends Encoder {
         } // end outer loop
         rleString.append("!");
     }
-            
 
-
+    /**
+     * Writes the meta data to file
+     * @param bw The {@link BufferedWriter} to use for saving the data
+     * @throws IOException If an unspecified I/O error occurs
+     * @see Model.GameOfLife.MetaData
+     */
     private void writeMetadata(BufferedWriter bw) throws IOException {
         bw.write(rleString.toString());
         rleString.delete(0, rleString.length());
     }
 
-    //Lagrer BARE brettet med en grense på 80 tegn per linje
+    /**
+     * Writes the translated board to file
+      * @param bw The {@link BufferedWriter} to use for saving the data
+     * @throws IOException If an unspecified I/O error occurs
+     */
     private void writeBoard(BufferedWriter bw) throws IOException {
         int offset = 0;
         final int offsetValue = 79;
@@ -166,6 +174,5 @@ public class RLEEncoder extends Encoder {
             bw.write("\r\n");
             offset += offsetValue;
         }
-
     }
 }

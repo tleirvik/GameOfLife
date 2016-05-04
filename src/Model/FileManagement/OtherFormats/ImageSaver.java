@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Model.FileManagement.OtherFormats;
 
 import Model.FileManagement.OtherFormats.Data.ImageData;
@@ -11,8 +6,7 @@ import java.awt.Color;
 import java.io.File;
 
 /**
- *
- * @author Robin
+ * The abstract class for all image savers
  */
 public abstract class ImageSaver {
     protected final GameOfLife game;
@@ -22,7 +16,11 @@ public abstract class ImageSaver {
     protected final int height;
     protected final int width;
     protected final int cellSize;
-    
+
+    /**
+     * Constructor for the {@link ImageSaver} class
+     * @param data
+     */
     public ImageSaver(ImageData data) {
         game = data.getGame();
         aliveCellColor = data.getAliveCellColor();
@@ -32,6 +30,10 @@ public abstract class ImageSaver {
         width = data.getWidth();
         cellSize = data.getCellSize();
     }
-    
+
+    /**
+     * Method that save the image
+     * @return true if the image is saved, otherwise false
+     */
     public abstract boolean saveImage();
 }

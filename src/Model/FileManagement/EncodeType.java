@@ -15,7 +15,7 @@ public enum EncodeType {
     
     private String name;
     private String[] fileExtensions;
-    
+
     EncodeType(String name, String[] fileExtensions ){
         this.name = name;
         this.fileExtensions = fileExtensions;

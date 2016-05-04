@@ -10,8 +10,7 @@ import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 
 /**
- *
- * @author Robin
+ * Save JPEG files
  */
 public class JPEGSaver extends ImageSaver {
 
@@ -41,9 +40,9 @@ public class JPEGSaver extends ImageSaver {
                 x1 += cellSize;
                 x2 += cellSize;
             }
-            x1 = 0; // Reset X-verdien for neste rad
+            x1 = 0;
             x2 = cellSize;
-            y1 += cellSize; // Plusser på for neste rad
+            y1 += cellSize;
             y2 += cellSize;
         }
         //TODO: DEN LAGRER INGEN TING!

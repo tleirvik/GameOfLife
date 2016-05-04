@@ -39,9 +39,7 @@ import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
 /**
- * Ansvaret for å åpne dialogbokser og flytte data rundt for å lagre/laste filer.
- * Skal ikke lagre eller laste filene selv
- * 
+ *
  * 
  * @author Robin
  */
@@ -267,7 +265,6 @@ public class FileController {
     //=========================================================================
     public void saveBoard(GameOfLife game, EncodeType type, Stage owner) {
         List<FileChooser.ExtensionFilter> extFilter = new ArrayList<>();
-        //TODO: Lag en switch på type for extensionfilter
         extFilter.add(new ExtensionFilter("RLE files", "*.rle"));
         extFilter.add(new ExtensionFilter("All Files", "*.*"));
         
@@ -291,14 +288,13 @@ public class FileController {
     
     public void saveImage(GameOfLife game, Stage owner) {
         throw new UnsupportedOperationException("Not supported yet.");
-        //TODO: FIX HER For JPEG, PNG
     }
     
     
     public void saveAnimation(GameOfLife game, Stage owner) {
         //Can be updated to support other formats
         GIFData gifData = saveToGIFDialog(game, owner);
-        if (gifData == null) {//Bruker avbrøt dialogboksen
+        if (gifData == null) {
             return;
         }
         fileSaver.saveImage(ImageType.GIF, gifData);
@@ -371,8 +367,8 @@ public class FileController {
             int channels = 2;
             int durationInSeconds = (int) spinnerDuration.getValue();
             int bits = 16;
-            //TODO: Gjør mindre hardkodet
-            
+            //TODO: Do mindre hardkodet
+
             return new WavData(game, iterations, sampleRate, channels, 
                     durationInSeconds, bits, file);
         }
