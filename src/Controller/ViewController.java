@@ -53,7 +53,6 @@ public class ViewController {
     @FXML private Pane canvasParent;
     @FXML private Canvas gameCanvas;
     @FXML private ToggleButton fitToView;
-    @FXML private ToggleButton toggleDrawMove;
     @FXML private Label statusBar;
 
 
@@ -96,7 +95,7 @@ public class ViewController {
         initializeFpsSlider();
         
         gol.newEmptyGame(20, 20, BoardType.DYNAMIC);        
-        openGame();
+        fitToView.setSelected(true);
         
         initializeBindCanvasSize();
         initializeKeyboardShortcuts();
@@ -336,6 +335,8 @@ public class ViewController {
     }
 
     public void fitToView() {
+        System.out.println(gameCanvas.getWidth());
+        System.out.println(gameCanvas.getHeight());
         double cellWidth = gameCanvas.getWidth() / (gol.getColumns());
         double cellHeight = gameCanvas.getHeight() / (gol.getRows());
 
@@ -600,15 +601,23 @@ public class ViewController {
     }
 
     private void initializeBindCanvasSize() {
+        gameCanvas.heightProperty().bind(canvasParent.heightProperty());
+    	gameCanvas.widthProperty().bind(canvasParent.widthProperty());  
+        
         gameCanvas.heightProperty().addListener(e -> {
+            if(fitToView.isSelected()) {
+                fitToView();
+                centerBoard();
+            }
             draw();
     	});
     	gameCanvas.widthProperty().addListener(e -> {
-            draw();
+            if(fitToView.isSelected()) {
+                fitToView();
+                centerBoard();
+            }
+            draw();   
     	});
-        
-        gameCanvas.heightProperty().bind(canvasParent.heightProperty());
-    	gameCanvas.widthProperty().bind(canvasParent.widthProperty());
     }
 
     private void initializeTimeline() {

@@ -22,8 +22,8 @@ public class Main extends Application {
             stage.setTitle("Game Of Life");
             stage.setScene(scene);
             
-            stage.setMinHeight(650);
-            stage.setMinWidth(810);
+            stage.setMinHeight(690);
+            stage.setMinWidth(910);
             
             stage.show();
 	}
