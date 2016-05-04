@@ -40,11 +40,6 @@ public class ViewController {
     @FXML private BorderPane root;
 
     @FXML private Button togglePlayButton;
-    
-    @FXML private ColorPicker gridColorPicker;
-    @FXML private ColorPicker cellColorPicker;
-    @FXML private ColorPicker backgroundColorPicker;
-    @FXML private ColorPicker boardColorPicker;
 
     @FXML private Slider fpsSlider;
     @FXML private Label fpsLabel;
@@ -206,10 +201,12 @@ public class ViewController {
         gol.setFirstGeneration();
     }
     
-    // TODO: 30.04.2016 Options-meny for å sette boolske flagg (med checkbokser)
+    
     @FXML
     private void openOptions() {
-
+        dialogBoxes.openOptionsDialog(this, 
+                (Stage) gameCanvas.getScene().getWindow());
+        draw();
     }
     
     //=================================
@@ -222,68 +219,8 @@ public class ViewController {
         
     }
     
-    //=================================
-    //            SIDEBAR
-    //=================================
     
-    /**
-     *  Method that changes the background color according to
-     *  the value selected from the ColorPicker
-     *
-     */
-    @FXML
-    public void changeBackgroundColor() {
-        stdBackgroundColor = backgroundColorPicker.getValue();
-        draw();
-    }
-
-    /**
-     *  Method that changes the board color according to
-     *  the value selected from the ColorPicker
-     *
-     */
-    @FXML
-    public void changeBoardColor() {
-        stdBoardColor = boardColorPicker.getValue();
-        draw();
-    }
-
-    /**
-     *  Method that changes the cell color according to
-     *  the value selected from the ColorPicker
-     *
-     */
-    @FXML
-    public void changeCellColor() {
-        stdAliveCellColor = cellColorPicker.getValue();
-        draw();
-    }
-
-    /**
-     *  Method that changes the grid color according to
-     *  the value selected from the ColorPicker
-     *
-     */
-    @FXML
-    public void changeGridColor() {
-        stdGridColor = gridColorPicker.getValue();
-        draw();
-    }
     
-    @FXML
-    public void handleFitToView() {
-        if(fitToView.isSelected()) {
-            fitToView();
-            centerBoard();
-            draw();
-        }
-    }
-    
-    @FXML
-    public void handleToggleGrid() {
-        drawGrid = !toggleGrid.isSelected();
-        draw();
-    }
     
     //=================================
     //         BOTTOM CONTROLS
@@ -316,6 +253,21 @@ public class ViewController {
     public void openStatistics() {
         pauseGame();
         dialogBoxes.statistics(gol, (Stage) gameCanvas.getScene().getWindow());
+    }
+    
+    @FXML
+    public void handleFitToView() {
+        if (fitToView.isSelected()) {
+            fitToView();
+            centerBoard();
+            draw();
+        }
+    }
+    
+    @FXML
+    public void handleToggleGrid() {
+        drawGrid = !toggleGrid.isSelected();
+        draw();
     }
     
     // TODO: 30.04.2016 Bedre tittel her
@@ -537,31 +489,24 @@ public class ViewController {
         }); // end eventhandler
 
         gameCanvas.addEventHandler(MouseEvent.MOUSE_DRAGGED, (MouseEvent e) -> {
-            if (e.isPrimaryButtonDown()) {  //TEGNEMODUS
+            if (e.isPrimaryButtonDown()) {
                 gameCanvas.getScene().setCursor(Cursor.CROSSHAIR);
                 double bClick_X = e.getX();
                 double bClick_Y = e.getY();
-
-                if ( isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y) ) {
-
-                    int row    = (int) ((bClick_Y - (offset_Y - getBoardHeight())) / cellSize) - gol.getRows();
-                    int column = (int) ((bClick_X - (offset_X - getBoardWidth())) / cellSize) - gol.getColumns();
-                    // unngår out of bounds exception,
-                    // holder seg innenfor arrayets lengde
-                    // tegner kun dersom man er innenfor lengde
-                    System.out.println("row " + row + " col " + column);
-                    if((row < gol.getRows()) && (row >= 0) && (column < gol.getColumns()) && (column >= 0)) {
-                        gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
-                        draw();
-                    }
-                }
-            } else if (e.isSecondaryButtonDown()) { //FLYTTEFUNKSJON
+                int row    = (int) ((bClick_Y - (offset_Y - 
+                        getBoardHeight())) / cellSize) - gol.getRows();
+                int column = (int) ((bClick_X - (offset_X - 
+                        getBoardWidth())) / cellSize) - gol.getColumns();
+                
+                gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
+                draw();
+            } else if (e.isSecondaryButtonDown()) {
                 gameCanvas.getScene().setCursor(Cursor.HAND);
                 offset_X = e.getX() - offsetBegin_X;
                 offset_Y = e.getY() - offsetBegin_Y;
                 draw();
             } // end if
-        });
+        }); // end eventhandler
 
         gameCanvas.setOnScroll((ScrollEvent event) -> {
             fitToView.setSelected(false);
@@ -570,7 +515,7 @@ public class ViewController {
             double scrollAmount = event.getDeltaY();
             double zoomFactor = 1.1;
 
-            if(scrollAmount < 0) {
+            if (scrollAmount < 0) {
                 zoomFactor = 1 / zoomFactor;
             }
 
@@ -583,25 +528,23 @@ public class ViewController {
     }
 
     private void initializeFpsSlider() {
-        fpsSlider.setMin(10);
+        fpsSlider.setMin(1);
     	fpsSlider.setMax(60);
-        fpsSlider.setSnapToTicks(true);
-        fpsSlider.setShowTickMarks(true);
-        fpsSlider.setShowTickLabels(true);
-        fpsSlider.setMajorTickUnit(10);
-        fpsSlider.setMinorTickCount(5);
-        fpsLabel.setText("10");
-        fpsSlider.valueChangingProperty().addListener((ObservableValue<? extends Boolean> obs, Boolean wasChanging, Boolean isChanging) -> {
-            
-                int newValue = (int)fpsSlider.getValue();
-                if(timeline.getStatus() == Animation.Status.RUNNING) {
-                    timeline.stop();
-                    initializeKeyFrame(newValue);
-                    timeline.play();
-                } else {
-                    initializeKeyFrame(newValue);
-                }
-            
+        fpsLabel.setText("1");
+        fpsSlider.valueProperty().addListener(e -> {
+            fpsLabel.setText(Integer.toString(fpsSlider.valueProperty().intValue()));
+        });
+        
+        fpsSlider.valueChangingProperty().addListener((ObservableValue<? extends 
+                Boolean> obs, Boolean wasChanging, Boolean isChanging) -> {
+            int newValue = (int)fpsSlider.getValue();
+            if (timeline.getStatus() == Animation.Status.RUNNING) {
+                timeline.stop();
+                initializeKeyFrame(newValue);
+                timeline.play();
+            } else {
+                initializeKeyFrame(newValue);
+            }
         });
     }
 
@@ -610,14 +553,14 @@ public class ViewController {
     	gameCanvas.widthProperty().bind(canvasParent.widthProperty());  
         
         gameCanvas.heightProperty().addListener(e -> {
-            if(fitToView.isSelected()) {
+            if (fitToView.isSelected()) {
                 fitToView();
                 centerBoard();
             }
             draw();
     	});
     	gameCanvas.widthProperty().addListener(e -> {
-            if(fitToView.isSelected()) {
+            if (fitToView.isSelected()) {
                 fitToView();
                 centerBoard();
             }
@@ -667,5 +610,37 @@ public class ViewController {
         edit.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN));
         edit.getItems().get(2).setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
         edit.getItems().get(3).setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
+    }
+    
+    public void setBackgroundColor(Color stdBackgroundColor) {
+        this.stdBackgroundColor = stdBackgroundColor;
+    }
+    
+    public void setBoardBackgroundColor(Color stdBoardColor) {
+        this.stdBoardColor = stdBoardColor;
+    }
+    
+    public void setCellColor(Color stdAliveCellColor) {
+        this.stdAliveCellColor = stdAliveCellColor;
+    }
+    
+    public void setGridColor(Color stdGridColor) {
+        this.stdGridColor = stdGridColor;
+    }
+    
+    public Color getBackgroundColor() {
+        return stdBackgroundColor;
+    }
+    
+    public Color getBoardBackgroundColor() {
+        return stdBoardColor;
+    }
+    
+    public Color getCellColor() {
+        return stdAliveCellColor;
+    }
+    
+    public Color getGridColor() {
+        return stdGridColor;
     }
 }

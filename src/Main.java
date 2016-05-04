@@ -17,14 +17,12 @@ public class Main extends Application {
 
             
             scene.getStylesheets().add(getClass().getResource(
-                "/View/mainWindowGraphics.css").toExternalForm());
+                "/View/mainWindowStyleSheet.css").toExternalForm());
                 
             stage.setTitle("Game Of Life");
             stage.setScene(scene);
-            
             stage.setMinHeight(690);
             stage.setMinWidth(910);
-            
             stage.show();
 	}
 

@@ -4,6 +4,7 @@ import Controller.StatisticsController;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Controller.EditorController;
 import Controller.FileController;
+import Controller.ViewController;
 import Model.GameOfLife.GameOfLife;
 import Model.GameOfLife.MetaData;
 import javafx.fxml.FXMLLoader;
@@ -197,6 +198,40 @@ public class DialogBoxes {
         }
     }
     
+    public void openOptionsDialog(ViewController vCtrl, Stage owner) {
+        GridPane gp = new GridPane();
+        
+        gp.add(new Label("Background Color: "), 0, 0);
+        ColorPicker backgroundColor = new ColorPicker(vCtrl.getBackgroundColor());
+        gp.add(backgroundColor, 1, 0);
+        
+        gp.add(new Label("Board Background Color: "), 0, 1);
+        ColorPicker boardBackgroundColor = new ColorPicker(vCtrl.getBoardBackgroundColor());
+        gp.add(boardBackgroundColor, 1, 1);
+        
+        gp.add(new Label("Cell Color: "), 0, 2);
+        ColorPicker cellColor = new ColorPicker(vCtrl.getCellColor());
+        gp.add(cellColor, 1, 2);
+        
+        gp.add(new Label("Grid Color: "), 0, 3);
+        ColorPicker gridColor = new ColorPicker(vCtrl.getGridColor());
+        gp.add(gridColor, 1, 3);
+        
+        Dialog dialog = customUtilityDialog("Options", null, gp, owner);
+        
+        ButtonType ok = new ButtonType("OK", ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(ok, cancel);
+        
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.get() == ok) {
+            vCtrl.setBackgroundColor(backgroundColor.getValue());
+            vCtrl.setBoardBackgroundColor(boardBackgroundColor.getValue());
+            vCtrl.setCellColor(cellColor.getValue());
+            vCtrl.setGridColor(gridColor.getValue());
+        }
+    }
+    
     //=========================================================================
     //                         FXML-based windows
     //=========================================================================
@@ -225,7 +260,7 @@ public class DialogBoxes {
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
-                    "/View/patternEditorGraphics.css").toExternalForm());
+                    "/View/patternEditorStyleSheet.css").toExternalForm());
             
             editor.setScene(scene);
             editor.setTitle("Pattern Editor");

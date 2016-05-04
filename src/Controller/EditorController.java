@@ -94,7 +94,12 @@ public class EditorController {
     }
     
     @FXML
-    public void saveToGif() { 
+    public void saveToGif() {
+        int rows = game.getRows();
+        int cols = game.getColumns();
+        if (rows <= 0 || cols <= cols) {
+            return;
+        }
         fileController.saveAnimation(game, 
                 (Stage) patternCanvas.getScene().getWindow());
         game.setFirstGeneration();
