@@ -3,10 +3,16 @@ package Model.GameOfLife.Boards;
 import Model.GameOfLife.MetaData;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.IntStream;
 
 /**
- * @author Robin
+ * This is our implementation of an expanding and shrinking dynamic
+ * game board for Game Of Life
+ *
+ * @see Board
+ * @see Model.GameOfLife.Boards.Board.BoardType
+ * @see FixedBoard
+ * @see Model.GameOfLife.Algorithms.Algorithm
+ * @see MetaData
  */
 public class DynamicBoard extends Board { 
     private final MetaData metadata;
@@ -18,7 +24,13 @@ public class DynamicBoard extends Board {
     //=========================================================================
     // Constructors
     //=========================================================================
-    
+
+    /**
+     * Constructs a dynamic board with a specific size and an empty MetaData object
+     *
+     * @param rows Number of rows to create
+     * @param columns Number of columns to create
+     */
     public DynamicBoard(int rows, int columns) {
         MIN_COL = columns;
         MIN_ROW = rows;
@@ -35,7 +47,13 @@ public class DynamicBoard extends Board {
             }
         }
     }
-        
+
+    /**
+     * Constructs a dynamic board from a <code>byte</code> 2D array
+     *
+     * @param board A <code>byte</code> 2D array to create a dynamic board from
+     * @param metadata The boards meta data
+     */
     public DynamicBoard(byte[][] board, MetaData metadata) {
         MIN_COL = board.length;
         MIN_ROW = board[0].length;
@@ -56,17 +74,33 @@ public class DynamicBoard extends Board {
     //=========================================================================
     // Getters
     //=========================================================================
-    
+
+    /**
+     * Returns the boards rows
+     *
+     * @return Number of rows
+     */
     @Override
     public int getRows() {
         return currentGeneration.size();
     }
 
+    /**
+     * Returns the boards columns
+     *
+     * @return Number of columns
+     */
     @Override
     public int getColumns() {
         return currentGeneration.get(0).size();
     }
-    
+
+    /**
+     * Returns the meta data object
+     *
+     * @return The meta data object
+     * @see MetaData
+     */
     @Override
     public MetaData getMetaData() {
         return metadata;
@@ -75,12 +109,12 @@ public class DynamicBoard extends Board {
     /**
      * Returns the <code>byte</code> value of the cell at the given position
      *
-     * @param row
-     * @param column
+     * @param row The specified row
+     * @param column The specified column
      * @return Returns the <code>byte</code> value of a cell on the
      * given position
+     *
      */
-
     @Override
     public byte getCellAliveState(int row, int column) {
         if (row > getRows() - 1 || row < 0 || column > getColumns() - 1 || column < 0) {
@@ -90,20 +124,25 @@ public class DynamicBoard extends Board {
         }
     }
 
-    public boolean insideArrayBoundaries(int row, int column) {
-        //HØYRE
-        //VENSTRE
+    /**
+     * This method checks if a given position is inside the array. If not, the array will
+     * be expanded to fit the given positions.
+     * @param row The specified row position
+     * @param column The specified column position
+     * @return true if the specified positions is inside the array, else false
+     */
+    private boolean insideArrayBoundaries(int row, int column) {
         if (row >= getRows() || row < 0 || column >= getColumns() || column < 0) {
 
-            if(row < 0) {//Topp
+            if(row < 0) {
                 addTopRow(Math.abs(row));
-            } else if(row >= getRows()) {//Bunn
+            } else if(row >= getRows()) {
                 addBottomRow(row - (getRows() - 1));
             }
 
-            if(column < 0) { //Venstre
+            if(column < 0) {
                 addLeftColumn(Math.abs(column));
-            } else if(column >= getColumns()) { //Høyre
+            } else if(column >= getColumns()) {
                 addRightColumn(column - (getColumns() - 1));
             }
             return false;
@@ -117,20 +156,15 @@ public class DynamicBoard extends Board {
     
     /**
      *  Sets the <code>byte</code> value of the cell at the given position
-     * to the <code>byte</code> value given in aliveState. Throws a Runtime
-     * Exception if the number does not equal 0 or 1.
+     * to the <code>byte</code> value given in aliveState.
      * 
-     * @param row
-     * @param column
-     * given position
-     * @param aliveState
+     * @param row The specified row position
+     * @param column The specified column position
+     * @param aliveState <code>0</code> or <code>1</code> to represent dead or alive cell
      */
     @Override
     public void setCellAliveState(int row, int column, byte aliveState) {
         if (!insideArrayBoundaries(row, column)) {
-            //TODO: Kall metoden over slik at den viser at den øker arrayet
-            // TODO: 02.05.2016 LAg logikk i inside metoden som oversetter row col til min/max i ærrajet
-
             if(row > getRows()) {
                 row = getRows()-1;
             } else if(row < 0) {
@@ -142,42 +176,7 @@ public class DynamicBoard extends Board {
             } else if(column < 0) {
                 column = 0;
             }
-
             currentGeneration.get(row).set(column, aliveState);
-
-            /*
-            // Oppe, innenfor grid'en
-            if (row < 0 && (column > 0 && column < getColumns())) {
-                currentGeneration.get(0).set(column, aliveState);
-            }
-            // Nede-innenfor grid'en
-            if (row >= getRows() & (column > 0 && column <= getColumns())) {
-                currentGeneration.get(getRows() -1).set(column, aliveState);
-            }
-            // Venstre-innenfor grid'en
-            if (row > 0 && row < getRows() -1 && column < 0) {
-                currentGeneration.get(row).set(0, aliveState);
-            }
-            // Høyre-innenfor grid'en
-            if (column > getColumns() -1 && (row > 0 && row < getRows() -1)) {
-                currentGeneration.get(row).set(getColumns() -1, aliveState);
-            }
-            // Høyre-utenfor oppe
-            if (row < 0 && column > getColumns() -1) {
-                currentGeneration.get(0).set(getColumns() -1, aliveState);
-            }
-            // Høyre-utenfor nede
-            if (column > getColumns() -1 && row > getRows() -1) {
-                currentGeneration.get(getRows() -1).set(getColumns() -1, aliveState);
-            }
-            // Venstre-utenfor nede
-            if (column < 0 && row >= (getRows() -1)) {
-                currentGeneration.get(getRows() -1).set(0, aliveState);
-            }
-            // Venstre-utenfor oppe
-            if (row < 0 && column < 0) {
-                currentGeneration.get(0).set(0, aliveState);
-            }*/
         } else {
             currentGeneration.get(row).set(column, aliveState);
         }
@@ -187,6 +186,9 @@ public class DynamicBoard extends Board {
     // Generation-methods
     //=========================================================================
 
+    /**
+     * This method resets the current game board to the first generation board.
+     */
     @Override
     public void resetBoard() {
         currentGeneration.clear();
@@ -199,6 +201,9 @@ public class DynamicBoard extends Board {
         }
     }
 
+    /**
+     * This method checks all the edges on the board
+     */
     private void checkEdges() {
         checkTop();
         checkBottom();
@@ -206,15 +211,23 @@ public class DynamicBoard extends Board {
         checkLeft();
     }
 
+    /**
+     * Adds a top row to the game board
+     * @param numberOfRows Number of rows to add
+     */
     private void addTopRow(int numberOfRows) {
         for (int i = 0; i < numberOfRows; i++) {
-            System.out.println(i);
             currentGeneration.add(0, new ArrayList<>());
             for (int col = 0; col < currentGeneration.get(currentGeneration.size() - 1).size(); col++) {
                 currentGeneration.get(0).add((byte) 0);
             }
         }
     }
+
+    /**
+     * Adds a bottom row to the board
+     * @param numberOfRows Number of rows to add
+     */
     private void addBottomRow(int numberOfRows) {
             for (int i = 0; i < numberOfRows; i++) {
                 currentGeneration.add(new ArrayList<>());
@@ -224,29 +237,47 @@ public class DynamicBoard extends Board {
         }
     }
 
+    /**
+     *  Removes a top row from the game board
+     * @param numberOfRows Number of rows to remove
+     */
     private void removeTopRow(int numberOfRows) {
         for (int i = 0; i < numberOfRows; i++) {
             currentGeneration.remove(0);
         }
     }
-
+    /**
+     *  Removes a bottom row from the game board
+     * @param numberOfRows Number of rows to remove
+     */
     private void removeBottomRow(int numberOfRows) {
         for (int i = 0; i < numberOfRows; i++) {
             currentGeneration.remove(currentGeneration.size() - 1);
         }
     }
+
+    /**
+     * Adds a left column to the game
+     * @param numberOfColumns Number of columns to add
+     */
     private void addLeftColumn(int numberOfColumns) {
             for (int i = 0; i < numberOfColumns; i++) {
                 currentGeneration.stream().forEach((col) -> col.add(0, (byte) 0));
         }
     }
-
+    /**
+     * Adds a right column to the game
+     * @param numberOfColumns Number of columns to add
+     */
     private void addRightColumn(int numberOfColumns) {
         for (int i = 0; i < numberOfColumns; i++) {
             currentGeneration.stream().forEach((col) -> col.add((byte) 0));
         }
     }
-
+    /**
+     * Removes a left column from the game
+     * @param numberOfColumns Number of columns to remove
+     */
     private void removeLeftColumn(int numberOfColumns) {
         for (int i = 0; i < numberOfColumns; i++) {
             for (List<Byte> row : currentGeneration) {
@@ -254,7 +285,10 @@ public class DynamicBoard extends Board {
             }
         }
     }
-
+    /**
+     * Removes a right column from the game
+     * @param numberOfColumns Number of columns to remove
+     */
     private void removeRightColumn(int numberOfColumns) {
         for (int i = 0; i < numberOfColumns; i++) {
             for (List<Byte> row : currentGeneration) {
@@ -263,6 +297,10 @@ public class DynamicBoard extends Board {
         }
     }
 
+    /**
+     * This method checks the top rows and will add or remove rows
+     * dependant on the cell activity near the top of the game board
+     */
     private void checkTop() {
         final int sum1 = currentGeneration
                 .get(0)
@@ -299,6 +337,10 @@ public class DynamicBoard extends Board {
         }
     }
 
+    /**
+     * This method checks the bottom rows and will add or remove rows
+     * dependant on the cell activity near the bottom of the game board
+     */
     private void checkBottom() {
         final int rows = currentGeneration.size();
         final int sum1 = currentGeneration
@@ -329,16 +371,17 @@ public class DynamicBoard extends Board {
         final int remove = sum1 + sum2 + sum3 + sum4 + sum5;
         final int add = sum1 + sum2;
 
-        System.out.println("Bottom row add: " + add);
-        System.out.println("Bottom row size " + currentGeneration.size());
         if (add != 0) {
             addBottomRow(1);
         } else if(remove == 0 && currentGeneration.size() > MIN_ROW) {
             removeBottomRow(1);
         }
-        System.out.println("Bottom row size " + currentGeneration.size());
     }
 
+    /**
+     * This method checks the left column and will add or remove columns
+     * dependant on the cell activity near the leftmost part the game board
+     */
     private void checkLeft() {
         final int rows = currentGeneration.size();
         int sum1 = 0;
@@ -364,13 +407,16 @@ public class DynamicBoard extends Board {
         }
     }
 
+    /**
+     * This method checks the right column and will add or remove columns
+     * dependant on the cell activity near the rightmost part the game board
+     */
     private void checkRight() {
         int sum1 = 0;
         int sum2 = 0;
         int sum3 = 0;
         int sum4 = 0;
         int sum5 = 0;
-        final int rows = currentGeneration.size();
         final int columns = currentGeneration.get(0).size();
 
         for (List<Byte> e : currentGeneration) {
@@ -390,15 +436,21 @@ public class DynamicBoard extends Board {
         }
     }
 
+    /**
+     * This method is inherited from {@link Board} and is used the check if we
+     * need to expand the edges before running the algorithm
+     */
     @Override
     public void beforeUpdate() {
         checkEdges();
     }
 
+    /**
+     * Sets the first generation board. Used with {@link #resetBoard()}
+     */
     @Override
     public void setFirstGeneration() {
         firstGeneration.clear();
-        //firstGeneration.stream().forEach(System.out::println);
         for (int row = 0; row < currentGeneration.size() -1; row++) {
             firstGeneration.add(new ArrayList<>());
             for (int col = 0; col < currentGeneration.get(0).size() -1; col++) {
@@ -411,6 +463,11 @@ public class DynamicBoard extends Board {
     // Misc.
     //=========================================================================
 
+    /**
+     * This method is inherited from {@link Board} and is used to clone a dynamic
+     * game board with its meta data
+     * @return A clone of this class' game board
+     */
     @Override
     public DynamicBoard clone() {
         byte[][] boardClone = new byte[getRows()][getColumns()];
@@ -423,9 +480,13 @@ public class DynamicBoard extends Board {
         return new DynamicBoard(boardClone, metaDataClone);
     }
 
-
+    /**
+     * Method that gives the smallest array to fit a specified pattern
+     * @return Returns an array of minrow maxrow mincolumn maxcolumn
+     * @author Henrik Lieng
+     */
     public int[] getBoundingBox() {
-        int[] boundingBox = new int[4]; // minrow maxrow mincolumn maxcolumn
+        int[] boundingBox = new int[4];
         boundingBox[0] = currentGeneration.size();
         boundingBox[1] = 0;
         boundingBox[2] = currentGeneration.get(0).size();
@@ -460,7 +521,6 @@ public class DynamicBoard extends Board {
      */
     @Override
     public String toString() {
-        //currentGeneration.stream().forEach(i -> System.out.println(i));
         StringBuilder sb = new StringBuilder();
 
         for (int i = 0; i < currentGeneration.size(); i++) {
