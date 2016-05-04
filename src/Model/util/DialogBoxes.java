@@ -20,6 +20,14 @@ import javafx.geometry.Insets;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.stage.StageStyle;
 
+/**
+ * This is a utility class that opens the game dialog boxes
+ *
+ * @see Controller.ViewController
+ * @see StatisticsController
+ * @see EditorController
+ * @see FileController
+ */
 public class DialogBoxes {
     
     //=========================================================================
@@ -37,7 +45,7 @@ public class DialogBoxes {
      * @param optionalHeader An optional header string
      * @param gp The content of the dialog box
      * @param owner The Stage that "owns" the dialog box
-     * @return 
+     * @return The dialog box
      */
     public static Dialog customUtilityDialog(String title, String optionalHeader, GridPane gp, Stage owner) {
         Dialog dialog = new Dialog();
@@ -56,7 +64,15 @@ public class DialogBoxes {
         
         return dialog;
     }
-    
+
+    /**
+     * This static method shows a dialog box and is useful for presenting errors to the user
+     *
+     * @param type The {@link AlertType} of the {@link Dialog} box
+     * @param title The title of the {@link Dialog} box
+     * @param headerText The header text of the {@link Dialog} box
+     * @param contentText The content text of the {@link Dialog} box
+     */
     public static void openAlertDialog(AlertType type, String title, String headerText, String contentText) {
         Alert dialog = new Alert(type);
     	dialog.setTitle(title);
@@ -68,6 +84,12 @@ public class DialogBoxes {
     //=========================================================================
     //                            DIALOGS
     //=========================================================================
+
+    /**
+     * This presents the new game dialog to the user and lets choose a game
+     * @param gol The {@link GameOfLife}
+     * @param owner The {@link Stage} that owns the new dialog box
+     */
     public void openNewGameDialog(GameOfLife gol, Stage owner) {
         GridPane gp = new GridPane();
         
@@ -121,7 +143,13 @@ public class DialogBoxes {
             }
         }
     }
-    
+
+    /**
+     * This method presents a meta data dialog box to the user and lets the
+     * user edit and save the meta data
+     * @param metadata The {@link MetaData} object to use in the dialog box
+     * @param owner The {@link Stage} that owns the new dialog box
+     */
     public void metaDataDialogBox(MetaData metadata, Stage owner) {        
         GridPane gp = new GridPane();
         
@@ -172,6 +200,13 @@ public class DialogBoxes {
     //=========================================================================
     //                         FXML-based windows
     //=========================================================================
+
+    /**
+     * This launches a new FXML window and starts a new {@link EditorController}
+     * @param game The {@link GameOfLife} object to use in the editor
+     * @param fileController The {@link FileController} to use in the editor
+     * @param owner The {@link Stage} that owns the new dialog box
+     */
     public void openPatternEditor(GameOfLife game, FileController fileController, 
             Stage owner) {
         Stage editor = new Stage();
@@ -200,7 +235,12 @@ public class DialogBoxes {
                     "Could not open the Pattern Editor", e.getMessage());
         } 
     }
-    
+
+    /**
+     * This launches a new FXML window and starts a new {@link StatisticsController}
+     * @param game The {@link GameOfLife} object to use in the editor
+     * @param owner The {@link Stage} that owns the new dialog box
+     */
     public void statistics(GameOfLife game, Stage owner) {
         Stage editor = new Stage();
         editor.initModality(Modality.WINDOW_MODAL);

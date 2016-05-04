@@ -2,15 +2,8 @@ package Model.GameOfLife;
 
 import java.util.stream.IntStream;
 
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
 /**
- *
- * @author stianreistadrogeberg
+ * This class provides statistics for the game
  */
 public class Statistics {
     private final GameOfLife game;
@@ -19,7 +12,14 @@ public class Statistics {
     private final int[] geometrics;
     private final int[] diffInLivingCells;
     private final int[] similarity;
-    
+
+    /**
+     * Constructs a new {@link Statistics} object to be used for collecting statistics from
+     * the specified game board
+     *
+     * @param game The Game Of Life game to be used for the statistics
+     * @param iterations The number of generations used for the statistics
+     */
     public Statistics(GameOfLife game, int iterations) {
         this.game = game;
         this.iterations = iterations;
@@ -30,7 +30,10 @@ public class Statistics {
 
         collectStatistics();
     }
-    
+
+    /**
+     * This method collects statistics from the game board
+     */
     private void collectStatistics() {
         //Living cells and position
         for (int i = 0; i < iterations; i++) {
@@ -64,13 +67,7 @@ public class Statistics {
     }
 
     /**
-     * @return the iterations
-     */
-    public int getIterations() {
-        return iterations;
-    }
-
-    /**
+     * Return the number of living cells on the game board
      * @return the number of living cells
      */
     public int[] getNumberOfLivingCells() {
@@ -78,21 +75,24 @@ public class Statistics {
     }
 
     /**
-     * @return the difference in living cells
+     * Return the difference in living cells between two generations
+     * @return The difference in living cells data
      */
     public int[] getDiffInLivingCells() {
         return diffInLivingCells;
     }
 
     /**
-     * @return the similarity
+     * Returns the similarity measure
+     * @return The similarity measure data
      */
     public int[] getSimilarity() {
         return similarity;
     }
     
     /**
-     * @return the similarity
+     * Returns the geometrics data
+     * @return The geometrics data
      */
     public int[] getGeometrics() {
         return geometrics;

@@ -6,9 +6,9 @@ package Model.GameOfLife;
  *
  * This class is a container class for a boards metadata<p>
  *
- * @see Board
- * @see Model.FileManagement.RLEDecoder
- * @see Model.FileManagement.RLEEncoder
+ * @see Model.GameOfLife.Boards.Board
+ * @see Model.FileManagement.Decoders.Decoder
+ * @see Model.FileManagement.Encoders.Encoder
  *
  */
 public class MetaData {
@@ -19,6 +19,9 @@ public class MetaData {
 	private String survivalRule;
 	private String birthRule;
 
+	/**
+	 * Constructs a new, empty  meta data object
+	 */
 	public MetaData() {
 		author = "";
 		name = "";
@@ -26,25 +29,59 @@ public class MetaData {
 		survivalRule = "";
 		birthRule = "";
 	}
+
+	/**
+	 * Returns the author name
+	 * @return The authors name
+     */
 	public String getAuthor() {
 		return author;
 	}
+
+	/**
+	 * Sets the author of the pattern
+	 * @param author The name of the author
+     */
 	public void setAuthor(String author) {
         this.author = author;
 	}
+
+	/**
+	 * Returns the name of the pattern
+	 * @return The name of the pattern
+     */
 	public String getName() {
         return name;
 	}
+
+	/**
+	 * Sets the name of the pattern
+	 * @param name The name of the pattern
+     */
 	public void setName(String name) {
         this.name = name;
 	}
+
+	/**
+	 * Returns the boards comments
+	 * @return The boards comments
+     */
 	public String getComment() {
         return comment;
 	}
+
+	/**
+	 * Sets the boards comments
+	 * @param comment The boards comments
+     */
 	public void setComment(String comment) {
         this.comment = comment;
 	}
 
+	/**
+	 * Returns the game rules
+	 * @return
+     */
 	public String[] getRuleString() {
         String[] rules = {
                 survivalRule,
@@ -52,18 +89,27 @@ public class MetaData {
         };
 		return rules;
 	}
+
+	/**
+	 * Sets the rules used on the game board
+	 * @param SBrules The game rules
+     */
 	public void setRuleString(String[] SBrules) {
 		this.survivalRule = SBrules[0];
 		this.birthRule = SBrules[1];
 	}
-        
-        @Override
-        public MetaData clone() {
-            MetaData clone = new MetaData();
-            clone.setAuthor(author);
-            clone.setComment(comment);
-            clone.setName(name);
-            clone.setRuleString(getRuleString());
-            return clone;
-        }
+
+	/**
+	 * This method is inherited from {@link Object} and returns a clone of the meta data object
+	 * @return A clone of the meta data object
+     */
+	@Override
+	public MetaData clone() {
+		MetaData clone = new MetaData();
+		clone.setAuthor(author);
+		clone.setComment(comment);
+		clone.setName(name);
+		clone.setRuleString(getRuleString());
+		return clone;
+	}
 }
