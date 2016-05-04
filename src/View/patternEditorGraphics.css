@@ -2,6 +2,11 @@
     -fx-background-color: linear-gradient(#e35e68, #8e4497);
 }
 
+.menu-bar .label {
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
+}
+
 #leftBox {
     -fx-background-color: #224687;
 }
@@ -22,7 +27,6 @@
     -fx-text-fill: #ff1626;
     -fx-background-color: #c6ff00;
     -fx-font-weight: bold;
-    -fx-font-family: "Monospace";
 }
 
 #stripButton:hover {

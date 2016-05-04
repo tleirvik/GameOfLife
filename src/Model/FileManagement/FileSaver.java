@@ -36,7 +36,7 @@ public class FileSaver {
     
     public boolean saveImage(ImageType type, ImageData data) {
         ImageSaver saver = null;
-        switch(type) {
+        switch (type) {
             case JPEG:
                 saver = new JPEGSaver(data);
                 break;

@@ -9,23 +9,19 @@ import Model.FileManagement.EncodeType;
 import Model.GameOfLife.Boards.Board;
 import Model.GameOfLife.GameOfLife;
 import Model.GameOfLife.MetaData;
+import Model.util.DialogBoxes;
 import javafx.fxml.FXML;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
-import javafx.scene.control.MenuItem;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
-import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 
-import java.io.File;
+import javafx.scene.control.Alert;
 
 /**
  * FXML Controller class
@@ -72,7 +68,9 @@ public class EditorController {
     @FXML
     public void saveBoard() {
         Stage owner = (Stage) patternCanvas.getScene().getWindow();
-        trim();
+        if (!trim()) {
+            return;
+        }
         fileController.saveBoard(game, EncodeType.RLE, owner);
     }
     
@@ -89,15 +87,22 @@ public class EditorController {
     
     @FXML
     public void saveToGif() { 
-        trim();
+        fileController.saveAnimation(game, 
+                (Stage) patternCanvas.getScene().getWindow());
         game.setFirstGeneration();
     }
     
-    private void trim() {
+    private boolean trim() {
         int[] bBox = game.getBoard().getBoundingBox();
         
         int trimmedBoardRows = (bBox[1] - bBox[0]) + 1;
         int trimmedBoardColumns = (bBox[3] - bBox[2]) + 1;
+        
+        if (trimmedBoardRows <= 0 || trimmedBoardColumns <= 0) {
+            DialogBoxes.openAlertDialog(Alert.AlertType.WARNING, "Empty Board", 
+                    "Error Saving Empty Board", "The current board is empty.");
+            return false;
+        }
         
         byte[][] trimmedBoard = new byte[trimmedBoardRows][trimmedBoardColumns];
         
@@ -107,8 +112,8 @@ public class EditorController {
                         game.getCellAliveState(oldRow, oldColumn);
             }
         }
-        System.out.println(trimmedBoard.length + " " + trimmedBoard[0].length);
         game.loadGame(trimmedBoard, game.getMetaData(), Board.BoardType.FIXED);
+        return true;
     }
     
     // sette brettet her?
@@ -151,9 +156,7 @@ public class EditorController {
         game.resetGame();
     }
     
-    private void drawStrip(GraphicsContext gc, double offset_X, double stripCellSize) {
-        boolean isGenerationAlive = false;
-        
+    private void drawStrip(GraphicsContext gc, double offset_X, double stripCellSize) {        
         final int rows = game.getRows();
         final int columns = game.getColumns();
         double x = offset_X;

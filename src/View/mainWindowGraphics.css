@@ -2,7 +2,10 @@
     -fx-background-color: linear-gradient(#e35e68, #8e4497);
 }
 
-
+.menu-bar .label {
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
+}
 
 #rightBox {
     -fx-background-color: #4d4785;
@@ -13,8 +16,7 @@
 }
 
 .label {
-    -fx-text-fill: #eaeaea;
-    -fx-font-family: "Monospace";
+    -fx-text-fill: #000000;
     -fx-font-weight: bold;
 }
 
@@ -22,7 +24,6 @@
     -fx-text-fill: #ff1626;
     -fx-background-color: #111111;
     -fx-font-weight: bold;
-    -fx-font-family: "Monospace";
     
 }
 
@@ -36,7 +37,6 @@
     -fx-text-fill: #ff1626;
     -fx-background-color: #111111;
     -fx-font-weight: bold;
-    -fx-font-family: "Monospace";
 }
 
 #toggleButton:hover {

@@ -31,7 +31,7 @@
     <top>
         <MenuBar id="topMenuBar" fx:id="menuBar" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
             <menus>
-                <Menu id="menu" text="File">
+                <Menu id="label" text="File">
                     <items>
                           <MenuItem onAction="#newGame" text="New game..." />
                           <MenuItem mnemonicParsing="false" onAction="#loadBoard" text="Load Board..." />
@@ -71,7 +71,7 @@
     
     
     <bottom>
-        <VBox id="bottomVBox" BorderPane.alignment="TOP_CENTER">
+        <VBox id="bottomVBox" BorderPane.alignment="CENTER">
          
             <children>
                 <HBox id="bottom" alignment="CENTER" prefHeight="76.0" prefWidth="1000.0" spacing="20.0">
@@ -87,7 +87,8 @@
                         <Button layoutX="419.0" layoutY="28.0" minHeight="20.0" minWidth="80.0" onAction="#openPatternList" prefHeight="30.0" prefWidth="80.0" text="Pattern" />
 
                         <Button minHeight="20.0" minWidth="80.0" onAction="#openStatistics" prefHeight="30.0" prefWidth="80.0" text="Stats" />
-
+                        
+                        <ToggleButton id="toggleButton" prefHeight="30.0" prefWidth="120.0" fx:id="fitToView" onAction="#handleFitToView" text="Fit to view" />
                         <VBox alignment="CENTER" spacing="5.0">
                             <children>
                                 <HBox spacing="5.0">
@@ -97,9 +98,9 @@
                                 </HBox>
                             </children>
                         </VBox>
-                        <ToggleButton id="toggleButton" fx:id="fitToView" onAction="#handleFitToView" text="Fit to view" />
+                        
       
-                      <CheckBox fx:id="toggleGrid" onAction="#handleToggleGrid" text="Turn off grid" />
+                      <CheckBox fx:id="toggleGrid"  onAction="#handleToggleGrid" text="Turn off grid" />
 
                         <Label text="FPS: " />
                         <Label fx:id="fpsLabel" />

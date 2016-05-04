@@ -28,6 +28,7 @@
           <Menu mnemonicParsing="false" text="File">
             <items>
               <MenuItem mnemonicParsing="false" onAction="#saveBoard" text="Save Board..." />
+              <MenuItem mnemonicParsing="false" onAction="#saveToGif" text="Save To GIF" />
             </items>
           </Menu>
           <Menu mnemonicParsing="false" text="Edit">

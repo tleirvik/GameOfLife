@@ -37,6 +37,7 @@ public class DialogBoxes {
      * @param optionalHeader An optional header string
      * @param gp The content of the dialog box
      * @param owner The Stage that "owns" the dialog box
+     * @return 
      */
     public static Dialog customUtilityDialog(String title, String optionalHeader, GridPane gp, Stage owner) {
         Dialog dialog = new Dialog();
@@ -61,6 +62,7 @@ public class DialogBoxes {
     	dialog.setTitle(title);
     	dialog.setHeaderText(headerText);
     	dialog.setContentText(contentText);
+        dialog.showAndWait();
     }
 
     //=========================================================================
@@ -188,7 +190,7 @@ public class DialogBoxes {
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
-                    "/View/patternEditor.css").toExternalForm());
+                    "/View/patternEditorGraphics.css").toExternalForm());
             
             editor.setScene(scene);
             editor.setTitle("Pattern Editor");
@@ -215,6 +217,8 @@ public class DialogBoxes {
             stats.initializeStatistics(game);
 
             Scene scene = new Scene(root);
+            scene.getStylesheets().add(getClass().getResource(
+                "/View/statisticsGraphics.css").toExternalForm());
             
             editor.setScene(scene);
             editor.setTitle("Game Of Life Statistics");

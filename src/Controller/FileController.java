@@ -7,20 +7,15 @@ import Model.FileManagement.ImageType;
 import Model.FileManagement.OtherFormats.Data.*;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
-import Model.GameOfLife.MetaData;
-import Model.GameOfLife.PatternFormatException;
 import Model.util.DialogBoxes;
 import static Model.util.DialogBoxes.customUtilityDialog;
 import java.io.File;
 import java.io.FilenameFilter;
-import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.ButtonBar;
@@ -422,7 +417,7 @@ public class FileController {
         final Label sliderLabel = new Label("500 ms");
         gp.add(sliderLabel,1 ,2);
         
-        final Slider animationSlider = new Slider(125,1000,500);
+        final Slider animationSlider = new Slider(50,500,250);
         animationSlider.setShowTickMarks(true);
         animationSlider.setShowTickLabels(true);
         animationSlider.setMajorTickUnit(100);
@@ -439,7 +434,7 @@ public class FileController {
         //=========================================
         gp.add(new Label("Number of Iterations:"), 0, 4);
         
-        final Slider iterSlider = new Slider(2,20,10);
+        final Slider iterSlider = new Slider(2,100,10);
         iterSlider.setShowTickMarks(true);
         iterSlider.setShowTickLabels(true);
         iterSlider.setMajorTickUnit(2);

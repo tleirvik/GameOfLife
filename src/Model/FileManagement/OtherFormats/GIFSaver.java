@@ -23,11 +23,14 @@ import java.io.IOException;
 public class GIFSaver extends ImageSaver {
     private final int iterations;
     private final int animationTimer;
+    private int cellSize; // shadowing ImageSaver cell size to account for
+                          // the increase in board size during the nextGeneration
+                          // method.
 
     /**
      * Sets the the current game.
      * 
-     * @param game 
+     * @param gifData 
      */
     public GIFSaver(GIFData gifData) {
         super(gifData);
@@ -37,7 +40,9 @@ public class GIFSaver extends ImageSaver {
     
     /**
      * 
+     * @return 
      */
+    @Override
     public boolean saveImage() {
         try {
             GIFWriter writer = new GIFWriter(width + 1, height + 1, 
@@ -65,15 +70,16 @@ public class GIFSaver extends ImageSaver {
         
         writer.setBackgroundColor(deadCellColor);
         
-        if (counter != 0) {         
+        if (counter != 0) {
+            cellSize = (int) calculateSize(height, width, game.getRows(), game.getColumns());
             writer.createNextImage();
             int x1 = 0;
             int x2 = cellSize;
             int y1 = 0;
             int y2 = cellSize;
 
-            for (int row = 0; row < game.getRows() -1; row++) {
-                for (int col = 0; col < game.getColumns() -1; col++) {
+            for (int row = 0; row < game.getRows() - 1; row++) {
+                for (int col = 0; col < game.getColumns() - 1; col++) {
                     if (game.getCellAliveState(row, col) == 1) {
                         writer.fillRect(x1, x2, y1, y2, 
                                 aliveCellColor);
@@ -81,9 +87,9 @@ public class GIFSaver extends ImageSaver {
                     x1 += cellSize;
                     x2 += cellSize;
                 }
-                x1 = 0; // Reset X-verdien for neste rad
+                x1 = 0;
                 x2 = cellSize;
-                y1 += cellSize; // Plusser på for neste rad
+                y1 += cellSize;
                 y2 += cellSize;
             }
             writer.insertCurrentImage();
@@ -92,4 +98,10 @@ public class GIFSaver extends ImageSaver {
         }
     }
 
+    private double calculateSize(double availibleHeight, double availibleWidth,
+            int rows, int columns) {
+        double sizeHeight = availibleHeight / rows;
+        double sizeWidth = availibleWidth / columns;
+        return Math.min(sizeWidth, sizeHeight);
+    }
 }
