@@ -54,6 +54,7 @@ public class FileController {
     private final FileChooser fileChooser;
     private final FileSaver fileSaver;
     private final FileLoader fileLoader;
+    private boolean giveLoadedPattern;
     
     private final File defaultPatternDirectory = new File("Patterns");
     private final File defaultImageDirectory = new File("Images");
@@ -87,11 +88,10 @@ public class FileController {
     //=========================================================================
     //                              LOAD
     //=========================================================================
-    public void loadBoard(GameOfLife gol, byte[][] holdingPattern,Stage owner) {
+    public void loadBoard(GameOfLife gol, Stage owner) {
         boolean loadSuccessful;
         
         Object[] args = loadBoardDialog(owner);
-        
         if(args == null) {
             return;
         }
@@ -101,7 +101,6 @@ public class FileController {
         if(args[1].equals("DISK")) {
             String filePath = (String) args[2];
             loadSuccessful = fileLoader.loadBoard(new File(filePath), encodetype);
-
         } else {
             String urlString = (String) args[2];
             URL url = null;
@@ -110,6 +109,7 @@ public class FileController {
             } catch (MalformedURLException muE) {
                 DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
                     "'" + urlString + "' is not a valid URL", muE.getMessage());
+                return;
             }
             loadSuccessful = fileLoader.loadBoardFromURL(url, encodetype);
         }
@@ -122,7 +122,7 @@ public class FileController {
             BoardType boardType = (BoardType) args[4];
             gol.loadGame(fileLoader.getBoard(), fileLoader.getMetadata(), boardType);
         } else {
-            holdingPattern = fileLoader.getBoard();
+            giveLoadedPattern = true;
         }
     }
     
@@ -205,7 +205,7 @@ public class FileController {
         //   TO NEW BOARD
         //===================
         RadioButton newBoard = new RadioButton();
-        selectDisk.setUserData("NEW BOARD");
+        newBoard.setUserData("NEW BOARD");
         newBoard.setToggleGroup(loadType);
         newBoard.setText("New Board");
         newBoard.setSelected(true);
@@ -221,7 +221,7 @@ public class FileController {
         // DROP FROM MOUSE POINTER
         //===================
         RadioButton droppablePattern = new RadioButton();
-        selectDisk.setUserData("MOUSE POINTER");
+        droppablePattern.setUserData("MOUSE POINTER");
         droppablePattern.setToggleGroup(loadType);
         droppablePattern.setText("Droppable from Mouse Pointer");
         gp.add(droppablePattern, 0, 10, 2, 1);
@@ -239,7 +239,7 @@ public class FileController {
         
         Optional<ButtonType> result = dialog.showAndWait();
         if(result.get() == open) {
-            Object[] args = new Object[4];
+            Object[] args = new Object[5];
             
             args[0] = encodeType.getValue();
             
@@ -514,10 +514,10 @@ public class FileController {
     }
     
     public byte[][] getBoard() {
-        return fileLoader.getBoard();
-    }
-    
-    public MetaData getMetadata() {
-       return fileLoader.getMetadata();
+        if(giveLoadedPattern) {
+            giveLoadedPattern = false;
+            return fileLoader.getBoard();
+        }
+        return null;
     }
 }

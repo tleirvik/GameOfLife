@@ -71,7 +71,7 @@ public class Default implements Algorithm{
         if (neighbourArrayRows < board.getRows()) {//Legg til rader
             final int diff = board.getRows() - neighbourArrayRows;
             final int columns = neighbourArray.get(0).size();
-            for (int row = 0; row < diff; row++) {
+            for (int row = 0; row <= diff; row++) {
                 neighbourArray.add(0, new ArrayList<>());
                 for (int col = 0; col < columns; col++) {
                     neighbourArray.get(0).add((byte) 0);
@@ -79,14 +79,14 @@ public class Default implements Algorithm{
             }
         } else if (neighbourArrayRows > board.getRows()) {//Slett rader
             final int diff = neighbourArrayRows - board.getRows();
-            for (int row = 0; row < diff; row++) {
+            for (int row = 0; row <= diff; row++) {
                 neighbourArray.remove(0);
             }
         }
         
         if (neighbourArrayColumns < board.getColumns()) {//Legg til kolonner
             final int diff = board.getColumns() - neighbourArrayColumns;
-            for (int row = 0; row < diff; row++) {
+            for (int row = 0; row <= diff; row++) {
                 neighbourArray.stream().forEach((e) -> {
                     e.add((byte) 0);
                 });
@@ -94,7 +94,7 @@ public class Default implements Algorithm{
         } else if (neighbourArrayColumns > board.getColumns()) {//Slett kolonner
             final int diff = neighbourArrayColumns - board.getColumns();
             
-            for (int row = 0; row < diff; row++) {
+            for (int row = 0; row <= diff; row++) {
                 neighbourArray.stream().forEach((e) -> {
                     e.remove(0);
                 });

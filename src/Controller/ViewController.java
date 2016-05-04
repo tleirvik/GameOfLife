@@ -2,12 +2,10 @@ package Controller;
 
 import Model.FileManagement.Decoders.RLEDecoder;
 import Model.FileManagement.EncodeType;
-import Model.FileManagement.OtherFormats.WavSaver;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
 import Model.util.DialogBoxes;
 import Model.util.Stopwatch;
-import Wav.WavFileException;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
@@ -27,9 +25,6 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 /**
  *Denne klassen lytter på hendelser i .fxml
@@ -136,7 +131,9 @@ public class ViewController {
     @FXML
     public void loadBoard() {
         timeline.stop();
-        fileController.loadBoard(gol, holdingPattern, (Stage) gameCanvas.getScene().getWindow());
+        fileController.loadBoard(gol, (Stage) gameCanvas.getScene().getWindow());
+        holdingPattern = fileController.getBoard();
+        draw();
     }
         
     //==================
