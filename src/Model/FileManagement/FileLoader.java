@@ -88,11 +88,13 @@ public class FileLoader {
             case LIFE106:
                 String encodeType = reader.readLine();
                 if(encodeType.matches("#Life 1.05")) {
-
+                    decoder = new Life105Decoder(reader);
                 } else if(encodeType.matches("#Life 1.06")) {
-
+                    decoder = new Life106Decoder(reader);
                 } else {
-                    //TODO: 01.05.2016 Kunne ikke finne ut typen fil-dialogboks her
+                    DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
+                    "Could not determine the encode type.", "Please ensure that "
+                            + "\"#Life 1.05\" or \"#Life 1.06\" is written on line 1.");
                 }
                 break;
         }

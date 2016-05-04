@@ -15,15 +15,15 @@ public class Main extends Application {
 
             Scene scene = new Scene(root);
 
-            /*
+            
             scene.getStylesheets().add(getClass().getResource(
-                "grafikk.css").toExternalForm());
-                */
+                "/View/mainWindowGraphics.css").toExternalForm());
+                
             stage.setTitle("Game Of Life");
             stage.setScene(scene);
             
-            stage.setMinHeight(650);
-            stage.setMinWidth(810);
+            stage.setMinHeight(690);
+            stage.setMinWidth(910);
             
             stage.show();
 	}

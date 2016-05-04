@@ -1,0 +1,50 @@
+#topMenuBar {
+    -fx-background-color: linear-gradient(#e35e68, #8e4497);
+}
+
+
+
+#rightBox {
+    -fx-background-color: #4d4785;
+}
+
+#bottomVBox {
+    -fx-background-color: #4d4785;
+}
+
+.label {
+    -fx-text-fill: #eaeaea;
+    -fx-font-family: "Monospace";
+    -fx-font-weight: bold;
+}
+
+.button {
+    -fx-text-fill: #ff1626;
+    -fx-background-color: #111111;
+    -fx-font-weight: bold;
+    -fx-font-family: "Monospace";
+    
+}
+
+.button:hover {
+    -fx-background-color: #ff1626;
+    -fx-text-fill: #111111;
+    -fx-font-weight: bold;
+}
+
+#toggleButton {
+    -fx-text-fill: #ff1626;
+    -fx-background-color: #111111;
+    -fx-font-weight: bold;
+    -fx-font-family: "Monospace";
+}
+
+#toggleButton:hover {
+    -fx-background-color: #ff1626;
+    -fx-text-fill: #111111;
+    -fx-font-weight: bold;
+}
+
+#picker {
+    -fx-background-color: #d81b60;
+}

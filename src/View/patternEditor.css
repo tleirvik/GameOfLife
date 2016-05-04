@@ -1,17 +1,32 @@
-/*
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
-*/
-/* 
-    Created on : 04.apr.2016, 19:59:02
-    Author     : stianreistadrogeberg
-*/
-
-#bottomBox {
-    -fx-background-color: #eaeaea;
+#topMenuBar {
+    -fx-background-color: linear-gradient(#e35e68, #8e4497);
 }
 
 #leftBox {
-    -fx-background-color: #eaeaea;
+    -fx-background-color: #224687;
+}
+
+#metaDataLabel {
+    -fx-text-fill: #c6ff00;
+}
+
+#closeButton {
+    -fx-background-color: #c6ff00;
+}
+
+#bottomBox {
+    -fx-background-color: #224687;
+}
+
+#stripButton {
+    -fx-text-fill: #ff1626;
+    -fx-background-color: #c6ff00;
+    -fx-font-weight: bold;
+    -fx-font-family: "Monospace";
+}
+
+#stripButton:hover {
+    -fx-background-color: #ff1626;
+    -fx-text-fill: #f9b24f;
+    -fx-font-weight: bold;
 }
