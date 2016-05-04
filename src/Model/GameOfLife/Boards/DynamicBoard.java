@@ -3,6 +3,7 @@ package Model.GameOfLife.Boards;
 import Model.GameOfLife.MetaData;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.IntStream;
 
 /**
  * @author Robin
@@ -236,26 +237,28 @@ public class DynamicBoard extends Board {
     }
     private void addLeftColumn(int numberOfColumns) {
             for (int i = 0; i < numberOfColumns; i++) {
-                currentGeneration.stream().forEach((e) -> e.add(0, (byte) 0));
+                currentGeneration.stream().forEach((col) -> col.add(0, (byte) 0));
         }
     }
 
     private void addRightColumn(int numberOfColumns) {
         for (int i = 0; i < numberOfColumns; i++) {
-            currentGeneration.stream().forEach((e) -> e.add((byte) 0));
+            currentGeneration.stream().forEach((col) -> col.add((byte) 0));
         }
     }
 
     private void removeLeftColumn(int numberOfColumns) {
         for (int i = 0; i < numberOfColumns; i++) {
-            currentGeneration.stream().forEach((e) -> e.remove(0));
+            for (List<Byte> row : currentGeneration) {
+                row.remove(0);
+            }
         }
     }
 
     private void removeRightColumn(int numberOfColumns) {
         for (int i = 0; i < numberOfColumns; i++) {
-            for (List<Byte> e : currentGeneration) {
-                e.remove(currentGeneration.size() - 1);
+            for (List<Byte> row : currentGeneration) {
+                row.remove(currentGeneration.get(0).size() - 1);
             }
         }
     }
@@ -297,40 +300,43 @@ public class DynamicBoard extends Board {
     }
 
     private void checkBottom() {
-            final int rows = currentGeneration.size();
-            final int sum1 = currentGeneration
-                    .get(rows -1)
-                    .stream()
-                    .mapToInt(w -> Integer.parseInt(w.toString()))
-                    .sum();
-            final int sum2 = currentGeneration
-                    .get(rows -2)
-                    .stream()
-                    .mapToInt(w -> Integer.parseInt(w.toString()))
-                    .sum();
-            final int sum3 = currentGeneration
-                    .get(rows -3)
-                    .stream()
-                    .mapToInt(w -> Integer.parseInt(w.toString()))
-                    .sum();
-            final int sum4 = currentGeneration
-                    .get(rows -4)
-                    .stream()
-                    .mapToInt(w -> Integer.parseInt(w.toString()))
-                    .sum();
-            final int sum5 = currentGeneration
-                    .get(rows -5)
-                    .stream()
-                    .mapToInt(w -> Integer.parseInt(w.toString()))
-                    .sum();
-            final int remove = sum1 + sum2 + sum3 + sum4 + sum5;
-            final int add = sum1 + sum2;
+        final int rows = currentGeneration.size();
+        final int sum1 = currentGeneration
+                .get(rows -1)
+                .stream()
+                .mapToInt(w -> Integer.parseInt(w.toString()))
+                .sum();
+        final int sum2 = currentGeneration
+                .get(rows -2)
+                .stream()
+                .mapToInt(w -> Integer.parseInt(w.toString()))
+                .sum();
+        final int sum3 = currentGeneration
+                .get(rows -3)
+                .stream()
+                .mapToInt(w -> Integer.parseInt(w.toString()))
+                .sum();
+        final int sum4 = currentGeneration
+                .get(rows -4)
+                .stream()
+                .mapToInt(w -> Integer.parseInt(w.toString()))
+                .sum();
+        final int sum5 = currentGeneration
+                .get(rows -5)
+                .stream()
+                .mapToInt(w -> Integer.parseInt(w.toString()))
+                .sum();
+        final int remove = sum1 + sum2 + sum3 + sum4 + sum5;
+        final int add = sum1 + sum2;
 
-            if (add != 0) {
-                addTopRow(1);
-            } else if(remove == 0 && currentGeneration.size() > MIN_ROW) {
-                removeBottomRow(1);
-            }
+        System.out.println("Bottom row add: " + add);
+        System.out.println("Bottom row size " + currentGeneration.size());
+        if (add != 0) {
+            addBottomRow(1);
+        } else if(remove == 0 && currentGeneration.size() > MIN_ROW) {
+            removeBottomRow(1);
+        }
+        System.out.println("Bottom row size " + currentGeneration.size());
     }
 
     private void checkLeft() {
@@ -359,7 +365,6 @@ public class DynamicBoard extends Board {
     }
 
     private void checkRight() {
-        System.out.println("curgen size: " + currentGeneration.get(0).size());
         int sum1 = 0;
         int sum2 = 0;
         int sum3 = 0;
