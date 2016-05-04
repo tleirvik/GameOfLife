@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -15,7 +21,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="patternController" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.EditorController">
+<BorderPane fx:id="patternController" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.EditorController">
     
     <top>
       <MenuBar id="topMenuBar" fx:id="menuBar" BorderPane.alignment="CENTER">
@@ -26,22 +32,14 @@
               <MenuItem mnemonicParsing="false" onAction="#saveToGif" text="Save To GIF" />
             </items>
           </Menu>
-          <Menu mnemonicParsing="false" text="Edit">
-            <items>
-              <MenuItem mnemonicParsing="false" text="Delete" />
-            </items>
-          </Menu>
-          <Menu mnemonicParsing="false" text="Help">
-            <items>
-              <MenuItem mnemonicParsing="false" text="About" />
-            </items>
-          </Menu>
+          
         </menus>
       </MenuBar>
    </top>
     
    <left>
       <VBox id="leftBox" prefHeight="371.0" prefWidth="198.0" spacing="20.0" BorderPane.alignment="CENTER">
+          
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
                <children>
@@ -75,12 +73,12 @@
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>
             </TextField>
-            <TextField promptText="Placement">
+            <Button mnemonicParsing="false" onAction="#handleTrimButton" prefHeight="27.0" prefWidth="61.0" text="Trim">
                <VBox.margin>
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>
-            </TextField>
-            <Button id="closeButton" fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" text="Close">
+            </Button>
+            <Button id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" text="Close">
                <VBox.margin>
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>

@@ -38,12 +38,9 @@
                   <Menu mnemonicParsing="false" text="Save Board As">
                     <items>
                       <MenuItem mnemonicParsing="false" onAction="#saveBoardAsRLE" text="RLE" />
-                                <MenuItem onAction="#saveBoardAsLife105" text="Life 1.05" />
-                        <MenuItem onAction="#saveBoardAsLife106" text="Life 1.06" />
                         <SeparatorMenuItem mnemonicParsing="false" />
                         <MenuItem onAction="#saveBoardAsWAV" text="WAV" />
                         <SeparatorMenuItem mnemonicParsing="false" />
-                        <MenuItem onAction="#saveBoardAsJPEG" text="JPEG" />
                         <MenuItem onAction="#saveBoardAsGIF" text="GIF" />
                     </items>
                   </Menu>
@@ -62,7 +59,7 @@
 
                 <Menu text="Help">
                     <items>
-                        <MenuItem onAction="#openAbout" text="About" />
+                        <MenuItem onAction="#openHelp" text="About" />
                     </items>
                 </Menu>
             </menus>
@@ -77,18 +74,23 @@
                 <HBox id="bottom" alignment="CENTER" prefHeight="76.0" prefWidth="1000.0" spacing="20.0">
 
                     <children>
-                        <Button fx:id="togglePlayButton" alignment="CENTER" minHeight="20.0" minWidth="80.0" onAction="#togglePlay" prefHeight="30.0" prefWidth="80.0" text="Play" textOverrun="CENTER_WORD_ELLIPSIS">
+                        <Button fx:id="togglePlayButton" alignment="CENTER" 
+                                minHeight="20.0" minWidth="80.0" onAction="#togglePlay" 
+                                prefHeight="30.0" prefWidth="80.0" text="Play" 
+                                textOverrun="CENTER_WORD_ELLIPSIS">
                            <HBox.margin>
                               <Insets left="10.0" />
                            </HBox.margin>
                         </Button>
 
-                        <Button minHeight="20.0" minWidth="80.0" onAction="#reset" prefHeight="30.0" prefWidth="80.0" text="Reset" />
-                        <Button layoutX="419.0" layoutY="28.0" minHeight="20.0" minWidth="80.0" onAction="#openPatternList" prefHeight="30.0" prefWidth="80.0" text="Pattern" />
-
-                        <Button minHeight="20.0" minWidth="80.0" onAction="#openStatistics" prefHeight="30.0" prefWidth="80.0" text="Stats" />
+                        <Button minHeight="20.0" minWidth="80.0" onAction="#reset" 
+                                prefHeight="30.0" prefWidth="80.0" text="Reset" />
+                        <Button minHeight="20.0" minWidth="80.0" onAction="#openStatistics" 
+                                prefHeight="30.0" prefWidth="80.0" text="Stats" />
                         
-                        <ToggleButton id="toggleButton" prefHeight="30.0" prefWidth="120.0" fx:id="fitToView" onAction="#handleFitToView" text="Fit to view" />
+                        <ToggleButton id="toggleButton" prefHeight="30.0" 
+                                      prefWidth="120.0" fx:id="fitToView" 
+                                      onAction="#handleFitToView" text="Fit to view" />
                         <VBox alignment="CENTER" spacing="5.0">
                             <children>
                                 <HBox spacing="5.0">
