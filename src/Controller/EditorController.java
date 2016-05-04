@@ -22,6 +22,11 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import javafx.scene.control.Alert;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
+import javafx.scene.input.KeyCode;
+import javafx.scene.input.KeyCodeCombination;
+import javafx.scene.input.KeyCombination;
 
 /**
  * FXML Controller class
@@ -32,6 +37,7 @@ import javafx.scene.control.Alert;
  * the its related view.
  */
 public class EditorController {
+    @FXML private MenuBar menuBar;
     @FXML private BorderPane patternController;
     @FXML private Canvas patternCanvas;
     @FXML private Canvas strip;
@@ -51,6 +57,8 @@ public class EditorController {
     public void initializeEditor(GameOfLife game, FileController fileController) {
         this.game = game.clone();
         this.fileController = fileController;
+        
+        initializeKeyboardShortcuts();
         
         setPattern();
     }
@@ -130,8 +138,6 @@ public class EditorController {
         rulesTextField.setText("S" + metaData.getRuleString()[0] + "/B" + metaData.getRuleString()[1]);
 
         draw();
-        
-        //saveToGif.setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN));
     }
     
     @FXML
@@ -249,5 +255,13 @@ public class EditorController {
     
     private double getPatternHeight() {
         return cellSize * game.getRows();
+    }
+    
+    private void initializeKeyboardShortcuts() {
+        Menu file = menuBar.getMenus().get(0);
+        Menu edit = menuBar.getMenus().get(1);
+        
+        //File Menu
+        file.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN));
     }
 }
