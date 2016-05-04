@@ -1,0 +1,12 @@
+
+Controller
+Model.FileManagement
+Model.FileManagement.Decoders
+Model.FileManagement.Encoders
+Model.FileManagement.OtherFormats
+Model.FileManagement.OtherFormats.Data
+Model.GameOfLife
+Model.GameOfLife.Algorithms
+Model.GameOfLife.Boards
+Model.util
+Wav

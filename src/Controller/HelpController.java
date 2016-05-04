@@ -45,7 +45,7 @@ public class HelpController {
         ...
         */
         ObservableList<String> subjects = FXCollections.observableArrayList(
-                "About / Credits","How To Play", "Pattern Editor", "Statistics"
+                "About / Credits","How To Play", "Pattern Editor", "Statistics", "Java Documentation"
         );
         listView.setItems(subjects);
         
@@ -78,6 +78,9 @@ public class HelpController {
                 break;
             case "Statistics":
                 subjectFileName = "Statistics.html";
+                break;
+            case "Java Documentation":
+                subjectFileName = "JavaDoc/index.html";
                 break;
         }
         return getClass().getResource("/Model/util/help/" + subjectFileName).toExternalForm();
