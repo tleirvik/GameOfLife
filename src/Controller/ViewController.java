@@ -112,7 +112,7 @@ public class ViewController {
     
     @FXML
     public void newGame() {
-        timeline.stop();
+        pauseGame();
         dialogBoxes.openNewGameDialog(gol, 
                 (Stage) gameCanvas.getScene().getWindow());
         
@@ -129,7 +129,7 @@ public class ViewController {
      */
     @FXML
     public void loadBoard() {
-        timeline.stop();
+        pauseGame();
         fileController.loadBoard(gol, (Stage) gameCanvas.getScene().getWindow());
         holdingPattern = fileController.getBoard();
         draw();
@@ -188,20 +188,21 @@ public class ViewController {
     
     @FXML
     public void openPatternEditor() {
-        timeline.stop();
+        pauseGame();
         dialogBoxes.openPatternEditor(gol, fileController, 
                 (Stage)gameCanvas.getScene().getWindow());
     }
     
     @FXML
     public void openMetadataDialog() {
+        pauseGame();
         dialogBoxes.metaDataDialogBox(gol.getMetaData(), 
                 (Stage)gameCanvas.getScene().getWindow());
     }
     
     @FXML
     public void setReset() {
-        timeline.stop();
+        pauseGame();
         gol.setFirstGeneration();
     }
     
@@ -294,14 +295,13 @@ public class ViewController {
             togglePlayButton.setText("Pause");
             timeline.play();
         } else {
-            togglePlayButton.setText("Play");
-            timeline.stop();
+            pauseGame();
         }
     }
     
     @FXML
     public void reset() {
-        timeline.stop();
+        pauseGame();
         gol.resetGame();
         draw();
     }
@@ -314,7 +314,7 @@ public class ViewController {
     
     @FXML
     public void openStatistics() {
-        timeline.stop();
+        pauseGame();
         dialogBoxes.statistics(gol, (Stage) gameCanvas.getScene().getWindow());
     }
     
@@ -322,6 +322,11 @@ public class ViewController {
     //=========================================================================
     // GAME RELATED
     //=========================================================================
+    
+    public void pauseGame() {
+        timeline.stop();
+        togglePlayButton.setText("Play");
+    }
     
     /**
      * Opens a currently loaded game, whether it is completely new
