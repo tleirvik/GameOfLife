@@ -4,6 +4,7 @@ import Controller.StatisticsController;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Controller.EditorController;
 import Controller.FileController;
+import Controller.HelpController;
 import Controller.ViewController;
 import Model.GameOfLife.GameOfLife;
 import Model.GameOfLife.MetaData;
@@ -276,31 +277,58 @@ public class DialogBoxes {
      * @param game The {@link GameOfLife} object to use in the editor
      * @param owner The {@link Stage} that owns the new dialog box
      */
-    public void statistics(GameOfLife game, Stage owner) {
-        Stage editor = new Stage();
-        editor.initModality(Modality.WINDOW_MODAL);
-        editor.initOwner(owner);
+    public void openStatistics(GameOfLife game, Stage owner) {
+        Stage stats = new Stage();
+        stats.initModality(Modality.WINDOW_MODAL);
+        stats.initOwner(owner);
         
         try {
             FXMLLoader loader;
             loader = new FXMLLoader(getClass().getResource("/View/statistics.fxml"));
             
             BorderPane root = loader.load();
-            editor.setResizable(false);
+            stats.setResizable(false);
             
-            StatisticsController stats = loader.getController();
-            stats.initializeStatistics(game);
+            StatisticsController statsCtrl = loader.getController();
+            statsCtrl.initializeStatistics(game);
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
                 "/View/statisticsGraphics.css").toExternalForm());
             
-            editor.setScene(scene);
-            editor.setTitle("Game Of Life Statistics");
-            editor.show();
+            stats.setScene(scene);
+            stats.setTitle("Game Of Life Statistics");
+            stats.show();
         } catch (IOException e) {
             DialogBoxes.openAlertDialog(AlertType.ERROR, "Error", 
                     "Could not open Statistics", e.getMessage());
+        } 
+    }
+    
+    //TODO: Javadoc
+    public void openHelp(Stage owner) {
+        Stage help = new Stage();
+        help.initModality(Modality.WINDOW_MODAL);
+        help.initOwner(owner);
+        
+        try {
+            FXMLLoader loader;
+            loader = new FXMLLoader(getClass().getResource("/View/HelpWindow.fxml"));
+            
+            BorderPane root = loader.load();
+            help.setResizable(false);
+            
+            HelpController helpCtrl  = loader.getController();
+            helpCtrl.initializeHelp();
+
+            Scene scene = new Scene(root);
+            
+            help.setScene(scene);
+            help.setTitle("Game Of Life Help");
+            help.show();
+        } catch (IOException e) {
+            DialogBoxes.openAlertDialog(AlertType.ERROR, "Error", 
+                    "Could not open Help dialog", e.toString());
         } 
     }
 }
