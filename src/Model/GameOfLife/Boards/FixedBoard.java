@@ -3,12 +3,11 @@ package Model.GameOfLife.Boards;
 import Model.GameOfLife.MetaData;
 
 /**
- * @author Robin Sean Aron David Lundh, Terje Leirvik, Stian Reistad Røgeberg.
+ * @author Robin Sean Aron David Lundh, Terje Leirvik, Stian Reistad Roegeberg.
  * 
  * This class contains the gameboard in a fixed size that cannot be changed
  * after creation. It also contains the algorithm for Game Of Life specifically
  * made for a board of a fixed size.
- * 
  */
 public class FixedBoard extends Board{
     private final MetaData metadata;
@@ -92,8 +91,8 @@ public class FixedBoard extends Board{
     /**
      * Returns the <code>byte</code> value of the cell at the given position
      *
-     * @param row
-     * @param column
+     * @param row The specified row position
+     * @param column The specified column position
      * @return Returns the <code>byte</code> value of a cell on the
      * given position
      */
@@ -116,15 +115,14 @@ public class FixedBoard extends Board{
      * to the <code>byte</code> value given in aliveState. Throws a Runtime
      * Exception if the number does not equal 0 or 1.
      *
-     * @param row
-     * @param column
+     * @param row The specified row position
+     * @param column The specified column position
      * @param aliveState sets the <code>byte</code> value of a cell on the
      * given position
      */
     @Override
     public void setCellAliveState(int row, int column, byte aliveState) {
         if (row > getRows()-1 || row < 0 || column > getColumns()-1 || column < 0) {
-            System.out.println("outside array");
             return;
         } else {
             if (aliveState == 0 || aliveState == 1) {
@@ -153,6 +151,9 @@ public class FixedBoard extends Board{
     // Generation-methods
     //=========================================================================
 
+    /**
+     * Sets the first generation board. Used with {@link #resetBoard()}
+     */
     @Override
     public void resetBoard() {
         for (int row = 0; row < currentGeneration.length; row++) {
@@ -165,7 +166,12 @@ public class FixedBoard extends Board{
     //=========================================================================
     // Misc.
     //=========================================================================
-    
+
+    /**
+     * This method is inherited from {@link Object} and is used to clone a fixed
+     * game board with its meta data
+     * @return A clone of this class' game board
+     */
     @Override
     public FixedBoard clone() {
         byte[][] boardClone = java.util.Arrays
@@ -176,7 +182,12 @@ public class FixedBoard extends Board{
         
         return new FixedBoard(boardClone, metaDataClone);
     }
-    
+    /**
+     * Method that gives the smallest array to fit a specified pattern
+     * @return Returns an array of minrow maxrow mincolumn maxcolumn
+     *
+     * @author Henrik Lieng
+     */
     @Override
     public int[] getBoundingBox() {
         int[] boundingBox = new int[4]; // minrow maxrow mincolumn maxcolumn

@@ -464,7 +464,7 @@ public class DynamicBoard extends Board {
     //=========================================================================
 
     /**
-     * This method is inherited from {@link Board} and is used to clone a dynamic
+     * This method is inherited from {@link Object} and is used to clone a dynamic
      * game board with its meta data
      * @return A clone of this class' game board
      */
@@ -483,6 +483,7 @@ public class DynamicBoard extends Board {
     /**
      * Method that gives the smallest array to fit a specified pattern
      * @return Returns an array of minrow maxrow mincolumn maxcolumn
+     *
      * @author Henrik Lieng
      */
     public int[] getBoundingBox() {
