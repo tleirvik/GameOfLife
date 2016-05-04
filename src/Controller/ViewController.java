@@ -622,6 +622,7 @@ public class ViewController {
         keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
             if(fitToView.isSelected()) {
                 fitToView();
+                centerBoard();
             }
             Stopwatch sw = new Stopwatch("Next generation threading");
             sw.start();
