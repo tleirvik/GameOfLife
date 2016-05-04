@@ -325,6 +325,7 @@ public class EditorController {
     private void initializeKeyboardShortcuts() {
         Menu file = menuBar.getMenus().get(0);
         //File Menu
+        file.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.B, KeyCombination.SHORTCUT_DOWN));
         file.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.G, KeyCombination.SHORTCUT_DOWN));
     }
 }
