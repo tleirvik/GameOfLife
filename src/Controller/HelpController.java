@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Controller;
 
 import javafx.beans.value.ChangeListener;
@@ -15,8 +10,7 @@ import javafx.scene.web.WebEngine;
 import javafx.scene.web.WebView;
 
 /**
- *
- * @author Robin
+ * FXML Controller class for the Pattern Editor
  */
 public class HelpController {
     
@@ -27,12 +21,21 @@ public class HelpController {
     @FXML private WebView webView;
     
     private WebEngine webEngine;
-    
+
+    /**
+     * Initializes the help Web View
+     *
+     * @see ListView
+     * @see WebView
+     */
     public void initializeHelp() {
         webEngine = webView.getEngine();
         initializeListView();
     }
-    
+
+    /**
+     * Initializes the {@link ListView}
+     */
     private void initializeListView() {
         /*
         About/Credits
@@ -55,7 +58,12 @@ public class HelpController {
         });
         listView.getSelectionModel().select(0);
     }
-    
+
+    /**
+     * Returns the path to the web files
+     * @param subject The subject to load
+     * @return the path to the web files
+     */
     private String getSubjectURL(String subject) {
         String subjectFileName = "AboutCredits.html";
         switch(subject) {
@@ -74,5 +82,4 @@ public class HelpController {
         }
         return getClass().getResource("/Model/util/help/" + subjectFileName).toExternalForm();
     }
-    
 }

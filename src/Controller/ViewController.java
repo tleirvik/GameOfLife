@@ -27,11 +27,12 @@ import javafx.util.Duration;
 // TODO: 04.05.2016 Sjekk om pakkenavn skal skrives med smaa bokstaver
 
 /**
- * This is a controller class for the main view.
+ * FXML Controller class for the Pattern Editor
  *
  * @author Stian Reistad Rogeberg.
  * @author Terje Leirvik.
  * @author Robin Sean Aron David Lundh.
+ *
  */
 public class ViewController {
 
@@ -154,7 +155,7 @@ public class ViewController {
     /**
      * This method will save the board in the format .rle.
      * 
-     * @see FileSaver
+     * @see Model.FileManagement.FileSaver
      */
     @FXML
     public void saveBoardAsRLE() {
@@ -378,8 +379,8 @@ public class ViewController {
 
     // TODO 30.04.2016 Fjern isXInsideGrid og isYInsideGrid
     /**
-     * 
-     * @param posX
+     *  Returns true if the X position is inside the grid
+     * @param posX The position on the X-axis
      * @return Return true if the posX is inside the grid.
      */
     private boolean isXInsideGrid(double posX) {
@@ -387,9 +388,9 @@ public class ViewController {
     }
 
     /**
-     * 
-     * @param posY
-     * @return 
+     * Returns true if the Y position is inside the grid
+     * @param posY The position on the Y-axis
+     * @return Return true if the posY is inside the grid.
      */
     private boolean isYInsideGrid(double posY) {
     	return ((posY >= offset_Y) && (posY <= offset_Y + getBoardHeight()));

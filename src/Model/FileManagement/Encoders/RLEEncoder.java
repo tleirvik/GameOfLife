@@ -2,13 +2,13 @@ package Model.FileManagement.Encoders;
 
 import Model.GameOfLife.GameOfLife;
 import Model.util.DialogBoxes;
+import javafx.scene.control.Alert;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
-import javafx.scene.control.Alert;
 
 
 /**
@@ -22,7 +22,7 @@ public class RLEEncoder extends Encoder {
      * Constructor that creates a RLEDecoder object.
      *
      * @param game The {@link GameOfLife} object to decode
-     * @param file The {@link File} to save
+     * @param f The {@link File} to save
      */
     public RLEEncoder(GameOfLife game, File f) {
         super(game, f);

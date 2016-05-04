@@ -17,7 +17,7 @@ public class Statistics {
      * Constructs a new {@link Statistics} object to be used for collecting statistics from
      * the specified game board
      *
-     * @param game The Game Of Life game to be used for the statistics
+     * @param game The {@link GameOfLife} game to be used for the statistics
      * @param iterations The number of generations used for the statistics
      */
     public Statistics(GameOfLife game, int iterations) {

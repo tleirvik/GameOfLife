@@ -1,21 +1,18 @@
 package Model.FileManagement;
 
-import Model.FileManagement.Decoders.*;
+import Model.FileManagement.Decoders.Decoder;
+import Model.FileManagement.Decoders.Life105Decoder;
+import Model.FileManagement.Decoders.Life106Decoder;
 import Model.FileManagement.Decoders.RLEDecoder;
 import Model.FileManagement.Encoders.RLEEncoder;
-import java.net.URL;
-import java.net.URLConnection;
 import Model.GameOfLife.MetaData;
 import Model.GameOfLife.PatternFormatException;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import Model.util.DialogBoxes;
 import javafx.scene.control.Alert;
+
+import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 
 /**
  * This class opens a file from disk or a an URL. It passes the file to the RLEDecoder for decoding of the RLE file
@@ -93,8 +90,8 @@ public class FileLoader {
      * This method decodes the loaded board
      * @param reader The {@link BufferedReader} to decode
      * @param type The {@link EncodeType} of the board to decode
-     * @throws IOException
-     * @throws PatternFormatException
+     * @throws IOException If an unspecified I/O error occurs
+     * @throws PatternFormatException If the board could not be interpreted
      */
     private void decodeBoard(BufferedReader reader, EncodeType type) throws IOException, PatternFormatException {
         switch(type) {

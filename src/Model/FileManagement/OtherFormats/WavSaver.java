@@ -56,7 +56,7 @@ public class WavSaver {
     /**
      * This method generates the sound from the board statistics
      * @throws IOException If an unspecified I/O error occures
-     * @throws WavFileException If an unspecified {@link WavFileException
+     * @throws WavFileException If an unspecified {@link WavFileException}
      */
     private void generateSound() throws IOException, WavFileException {
         double[][]buffer = new double[wavFile.getNumChannels()][100];

@@ -17,7 +17,7 @@ public class Life106Decoder extends Decoder {
 
     /**
      * Constructs a {@link Life106Decoder} object with the specified parameters
-     * @param reader
+     * @param reader The {@link BufferedReader} to open
      */
     public Life106Decoder(BufferedReader reader) {
         super(reader);

@@ -1,10 +1,10 @@
 package Model.GameOfLife;
 
 /**
- * @author tleirvik, rlundh, srrogeberg<p>
- * @version 1.0<p>
+ * @author tleirvik, rlundh, srrogeberg
+ * @version 1.0
  *
- * This class is a container class for a boards metadata<p>
+ * This class is a container class for a boards metadata
  *
  * @see Model.GameOfLife.Boards.Board
  * @see Model.FileManagement.Decoders.Decoder
@@ -80,7 +80,7 @@ public class MetaData {
 
 	/**
 	 * Returns the game rules
-	 * @return
+	 * @return The game rules
      */
 	public String[] getRuleString() {
         String[] rules = {

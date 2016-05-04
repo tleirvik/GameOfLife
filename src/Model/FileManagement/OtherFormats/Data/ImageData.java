@@ -19,7 +19,7 @@ public class ImageData {
     /**
      * Constructs an {@link ImageData} object with the specified parameters
      * @param game The {@link GameOfLife} to use
-     * @param aliveCellColor The {@link javafx.scene.paint.Color of the alive cells
+     * @param aliveCellColor The {@link javafx.scene.paint.Color} of the alive cells
      * @param deadCellColor The {@link javafx.scene.paint.Color} of the dead cells
      * @param file The {@link File}to save to
      * @param height The height of the image

@@ -18,8 +18,8 @@ public abstract class Encoder {
 
     /**
      * Constructs an object with the specified parameters
-     * @param game
-     * @param f
+     * @param game The {@link GameOfLife} object to hold the game board
+     * @param f The {@link File} to save to
      */
     public Encoder(GameOfLife game, File f) {
         this.game = game;

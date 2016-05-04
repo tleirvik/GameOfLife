@@ -15,7 +15,7 @@ public abstract class Decoder {
 
     /**
      * Creates a {@link Decoder} class with the specified parameters
-     * @param reader
+     * @param reader The {@link BufferedReader} to open
      */
     public Decoder(BufferedReader reader) {
         this.reader = reader;

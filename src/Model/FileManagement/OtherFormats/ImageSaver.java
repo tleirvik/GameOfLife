@@ -19,7 +19,7 @@ public abstract class ImageSaver {
 
     /**
      * Constructor for the {@link ImageSaver} class
-     * @param data
+     * @param data The {@link ImageData} object to save
      */
     public ImageSaver(ImageData data) {
         game = data.getGame();

@@ -7,11 +7,9 @@ import javafx.scene.chart.LineChart;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.TextField;
-import javafx.util.Pair;
 
 /**
- * FXML Controller class
- *
+ * FXML Controller class for the Pattern Editor
  */
 public class StatisticsController {
     private final XYChart.Series livingCells = new XYChart.Series();
@@ -23,7 +21,11 @@ public class StatisticsController {
     @FXML private TextField numberOfIterations;
     @FXML private LineChart lineChart;
     @FXML private NumberAxis xAxis;
-    
+
+    /**
+     * Initializes the Statistics view and loads the game to collect statistics from
+     * @param game The {@link GameOfLife} object to collect statistics from
+     */
     public void initializeStatistics(GameOfLife game) {
         this.game = game.clone();
         
@@ -40,7 +42,12 @@ public class StatisticsController {
             }
         });
     }
-    
+
+    /**
+     * Presents the statistics by instantiating a new {@link Statistics} object with {@link GameOfLife} and number
+     * of iterations as parameters
+     * @see Statistics
+     */
     @FXML
     public void viewStats() {
         String iterationString = numberOfIterations.getText();
@@ -50,7 +57,13 @@ public class StatisticsController {
             drawStats(statistics);
         }
     }
-        
+
+    /**
+     * Draws the statistics on a {@link XYChart}
+     * @param statistics The {@link Statistics} object which holds the statistics data
+     * @see Statistics
+     * @see XYChart
+     */
     private void drawStats(Statistics statistics) {
         livingCells.getData().clear();
         diffLivingCells.getData().clear();

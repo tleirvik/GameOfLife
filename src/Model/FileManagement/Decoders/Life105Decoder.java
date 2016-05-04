@@ -14,7 +14,7 @@ public class Life105Decoder extends Decoder {
     private String line;
     /**
      * Constructs a {@link Life105Decoder} object with the specified parameters
-     * @param reader
+     * @param reader The {@link BufferedReader} to use
      */
     public Life105Decoder(BufferedReader reader) {
         super(reader);
@@ -32,6 +32,7 @@ public class Life105Decoder extends Decoder {
     }
     /**
      * Parses the meta data from the file
+     * @param reader The {@link BufferedReader} to open
      * @throws PatternFormatException If the pattern is not recognized
      * @throws IOException If an unspecified I/O error occurs
      */

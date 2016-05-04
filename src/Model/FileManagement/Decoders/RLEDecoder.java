@@ -46,7 +46,7 @@ public class RLEDecoder extends Decoder {
      * Exception
      * @throws PatternFormatException Throws an exception if the method is unable to
      *                                parse the RLE file
-     * @throws java.io.IOException If an unspecified I/O error occurs
+     * @throws IOException If an unspecified I/O error occurs
      */
     @Override
     public void decode() throws PatternFormatException, IOException {
@@ -62,7 +62,9 @@ public class RLEDecoder extends Decoder {
      * This method is not meant to be called directly, but rather through the decode() method in
      * a RLEDecoder-object.
      *
+     * @param reader The {@link BufferedReader} to open
      * @throws PatternFormatException Throws an exception if the method is unable to parse the RLE file
+     * @throws IOException If an unspecified I/O error occurs
      * @see MetaData
      */
     private void parseMetadata(BufferedReader reader) throws PatternFormatException, IOException {
@@ -143,8 +145,8 @@ public class RLEDecoder extends Decoder {
      * @throws IOException Other unspecified I/O related issues
      *
      * @version 3.0 Complete changed the logic. Converted from regex to if-else and
-     * we observed a > 3800% performance gain. Large RLE files now usually never takes more than a few hundred
-     * milisecounds compared to >40 seconds using regex
+     * we observed a more than 3800% performance gain. Large RLE files now usually never takes more than a few hundred
+     * milliseconds compared to 40 seconds using regex
      *
      */
     private void parseBoard(BufferedReader reader) throws PatternFormatException, IOException {

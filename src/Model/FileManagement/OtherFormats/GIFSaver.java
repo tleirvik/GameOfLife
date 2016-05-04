@@ -91,13 +91,13 @@ public class GIFSaver extends ImageSaver {
     }
 
     /**
-     * This method calculates the size of an element based on the given paramteres
+     * This method calculates the size of an element based on the given parameters
      *
      * @param availableHeight The available height for the collection of elements
      * @param availableWidth The available width for the collection of elements
      * @param rows The given rows
      * @param columns The given columns
-     * @return The miniumum size for each element required to show all elements
+     * @return The minimum size for each element required to show all elements
      */
     private double calculateSize(double availableHeight, double availableWidth,
             int rows, int columns) {

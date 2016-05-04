@@ -22,8 +22,9 @@ public class FileSaver {
      * @param type The {@link EncodeType} used for saving the game
      * @param game The {@link GameOfLife} to save
      * @param f The {@link File} to save
-     * @return
+     * @return True if the file has been saved
      */
+    // TODO: 04.05.2016 Sjekk @return 
     public boolean saveGame(EncodeType type, GameOfLife game, File f) {
         Encoder encoder = null;
         switch(type) {

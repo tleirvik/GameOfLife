@@ -22,7 +22,7 @@ import javafx.scene.input.KeyCodeCombination;
 import javafx.scene.input.KeyCombination;
 
 /**
- * FXML Controller class.
+ * FXML Controller class for the Pattern Editor
  *
  * This controller class handles all the actions performed in
  * the its related view.
@@ -48,9 +48,9 @@ public class EditorController {
     
     /**
      * This method clones a game from the main view. It also initializes
-     * som keyboard shurtcuts and sets the pattern.
+     * som keyboard shortcuts and sets the pattern.
      * 
-     * @param game is the game to be cloned the main view.
+     * @param game The {@link GameOfLife} to be cloned to the main view.
      * @param fileController is a reference to the class that takes care of
      * saving and reading files.
      * 
@@ -103,7 +103,7 @@ public class EditorController {
     
     /**
      * This method saves the current pattern to the .gif format.
-     * @see GifSaver
+     * @see Model.FileManagement.OtherFormats.GIFSaver
      */
     @FXML
     public void saveToGif() {
@@ -113,7 +113,7 @@ public class EditorController {
     }
     
     /**
-     * 
+     * This method calls the {@link #trim()} method which reduces the array to smallest possible
      */
     @FXML
     public void handleTrimButton() {
@@ -149,7 +149,7 @@ public class EditorController {
     /**
      * This method ignores empty rows and creates a new trimmed board with
      * the pattern.
-     * @return boolean true if the board is not empty.
+     * @return true if the board is not empty.
      */
     private boolean trim() {
         int[] bBox = game.getBoard().getBoundingBox();
@@ -190,14 +190,13 @@ public class EditorController {
         titleTextField.setText(metaData.getName());
         rulesTextField.setText("S" + metaData.getRuleString()[0] + "/B" + 
                 metaData.getRuleString()[1]);
-
         draw();
     }
     
     /**
      * This method draws the pattern to the strip view.
      * 
-     * @param gc is a buffer used to draw on a canvas.
+     * @param gc Is the {@link GraphicsContext} buffer used to draw on a canvas.
      * @param offset_X is the x position from where to draw.
      * @param stripCellSize is the size of the cells.
      */
@@ -229,7 +228,7 @@ public class EditorController {
     /**
      * This method draws padding around each generations in the strip view.
      * 
-     * @param gc is a buffer used to draw on a canvas.
+     * @param gc Is the {@link GraphicsContext} buffer used to draw on a canvas.
      * @param start_x is the x-position from where to start drawing the padding.
      * @param start_y is the y-position from where to start drawing the padding.
      * @param end_x is x-position where to stop drawing the padding.
@@ -280,7 +279,7 @@ public class EditorController {
     
     /**
      * This method will draw gridlines if the pattern is over a specific size.
-     * @param gc is a buffer used to draw on a canvas.
+     * @param gc Is the {@link GraphicsContext} buffer used to draw on a canvas.
      */
     private void drawGridLines(GraphicsContext gc) {
         final int rows = game.getRows();

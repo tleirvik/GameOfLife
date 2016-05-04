@@ -4,32 +4,12 @@ import Model.FileManagement.EncodeType;
 import Model.FileManagement.FileLoader;
 import Model.FileManagement.FileSaver;
 import Model.FileManagement.ImageType;
-import Model.FileManagement.OtherFormats.Data.*;
+import Model.FileManagement.OtherFormats.Data.GIFData;
+import Model.FileManagement.OtherFormats.Data.WavData;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
 import Model.util.DialogBoxes;
-import static Model.util.DialogBoxes.customUtilityDialog;
-import java.io.File;
-import java.io.FilenameFilter;
-import java.net.MalformedURLException;
-import java.net.URL;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonBar;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.ChoiceBox;
-import javafx.scene.control.ColorPicker;
-import javafx.scene.control.Dialog;
-import javafx.scene.control.Label;
-import javafx.scene.control.RadioButton;
-import javafx.scene.control.Separator;
-import javafx.scene.control.Slider;
-import javafx.scene.control.Spinner;
-import javafx.scene.control.TextField;
-import javafx.scene.control.ToggleGroup;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Font;
@@ -38,10 +18,18 @@ import javafx.stage.FileChooser;
 import javafx.stage.FileChooser.ExtensionFilter;
 import javafx.stage.Stage;
 
+import java.io.File;
+import java.io.FilenameFilter;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+
+import static Model.util.DialogBoxes.customUtilityDialog;
+
 /**
- *
- * 
- * @author Robin
+ * The FileController class that handles the interaction with files
  */
 public class FileController {
     private final FileChooser fileChooser;
@@ -51,7 +39,10 @@ public class FileController {
     
     private final File defaultPatternDirectory = new File("Patterns");
     private final File defaultImageDirectory = new File("Images");
-    
+
+    /**
+     * Constructs a FileController object with the specified parameters
+     */
     public FileController() {
         fileChooser = new FileChooser();
         fileSaver = new FileSaver();
@@ -60,7 +51,11 @@ public class FileController {
         defaultPatternDirectory.mkdir(); //Returns true false if folder is created/exists
         defaultImageDirectory.mkdir();
     }
-    
+
+    /**
+     * Returns the files in the directory
+     * @return Array of files in the directory
+     */
     public File[] getPatternDirectoryFiles() {
         FilenameFilter filter = new FilenameFilter() {
             @Override
@@ -73,7 +68,12 @@ public class FileController {
         
         return defaultPatternDirectory.listFiles(filter);
     }
-    
+
+    /**
+     * Returns the file extension
+     * @param fileName The filename to check
+     * @return The file extension
+     */
     private String getFileExtension(String fileName) {
         return fileName.substring(fileName.lastIndexOf("."));
     }
@@ -81,6 +81,12 @@ public class FileController {
     //=========================================================================
     //                              LOAD
     //=========================================================================
+
+    /**
+     *
+     * @param gol The {@link GameOfLife} object to hold the game board
+     * @param owner The Stage that "owns" the dialog box
+     */
     public void loadBoard(GameOfLife gol, Stage owner) {
         boolean loadSuccessful;
         
@@ -118,14 +124,26 @@ public class FileController {
             giveLoadedPattern = true;
         }
     }
-    
+
+    /**
+     *  The Load {@link FileChooser} dialog
+     * @param owner The Stage that "owns" the dialog box
+     * @param extFilter {@link List} of {@link ExtensionFilter} to use in the {@link FileChooser}
+     * @return The selected {@link File}
+     */
     private File loadFileChooser(Stage owner, List<ExtensionFilter> extFilter) {
         fileChooser.getExtensionFilters().clear();
         fileChooser.getExtensionFilters().addAll(extFilter);
         fileChooser.setTitle("Open Resource File");
         return fileChooser.showOpenDialog(owner);
     }
-    
+
+    /**
+     * The generic Load Board dialog that handles loading of files
+     * @param owner The Stage that "owns" the dialog box
+     * @return
+     */
+    // TODO: 04.05.2016 JAVADOKKINGS på return. Skj0nner ikke helt Robins next level shits :D 
     private Object[] loadBoardDialog(Stage owner) {
         GridPane gp = new GridPane();
         
@@ -263,6 +281,14 @@ public class FileController {
     //=========================================================================
     //                              SAVE
     //=========================================================================
+
+    /**
+     *   The Save {@link FileChooser} dialog
+     *
+     * @param game The {@link GameOfLife} game to be save
+     * @param type The {@link EncodeType} of the board to save
+     * @param owner The Stage that "owns" the dialog box
+     */
     public void saveBoard(GameOfLife game, EncodeType type, Stage owner) {
         List<FileChooser.ExtensionFilter> extFilter = new ArrayList<>();
         extFilter.add(new ExtensionFilter("RLE files", "*.rle"));
@@ -276,7 +302,13 @@ public class FileController {
         
         fileSaver.saveGame(type, game, f);
     }
-    
+
+    /**
+     * The Save as Sound dialog
+     * @param game The {@link GameOfLife} game to be saved to sound
+     * @param owner The Stage that "owns" the dialog box
+     * @see WavData
+     */
     public void saveSound(GameOfLife game, Stage owner) {
         WavData wavData = saveToWavDialog(game, owner);
         
@@ -285,12 +317,22 @@ public class FileController {
         }
         fileSaver.saveSound(wavData);
     }
-    
+
+    /**
+     * The Save as Image dialog
+     * @param game The {@link GameOfLife} game to be saved to image
+     * @param owner The Stage that "owns" the dialog box
+     */
     public void saveImage(GameOfLife game, Stage owner) {
         throw new UnsupportedOperationException("Not supported yet.");
     }
-    
-    
+
+    /**
+     * The Save as animation dialog
+     * @param game The {@link GameOfLife} game to be saved to image
+     * @param owner The Stage that "owns" the dialog box
+     * @see GIFData
+     */
     public void saveAnimation(GameOfLife game, Stage owner) {
         //Can be updated to support other formats
         GIFData gifData = saveToGIFDialog(game, owner);
@@ -299,14 +341,29 @@ public class FileController {
         }
         fileSaver.saveImage(ImageType.GIF, gifData);
     }
-    
+
+    /**
+     *  The generic Save {@link FileChooser} dialog
+     * @param owner The Stage that "owns" the dialog box
+     * @param extFilter {@link List} of {@link ExtensionFilter} to use in the {@link FileChooser}
+     * @return The selected {@link File}
+     */
     private File saveFileChooser(Stage owner, List<ExtensionFilter> extFilter) {
         fileChooser.getExtensionFilters().clear();
         fileChooser.getExtensionFilters().addAll(extFilter);
         fileChooser.setTitle("Save File");
         return fileChooser.showSaveDialog(owner);
     }
-    
+
+    /**
+     * The Save as Wav dialog
+     * @param game The {@link GameOfLife} game to be saved to Wav format
+     * @param owner The Stage that "owns" the dialog box
+     * @see WavData
+     * @see Model.FileManagement.OtherFormats.WavSaver
+     * @see Wav.WavFile
+     * @return A {@link WavData} object
+     */
     private WavData saveToWavDialog(GameOfLife game, Stage owner) {
         GridPane gp = new GridPane();
 
@@ -375,7 +432,14 @@ public class FileController {
         
         return null;
     }
-    
+
+    /**
+     *  The Save to Gif dialog box
+     * @param game The {@link GameOfLife} game to be saved to GIF format
+     * @param owner The Stage that "owns" the dialog box
+     * @return A {@link GIFData} object
+     * @see GIFData
+     */
     private GIFData saveToGIFDialog(GameOfLife game, Stage owner) {
         GridPane gp = new GridPane();
 
@@ -487,8 +551,12 @@ public class FileController {
         }
         return null;
     }
-    
-    
+
+    /**
+     * Method to convert between {@link Color} and {@link java.awt.Color}
+     * @param c The {@link Color} to convert
+     * @return The converted {@link java.awt.Color}
+     */
     private java.awt.Color convertFXColorToAWTColor(javafx.scene.paint.Color c) {
         float r = (float) c.getRed();
         float g = (float) c.getGreen();
@@ -497,13 +565,26 @@ public class FileController {
         return new java.awt.Color(r, g, b);
     }
 
-    private double calculateSize(double availibleHeight, double availibleWidth,
+    /**
+     * This method calculates the size of an element based on the given parameters
+     *
+     * @param availableHeight The available height for the collection of elements
+     * @param availableWidth The available width for the collection of elements
+     * @param rows The given rows
+     * @param columns The given columns
+     * @return The minimum size for each element required to show all elements
+     */
+    private double calculateSize(double availableHeight, double availableWidth,
             int rows, int columns) {
-        double sizeHeight = availibleHeight / rows;
-        double sizeWidth = availibleWidth / columns;
+        double sizeHeight = availableHeight / rows;
+        double sizeWidth = availableWidth / columns;
         return Math.min(sizeWidth, sizeHeight);
     }
-    
+
+    /**
+     * Returns the <code>byte[][]</code> board
+     * @return the <code>byte[][]</code> board
+     */
     public byte[][] getBoard() {
         if(giveLoadedPattern) {
             giveLoadedPattern = false;

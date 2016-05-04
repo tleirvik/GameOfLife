@@ -4,7 +4,7 @@ import Model.GameOfLife.Algorithms.Algorithm;
 import Model.GameOfLife.Boards.Board;
 import java.util.ArrayList;
 import java.util.concurrent.CyclicBarrier;
-
+// TODO: 04.05.2016 JAVADOKKINGS TODO 
 /**
  * This class constructs worker threads and splits the board into segments
  *
@@ -116,7 +116,7 @@ public final class NextGenerationWorkers {
     }
 
     /**
-     * This class
+     * This class is the Next Generation Runnable
      */
     private static class NextGenerationRunnable implements Runnable {
         private CyclicBarrier barrier;

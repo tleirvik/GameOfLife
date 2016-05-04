@@ -131,8 +131,8 @@ public class Default implements Algorithm{
      * This is a synchronized method that counts cells that are alive within a segment.
      * The access to {@link #updateNeighbours(int, int)} is restricted so that we don't get problems with
      * threads interfering with each other
-     * @param start
-     * @param stop
+     * @param start Start of the segment
+     * @param stop The end of the segment
      * @see Thread
      */
     private void countNeighbours(int start, int stop) {
