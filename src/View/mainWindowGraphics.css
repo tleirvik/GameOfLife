@@ -45,6 +45,17 @@
     -fx-font-weight: bold;
 }
 
+#toggleButton:selected {
+    -fx-background-color: #ff1626;
+    -fx-text-fill: #111111;
+    -fx-font-weight: bold;
+}
+
 #picker {
     -fx-background-color: #d81b60;
+}
+
+.check-box{
+    -fx-text-fill: #111111;
+    -fx-font-weight: bold;
 }

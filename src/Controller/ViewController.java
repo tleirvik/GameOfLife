@@ -542,19 +542,11 @@ public class ViewController {
                 double bClick_X = e.getX();
                 double bClick_Y = e.getY();
 
-                if ( isXInsideGrid(bClick_X) && isYInsideGrid(bClick_Y) ) {
-
-                    int row    = (int) ((bClick_Y - (offset_Y - getBoardHeight())) / cellSize) - gol.getRows();
-                    int column = (int) ((bClick_X - (offset_X - getBoardWidth())) / cellSize) - gol.getColumns();
-                    // unngår out of bounds exception,
-                    // holder seg innenfor arrayets lengde
-                    // tegner kun dersom man er innenfor lengde
-                    System.out.println("row " + row + " col " + column);
-                    if((row < gol.getRows()) && (row >= 0) && (column < gol.getColumns()) && (column >= 0)) {
-                        gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
-                        draw();
-                    }
-                }
+                
+                int row    = (int) ((bClick_Y - (offset_Y - getBoardHeight())) / cellSize) - gol.getRows();
+                int column = (int) ((bClick_X - (offset_X - getBoardWidth())) / cellSize) - gol.getColumns();
+                gol.setCellAliveState(row, column, (drawCell ? (byte)1 : (byte)0));
+                draw();
             } else if (e.isSecondaryButtonDown()) { //FLYTTEFUNKSJON
                 gameCanvas.getScene().setCursor(Cursor.HAND);
                 offset_X = e.getX() - offsetBegin_X;
@@ -570,7 +562,7 @@ public class ViewController {
             double scrollAmount = event.getDeltaY();
             double zoomFactor = 1.1;
 
-            if(scrollAmount < 0) {
+            if (scrollAmount < 0) {
                 zoomFactor = 1 / zoomFactor;
             }
 
@@ -583,25 +575,23 @@ public class ViewController {
     }
 
     private void initializeFpsSlider() {
-        fpsSlider.setMin(10);
+        fpsSlider.setMin(1);
     	fpsSlider.setMax(60);
-        fpsSlider.setSnapToTicks(true);
-        fpsSlider.setShowTickMarks(true);
-        fpsSlider.setShowTickLabels(true);
-        fpsSlider.setMajorTickUnit(10);
-        fpsSlider.setMinorTickCount(5);
-        fpsLabel.setText("10");
-        fpsSlider.valueChangingProperty().addListener((ObservableValue<? extends Boolean> obs, Boolean wasChanging, Boolean isChanging) -> {
-            
-                int newValue = (int)fpsSlider.getValue();
-                if(timeline.getStatus() == Animation.Status.RUNNING) {
-                    timeline.stop();
-                    initializeKeyFrame(newValue);
-                    timeline.play();
-                } else {
-                    initializeKeyFrame(newValue);
-                }
-            
+        fpsLabel.setText("1");
+        fpsSlider.valueProperty().addListener(e -> {
+            fpsLabel.setText(Integer.toString(fpsSlider.valueProperty().intValue()));
+        });
+        
+        fpsSlider.valueChangingProperty().addListener((ObservableValue<? extends 
+                Boolean> obs, Boolean wasChanging, Boolean isChanging) -> {
+            int newValue = (int)fpsSlider.getValue();
+            if (timeline.getStatus() == Animation.Status.RUNNING) {
+                timeline.stop();
+                initializeKeyFrame(newValue);
+                timeline.play();
+            } else {
+                initializeKeyFrame(newValue);
+            }
         });
     }
 
@@ -610,14 +600,14 @@ public class ViewController {
     	gameCanvas.widthProperty().bind(canvasParent.widthProperty());  
         
         gameCanvas.heightProperty().addListener(e -> {
-            if(fitToView.isSelected()) {
+            if (fitToView.isSelected()) {
                 fitToView();
                 centerBoard();
             }
             draw();
     	});
     	gameCanvas.widthProperty().addListener(e -> {
-            if(fitToView.isSelected()) {
+            if (fitToView.isSelected()) {
                 fitToView();
                 centerBoard();
             }
