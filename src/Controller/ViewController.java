@@ -27,8 +27,11 @@ import javafx.util.Duration;
 
 
 /**
- *Denne klassen lytter på hendelser i .fxml
+ * This is a controller class for the main view.
  *
+ * @author Stian Reistad Rogeberg.
+ * @author Terje Leirvik.
+ * @author Robin Sean Aron David Lundh.
  */
 public class ViewController {
 
@@ -62,7 +65,7 @@ public class ViewController {
 
     private double cellSize = 10;
 
-    //Standard colors (Can be changed during runtime)
+    // Standard colors (Can be changed during runtime)
     private Color stdAliveCellColor = Color.BLACK;
     private Color stdBoardColor = Color.GHOSTWHITE;
     private Color stdBackgroundColor = Color.LIGHTGREY;
@@ -70,7 +73,7 @@ public class ViewController {
 
     private final double stdGridLineWidth = 1;
 
-    //Used to calculate the offset_X and offset_Y values
+    // Used to calculate the offset_X and offset_Y values
     private double offsetBegin_X = 0;
     private double offsetBegin_Y = 0;
 
@@ -85,6 +88,15 @@ public class ViewController {
     //=========================================================================
     // Initializer
     //=========================================================================
+    /**
+     * This method initializes the timeline and the slider for setting the
+     * animation speed. It also creates a deafult 20x20 dynamic board. The
+     * fit to view button is set to true to fith the board to the screen.
+     * 
+     * This method also binds the canvas size to the view, initializes keyboard
+     * shortcuts and sets the mouse events so that the user can draw on the
+     * board, resize it and move the board.
+     */
     public void initialize() {
         initializeTimeline();
         initializeFpsSlider();
@@ -105,6 +117,11 @@ public class ViewController {
     //            FILE MENU
     //=================================
     
+    /**
+     * This method is activated when the user clicks the new game choice in the view
+     * and opens a dialogbox where the user can set paramters for a new game. 
+     * Then launches the new game.
+     */
     @FXML
     public void newGame() {
         pauseGame();
@@ -127,13 +144,18 @@ public class ViewController {
         pauseGame();
         fileController.loadBoard(gol, (Stage) gameCanvas.getScene().getWindow());
         holdingPattern = fileController.getBoard();
-        draw();
+        openGame();
     }
         
     //==================
     //  SAVE BOARD AS
     //==================
     
+    /**
+     * This method will save the board in the format .rle.
+     * 
+     * @see FileSaver
+     */
     @FXML
     public void saveBoardAsRLE() {
         //TODO Endre saveBoard() til å ta inn filtype RLE
@@ -141,36 +163,29 @@ public class ViewController {
                 (Stage) gameCanvas.getScene().getWindow());
     }
     
-    @FXML
-    public void saveBoardAsLife105() {
-        fileController.saveBoard(gol, EncodeType.LIFE105, 
-                (Stage) gameCanvas.getScene().getWindow());
-    }
-    
-    @FXML
-    public void saveBoardAsLife106() {
-        fileController.saveBoard(gol, EncodeType.LIFE106, 
-                (Stage) gameCanvas.getScene().getWindow());
-    }
-    
+    /**
+     * This method will save the current board as a .wav representation when
+     * the user interacts with this function in the view.
+     */
     @FXML
     public void saveBoardAsWAV() {
         fileController.saveSound(gol, 
                 (Stage) gameCanvas.getScene().getWindow());
     }
     
-    @FXML
-    public void saveBoardAsJPEG() {
-        fileController.saveImage(gol, 
-                (Stage) gameCanvas.getScene().getWindow());
-    }
-    
+    /**
+     * This method will save the current board as a .gif representation when
+     * the user interacts with this function in the view.
+     */
     @FXML
     public void saveBoardAsGIF() {
         fileController.saveAnimation(gol, 
                 (Stage) gameCanvas.getScene().getWindow());
     }
     
+    /**
+     * This method will close the application.
+     */
     @FXML
     public void closeApplication() {
         Platform.exit();
@@ -181,6 +196,10 @@ public class ViewController {
     //            EDIT MENU
     //=================================
     
+    /**
+     * This method opens the pattern editor when the user interacts with
+     * this function and pauses the animation of the current game.
+     */
     @FXML
     public void openPatternEditor() {
         pauseGame();
@@ -188,6 +207,9 @@ public class ViewController {
                 (Stage)gameCanvas.getScene().getWindow());
     }
     
+    /**
+     * This method opens a dialog box where the user can enter meta data.
+     */
     @FXML
     public void openMetadataDialog() {
         pauseGame();
@@ -195,13 +217,22 @@ public class ViewController {
                 (Stage)gameCanvas.getScene().getWindow());
     }
     
+    /**
+     * This method changes the boards first generation to be equal to the
+     * boards current generation.
+     */
     @FXML
     public void setReset() {
         pauseGame();
         gol.setFirstGeneration();
     }
     
-    
+    /**
+     * This method opens a option dialog where the user can set parameters 
+     * such as colors.
+     * 
+     * @see DialogBoxes
+     */
     @FXML
     private void openOptions() {
         dialogBoxes.openOptionsDialog(this, 
@@ -213,10 +244,12 @@ public class ViewController {
     //            HELP MENU
     //=================================
     
+    /**
+     * 
+     */
     @FXML
-    public void openAbout() {
-        //TODO: FIKS ABOUT
-        
+    public void openHelp() {
+        dialogBoxes.openHelp((Stage) gameCanvas.getScene().getWindow());
     }
     
     
@@ -226,6 +259,10 @@ public class ViewController {
     //         BOTTOM CONTROLS
     //=================================
     
+    /**
+     * This method starts and pauses the animation of the current game
+     * when the user clicks this button.
+     */
     @FXML
     public void togglePlay() {
         if(timeline.getStatus() != Status.RUNNING) {
@@ -236,6 +273,9 @@ public class ViewController {
         }
     }
     
+    /**
+     * This method resets the board.
+     */
     @FXML
     public void reset() {
         pauseGame();
@@ -243,18 +283,20 @@ public class ViewController {
         draw();
     }
     
-    @FXML
-    public void openPatternList() {
-        //TODO: IMPLEMENTER DROPDOWN ELLER DIALOGBOKS
-        //dialogBoxes.openPatternList();
-    }
-    
+    /**
+     * This method opens a view to show statistics of the current board.
+     */
     @FXML
     public void openStatistics() {
         pauseGame();
-        dialogBoxes.statistics(gol, (Stage) gameCanvas.getScene().getWindow());
+        dialogBoxes.openStatistics(gol, (Stage) gameCanvas.getScene().getWindow());
     }
     
+    /**
+     * This method handles the fit to view button and fits the current board
+     * to the canvas.
+     * 
+     */
     @FXML
     public void handleFitToView() {
         if (fitToView.isSelected()) {
@@ -264,6 +306,10 @@ public class ViewController {
         }
     }
     
+    /**
+     * This method will turn the grid lines on or off when the user clicks 
+     * this button.
+     */
     @FXML
     public void handleToggleGrid() {
         drawGrid = !toggleGrid.isSelected();
@@ -275,6 +321,9 @@ public class ViewController {
     // GAME RELATED
     //=========================================================================
     
+    /**
+     * This method pauses the animation of the board.
+     */
     public void pauseGame() {
         timeline.stop();
         togglePlayButton.setText("Play");
@@ -291,13 +340,14 @@ public class ViewController {
         draw();
     }
 
+    /**
+     * This method fits the current board to the canvas.
+     */
     public void fitToView() {
-        System.out.println(gameCanvas.getWidth());
-        System.out.println(gameCanvas.getHeight());
         double cellWidth = gameCanvas.getWidth() / (gol.getColumns());
         double cellHeight = gameCanvas.getHeight() / (gol.getRows());
 
-        if(cellWidth < cellHeight) {
+        if (cellWidth < cellHeight) {
             cellSize = cellWidth;
         } else {
             cellSize = cellHeight;
@@ -308,31 +358,54 @@ public class ViewController {
     // Draw methods
     //=========================================================================
 
+    /**
+     * This method returns the boards width.
+     * 
+     * @return double value of the boards width.
+     */
     private double getBoardWidth() {
     	return cellSize * gol.getColumns();
     }
 
+    /**
+     * This method returns the boards height.
+     * 
+     * @return Returns the double value of the boards height.
+     */
     private double getBoardHeight() {
     	return cellSize * gol.getRows();
     }
 
     // TODO 30.04.2016 Fjern isXInsideGrid og isYInsideGrid
+    /**
+     * 
+     * @param posX
+     * @return Return true if the posX is inside the grid.
+     */
     private boolean isXInsideGrid(double posX) {
     	return ((posX >= offset_X) && (posX <= offset_X + getBoardWidth()));
     }
 
+    /**
+     * 
+     * @param posY
+     * @return 
+     */
     private boolean isYInsideGrid(double posY) {
     	return ((posY >= offset_Y) && (posY <= offset_Y + getBoardHeight()));
     }
 
     /**
-     * This method center the board.
+     * This method will center the board.
      */
     private void centerBoard() {
             offset_X = gameCanvas.getWidth() / 2 - (getBoardWidth() / 2);
             offset_Y = gameCanvas.getHeight() / 2 - (getBoardHeight() / 2);
     }
 
+    /**
+     * This method draws the board.
+     */
     private void draw() {
         final double start_X = Math.round(offset_X);
         final double start_Y = Math.round(offset_Y);
@@ -352,44 +425,55 @@ public class ViewController {
         gc.setFill(stdBoardColor);
         gc.fillRect(start_X, start_Y, boardWidth, boardHeight);
 
-        //Burde være en translatePositionToIndexArray
-        int rowStart = (int) ((0 - (offset_Y - getBoardHeight())) / cellSize) - gol.getRows();
-        int rowEnd = (int) ((canvasParent.getHeight() - (offset_Y - getBoardHeight())) / cellSize) - gol.getRows();
-        int columnStart = (int) ((0 - (offset_X - getBoardWidth())) / cellSize) - gol.getColumns();
-        int columnEnd = (int) ((canvasParent.getWidth() - (offset_X - getBoardWidth())) / cellSize) - gol.getColumns();
+        
+        int rowStart = (int) ((0 - (offset_Y - getBoardHeight())) / 
+                cellSize) - gol.getRows();
+        
+        int rowEnd = (int) ((canvasParent.getHeight() - (offset_Y - 
+                getBoardHeight())) / cellSize) - gol.getRows();
+        
+        int columnStart = (int) ((0 - (offset_X - getBoardWidth())) / 
+                cellSize) - gol.getColumns();
+        
+        int columnEnd = (int) ((canvasParent.getWidth() - (offset_X - 
+                getBoardWidth())) / cellSize) - gol.getColumns();
 
         int startRow = 0;
         int endRow = rows;
-        if(rowStart > 0) {
+        if (rowStart > 0) {
             startRow = rowStart;
         }
-        if(rowEnd < rows) {
+        if (rowEnd < rows) {
             endRow = rowEnd + 1;
         }
 
         int startCol = 0;
         int endCol = columns;
-        if(columnStart > 0) {
+        if (columnStart > 0) {
             startCol = columnStart;
         }
-        if(columnEnd < columns) {
+        if (columnEnd < columns) {
             endCol = columnEnd + 1;
         }
 
         gc.setFill(stdAliveCellColor);
-        for(int row = startRow; row < endRow; row++) {
-            for(int col = startCol; col < endCol; col++ ) {
+        for (int row = startRow; row < endRow; row++) {
+            for (int col = startCol; col < endCol; col++ ) {
                 if (gol.getCellAliveState(row, col) == 1) {
                     gc.fillRect(start_X + cellSize * col, start_Y + cellSize * row, cellSize, cellSize);
                 }
             }
         }
 
-        if(drawGrid) {
+        if (drawGrid) {
             drawGridLines(gc);
         }
     }
 
+    /**
+     * This method draws grid lines.
+     * @param gc the buffer used to draw on canvas.
+     */
     private void drawGridLines(GraphicsContext gc) {
     	gc.setLineWidth(stdGridLineWidth);
     	gc.setStroke(stdGridColor);
@@ -399,23 +483,19 @@ public class ViewController {
     	double start_X = offset_X;
         double start_Y = offset_Y;
 
-        // Slutten av strekene vil være startposisjonen + bredden/høyde til alle cellene lagt sammen
         double end_X = start_X + getBoardWidth();
         double end_Y = start_Y + getBoardHeight();
 
-    	// For hver rad, tegn en horisontal strek
-        for(int y = 0; y <= boardRowLength; y++) {
+        for (int y = 0; y <= boardRowLength; y++) {
             gc.strokeLine(start_X, start_Y + (cellSize * y),
                     end_X, start_Y + (cellSize * y));
         }
 
-        // For hver kolonne, tegn en vertikal strek
-        for(int x = 0; x <= boardColumnLength; x++) {
+        for (int x = 0; x <= boardColumnLength; x++) {
         	gc.strokeLine(start_X + (cellSize * x),
                         start_Y, start_X + (cellSize * x), end_Y);
         }
 
-        //EVENTUELLE DEBUG-TEGNINGER
         gc.setFill(stdAliveCellColor);
         gc.fillOval(gameCanvas.getWidth()/2-2,
                 gameCanvas.getHeight() / 2 - 2, 5, 5);
@@ -430,6 +510,9 @@ public class ViewController {
     // Initialize-methods
     //================================================================================
 
+    /**
+     * This method initializes mouse events.
+     */
     private void initializeMouseEventHandlers() {
         gameCanvas.addEventHandler(MouseEvent.MOUSE_PRESSED, (MouseEvent e) -> {
             if (e.isPrimaryButtonDown()) {  //TEGNEMODUS
@@ -480,7 +563,7 @@ public class ViewController {
                     offset_X -= newBoardWidth - oldBoardWidth;
                 }
                 draw();
-            } else if (e.isSecondaryButtonDown()) { //FLYTTEFUNKSJON
+            } else if (e.isSecondaryButtonDown()) {
                 gameCanvas.getScene().setCursor(Cursor.HAND);
                 fitToView.setSelected(false);
                 offsetBegin_X = e.getX() - offset_X;
@@ -527,6 +610,9 @@ public class ViewController {
         });
     }
 
+    /**
+     * This method initializes the slider for the animation speed.
+     */
     private void initializeFpsSlider() {
         fpsSlider.setMin(1);
     	fpsSlider.setMax(60);
@@ -548,6 +634,9 @@ public class ViewController {
         });
     }
 
+    /**
+     * This method binds the canvas to the view.
+     */
     private void initializeBindCanvasSize() {
         gameCanvas.heightProperty().bind(canvasParent.heightProperty());
     	gameCanvas.widthProperty().bind(canvasParent.widthProperty());  
@@ -568,22 +657,30 @@ public class ViewController {
     	});
     }
 
+    /**
+     * This method initializes the timeline on start up.
+     */
     private void initializeTimeline() {
         timeline.setCycleCount(Animation.INDEFINITE);
-        initializeKeyFrame(30);
+        initializeKeyFrame(1);
     }
 
+    /**
+     * This method initializes the key frame.
+     * @param fps number of frames per second.
+     */
     private void initializeKeyFrame(int fps) {
         Duration duration = Duration.millis(1000/fps);
         KeyFrame keyFrame;
         keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-            if(fitToView.isSelected()) {
+            if (fitToView.isSelected()) {
                 fitToView();
                 centerBoard();
             }
+            // TODO: 04.05.2016 Mulighet for å velge concurrency
             Stopwatch sw = new Stopwatch("Next generation threading");
             sw.start();
-            gol.updateWithThreads();
+            gol.update();
             draw();
             sw.stop();
         });
@@ -595,51 +692,102 @@ public class ViewController {
         statusBar.setText(s);
     }
 
+    /**
+     * This method initializes keyboard shortcuts.
+     */
     private void initializeKeyboardShortcuts() {
         Menu file = menuBar.getMenus().get(0);
         Menu edit = menuBar.getMenus().get(1);
         
         //File Menu
-        file.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.N, KeyCombination.SHORTCUT_DOWN));
-        file.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.L, KeyCombination.SHORTCUT_DOWN));
-        file.getItems().get(2).setAccelerator(new KeyCodeCombination(KeyCode.S, KeyCombination.SHORTCUT_DOWN));
-        file.getItems().get(3).setAccelerator(new KeyCodeCombination(KeyCode.E, KeyCombination.SHORTCUT_DOWN));
+        file.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.N, 
+                KeyCombination.SHORTCUT_DOWN));
+        file.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.L, 
+                KeyCombination.SHORTCUT_DOWN));
+        file.getItems().get(2).setAccelerator(new KeyCodeCombination(KeyCode.S, 
+                KeyCombination.SHORTCUT_DOWN));
+        file.getItems().get(3).setAccelerator(new KeyCodeCombination(KeyCode.E, 
+                KeyCombination.SHORTCUT_DOWN));
         
         //Edit Menu
-        edit.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.P, KeyCombination.SHORTCUT_DOWN));
-        edit.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.M, KeyCombination.SHORTCUT_DOWN));
-        edit.getItems().get(2).setAccelerator(new KeyCodeCombination(KeyCode.X, KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
-        edit.getItems().get(3).setAccelerator(new KeyCodeCombination(KeyCode.O, KeyCombination.SHORTCUT_DOWN));
+        edit.getItems().get(0).setAccelerator(new KeyCodeCombination(KeyCode.P, 
+                KeyCombination.SHORTCUT_DOWN));
+        edit.getItems().get(1).setAccelerator(new KeyCodeCombination(KeyCode.M,
+                KeyCombination.SHORTCUT_DOWN));
+        edit.getItems().get(2).setAccelerator(new KeyCodeCombination(KeyCode.X, 
+                KeyCombination.SHORTCUT_DOWN, KeyCombination.SHIFT_DOWN));
+        edit.getItems().get(3).setAccelerator(new KeyCodeCombination(KeyCode.O, 
+                KeyCombination.SHORTCUT_DOWN));
     }
     
+    /**
+     * This method sets the color for the background.
+     * 
+     * @param stdBackgroundColor the color to be used as background.
+     */
     public void setBackgroundColor(Color stdBackgroundColor) {
         this.stdBackgroundColor = stdBackgroundColor;
     }
     
+    /**
+     * This method set the color for the background of the board.
+     * 
+     * @param stdBoardColor the color to be used as background color for the board.
+     */
     public void setBoardBackgroundColor(Color stdBoardColor) {
         this.stdBoardColor = stdBoardColor;
     }
     
+    /**
+     * This method sets the color for the living cells in the board.
+     * 
+     * @param stdAliveCellColor the color for the living cells.
+     */
     public void setCellColor(Color stdAliveCellColor) {
         this.stdAliveCellColor = stdAliveCellColor;
     }
     
+    /**
+     * This method set the color for the grid lines.
+     * 
+     * @param stdGridColor is the color to be used as grid lines.
+     */
     public void setGridColor(Color stdGridColor) {
         this.stdGridColor = stdGridColor;
     }
     
+    /**
+     * This method returns the background color.
+     * 
+     * @return the color to be used as background.
+     */
     public Color getBackgroundColor() {
         return stdBackgroundColor;
     }
     
+    /**
+     * This method return the color to be used on the board.
+     * 
+     * @return the color for the board.
+     */
     public Color getBoardBackgroundColor() {
         return stdBoardColor;
     }
     
+    /**
+     * This method returns the color to be used on living cells.
+     * 
+     * @return the color of living cells.
+     */
     public Color getCellColor() {
         return stdAliveCellColor;
     }
     
+    /**
+     * This method returns the color to be used on the grid lines.
+     * 
+     * @return the color for the grid lines.
+     */
     public Color getGridColor() {
         return stdGridColor;
     }

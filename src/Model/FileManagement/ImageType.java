@@ -6,8 +6,7 @@
 package Model.FileManagement;
 
 /**
- *
- * @author Robin
+ * Constants used for image types
  */
 public enum ImageType {
     JPEG,

@@ -27,7 +27,13 @@ import javafx.scene.control.Alert;
  */
 public class FileLoader {
     private Decoder decoder;
-    
+
+    /**
+     * This method loads a game board from file
+     * @param f The {@link File} to load
+     * @param type The {@link EncodeType} of the board to load
+     * @return true if the board could be loaded. Otherwise false
+     */
     public boolean loadBoard(File f, EncodeType type) {
         if (!f.canRead()) {
             DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
@@ -53,7 +59,12 @@ public class FileLoader {
         }
         return true;
     }
-    
+    /**
+     * This method loads a game board from a URL
+     * @param url The {@link URL} to load
+     * @param type The {@link EncodeType} of the board to load
+     * @return true if the board could be loaded. Otherwise false
+     */
     public boolean loadBoardFromURL(URL url, EncodeType type) {
         URLConnection conn;
         try {
@@ -78,7 +89,14 @@ public class FileLoader {
         
         return true;
     }
-    
+
+    /**
+     * This method decodes the loaded board
+     * @param reader The {@link BufferedReader} to decode
+     * @param type The {@link EncodeType} of the board to decode
+     * @throws IOException
+     * @throws PatternFormatException
+     */
     private void decodeBoard(BufferedReader reader, EncodeType type) throws IOException, PatternFormatException {
         switch(type) {
             case RLE:
