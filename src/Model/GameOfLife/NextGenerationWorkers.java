@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Model.GameOfLife;
 
 import Model.GameOfLife.Algorithms.Algorithm;
@@ -11,8 +6,12 @@ import java.util.ArrayList;
 import java.util.concurrent.CyclicBarrier;
 
 /**
+ * This class constructs worker threads and splits the board into segments
  *
- * @author stianreistadrogeberg
+ * @see Thread
+ * @see Board
+ * @see Algorithm
+ * @see Runnable
  */
 public final class NextGenerationWorkers {
     private final Board board;
@@ -22,6 +21,13 @@ public final class NextGenerationWorkers {
     private int[][] segments;
     private CyclicBarrier barrier;
 
+    /**
+     * This creates a spcified number of workers to use in the multi threaded algorithm
+     *
+     * @param numWorkers The number of workers to use
+     * @param board The {@link Board} to use
+     * @param algorithm The {@link Algorithm} to use
+     */
     public NextGenerationWorkers(int numWorkers, Board board, Algorithm algorithm) {
         this.numWorkers = numWorkers;
         this.algorithm = algorithm;
@@ -30,16 +36,24 @@ public final class NextGenerationWorkers {
         for (int i = 0; i < numWorkers; i++) {
             workers.add(null);
         }
-
-
         segments = new int[numWorkers][4];
         this.board = board;
         splitBoard();
     }
 
+    /**
+     * Returns the cyclic barrier that is used for restricting thread access
+     *
+     * @return The cyclic barrier
+     * @see CyclicBarrier
+     */
     public CyclicBarrier getBarrier() {
         return barrier;
     }
+
+    /**
+     * This method creates workers for each segment of the game board
+     */
     public void createWorkers() {
         for (int i = 0; i < numWorkers; i++) {
             final int start = segments[i][0];
@@ -51,6 +65,12 @@ public final class NextGenerationWorkers {
         }
     }
 
+    /**
+     * Starts and joins the threads
+     *
+     * @throws InterruptedException Thrown if a thread is interrupted
+     * @see Thread
+     */
     public void runWorkers() throws InterruptedException {
         workers.stream().forEach((t) -> {
             t.start();
@@ -61,6 +81,9 @@ public final class NextGenerationWorkers {
         }
     }
 
+    /**
+     * This method divides the game board into segments
+     */
     public void splitBoard() {
         int boardRowLength = board.getRows();
         int boardChunkSize = boardRowLength / numWorkers;
@@ -91,6 +114,10 @@ public final class NextGenerationWorkers {
             segments[segments.length-1][3]+= clearRowsLeft;
         }
     }
+
+    /**
+     * This class
+     */
     private static class NextGenerationRunnable implements Runnable {
         private CyclicBarrier barrier;
         private final int start;
@@ -99,7 +126,16 @@ public final class NextGenerationWorkers {
         private final int clearStop;
         private final Algorithm algorithm;
 
-
+        /**
+         * Creates a {@link Runnable}
+         *
+         * @param start The start position of the board segment
+         * @param stop The end position of the board segment
+         * @param clearStart
+         * @param clearStop
+         * @param barrier The cyclic barrier
+         * @param algorithm The {@link Algorithm} to use
+         */
         public NextGenerationRunnable(int start, int stop, int clearStart, int clearStop, CyclicBarrier barrier, Algorithm algorithm) {
             this.barrier = barrier;
             this.start = start;
