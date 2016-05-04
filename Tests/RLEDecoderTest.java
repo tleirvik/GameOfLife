@@ -1,10 +1,15 @@
 
+import Model.FileManagement.Decoders.Decoder;
+import Model.FileManagement.Decoders.RLEDecoder;
+import Model.FileManagement.Encoders.RLEEncoder;
 import org.junit.Before;
 import org.junit.Test;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 
 import static org.junit.Assert.*;
 
@@ -14,6 +19,7 @@ import static org.junit.Assert.*;
 public class RLEDecoderTest {
     // Hardcoded a RLE file for encoding. An alternative would be to use a mocking framework and mock the file
     private File file;
+    private BufferedReader reader;
    // private RLEDecoder rleDecoder;
     //private MetaData metadata = rleDecoder.getMetadata();
 
@@ -27,10 +33,12 @@ public class RLEDecoderTest {
 
         // Act
         // file = new File("C:\\Users\\tleirvik\\Dropbox\\gardenofeden5.rle");
-         file = new File("/home/tleirvik/Dropbox/gardenofeden5.rle");
+        file = new File("/Users/tleirvik/Dropbox/gardenofeden5.rle");
         // Assert
         assertNotNull(file);
         assertTrue(file.canRead());
+        reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
+
     }
 
     /**
@@ -43,17 +51,19 @@ public class RLEDecoderTest {
         byte[] verify1stRow = {0, 1, 1, 1, 0, 0, 1, 1, 0, 0, 0};
         byte[] verify6thRow = {0, 0, 0, 0, 1, 1, 1, 0, 0, 0, 0};
         byte[] verifyLastRow = {0, 0, 0, 1, 1, 0, 0, 1, 1, 1, 0};
-
+        Decoder decoder = new RLEDecoder(reader);
         // Act
-        BufferedReader reader = new BufferedReader(new FileReader(file.getAbsolutePath()));
-        /*rleDecoder = new RLEDecoder(reader);
-        rleDecoder.decode();
-        byte[][] board = rleDecoder.getBoard();*/
-
+        decoder.decode();
+        /*Method method = RLEEncoder.class.getDeclaredMethod("encodeBoard");
+        method.setAccessible(true);
+        method.invoke(decoder);
+*/
+        Field field = decoder.getClass().getDeclaredField("board");
+        field.setAccessible(true);
+        byte[][] board = (byte[][]) field.get("board");
+        System.out.println(board.getClass());
         // Assert
-        /*assertArrayEquals(verify1stRow, board[0]);
-        assertArrayEquals(verify6thRow, board[5]);
-        assertArrayEquals(verifyLastRow, board[10]);*/
+
     }
 
     /**
@@ -95,5 +105,4 @@ public class RLEDecoderTest {
        // assertEquals(author, metadata.getAuthor());
         // assertEquals(comment, metadata.getComment());
     }
-
 }
