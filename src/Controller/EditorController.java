@@ -107,17 +107,17 @@ public class EditorController {
      */
     @FXML
     public void saveToGif() {
-        int rows = game.getRows();
-        int cols = game.getColumns();
-        if (rows <= 0 || cols <= cols) {
-            DialogBoxes.openAlertDialog(Alert.AlertType.WARNING, "Empty Board", 
-                    "Error Saving Empty Board as GIF", 
-                    "The current board is empty.");
-            return;
-        }
         fileController.saveAnimation(game, 
                 (Stage) patternCanvas.getScene().getWindow());
         game.setFirstGeneration();
+    }
+    
+    /**
+     * 
+     */
+    @FXML
+    public void handleTrimButton() {
+        trim();
     }
     
     /**
