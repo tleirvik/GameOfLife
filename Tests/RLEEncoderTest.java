@@ -7,9 +7,11 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.io.*;
+import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -47,9 +49,13 @@ public class RLEEncoderTest {
         f = new File("temp.rle");
         gol = new GameOfLife();
         gol.loadGame(inputArraySmallExploder, metaData, Board.BoardType.FIXED);
+
+        // Assert
         assertTrue(gol instanceof GameOfLife);
         assertTrue(gol.getBoard() instanceof Board);
-
+        /*assertNotNull(f);
+        assertTrue(f.canRead());
+*/
     }
 
     /**
@@ -66,11 +72,12 @@ public class RLEEncoderTest {
         Method method = RLEEncoder.class.getDeclaredMethod("encodeBoard");
         method.setAccessible(true);
         method.invoke(encoder);
+
         // Assert
 
-        /*Field field = encoder.getClass().getDeclaredField();
+        Field field = encoder.getClass().getDeclaredField("rleString");
         field.setAccessible(true);
-        StringBuilder test = (StringBuilder) field.get(encoder);*/
+        StringBuilder test = (StringBuilder) field.get(encoder);
         assertEquals(RLEString, encoder.toString());
     }
 
