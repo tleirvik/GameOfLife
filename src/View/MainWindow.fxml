@@ -124,7 +124,7 @@
     <center>
         <Pane fx:id="canvasParent">
             <children>
-                <Canvas id="gameCanvas" fx:id="gameCanvas" height="596.0" width="835.0" />
+                <Canvas id="gameCanvas" fx:id="gameCanvas" height="592.0" width="1000.0" />
             </children>
         </Pane>
     </center>
