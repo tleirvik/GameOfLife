@@ -18,6 +18,7 @@ import java.io.IOException;
 import java.util.Optional;
 import javafx.geometry.Insets;
 import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.paint.Color;
 import javafx.stage.StageStyle;
 
 public class DialogBoxes {
@@ -166,6 +167,41 @@ public class DialogBoxes {
             metadata.setAuthor(authorTextField.getText());
             metadata.setName(nameTextField.getText());
             metadata.setComment(commentTextArea.getText());
+        }
+    }
+    
+    public void openOptionsDialog(Color background, Color boardBackground, 
+            Color cell, Color grid, Stage owner) {
+        GridPane gp = new GridPane();
+        
+        gp.add(new Label("Background Color: "), 0, 0);
+        ColorPicker backgroundColor = new ColorPicker(background);
+        gp.add(backgroundColor, 1, 0);
+        
+        gp.add(new Label("Board Background Color: "), 0, 0);
+        ColorPicker boardBackgroundColor = new ColorPicker(boardBackground);
+        gp.add(boardBackgroundColor, 1, 0);
+        
+        gp.add(new Label("Cell Color: "), 0, 0);
+        ColorPicker cellColor = new ColorPicker(cell);
+        gp.add(cellColor, 1, 0);
+        
+        gp.add(new Label("Grid Color: "), 0, 0);
+        ColorPicker gridColor = new ColorPicker(grid);
+        gp.add(gridColor, 1, 0);
+        
+        Dialog dialog = customUtilityDialog("Options", null, gp, owner);
+        
+        ButtonType ok = new ButtonType("OK", ButtonData.OK_DONE);
+        ButtonType cancel = new ButtonType("Cancel", ButtonData.CANCEL_CLOSE);
+        dialog.getDialogPane().getButtonTypes().addAll(ok, cancel);
+        
+        Optional<ButtonType> result = dialog.showAndWait();
+        if (result.get() == ok) {
+            background = backgroundColor.getValue();
+            boardBackground = boardBackgroundColor.getValue();
+            cell = cellColor.getValue();
+            grid = gridColor.getValue();
         }
     }
     
