@@ -581,9 +581,10 @@ public class ViewController {
                 fitToView();
                 centerBoard();
             }
+            // TODO: 04.05.2016 Mulighet for å velge concurrency
             Stopwatch sw = new Stopwatch("Next generation threading");
             sw.start();
-            gol.updateWithThreads();
+            gol.update();
             draw();
             sw.stop();
         });

@@ -12,13 +12,18 @@ import Model.GameOfLife.GameOfLife;
 import java.io.File;
 
 /**
- * Ansvaret for lagring av filer. Skal bedømme hvilken encoder som trengs for å 
- * lagre filen
- * 
- * @author Robin
+ * This class enables the user to save files of different types
  */
 public class FileSaver {
-    
+
+    /**
+     * This method saves a game to a file using a specified encoder
+     *
+     * @param type The {@link EncodeType} used for saving the game
+     * @param game The {@link GameOfLife} to save
+     * @param f The {@link File} to save
+     * @return
+     */
     public boolean saveGame(EncodeType type, GameOfLife game, File f) {
         Encoder encoder = null;
         switch(type) {
@@ -28,12 +33,24 @@ public class FileSaver {
         }
         return encoder.encode();
     }
-    
+
+    /**
+     * This method saves a board to a sound
+     *
+     * @param wav The {@link WavData} to save
+     * @return The wave file
+     */
     public boolean saveSound(WavData wav) {
         WavSaver wavSaver = new WavSaver(wav);
         return wavSaver.saveSound();
     }
-    
+
+    /**
+     * This method saves the board as an image
+     * @param type The {@link ImageType} to save
+     * @param data The {@link ImageData} to save
+     * @return The image file
+     */
     public boolean saveImage(ImageType type, ImageData data) {
         ImageSaver saver = null;
         switch (type) {

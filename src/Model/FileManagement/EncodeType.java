@@ -6,8 +6,7 @@
 package Model.FileManagement;
 
 /**
- *
- * @author Robin
+ * Constants used for encode types
  */
 public enum EncodeType {
     RLE("RLE",  new String[]{"*.rle"}),
@@ -21,11 +20,19 @@ public enum EncodeType {
         this.name = name;
         this.fileExtensions = fileExtensions;
     }
-    
+
+    /**
+     * Returns the name
+     * @return The name
+     */
     public String getName() {
         return name;
     }
-    
+
+    /**
+     * Returns the file extensions
+     * @return The file extensions
+     */
     public String[] getFileExtensions(){
         return fileExtensions;
     }
