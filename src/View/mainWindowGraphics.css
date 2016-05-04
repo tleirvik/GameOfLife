@@ -1,46 +1,50 @@
-.root {
-    -fx-background-color: black
+#topMenuBar {
+    -fx-background-color: linear-gradient(#e35e68, #8e4497);
+}
+
+
+
+#rightBox {
+    -fx-background-color: #4d4785;
+}
+
+#bottomVBox {
+    -fx-background-color: #4d4785;
+}
+
+.label {
+    -fx-text-fill: #eaeaea;
+    -fx-font-family: "Monospace";
+    -fx-font-weight: bold;
 }
 
 .button {
-    -fx-color: #4169E1;
-    -fx-text-fill: #202020;
-}
-
-#menuBar {
-    -fx-background-color: #202020;
-}
-
-#vboxRight {
-    -fx-background-color: #202020;
-}
-
-#colors {
-    -fx-text-fill: FFFAFA;
-}
-
-#text {
-    -fx-text-fill: #FAF0E6;
-}
-
-/* alle colorpickers */
-#picker {
-    -fx-background-color: #00FF00;
+    -fx-text-fill: #ff1626;
+    -fx-background-color: #111111;
+    -fx-font-weight: bold;
+    -fx-font-family: "Monospace";
     
 }
 
-#bottom {
-    -fx-background-color: #202020;
+.button:hover {
+    -fx-background-color: #ff1626;
+    -fx-text-fill: #111111;
+    -fx-font-weight: bold;
 }
 
-#combobox {
-    -fx-color: #4169E1;
+#toggleButton {
+    -fx-text-fill: #ff1626;
+    -fx-background-color: #111111;
+    -fx-font-weight: bold;
+    -fx-font-family: "Monospace";
 }
 
-#fitToView {
-    -fx-graphic: url('/View/arrows.png');
+#toggleButton:hover {
+    -fx-background-color: #ff1626;
+    -fx-text-fill: #111111;
+    -fx-font-weight: bold;
 }
 
-#fitToView:selected {
-    -fx-graphic: url('/View/arrows.png');
+#picker {
+    -fx-background-color: #d81b60;
 }

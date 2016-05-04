@@ -1,5 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -19,12 +26,12 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" minWidth="810.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ViewController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" minWidth="810.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Controller.ViewController">
 
     <top>
-        <MenuBar id="menuBar" fx:id="menuBar" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
+        <MenuBar id="topMenuBar" fx:id="menuBar" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
             <menus>
-                <Menu text="File">
+                <Menu id="menu" text="File">
                     <items>
                           <MenuItem onAction="#newGame" text="New game..." />
                           <MenuItem mnemonicParsing="false" onAction="#loadBoard" text="Load Board..." />
@@ -62,69 +69,9 @@
         </MenuBar>
     </top>
     
-   
-    <right>
-        <VBox alignment="TOP_CENTER" prefHeight="592.0" prefWidth="165.0" spacing="15.0">
-            <children>
-                <VBox alignment="TOP_CENTER" spacing="3.0">
-                    <children>
-                        <Label text="Colors:">
-                            <font>
-                                <Font name="System Bold" size="13.0" />
-                             </font>
-                            <VBox.margin>
-                                <Insets bottom="4.0" />
-                            </VBox.margin>
-                        </Label>
-                  
-                        <Label id="text" text="Background:" />
-                        <ColorPicker id="picker" fx:id="backgroundColorPicker" onAction="#changeBackgroundColor" prefHeight="25.0" prefWidth="50.0">
-                            <VBox.margin>
-                                <Insets bottom="4.0" />
-                            </VBox.margin>
-                        </ColorPicker>
-
-                        <Label id="text" text="Board:" />
-                        <ColorPicker id="picker" fx:id="boardColorPicker" onAction="#changeBoardColor" prefHeight="25.0" prefWidth="50.0">
-                            <VBox.margin>
-                                <Insets bottom="4.0" />
-                            </VBox.margin>
-                        </ColorPicker>
-
-                        <Label id="text" text="Cell:" />
-                        <ColorPicker id="picker" fx:id="cellColorPicker" onAction="#changeCellColor" prefHeight="25.0" prefWidth="50.0">
-                            <VBox.margin>
-                                <Insets bottom="4.0" />
-                            </VBox.margin>
-                        </ColorPicker>
-
-                        <Label id="text" text="Grid:" />
-                        <ColorPicker id="picker" fx:id="gridColorPicker" onAction="#changeGridColor" prefHeight="25.0" prefWidth="50.0">
-                            <effect>
-                               <Blend mode="BLUE" />
-                            </effect>
-                        </ColorPicker>
-                    </children>
-                </VBox>
-            
-                <VBox alignment="TOP_CENTER" spacing="5.0">
-                    <children>
-                        <ToggleButton fx:id="fitToView" onAction="#handleFitToView" text="Fit to view" />
-                    </children>
-                </VBox>
-
-                <CheckBox fx:id="toggleGrid" onAction="#handleToggleGrid" text="Turn off grid" />
-            </children>
-            
-            <padding>
-                <Insets top="10.0" />
-            </padding>
-        </VBox>
-    </right>
-    
     
     <bottom>
-        <VBox BorderPane.alignment="TOP_CENTER">
+        <VBox id="bottomVBox" BorderPane.alignment="TOP_CENTER">
          
             <children>
                 <HBox id="bottom" alignment="CENTER" prefHeight="76.0" prefWidth="1000.0" spacing="20.0">
@@ -150,6 +97,9 @@
                                 </HBox>
                             </children>
                         </VBox>
+                        <ToggleButton id="toggleButton" fx:id="fitToView" onAction="#handleFitToView" text="Fit to view" />
+      
+                      <CheckBox fx:id="toggleGrid" onAction="#handleToggleGrid" text="Turn off grid" />
 
                         <Label text="FPS: " />
                         <Label fx:id="fpsLabel" />
