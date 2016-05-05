@@ -163,6 +163,8 @@ public class GameOfLife {
      */
     public void setBoard(Board board) {
         this.board = board;
+        algorithm = new Default(board);
+        nextGenerationWorkers = new NextGenerationWorkers(NUM_THREADS, this.board, algorithm);
     }
 
     /**
