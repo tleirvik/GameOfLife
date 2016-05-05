@@ -200,7 +200,7 @@ public class DialogBoxes {
         }
     }
     
-    public void openOptionsDialog(ViewController vCtrl, Stage owner) {
+    public Color[] openOptionsDialog(ViewController vCtrl, Stage owner) {
         Color[] colors = vCtrl.getColors();
         GridPane gp = new GridPane();
         
@@ -233,6 +233,7 @@ public class DialogBoxes {
                     cellColor.getValue(), gridColor.getValue()
             };
         }
+        return colors;
     }
     
     //=========================================================================

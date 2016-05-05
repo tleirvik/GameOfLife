@@ -240,7 +240,7 @@ public class ViewController implements Draw {
      */
     @FXML
     private void openOptions() {
-        dialogBoxes.openOptionsDialog(this, 
+        colors = dialogBoxes.openOptionsDialog(this,
                 (Stage) gameCanvas.getScene().getWindow());
         draw();
     }
@@ -601,7 +601,6 @@ public class ViewController implements Draw {
             fitToView();
             centerBoard();
         }
-        // TODO: 04.05.2016 Mulighet for aa velge concurrency
         gol.updateWithThreads();
         draw();
     }
