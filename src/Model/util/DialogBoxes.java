@@ -14,6 +14,7 @@ import javafx.scene.control.*;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import java.io.IOException;
@@ -200,22 +201,23 @@ public class DialogBoxes {
     }
     
     public void openOptionsDialog(ViewController vCtrl, Stage owner) {
+        Color[] colors = vCtrl.getColors();
         GridPane gp = new GridPane();
         
         gp.add(new Label("Background Color: "), 0, 0);
-        ColorPicker backgroundColor = new ColorPicker(vCtrl.getBackgroundColor());
+        ColorPicker backgroundColor = new ColorPicker(colors[0]);
         gp.add(backgroundColor, 1, 0);
         
         gp.add(new Label("Board Background Color: "), 0, 1);
-        ColorPicker boardBackgroundColor = new ColorPicker(vCtrl.getBoardBackgroundColor());
+        ColorPicker boardBackgroundColor = new ColorPicker(colors[1]);
         gp.add(boardBackgroundColor, 1, 1);
         
         gp.add(new Label("Cell Color: "), 0, 2);
-        ColorPicker cellColor = new ColorPicker(vCtrl.getCellColor());
+        ColorPicker cellColor = new ColorPicker(colors[2]);
         gp.add(cellColor, 1, 2);
         
         gp.add(new Label("Grid Color: "), 0, 3);
-        ColorPicker gridColor = new ColorPicker(vCtrl.getGridColor());
+        ColorPicker gridColor = new ColorPicker(colors[3]);
         gp.add(gridColor, 1, 3);
         
         Dialog dialog = customUtilityDialog("Options", null, gp, owner);
@@ -226,10 +228,10 @@ public class DialogBoxes {
         
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.get() == ok) {
-            vCtrl.setBackgroundColor(backgroundColor.getValue());
-            vCtrl.setBoardBackgroundColor(boardBackgroundColor.getValue());
-            vCtrl.setCellColor(cellColor.getValue());
-            vCtrl.setGridColor(gridColor.getValue());
+            colors = new Color[]{
+                    backgroundColor.getValue(), boardBackgroundColor.getValue(),
+                    cellColor.getValue(), gridColor.getValue()
+            };
         }
     }
     

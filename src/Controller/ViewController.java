@@ -5,7 +5,6 @@ import Model.FileManagement.EncodeType;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
 import Model.util.DialogBoxes;
-import Model.util.Stopwatch;
 import javafx.animation.Animation;
 import javafx.animation.Animation.Status;
 import javafx.animation.KeyFrame;
@@ -34,7 +33,7 @@ import javafx.util.Duration;
  * @author Robin Sean Aron David Lundh.
  *
  */
-public class ViewController {
+public class ViewController implements Draw {
 
     //=========================================================================
     // JavaFX Fields
@@ -67,10 +66,15 @@ public class ViewController {
     private double cellSize = 10;
 
     // Standard colors (Can be changed during runtime)
+    private Color[] colors = new Color[] {
+            Color.BLACK, Color.GHOSTWHITE, Color.LIGHTGREY, Color.GREY
+    };
+    /*
     private Color stdAliveCellColor = Color.BLACK;
     private Color stdBoardColor = Color.GHOSTWHITE;
     private Color stdBackgroundColor = Color.LIGHTGREY;
     private Color stdGridColor = Color.GREY;
+    */
 
     private final double stdGridLineWidth = 1;
 
@@ -240,7 +244,10 @@ public class ViewController {
                 (Stage) gameCanvas.getScene().getWindow());
         draw();
     }
-    
+
+    private void draw() {
+        draw(gol, gameCanvas.getGraphicsContext2D(),colors, offset_X, offset_Y, cellSize, drawGrid);
+    }
     //=================================
     //            HELP MENU
     //=================================
@@ -252,9 +259,7 @@ public class ViewController {
     public void openHelp() {
         dialogBoxes.openHelp((Stage) gameCanvas.getScene().getWindow());
     }
-    
-    
-    
+
     
     //=================================
     //         BOTTOM CONTROLS
@@ -407,105 +412,7 @@ public class ViewController {
     /**
      * This method draws the board.
      */
-    private void draw() {
-        final double start_X = Math.round(offset_X);
-        final double start_Y = Math.round(offset_Y);
-        final int rows = gol.getRows();
-        final int columns = gol.getColumns();
-        final double boardWidth = getBoardWidth();
-        final double boardHeight = getBoardHeight();
-        final double canvasWidth = gameCanvas.getWidth();
-        final double canvasHeight = gameCanvas.getHeight();
 
-        GraphicsContext gc = gameCanvas.getGraphicsContext2D();
-        gc.clearRect(0, 0, canvasWidth, canvasHeight);
-
-        gc.setFill(stdBackgroundColor);
-        gc.fillRect(0, 0, canvasWidth, canvasHeight);
-        
-        gc.setFill(stdBoardColor);
-        gc.fillRect(start_X, start_Y, boardWidth, boardHeight);
-
-        
-        int rowStart = (int) ((0 - (offset_Y - getBoardHeight())) / 
-                cellSize) - gol.getRows();
-        
-        int rowEnd = (int) ((canvasParent.getHeight() - (offset_Y - 
-                getBoardHeight())) / cellSize) - gol.getRows();
-        
-        int columnStart = (int) ((0 - (offset_X - getBoardWidth())) / 
-                cellSize) - gol.getColumns();
-        
-        int columnEnd = (int) ((canvasParent.getWidth() - (offset_X - 
-                getBoardWidth())) / cellSize) - gol.getColumns();
-
-        int startRow = 0;
-        int endRow = rows;
-        if (rowStart > 0) {
-            startRow = rowStart;
-        }
-        if (rowEnd < rows) {
-            endRow = rowEnd + 1;
-        }
-
-        int startCol = 0;
-        int endCol = columns;
-        if (columnStart > 0) {
-            startCol = columnStart;
-        }
-        if (columnEnd < columns) {
-            endCol = columnEnd + 1;
-        }
-
-        gc.setFill(stdAliveCellColor);
-        for (int row = startRow; row < endRow; row++) {
-            for (int col = startCol; col < endCol; col++ ) {
-                if (gol.getCellAliveState(row, col) == 1) {
-                    gc.fillRect(start_X + cellSize * col, start_Y + cellSize * row, cellSize, cellSize);
-                }
-            }
-        }
-
-        if (drawGrid) {
-            drawGridLines(gc);
-        }
-    }
-
-    /**
-     * This method draws grid lines.
-     * @param gc the buffer used to draw on canvas.
-     */
-    private void drawGridLines(GraphicsContext gc) {
-    	gc.setLineWidth(stdGridLineWidth);
-    	gc.setStroke(stdGridColor);
-        final int boardRowLength = gol.getRows();
-        final int boardColumnLength = gol.getColumns();
-
-    	double start_X = offset_X;
-        double start_Y = offset_Y;
-
-        double end_X = start_X + getBoardWidth();
-        double end_Y = start_Y + getBoardHeight();
-
-        for (int y = 0; y <= boardRowLength; y++) {
-            gc.strokeLine(start_X, start_Y + (cellSize * y),
-                    end_X, start_Y + (cellSize * y));
-        }
-
-        for (int x = 0; x <= boardColumnLength; x++) {
-        	gc.strokeLine(start_X + (cellSize * x),
-                        start_Y, start_X + (cellSize * x), end_Y);
-        }
-
-        gc.setFill(stdAliveCellColor);
-        gc.fillOval(gameCanvas.getWidth()/2-2,
-                gameCanvas.getHeight() / 2 - 2, 5, 5);
-
-        gc.setFill(Color.RED);
-        gc.fillOval(start_X + (getBoardWidth() / 2) - 2, start_Y +
-                (getBoardHeight() / 2) - 2, 5, 5);
-
-    }
     
     //================================================================================
     // Initialize-methods
@@ -674,21 +581,30 @@ public class ViewController {
         Duration duration = Duration.millis(1000/fps);
         KeyFrame keyFrame;
         keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-            if (fitToView.isSelected()) {
-                fitToView();
-                centerBoard();
-            }
-            // TODO: 04.05.2016 Mulighet for aa velge concurrency
-            Stopwatch sw = new Stopwatch("Next generation threading");
-            sw.start();
-            gol.update();
-            draw();
-            sw.stop();
+            update();
         });
         timeline.getKeyFrames().clear();
         timeline.getKeyFrames().add(0, keyFrame);
     }
-    
+
+    /**
+     *  This method is called from within the {@link KeyFrame} in the {@link Timeline} and
+     *  calls other methods that are required
+     *  <br>
+     *  First we call {@link #fitToView()} (if the Fit To View {@link ToggleButton} is  selected )
+     *  to resize the board and position it on the center of the {@link Canvas}. Then we call
+     *  {@link GameOfLife#updateWithThreads()} ()} to run the algorithm and lastly we call
+     *  {@link #draw()} to redraw the {@link Canvas}
+     */
+    private void update() {
+        if (fitToView.isSelected()) {
+            fitToView();
+            centerBoard();
+        }
+        // TODO: 04.05.2016 Mulighet for aa velge concurrency
+        gol.updateWithThreads();
+        draw();
+    }
     public void setStatusBarText(String s) {
         statusBar.setText(s);
     }
@@ -725,74 +641,28 @@ public class ViewController {
     }
     
     /**
-     * This method sets the color for the background.
+     * This method sets the four colors used when drawing the game;
+     * <ul>
+     *     <li>Background color</li>
+     *     <li>Dead cell color</li>
+     *     <li>Alive cell color</li>
+     *     <li>Grid color</li>
+     * </ul>
      * 
-     * @param stdBackgroundColor the color to be used as background.
+     * @param colors The board colors
+     * @see Color
      */
-    public void setBackgroundColor(Color stdBackgroundColor) {
-        this.stdBackgroundColor = stdBackgroundColor;
+    public void setColors(Color[] colors) {
+        this.colors = colors;
     }
-    
+
     /**
-     * This method set the color for the background of the board.
-     * 
-     * @param stdBoardColor the color to be used as background color for the board.
+     * Returns the boards color
+     * @return The board colors
+     * @see {@link #setColors(Color[])}
+     * @see Color
      */
-    public void setBoardBackgroundColor(Color stdBoardColor) {
-        this.stdBoardColor = stdBoardColor;
-    }
-    
-    /**
-     * This method sets the color for the living cells in the board.
-     * 
-     * @param stdAliveCellColor the color for the living cells.
-     */
-    public void setCellColor(Color stdAliveCellColor) {
-        this.stdAliveCellColor = stdAliveCellColor;
-    }
-    
-    /**
-     * This method set the color for the grid lines.
-     * 
-     * @param stdGridColor is the color to be used as grid lines.
-     */
-    public void setGridColor(Color stdGridColor) {
-        this.stdGridColor = stdGridColor;
-    }
-    
-    /**
-     * This method returns the background color.
-     * 
-     * @return the color to be used as background.
-     */
-    public Color getBackgroundColor() {
-        return stdBackgroundColor;
-    }
-    
-    /**
-     * This method return the color to be used on the board.
-     * 
-     * @return the color for the board.
-     */
-    public Color getBoardBackgroundColor() {
-        return stdBoardColor;
-    }
-    
-    /**
-     * This method returns the color to be used on living cells.
-     * 
-     * @return the color of living cells.
-     */
-    public Color getCellColor() {
-        return stdAliveCellColor;
-    }
-    
-    /**
-     * This method returns the color to be used on the grid lines.
-     * 
-     * @return the color for the grid lines.
-     */
-    public Color getGridColor() {
-        return stdGridColor;
+    public Color[] getColors() {
+        return colors;
     }
 }

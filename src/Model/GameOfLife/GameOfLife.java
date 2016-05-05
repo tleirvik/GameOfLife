@@ -6,6 +6,8 @@ import Model.GameOfLife.Boards.Board;
 import Model.GameOfLife.Boards.FixedBoard;
 import Model.GameOfLife.Boards.DynamicBoard;
 import Model.GameOfLife.Boards.Board.BoardType;
+import Model.util.Stopwatch;
+
 import java.util.Random;
 
 /**
@@ -185,6 +187,8 @@ public class GameOfLife {
      * the game board
      */
     public void updateWithThreads() {
+        Stopwatch sw = new Stopwatch("Next generation threading");
+        sw.start();
         algorithm.beforeUpdate();
         nextGenerationWorkers.splitBoard();
         nextGenerationWorkers.createWorkers();
@@ -192,6 +196,7 @@ public class GameOfLife {
             nextGenerationWorkers.runWorkers();
         } catch (InterruptedException iE) {
         }
+        sw.stop();
     }
 
     /**

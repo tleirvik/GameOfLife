@@ -173,11 +173,17 @@ public class Default implements Algorithm{
      * @param stop The end of the segment
      */
     public void nextGeneration(int start, int stop) {
+
         for (int row = start; row < stop; row++) {
+
             for (int col = 0; col < board.getColumns(); col++) {
+                int neighbours = getNeighbours(row, col);
+                if (neighbours < 2 && neighbours > 3) {
+                    continue;
+                }
                 board.setCellAliveState(row, col,
-                    (getNeighbours(row, col) == 3) || (board.getCellAliveState(row, col) == 1 &&
-                        (getNeighbours(row, col) == 2 )) ? (byte)1 : (byte)0);
+                (neighbours == 3) || (board.getCellAliveState(row, col) == 1 &&
+                        (neighbours == 2 )) ? (byte)1 : (byte)0);
             }
         }
     }
@@ -190,7 +196,7 @@ public class Default implements Algorithm{
     private void clearNeighbours(int start, int stop) {
         for (int row = start; row < stop; row++) {
             for (int col = 0; col < neighbourArray.get(0).size(); col++) {
-                neighbourArray.get(row).set(col, (byte) 0);
+                    neighbourArray.get(row).set(col, (byte) 0);
             }
         }
     }
