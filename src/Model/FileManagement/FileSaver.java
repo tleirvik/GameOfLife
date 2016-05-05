@@ -1,15 +1,16 @@
-package Model.FileManagement;
+package model.filemanagement;
 
-import Model.FileManagement.Encoders.*;
-import Model.FileManagement.OtherFormats.Data.GIFData;
-import Model.FileManagement.OtherFormats.Data.ImageData;
-import Model.FileManagement.OtherFormats.Data.WavData;
-import Model.FileManagement.OtherFormats.GIFSaver;
-import Model.FileManagement.OtherFormats.ImageSaver;
-import Model.FileManagement.OtherFormats.JPEGSaver;
-import Model.FileManagement.OtherFormats.WavSaver;
-import Model.GameOfLife.GameOfLife;
+import model.filemanagement.otherformats.data.GIFData;
+import model.filemanagement.otherformats.data.ImageData;
+import model.filemanagement.otherformats.data.WavData;
+import model.filemanagement.otherformats.GIFSaver;
+import model.filemanagement.otherformats.ImageSaver;
+import model.filemanagement.otherformats.PNGSaver;
+import model.filemanagement.otherformats.WavSaver;
 import java.io.File;
+import model.filemanagement.encoders.Encoder;
+import model.filemanagement.encoders.RLEEncoder;
+import model.gameoflife.GameOfLife;
 
 /**
  * This class enables the user to save files of different types
@@ -50,8 +51,8 @@ public class FileSaver {
     public boolean saveImage(ImageType type, ImageData data) {
         ImageSaver saver = null;
         switch (type) {
-            case JPEG:
-                saver = new JPEGSaver(data);
+            case PNG:
+                saver = new PNGSaver(data);
                 break;
             case GIF:
                 saver = new GIFSaver((GIFData) data);

@@ -1,6 +1,6 @@
-package Model.GameOfLife.Boards;
+package model.gameoflife.boards;
 
-import Model.GameOfLife.MetaData;
+import model.gameoflife.MetaData;
 
 /**
  * @author Robin Sean Aron David Lundh, Terje Leirvik, Stian Reistad Roegeberg.

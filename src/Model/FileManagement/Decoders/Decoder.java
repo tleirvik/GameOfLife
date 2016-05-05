@@ -1,7 +1,7 @@
-package Model.FileManagement.Decoders;
+package model.filemanagement.decoders;
 
-import Model.GameOfLife.MetaData;
-import Model.GameOfLife.PatternFormatException;
+import model.gameoflife.MetaData;
+import model.gameoflife.PatternFormatException;
 import java.io.BufferedReader;
 import java.io.IOException;
 

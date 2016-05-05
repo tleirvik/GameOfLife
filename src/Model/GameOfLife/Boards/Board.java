@@ -1,6 +1,6 @@
-package Model.GameOfLife.Boards;
+package model.gameoflife.boards;
 
-import Model.GameOfLife.MetaData;
+import model.gameoflife.MetaData;
 
 /**
  * This is an abstract class that represents the game board in Game Of Life

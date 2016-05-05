@@ -1,7 +1,7 @@
-package Model.GameOfLife;
+package model.gameoflife;
 
-import Model.GameOfLife.Algorithms.Algorithm;
-import Model.GameOfLife.Boards.Board;
+import model.gameoflife.algorithms.Algorithm;
+import model.gameoflife.boards.Board;
 import java.util.ArrayList;
 import java.util.concurrent.CyclicBarrier;
 // TODO: 04.05.2016 JAVADOKKINGS TODO 

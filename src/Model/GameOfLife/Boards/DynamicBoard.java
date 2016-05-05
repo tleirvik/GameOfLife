@@ -1,6 +1,6 @@
-package Model.GameOfLife.Boards;
+package model.gameoflife.boards;
 
-import Model.GameOfLife.MetaData;
+import model.gameoflife.MetaData;
 import java.util.ArrayList;
 import java.util.List;
 

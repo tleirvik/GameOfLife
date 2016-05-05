@@ -1,9 +1,9 @@
-package Model.FileManagement.OtherFormats;
+package model.filemanagement.otherformats;
 
-import Model.FileManagement.OtherFormats.Data.ImageData;
-import Model.GameOfLife.GameOfLife;
+import model.filemanagement.otherformats.data.ImageData;
 import java.awt.Color;
 import java.io.File;
+import model.gameoflife.GameOfLife;
 
 /**
  * The abstract class for all image savers

@@ -1,0 +1,36 @@
+#topMenuBar {
+    -fx-background-color: linear-gradient(#e35e68, #8e4497);
+}
+
+.menu-bar .label {
+    -fx-text-fill: #000000;
+    -fx-font-weight: bold;
+}
+
+#leftBox {
+    -fx-background-color: #224687;
+}
+
+#metaDataLabel {
+    -fx-text-fill: #c6ff00;
+}
+
+#closeButton {
+    -fx-background-color: #c6ff00;
+}
+
+#bottomBox {
+    -fx-background-color: #224687;
+}
+
+#stripButton {
+    -fx-text-fill: #ff1626;
+    -fx-background-color: #c6ff00;
+    -fx-font-weight: bold;
+}
+
+#stripButton:hover {
+    -fx-background-color: #ff1626;
+    -fx-text-fill: #f9b24f;
+    -fx-font-weight: bold;
+}

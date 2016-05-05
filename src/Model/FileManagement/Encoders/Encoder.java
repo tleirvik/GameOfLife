@@ -1,9 +1,9 @@
-package Model.FileManagement.Encoders;
+package model.filemanagement.encoders;
 
-import Model.GameOfLife.GameOfLife;
-import Model.GameOfLife.MetaData;
+import model.gameoflife.MetaData;
 import java.io.File;
 import java.nio.file.Path;
+import model.gameoflife.GameOfLife;
 
 
 /**

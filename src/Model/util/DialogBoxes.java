@@ -1,13 +1,12 @@
-package Model.util;
+package model.util;
 
-import Controller.StatisticsController;
-import Model.GameOfLife.Boards.Board.BoardType;
-import Controller.EditorController;
-import Controller.FileController;
-import Controller.HelpController;
-import Controller.ViewController;
-import Model.GameOfLife.GameOfLife;
-import Model.GameOfLife.MetaData;
+import controller.StatisticsController;
+import model.gameoflife.boards.Board.BoardType;
+import controller.EditorController;
+import controller.FileController;
+import controller.HelpController;
+import controller.ViewController;
+import model.gameoflife.MetaData;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -22,11 +21,12 @@ import java.util.Optional;
 import javafx.geometry.Insets;
 import javafx.scene.control.ButtonBar.ButtonData;
 import javafx.stage.StageStyle;
+import model.gameoflife.GameOfLife;
 
 /**
  * This is a utility class that opens the game dialog boxes
  *
- * @see Controller.ViewController
+ * @see controller.ViewController
  * @see StatisticsController
  * @see EditorController
  * @see FileController
@@ -97,11 +97,26 @@ public class DialogBoxes {
         GridPane gp = new GridPane();
         
         gp.add(new Label("Rows: "), 0, 0);
+        final Spinner rows = new Spinner(10, 10000, 200, 10);
+        rows.setEditable(true);
+        TextField widthField = rows.getEditor();
+        widthField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("[0-9]*")) {
+                widthField.setText(oldValue);
+            }
+        });
+        gp.add(rows, 1, 0, 3, 1);
+        
         gp.add(new Label("Columns: "), 0, 1);
-        TextField rows = new TextField();
-        TextField columns = new TextField();
-        gp.add(rows, 1, 0);
-        gp.add(columns, 1, 1);
+        final Spinner columns = new Spinner(10, 10000, 200, 10);
+        columns.setEditable(true);
+        TextField heightField = columns.getEditor();
+        heightField.textProperty().addListener((observable, oldValue, newValue) -> {
+            if (!newValue.matches("[0-9]*")) {
+                heightField.setText(oldValue);
+            }
+        });
+        gp.add(columns, 1, 1, 3, 1);
         
         gp.add(new Label("Board Type: "), 0, 2);
         ChoiceBox<BoardType> boardType = new ChoiceBox<>();
@@ -113,18 +128,6 @@ public class DialogBoxes {
         CheckBox random = new CheckBox();
         gp.add(random, 1, 3);
         
-        rows.textProperty().addListener((observable, oldValue, newValue) -> {
-            if (!newValue.matches("[0-9]*")) {
-                rows.setText(oldValue);
-            }
-        });
-        
-        columns.textProperty().addListener((observable, oldValue, newValue) -> {
-            if(!newValue.matches("[0-9]*")) {
-                columns.setText(oldValue);
-            }
-        });
-        
         Dialog dialog = customUtilityDialog("New Game", null, gp, owner);
         
         ButtonType ok = new ButtonType("OK", ButtonData.OK_DONE);
@@ -132,10 +135,9 @@ public class DialogBoxes {
         dialog.getDialogPane().getButtonTypes().addAll(ok, cancel);
         
         Optional<ButtonType> result = dialog.showAndWait();
-        if (result.get() == ok && !rows.getText().equals("") 
-                && !columns.getText().equals("")) {
-            int numRows = Integer.parseInt(rows.getText());
-            int numColumns = Integer.parseInt(columns.getText());
+        if (result.get() == ok) {
+            int numRows = (int) rows.getValue();
+            int numColumns = (int) columns.getValue();
             BoardType type = boardType.getValue();
             boolean randomPattern = random.isSelected();
             
@@ -260,7 +262,7 @@ public class DialogBoxes {
         
         try {
             FXMLLoader loader;
-            loader = new FXMLLoader(getClass().getResource("/View/PatternEditor.fxml"));
+            loader = new FXMLLoader(getClass().getResource("/view/PatternEditor.fxml"));
             
             BorderPane root = loader.load();
             editor.setResizable(false);
@@ -270,7 +272,7 @@ public class DialogBoxes {
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
-                    "/View/patternEditorStyleSheet.css").toExternalForm());
+                    "/view/patternEditorStyleSheet.css").toExternalForm());
             
             editor.setScene(scene);
             editor.setTitle("Pattern Editor");
@@ -293,7 +295,7 @@ public class DialogBoxes {
         
         try {
             FXMLLoader loader;
-            loader = new FXMLLoader(getClass().getResource("/View/statistics.fxml"));
+            loader = new FXMLLoader(getClass().getResource("/view/statistics.fxml"));
             
             BorderPane root = loader.load();
             stats.setResizable(false);
@@ -303,7 +305,7 @@ public class DialogBoxes {
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
-                "/View/statisticsGraphics.css").toExternalForm());
+                "/view/statisticsGraphics.css").toExternalForm());
             
             stats.setScene(scene);
             stats.setTitle("Game Of Life Statistics");
@@ -325,7 +327,7 @@ public class DialogBoxes {
         
         try {
             FXMLLoader loader;
-            loader = new FXMLLoader(getClass().getResource("/View/HelpWindow.fxml"));
+            loader = new FXMLLoader(getClass().getResource("/view/HelpWindow.fxml"));
             
             BorderPane root = loader.load();
             help.setResizable(false);

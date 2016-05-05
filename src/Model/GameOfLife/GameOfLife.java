@@ -1,14 +1,16 @@
-package Model.GameOfLife;
+package model.gameoflife;
 
-import Model.GameOfLife.Algorithms.Algorithm;
-import Model.GameOfLife.Algorithms.Default;
-import Model.GameOfLife.Boards.Board;
-import Model.GameOfLife.Boards.FixedBoard;
-import Model.GameOfLife.Boards.DynamicBoard;
-import Model.GameOfLife.Boards.Board.BoardType;
-import Model.util.Stopwatch;
 
+import model.util.Stopwatch;
 import java.util.Random;
+import model.gameoflife.algorithms.Algorithm;
+import model.gameoflife.algorithms.Default;
+import model.gameoflife.boards.Board;
+import model.gameoflife.boards.Board.BoardType;
+import static model.gameoflife.boards.Board.BoardType.DYNAMIC;
+import static model.gameoflife.boards.Board.BoardType.FIXED;
+import model.gameoflife.boards.DynamicBoard;
+import model.gameoflife.boards.FixedBoard;
 
 /**
  * This is the Game Of Life class
