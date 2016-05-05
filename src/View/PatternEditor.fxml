@@ -78,7 +78,8 @@
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>
             </Button>
-            <Button id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" text="Close">
+            <Button id="closeButton" fx:id="closeButton" mnemonicParsing="false" 
+                    onAction="#handleCloseButton" text="Save And Close">
                <VBox.margin>
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>

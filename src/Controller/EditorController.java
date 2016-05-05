@@ -42,13 +42,14 @@ public class EditorController {
     @FXML private TextField rulesTextField;
 
     private double cellSize;
-    private GameOfLife game;
+    private GameOfLife patternGame;
+    private GameOfLife originalGame;
     private MetaData metaData;
     private FileController fileController;
     
     /**
      * This method clones a game from the main view. It also initializes
-     * som keyboard shortcuts and sets the pattern.
+     * some keyboard shortcuts and sets the pattern.
      * 
      * @param game The {@link GameOfLife} to be cloned to the main view.
      * @param fileController is a reference to the class that takes care of
@@ -57,7 +58,8 @@ public class EditorController {
      * @see FileController
      */
     public void initializeEditor(GameOfLife game, FileController fileController) {
-        this.game = game.clone();
+        originalGame = game;
+        patternGame = game.clone();
         this.fileController = fileController;
         
         initializeKeyboardShortcuts();
@@ -70,6 +72,7 @@ public class EditorController {
     @FXML
     public void handleCloseButton() {
         Stage s = (Stage) closeButton.getScene().getWindow();
+        originalGame.setBoard(patternGame.getBoard());
         s.close();
     }
     
@@ -82,7 +85,7 @@ public class EditorController {
         if (!trim()) {
             return;
         }
-        fileController.saveBoard(game, EncodeType.RLE, owner);
+        fileController.saveBoard(patternGame, EncodeType.RLE, owner);
     }
     
     /**
@@ -95,8 +98,9 @@ public class EditorController {
         int row = (int) (e.getY() / cellSize);
         int col = (int) (e.getX() / cellSize);
         
-        if(row < game.getRows() && col < game.getColumns()) {
-            game.setCellAliveState(row, col,(game.getCellAliveState(row, col) == 1) ? (byte) 0 : (byte) 1);
+        if(row < patternGame.getRows() && col < patternGame.getColumns()) {
+            patternGame.setCellAliveState(row, col, (patternGame
+                    .getCellAliveState(row, col) == 1) ? (byte) 0 : (byte) 1);
             draw();
         }
     }
@@ -107,9 +111,9 @@ public class EditorController {
      */
     @FXML
     public void saveToGif() {
-        fileController.saveAnimation(game, 
+        fileController.saveAnimation(patternGame, 
                 (Stage) patternCanvas.getScene().getWindow());
-        game.setFirstGeneration();
+        patternGame.setFirstGeneration();
     }
     
     /**
@@ -126,9 +130,9 @@ public class EditorController {
      */
     @FXML
     public void updateStrip() {
-        game.setFirstGeneration();
-        final double stripCellSize = strip.getHeight() / game.getRows();
-        final double generationWidth = stripCellSize * game.getColumns();
+        patternGame.setFirstGeneration();
+        final double stripCellSize = strip.getHeight() / patternGame.getRows();
+        final double generationWidth = stripCellSize * patternGame.getColumns();
         final double padding = 25;
         strip.setWidth((generationWidth + padding) * 20);
         double offset_X = 0;
@@ -138,12 +142,12 @@ public class EditorController {
                 strip.heightProperty().doubleValue());
         
         for (int i = 0; i < 20; i++) {
-            game.update();
+            patternGame.update();
             drawStrip(gc, offset_X, stripCellSize);
             offset_X += generationWidth + padding;
         }
         
-        game.resetGame();
+        patternGame.resetGame();
     }
     
     /**
@@ -152,7 +156,7 @@ public class EditorController {
      * @return true if the board is not empty.
      */
     private boolean trim() {
-        int[] bBox = game.getBoard().getBoundingBox();
+        int[] bBox = patternGame.getBoard().getBoundingBox();
         
         int trimmedBoardRows = (bBox[1] - bBox[0]) + 1;
         int trimmedBoardColumns = (bBox[3] - bBox[2]) + 1;
@@ -168,10 +172,10 @@ public class EditorController {
         for (int oldRow = bBox[0], newRow = 0; oldRow <= bBox[1]; oldRow++, newRow++) {
             for (int oldColumn = bBox[2], newColumn = 0; oldColumn <= bBox[3]; oldColumn++, newColumn++) {
                 trimmedBoard[newRow][newColumn] = 
-                        game.getCellAliveState(oldRow, oldColumn);
+                        patternGame.getCellAliveState(oldRow, oldColumn);
             }
         }
-        game.loadGame(trimmedBoard, game.getMetaData(), Board.BoardType.FIXED);
+        patternGame.loadGame(trimmedBoard, patternGame.getMetaData(), Board.BoardType.FIXED);
         return true;
     }
     
@@ -179,10 +183,10 @@ public class EditorController {
      * This method sets the pattern with meta data.
      */
     public void setPattern() {
-        metaData = game.getMetaData();
+        metaData = patternGame.getMetaData();
         
-        double cellWidth = patternCanvas.getWidth() / game.getRows();
-        double cellHeight = patternCanvas.getHeight() / game.getColumns();
+        double cellWidth = patternCanvas.getWidth() / patternGame.getRows();
+        double cellHeight = patternCanvas.getHeight() / patternGame.getColumns();
         cellSize = (cellWidth < cellHeight) ? cellWidth : cellHeight;
 
         authorTextField.setText(metaData.getAuthor());
@@ -201,14 +205,14 @@ public class EditorController {
      * @param stripCellSize is the size of the cells.
      */
     private void drawStrip(GraphicsContext gc, double offset_X, double stripCellSize) {        
-        final int rows = game.getRows();
-        final int columns = game.getColumns();
+        final int rows = patternGame.getRows();
+        final int columns = patternGame.getColumns();
         double x = offset_X;
         double y = 0;
 
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
-                if (game.getCellAliveState(row, col) == 1) {
+                if (patternGame.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, stripCellSize, stripCellSize);
                 }
                 x += stripCellSize;
@@ -250,8 +254,8 @@ public class EditorController {
      * This method draws the pattern.
      */
     private void draw() {
-        final int rows = game.getRows();
-        final int columns = game.getColumns();
+        final int rows = patternGame.getRows();
+        final int columns = patternGame.getColumns();
         
         final GraphicsContext gc = patternCanvas.getGraphicsContext2D();
         gc.setFill(Color.WHITE);
@@ -264,7 +268,7 @@ public class EditorController {
         gc.setFill(Color.BLACK);
         for (int row = 0; row < rows; row++) {
             for (int col = 0; col < columns; col++) {
-                if (game.getCellAliveState(row, col) == 1) {
+                if (patternGame.getCellAliveState(row, col) == 1) {
                     gc.fillRect(x, y, cellSize, cellSize);
                 }
                 x += cellSize;
@@ -272,7 +276,7 @@ public class EditorController {
             x = 0;
             y += cellSize;
         }
-        if (!(game.getBoard().getRows() > 100)) {
+        if (!(patternGame.getBoard().getRows() > 100)) {
             drawGridLines(gc);
         }
     }
@@ -282,8 +286,8 @@ public class EditorController {
      * @param gc Is the {@link GraphicsContext} buffer used to draw on a canvas.
      */
     private void drawGridLines(GraphicsContext gc) {
-        final int rows = game.getRows();
-        final int columns = game.getColumns();
+        final int rows = patternGame.getRows();
+        final int columns = patternGame.getColumns();
         final double height = getPatternHeight();
         final double width = getPatternWidth();
         
@@ -306,7 +310,7 @@ public class EditorController {
      * @return a double value of the width.
      */
     private double getPatternWidth() {
-        return cellSize * game.getColumns();
+        return cellSize * patternGame.getColumns();
     }
     
     /**
@@ -315,7 +319,7 @@ public class EditorController {
      * @return a double value of the height.
      */
     private double getPatternHeight() {
-        return cellSize * game.getRows();
+        return cellSize * patternGame.getRows();
     }
     
     /**

@@ -265,7 +265,7 @@ public class DialogBoxes {
             
             editor.setScene(scene);
             editor.setTitle("Pattern Editor");
-            editor.show();
+            editor.showAndWait();
         } catch (IOException e) {
             DialogBoxes.openAlertDialog(AlertType.ERROR, "Error", 
                     "Could not open the Pattern Editor", e.getMessage());

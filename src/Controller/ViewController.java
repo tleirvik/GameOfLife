@@ -2,6 +2,7 @@ package Controller;
 
 import Model.FileManagement.Decoders.RLEDecoder;
 import Model.FileManagement.EncodeType;
+import Model.GameOfLife.Boards.Board;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
 import Model.util.DialogBoxes;
@@ -105,6 +106,8 @@ public class ViewController {
         gol.newEmptyGame(20, 20, BoardType.DYNAMIC);        
         fitToView.setSelected(true);
         
+        
+        
         initializeBindCanvasSize();
         initializeKeyboardShortcuts();
         initializeMouseEventHandlers();
@@ -206,6 +209,7 @@ public class ViewController {
         pauseGame();
         dialogBoxes.openPatternEditor(gol, fileController, 
                 (Stage)gameCanvas.getScene().getWindow());
+        draw();
     }
     
     /**
@@ -400,8 +404,8 @@ public class ViewController {
      * This method will center the board.
      */
     private void centerBoard() {
-            offset_X = gameCanvas.getWidth() / 2 - (getBoardWidth() / 2);
-            offset_Y = gameCanvas.getHeight() / 2 - (getBoardHeight() / 2);
+        offset_X = gameCanvas.getWidth() / 2 - (getBoardWidth() / 2);
+        offset_Y = gameCanvas.getHeight() / 2 - (getBoardHeight() / 2);
     }
 
     /**
