@@ -151,6 +151,15 @@ public class ViewController implements Draw {
     public void loadBoard() {
         pauseGame();
         fileController.loadBoard(gol, (Stage) gameCanvas.getScene().getWindow());
+       
+        if ((gol.getRows() > 500) && (gol.getColumns() > 500)) {
+            toggleGrid.setSelected(true);
+            drawGrid = false;
+        } else {
+            toggleGrid.setSelected(false);
+            drawGrid = true;
+        }
+        
         holdingPattern = fileController.getBoard();
         openGame();
     }
