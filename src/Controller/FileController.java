@@ -180,7 +180,10 @@ public class FileController {
             List<ExtensionFilter> extFilter = new ArrayList<>();
             extFilter.add(new ExtensionFilter(type.getName(),type.getFileExtensions()));
             File file = loadFileChooser((Stage)browse.getScene().getWindow(), extFilter);
-            filePath.setText(file.getAbsolutePath());
+            
+            if (file != null) {
+                filePath.setText(file.getAbsolutePath());
+            }
         });
         
         //===================

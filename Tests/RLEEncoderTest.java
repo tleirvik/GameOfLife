@@ -10,6 +10,7 @@ import java.io.*;
 import java.lang.reflect.Method;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -44,16 +45,16 @@ public class RLEEncoderTest {
                 "3","23"
         };
         metaData.setRuleString(ruleString);
-        f = new File("temp.rle");
+        f = new File("/Users/tleirvik/Dropbox/temp.rle");
         gol = new GameOfLife();
         gol.loadGame(inputArraySmallExploder, metaData, Board.BoardType.FIXED);
 
         // Assert
         assertTrue(gol instanceof GameOfLife);
         assertTrue(gol.getBoard() instanceof Board);
-        /*assertNotNull(f);
-        assertTrue(f.canRead());
-*/
+        assertNotNull(f);
+        //assertTrue(f.canRead());
+
     }
 
     /**

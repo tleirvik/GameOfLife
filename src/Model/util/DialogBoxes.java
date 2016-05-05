@@ -200,6 +200,12 @@ public class DialogBoxes {
         }
     }
     
+    /**
+     * This method opens an options dialog box where the user can set colors for the game.
+     * @param vCtrl {@link ViewController} object to get the colors from.
+     * @param owner The {@link Stage} that owns the new dialog box.
+     * @return The array of colors.
+     */
     public Color[] openOptionsDialog(ViewController vCtrl, Stage owner) {
         Color[] colors = vCtrl.getColors();
         GridPane gp = new GridPane();
@@ -308,7 +314,10 @@ public class DialogBoxes {
         } 
     }
     
-    //TODO: Javadoc
+    /**
+     * This method launches a new FXML window and starts a new {@link HelpController}.
+     * @param owner The {@link Stage} that owns the new window.
+     */
     public void openHelp(Stage owner) {
         Stage help = new Stage();
         help.initModality(Modality.WINDOW_MODAL);

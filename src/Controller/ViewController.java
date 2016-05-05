@@ -64,7 +64,6 @@ public class ViewController implements Draw {
     private Color[] colors = new Color[] {
             Color.GHOSTWHITE, Color.GHOSTWHITE, Color.BLACK, Color.GREY
     };
-    private final double stdGridLineWidth = 1;
 
     // Used to calculate the offset_X and offset_Y values
     private double offsetBegin_X = 0;
@@ -137,6 +136,15 @@ public class ViewController implements Draw {
     public void loadBoard() {
         pauseGame();
         fileController.loadBoard(gol, (Stage) gameCanvas.getScene().getWindow());
+       
+        if ((gol.getRows() > 500) && (gol.getColumns() > 500)) {
+            toggleGrid.setSelected(true);
+            drawGrid = false;
+        } else {
+            toggleGrid.setSelected(false);
+            drawGrid = true;
+        }
+        
         holdingPattern = fileController.getBoard();
         openGame();
     }
@@ -152,6 +160,7 @@ public class ViewController implements Draw {
      */
     @FXML
     public void saveBoardAsRLE() {
+        pauseGame();
         //TODO Endre saveBoard() til aa ta inn filtype RLE
         fileController.saveBoard(gol, EncodeType.RLE, 
                 (Stage) gameCanvas.getScene().getWindow());
@@ -163,6 +172,7 @@ public class ViewController implements Draw {
      */
     @FXML
     public void saveBoardAsWAV() {
+        pauseGame();
         fileController.saveSound(gol, 
                 (Stage) gameCanvas.getScene().getWindow());
     }
@@ -173,6 +183,7 @@ public class ViewController implements Draw {
      */
     @FXML
     public void saveBoardAsGIF() {
+        pauseGame();
         fileController.saveAnimation(gol, 
                 (Stage) gameCanvas.getScene().getWindow());
     }
@@ -230,6 +241,7 @@ public class ViewController implements Draw {
      */
     @FXML
     private void openOptions() {
+        pauseGame();
         colors = dialogBoxes.openOptionsDialog(this,
                 (Stage) gameCanvas.getScene().getWindow());
         draw();
@@ -243,10 +255,11 @@ public class ViewController implements Draw {
     //=================================
     
     /**
-     * 
+     * This method opens a new window with information about the application.
      */
     @FXML
     public void openHelp() {
+        pauseGame();
         dialogBoxes.openHelp((Stage) gameCanvas.getScene().getWindow());
     }
 
@@ -374,7 +387,6 @@ public class ViewController implements Draw {
     	return cellSize * gol.getRows();
     }
 
-    // TODO 30.04.2016 Fjern isXInsideGrid og isYInsideGrid
     /**
      *  Returns true if the X position is inside the grid
      * @param posX The position on the X-axis
@@ -429,16 +441,6 @@ public class ViewController implements Draw {
                 double oldBoardWidth = getBoardWidth();
 
                 if (holdingPattern != null) {
-                    /*
-                    final int M = testArray.length;
-                    final int N = testArray[0].length;
-                    byte[][] ret = new byte[N][M];
-                    for(int r = 0; r < M; r++) {
-                        for (int c = 0; c < N; c++) {
-                            ret[c][M-1-r] = testArray[r][c];
-                        }
-                    }*/
-
                     int midRow = (holdingPattern.length - 1) / 2;
                     int midColumn = (holdingPattern[0].length - 1) / 2;
 
@@ -449,6 +451,7 @@ public class ViewController implements Draw {
                                     holdingPattern[i][j]);
                         }
                     }
+                    holdingPattern = null;
                 } else {
                     gol.setCellAliveState(row, column, (drawCell ? (byte) 1 : (byte) 0));
                 }
