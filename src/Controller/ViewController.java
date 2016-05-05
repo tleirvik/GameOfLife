@@ -2,21 +2,16 @@ package Controller;
 
 import Model.FileManagement.Decoders.RLEDecoder;
 import Model.FileManagement.EncodeType;
-import Model.GameOfLife.Boards.Board;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
 import Model.util.DialogBoxes;
-import javafx.animation.Animation;
-import javafx.animation.Animation.Status;
-import javafx.animation.KeyFrame;
-import javafx.animation.Timeline;
 import javafx.application.Platform;
 import javafx.beans.value.ObservableValue;
-import javafx.event.ActionEvent;
+import javafx.concurrent.ScheduledService;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
@@ -24,7 +19,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-// TODO: 04.05.2016 Sjekk om pakkenavn skal skrives med smaa bokstaver
 
 /**
  * FXML Controller class for the Pattern Editor
@@ -60,7 +54,7 @@ public class ViewController implements Draw {
     //=========================================================================
 
     private final DialogBoxes dialogBoxes = new DialogBoxes();
-    private final Timeline timeline = new Timeline();
+    private ScheduledService<Void> scheduledService;
     private final GameOfLife gol = new GameOfLife();
     private final FileController fileController = new FileController();
 
@@ -68,15 +62,8 @@ public class ViewController implements Draw {
 
     // Standard colors (Can be changed during runtime)
     private Color[] colors = new Color[] {
-            Color.BLACK, Color.GHOSTWHITE, Color.LIGHTGREY, Color.GREY
+            Color.GHOSTWHITE, Color.GHOSTWHITE, Color.BLACK, Color.GREY
     };
-    /*
-    private Color stdAliveCellColor = Color.BLACK;
-    private Color stdBoardColor = Color.GHOSTWHITE;
-    private Color stdBackgroundColor = Color.LIGHTGREY;
-    private Color stdGridColor = Color.GREY;
-    */
-
     private final double stdGridLineWidth = 1;
 
     // Used to calculate the offset_X and offset_Y values
@@ -90,12 +77,14 @@ public class ViewController implements Draw {
 
     private byte[][] holdingPattern = null;
     private boolean drawCell = false;
+    private boolean isRunning = false;
+
     
     //=========================================================================
     // Initializer
     //=========================================================================
     /**
-     * This method initializes the timeline and the slider for setting the
+     * This method initializes the slider for setting the
      * animation speed. It also creates a deafult 20x20 dynamic board. The
      * fit to view button is set to true to fith the board to the screen.
      * 
@@ -104,17 +93,14 @@ public class ViewController implements Draw {
      * board, resize it and move the board.
      */
     public void initialize() {
-        initializeTimeline();
-        initializeFpsSlider();
-        
-        gol.newEmptyGame(20, 20, BoardType.DYNAMIC);        
+        gol.newEmptyGame(20, 20, BoardType.DYNAMIC);
         fitToView.setSelected(true);
-        
-        
-        
+
+        initializeFpsSlider();
         initializeBindCanvasSize();
         initializeKeyboardShortcuts();
         initializeMouseEventHandlers();
+        initializeScheduledService();
     }
     
     //=========================================================================
@@ -275,9 +261,10 @@ public class ViewController implements Draw {
      */
     @FXML
     public void togglePlay() {
-        if(timeline.getStatus() != Status.RUNNING) {
+        if(!isRunning) {
+            isRunning = true;
             togglePlayButton.setText("Pause");
-            timeline.play();
+            scheduledService.restart();
         } else {
             pauseGame();
         }
@@ -335,7 +322,8 @@ public class ViewController implements Draw {
      * This method pauses the animation of the board.
      */
     public void pauseGame() {
-        timeline.stop();
+        isRunning = false;
+        scheduledService.cancel();
         togglePlayButton.setText("Play");
     }
     
@@ -536,13 +524,8 @@ public class ViewController implements Draw {
         fpsSlider.valueChangingProperty().addListener((ObservableValue<? extends 
                 Boolean> obs, Boolean wasChanging, Boolean isChanging) -> {
             int newValue = (int)fpsSlider.getValue();
-            if (timeline.getStatus() == Animation.Status.RUNNING) {
-                timeline.stop();
-                initializeKeyFrame(newValue);
-                timeline.play();
-            } else {
-                initializeKeyFrame(newValue);
-            }
+            Duration duration = new Duration(1000/newValue);
+            scheduledService.setPeriod(duration);
         });
     }
 
@@ -570,30 +553,7 @@ public class ViewController implements Draw {
     }
 
     /**
-     * This method initializes the timeline on start up.
-     */
-    private void initializeTimeline() {
-        timeline.setCycleCount(Animation.INDEFINITE);
-        initializeKeyFrame(1);
-    }
-
-    /**
-     * This method initializes the key frame.
-     * @param fps number of frames per second.
-     */
-    private void initializeKeyFrame(int fps) {
-        Duration duration = Duration.millis(1000/fps);
-        KeyFrame keyFrame;
-        keyFrame = new KeyFrame(duration, (ActionEvent e) -> {
-            update();
-        });
-        timeline.getKeyFrames().clear();
-        timeline.getKeyFrames().add(0, keyFrame);
-    }
-
-    /**
-     *  This method is called from within the {@link KeyFrame} in the {@link Timeline} and
-     *  calls other methods that are required
+     *  This method is called by a {@link ScheduledService} and calls other methods that are required
      *  <br>
      *  First we call {@link #fitToView()} (if the Fit To View {@link ToggleButton} is  selected )
      *  to resize the board and position it on the center of the {@link Canvas}. Then we call
@@ -605,9 +565,33 @@ public class ViewController implements Draw {
             fitToView();
             centerBoard();
         }
-        gol.updateWithThreads();
-        draw();
+        gol.update();
+        Platform.runLater(new Runnable() {
+            @Override
+            public void run() {
+                draw();
+            }
+        });
     }
+
+
+    private void initializeScheduledService() {
+        scheduledService = new ScheduledService<Void>() {
+            @Override
+            protected Task<Void> createTask() {
+                return new Task<Void>() {
+                    @Override
+                    protected Void call() throws Exception {
+                        update();
+                        return null;
+                    }
+                };
+            }
+        };
+        Duration duration = Duration.millis(1000/60);
+        scheduledService.setPeriod(duration);
+    }
+
     public void setStatusBarText(String s) {
         statusBar.setText(s);
     }
