@@ -10,11 +10,8 @@ public class Main extends Application {
     @Override
     public void start(Stage stage) throws Exception {
         FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MainWindow.fxml"));
-        Parent root = (Parent) loader.load();
-        ViewController controller = (ViewController) loader.getController();
-
+        Parent root = loader.load();
         Scene scene = new Scene(root);
-
 
         scene.getStylesheets().add(getClass().getResource(
                 "/view/mainWindowStyleSheet.css").toExternalForm());
