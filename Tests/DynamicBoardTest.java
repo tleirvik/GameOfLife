@@ -41,10 +41,8 @@ public class DynamicBoardTest {
         metaData.setRuleString(s);
         gol.loadGame(inputArraySmallExploder, metaData, Board.BoardType.DYNAMIC);
 
-        //System.out.println(dynamicBoard.getBoundingBoxPattern());
         assertTrue(gol instanceof GameOfLife);
         assertTrue(gol.getBoard() instanceof Board);
-        // System.out.println(dynamicBoard.toString());
     }
 
     @Test
@@ -287,14 +285,12 @@ public class DynamicBoardTest {
         // Arrange
         gol = new GameOfLife();
         gol.loadGame(inputArraySmallExploder, new MetaData(), Board.BoardType.DYNAMIC);
-        String verify = "0000000000000000000000000000000000000000000000000000000000011100000000101000000001" +
-                "01000000000100000000000000000000000000000000000000";
+        String verify = "000000000000000000000000000000000000000000000000111000000001010000000010100000000010" +
+                "000000000000000000000000000000000000000000000000";
 
         // Act
         gol.setCellAliveState(10, 5, (byte)1);
         gol.update();
-        System.out.println(gol.getRows() + " : " + gol.getColumns());
-        System.out.println(gol.getBoard().toString());
 
         // Assert
         assertEquals(verify, gol.getBoard().toString());
@@ -309,8 +305,6 @@ public class DynamicBoardTest {
                 "0000100000000000000000000000000000000000000000";
 
         // Act
-        //gol.setCellAliveState(5, 0, (byte)1);
-        //gol.setCellAliveState(11, 5, (byte)1);
         gol.setCellAliveState(5, 0, (byte)1);
         gol.update();
         System.out.println(gol.getRows() + " : " + gol.getColumns());
@@ -342,29 +336,20 @@ public class DynamicBoardTest {
         // Arrange
         gol = new GameOfLife();
         gol.loadGame(inputArraySmallExploder, new MetaData(), Board.BoardType.DYNAMIC);
-        String verify = "00000000000000000000000000000000000000000000000000001110000000001010000000001" +
-                "0100000000001000000000000000000000000000000000000000000";
+        String verify = "00000000000000000000000000000000000000000000000000000000000000000000001110000000000101000000" +
+                "00001010000000000010000000000000000000000000000000000000000000000000000000000";
 
         // Act
         gol.setCellAliveState(0, 5, (byte)1);
         gol.setCellAliveState(10, 5, (byte)1);
         gol.setCellAliveState(5, 0, (byte)1);
         gol.setCellAliveState(5, 10, (byte)1);
-        System.out.println(gol.getRows());
-        System.out.println(gol.getColumns());
-
-        System.out.println(gol.getBoard().toString());
 
         gol.update();
-        System.out.println(gol.getRows());
-        System.out.println(gol.getColumns());
-        System.out.println(gol.getBoard().toString());
 
-        // Nede har ikke ekspandert
-        // Høyre OK
-        // Venstre OK
-        // Topp har ekspandert for mye
         // Assert
         assertEquals(verify, gol.getBoard().toString());
+        assertEquals(13, gol.getRows());
+        assertEquals(13, gol.getColumns());
     }
 }
