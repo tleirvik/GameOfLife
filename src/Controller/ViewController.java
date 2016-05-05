@@ -2,7 +2,6 @@ package Controller;
 
 import Model.FileManagement.Decoders.RLEDecoder;
 import Model.FileManagement.EncodeType;
-import Model.GameOfLife.Boards.Board;
 import Model.GameOfLife.Boards.Board.BoardType;
 import Model.GameOfLife.GameOfLife;
 import Model.util.DialogBoxes;
@@ -16,7 +15,6 @@ import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.canvas.Canvas;
-import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.*;
 import javafx.scene.input.*;
 import javafx.scene.layout.BorderPane;
@@ -68,7 +66,7 @@ public class ViewController implements Draw {
 
     // Standard colors (Can be changed during runtime)
     private Color[] colors = new Color[] {
-            Color.BLACK, Color.GHOSTWHITE, Color.LIGHTGREY, Color.GREY
+            Color.GHOSTWHITE, Color.GHOSTWHITE, Color.BLACK, Color.GREY
     };
     /*
     private Color stdAliveCellColor = Color.BLACK;
@@ -266,7 +264,7 @@ public class ViewController implements Draw {
     //=================================
     
     /**
-     * 
+     * This method opens a new window with information about the application.
      */
     @FXML
     public void openHelp() {
@@ -284,7 +282,7 @@ public class ViewController implements Draw {
      */
     @FXML
     public void togglePlay() {
-        if(timeline.getStatus() != Status.RUNNING) {
+        if (timeline.getStatus() != Status.RUNNING) {
             togglePlayButton.setText("Pause");
             timeline.play();
         } else {
