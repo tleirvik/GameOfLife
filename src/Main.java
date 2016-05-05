@@ -1,4 +1,4 @@
-import Controller.ViewController;
+import controller.ViewController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -9,7 +9,7 @@ public class Main extends Application {
 
 	@Override
 	public void start(Stage stage) throws Exception {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/View/MainWindow.fxml"));
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MainWindow.fxml"));
             Parent root = (Parent)loader.load();
             ViewController controller = (ViewController)loader.getController();
 
@@ -17,7 +17,7 @@ public class Main extends Application {
 
             
             scene.getStylesheets().add(getClass().getResource(
-                "/View/mainWindowStyleSheet.css").toExternalForm());
+                    "/view/mainWindowStyleSheet.css").toExternalForm());
                 
             stage.setTitle("Game Of Life");
             stage.setScene(scene);
