@@ -169,7 +169,7 @@ public class ViewController implements Draw {
     }
     
     /**
-     * This method will save the current board as a .wav representation when
+     * This method will save the current board as a .model.filemanagement.otherformats.wav representation when
      * the user interacts with this function in the view.
      */
     @FXML
@@ -683,7 +683,6 @@ public class ViewController implements Draw {
     /**
      * Returns the boards color
      * @return The board colors
-     * @see {@link #setColors(Color[])}
      * @see Color
      */
     public Color[] getColors() {

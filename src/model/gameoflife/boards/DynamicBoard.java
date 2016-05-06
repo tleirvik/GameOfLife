@@ -9,9 +9,9 @@ import java.util.List;
  * game board for Game Of Life
  *
  * @see Board
- * @see Model.GameOfLife.Boards.Board.BoardType
+ * @see model.gameoflife.boards.Board.BoardType
  * @see FixedBoard
- * @see Model.GameOfLife.Algorithms.Algorithm
+ * @see model.gameoflife.algorithms.Algorithm
  * @see MetaData
  */
 public class DynamicBoard extends Board { 

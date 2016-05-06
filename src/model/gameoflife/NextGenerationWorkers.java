@@ -131,8 +131,8 @@ public final class NextGenerationWorkers {
          *
          * @param start The start position of the board segment
          * @param stop The end position of the board segment
-         * @param clearStart
-         * @param clearStop
+         * @param clearStart The position where the thread should start emptying the neighbour array
+         * @param clearStop The position where the thread should stop emptying the neighbour array
          * @param barrier The cyclic barrier
          * @param algorithm The {@link Algorithm} to use
          */

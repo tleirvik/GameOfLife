@@ -5,6 +5,9 @@ import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import model.gameoflife.GameOfLife;
 
+/**
+ * This is the draw interface used in our Game Of Life implementation
+ */
 public interface Draw {
 
     default void draw(GameOfLife gol, GraphicsContext gc, Color[] colors, double offset_X

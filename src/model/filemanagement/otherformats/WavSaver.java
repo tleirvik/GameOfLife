@@ -1,9 +1,11 @@
 package model.filemanagement.otherformats;
 
+
 import model.filemanagement.otherformats.data.WavData;
+import model.filemanagement.otherformats.wav.WavFile;
+import model.filemanagement.otherformats.wav.WavFileException;
 import model.gameoflife.Statistics;
-import Wav.WavFile;
-import Wav.WavFileException;
+
 import java.io.File;
 import java.io.IOException;
 

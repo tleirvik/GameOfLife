@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package Wav;
+package model.filemanagement.otherformats.wav;
 
 public class WavFileException extends Exception
 {

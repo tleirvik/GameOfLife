@@ -107,7 +107,7 @@ public class EditorController {
     
     /**
      * This method saves the current pattern to the .gif format.
-     * @see Model.FileManagement.OtherFormats.GIFSaver
+     * @see model.filemanagement.otherformats.GIFSaver
      */
     @FXML
     public void saveToGif() {

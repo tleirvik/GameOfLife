@@ -148,7 +148,7 @@ public class RLEEncoder extends Encoder {
      * Writes the meta data to file
      * @param bw The {@link BufferedWriter} to use for saving the data
      * @throws IOException If an unspecified I/O error occurs
-     * @see model.gameoflife2.MetaData
+     * @see model.gameoflife.MetaData
      */
     private void writeMetadata(BufferedWriter bw) throws IOException {
         bw.write(rleString.toString());

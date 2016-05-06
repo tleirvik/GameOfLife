@@ -356,8 +356,8 @@ public class FileController {
      * @param game The {@link GameOfLife} game to be saved to Wav format
      * @param owner The Stage that "owns" the dialog box
      * @see WavData
-     * @see Model.FileManagement.OtherFormats.WavSaver
-     * @see Wav.WavFile
+     * @see model.filemanagement.otherformats.WavSaver
+     * @see model.filemanagement.otherformats.wav.WavFile
      * @return A {@link WavData} object
      */
     private WavData saveToWavDialog(GameOfLife game, Stage owner) {

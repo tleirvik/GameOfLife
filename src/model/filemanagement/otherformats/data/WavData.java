@@ -6,7 +6,7 @@ import model.gameoflife.GameOfLife;
 /**
  * This class generates a sound interpretation of a game board
  *
- * @see Model.FileManagement.OtherFormats.WavSaver
+ * @see model.filemanagement.otherformats.WavSaver
  */
 public class WavData {
     private final GameOfLife game;

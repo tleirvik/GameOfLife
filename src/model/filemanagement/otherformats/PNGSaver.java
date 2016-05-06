@@ -12,7 +12,7 @@ import java.io.IOException;
 import javax.imageio.ImageIO;
 
 /**
- * Save JPEG files
+ * Save PNG files
  */
 public class PNGSaver extends ImageSaver {
 

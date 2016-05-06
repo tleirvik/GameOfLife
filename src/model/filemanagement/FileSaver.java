@@ -25,7 +25,6 @@ public class FileSaver {
      * @param f The {@link File} to save
      * @return True if the file has been saved
      */
-    // TODO: 04.05.2016 Sjekk @return 
     public boolean saveGame(EncodeType type, GameOfLife game, File f) {
         Encoder encoder = new RLEEncoder(game, f);
         return encoder.encode();
