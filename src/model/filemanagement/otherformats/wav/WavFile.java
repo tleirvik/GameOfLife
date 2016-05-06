@@ -186,7 +186,7 @@ public class WavFile
 
 		// Read the first 12 bytes of the file
 		int bytesRead = wavFile.iStream.read(wavFile.buffer, 0, 12);
-		if (bytesRead != 12) throw new WavFileException("Not enough wav file bytes for header");
+		if (bytesRead != 12) throw new WavFileException("Not enough model.filemanagement.otherformats.wav file bytes for header");
 
 		// Extract parts from the header
 		long riffChunkID = getLE(wavFile.buffer, 0, 4);
@@ -263,7 +263,7 @@ public class WavFile
 				// before we can read the data chunk
 				if (foundFormat == false) throw new WavFileException("Data chunk found before Format chunk");
 
-				// Check that the chunkSize (wav data length) is a multiple of the
+				// Check that the chunkSize (model.filemanagement.otherformats.wav data length) is a multiple of the
 				// block align (bytes per frame)
 				if (chunkSize % wavFile.blockAlign != 0) throw new WavFileException("Data Chunk size is not multiple of Block Align");
 
@@ -723,7 +723,7 @@ public class WavFile
 				int validBits = readWavFile.getValidBits();
 				long sampleRate = readWavFile.getSampleRate();
 
-				WavFile writeWavFile = newWavFile(new File("out.wav"), numChannels, numFrames, validBits, sampleRate);
+				WavFile writeWavFile = newWavFile(new File("out.model.filemanagement.otherformats.wav"), numChannels, numFrames, validBits, sampleRate);
 
 				final int BUF_SIZE = 5001;
 
@@ -746,7 +746,7 @@ public class WavFile
 				writeWavFile.close();
 			}
 
-			WavFile writeWavFile = newWavFile(new File("out2.wav"), 1, 10, 23, 44100);
+			WavFile writeWavFile = newWavFile(new File("out2.model.filemanagement.otherformats.wav"), 1, 10, 23, 44100);
 			double[] buffer = new double[10];
 			writeWavFile.writeFrames(buffer, 10);
 			writeWavFile.close();
