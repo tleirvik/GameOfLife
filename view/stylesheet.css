@@ -1,0 +1,32 @@
+#background, #bottomBox, #topMenuBar, #sideBar {
+    -fx-background-image: url("resources/bottom_topBG.png");
+}
+
+#canvasParent {
+    -fx-background-image: url("resources/canvasBG.png");
+    -fx-effect: innershadow( one-pass-box , black, 7,0,0,0 );
+}
+
+.button, .toggle-button {
+    -fx-background-color: #555;
+    -fx-text-fill: #eee;
+    -fx-font-weight: bold;
+    -fx-effect: dropshadow( gaussian , black, 2,0,0,0 );
+    
+}
+
+.button:hover, .toggle-button:hover {
+    -fx-background-color: #aaa;
+    -fx-text-fill: #333;
+    -fx-font-weight: bold;
+}
+
+.toggle-button:selected {
+    -fx-background-color: #888;
+    -fx-effect: innershadow( one-pass-box , black, 6,0,0,0 );
+}
+
+.check-box, .label{
+    -fx-text-fill: #555;
+    -fx-font-weight: bold;
+}

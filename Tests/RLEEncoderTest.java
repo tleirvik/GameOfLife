@@ -1,17 +1,11 @@
-import Model.FileManagement.Encoders.Encoder;
-import Model.FileManagement.Encoders.RLEEncoder;
-import Model.GameOfLife.Boards.Board;
-import Model.GameOfLife.GameOfLife;
-import Model.GameOfLife.MetaData;
+/*
 import org.junit.Before;
 import org.junit.Test;
-
+import Model.FileManagement.*;
 import java.io.*;
 import java.lang.reflect.Method;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.*;
 
 /**
  * Created by tleirvik on 03.05.2016.
@@ -20,7 +14,7 @@ public class RLEEncoderTest {
     File f;
     Encoder encoder;
     GameOfLife gol;
-    MetaData metaData;
+    model.gameoflife.MetaData metaData;
     byte[][] inputArraySmallExploder = {
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
             {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},

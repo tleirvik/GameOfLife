@@ -1,0 +1,115 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.text.*?>
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.canvas.Canvas?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ScrollPane?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.BorderPane?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
+
+<BorderPane fx:id="patternController" prefHeight="500.0" prefWidth="800.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.EditorController">
+    
+    <top>
+      <MenuBar id="topMenuBar" fx:id="menuBar" BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="File">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#saveBoard" text="Save Board..." />
+              <MenuItem mnemonicParsing="false" onAction="#saveToGif" text="Save To GIF" />
+            </items>
+          </Menu>
+          
+        </menus>
+      </MenuBar>
+   </top>
+    
+   <left>
+      <VBox id="sideBar" prefHeight="371.0" prefWidth="198.0" spacing="20.0" BorderPane.alignment="CENTER">
+          
+         <children>
+            <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
+               <children>
+                  <Label id="metaDataLabel" alignment="CENTER" prefHeight="30.0" prefWidth="129.0" text="Meta Data">
+                     <font>
+                        <Font name="Arial Bold" size="19.0" />
+                     </font>
+                  </Label>
+               </children>
+               <VBox.margin>
+                  <Insets top="20.0" />
+               </VBox.margin>
+            </HBox>
+            <TextField fx:id="titleTextField" prefHeight="27.0" prefWidth="157.0" promptText="Title">
+               <VBox.margin>
+                  <Insets left="15.0" right="15.0" />
+               </VBox.margin>
+            </TextField>
+            <TextField fx:id="authorTextField" promptText="Author">
+               <VBox.margin>
+                  <Insets left="15.0" right="15.0" />
+               </VBox.margin>
+            </TextField>
+            <TextField fx:id="descriptionTextField" promptText="Description">
+               <VBox.margin>
+                  <Insets left="15.0" right="15.0" />
+               </VBox.margin>
+            </TextField>
+            <TextField fx:id="rulesTextField" promptText="Rules">
+               <VBox.margin>
+                  <Insets left="15.0" right="15.0" />
+               </VBox.margin>
+            </TextField>
+            <Button mnemonicParsing="false" onAction="#handleTrimButton" prefHeight="27.0" prefWidth="61.0" text="Trim">
+               <VBox.margin>
+                  <Insets left="15.0" right="15.0" />
+               </VBox.margin>
+            </Button>
+            <Button id="closeButton" fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" text="Save And Close">
+               <VBox.margin>
+                  <Insets left="15.0" right="15.0" />
+               </VBox.margin>
+               <font>
+                  <Font name="Arial Bold" size="15.0" />
+               </font>
+            </Button>
+         </children>
+         <padding>
+            <Insets bottom="20.0" top="10.0" />
+         </padding>
+      </VBox>
+   </left>
+   <center>
+      <Pane id="canvasParent" BorderPane.alignment="CENTER">
+         <children>
+            <Canvas fx:id="patternCanvas" height="354.0" onMouseClicked="#handleMouseClick" width="602.0" />
+         </children>
+      </Pane>
+   </center>
+   <bottom>
+      <VBox id="bottomBox" prefHeight="130.0" prefWidth="100.0" BorderPane.alignment="CENTER">
+         <children>
+            <ScrollPane fitToHeight="true" minHeight="150.0" minWidth="800.0" pannable="false" prefViewportWidth="800.0" vbarPolicy="NEVER" vmax="0.0">
+               <content>
+                  <Canvas fx:id="strip" height="132.0" width="7000.0" />
+               </content>
+            </ScrollPane>
+            <Button id="stripButton" onAction="#updateStrip" text="Update Strip" />
+         </children>
+      </VBox>
+   </bottom>
+   
+</BorderPane>
