@@ -292,21 +292,10 @@ public class FileController {
      * @param owner The Stage that "owns" the dialog box
      */
     public void saveImage(GameOfLife game, Stage owner) {
-        ImageData data = null;
-        do{
-            data = saveToImageDialog(game, owner);//Open dialog and wait for it to close
-            if (data == null) { //If data equals null, user exited the dialog
-                return;
-            } else if (data.getCellSize() < 1) { //The image size was too small
-                int minimumHeight = 1 * data.getGame().getRows();
-                int minimumWidth = 1 * data.getGame().getColumns();
-                DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
-                        "The image size is too small to save the current board", 
-                        "Please choose a bigger height and/or width. The image "
-                      + "needs to be at least " + minimumWidth + " pixels in width"
-                      + " and " + minimumHeight + " pixels in height");
-            }//TODO: TEST FOR BUGS
-        } while (data.getCellSize() < 1); //Run loop again if cellSize is less than 1
+        ImageData data = data = saveToImageDialog(game, owner);//Open dialog and wait for it to close
+        if (data == null) { //If data equals null, user exited the dialog
+            return;
+        }
 
         fileSaver.saveImage(ImageType.PNG, data);
     }
@@ -319,22 +308,10 @@ public class FileController {
      */
     public void saveAnimation(GameOfLife game, Stage owner) {
         //Can be updated to support other formats
-        GIFData data = null;
-        do{
-            data = saveToGIFDialog(game, owner);//Open dialog and wait for it to close
-            if (data == null) { //If data equals null, user exited the dialog
-                return;
-            } else if (data.getCellSize() < 1) { //The image size was too small
-                int minimumHeight = 1 * data.getGame().getRows();
-                int minimumWidth = 1 * data.getGame().getColumns();
-                DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error!", 
-                        "The image size is too small to save the current board", 
-                        "Please choose a bigger height and/or width. The image "
-                      + "needs to be at least " + minimumWidth + " pixels in width"
-                      + " and " + minimumHeight + " pixels in height");
-            }//TODO: TEST FOR BUGS
-        } while (data.getCellSize() < 1); //Run loop again if cellSize is less than 1
-        
+        GIFData data = data = saveToGIFDialog(game, owner);//Open dialog and wait for it to close
+        if (data == null) { //If data equals null, user exited the dialog
+            return;
+        }
         fileSaver.saveImage(ImageType.GIF, data);
     }
 
@@ -407,7 +384,7 @@ public class FileController {
         Optional<ButtonType> result = dialog.showAndWait();
         if (result.get() == saveChanges){
             List<FileChooser.ExtensionFilter> extFilter = new ArrayList<>();
-            extFilter.add(new FileChooser.ExtensionFilter("GIF files", "*.gif"));
+            extFilter.add(new FileChooser.ExtensionFilter("WAV files", "*.wav"));
             extFilter.add(new FileChooser.ExtensionFilter("All Files", "*.*"));
             File file = saveFileChooser(owner, extFilter);
             
@@ -444,8 +421,14 @@ public class FileController {
         //=========================================
         gp.add(new Label("Width: "), 0, 0, 1, 1);
         gp.add(new Label("Height: "), 0, 1, 1, 1);
-        
-        final Spinner spinnerWidth = new Spinner(10, 10000, 200, 10);
+
+        int minimumWidth = 1 * game.getColumns();
+        int minimumHeight = 1 * game.getRows();
+
+        int maximumWidth = minimumWidth * 4;
+        int maximumHeight = minimumHeight * 4;
+
+        final Spinner spinnerWidth = new Spinner(minimumWidth, maximumWidth, minimumWidth, minimumWidth);
         spinnerWidth.setEditable(true);
         TextField widthField = spinnerWidth.getEditor();
         widthField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -455,7 +438,7 @@ public class FileController {
         });
         gp.add(spinnerWidth, 1, 0, 3, 1);
         
-        final Spinner spinnerHeight = new Spinner(10, 10000, 200, 10);
+        final Spinner spinnerHeight = new Spinner(minimumHeight, maximumHeight, minimumHeight, minimumHeight);
         spinnerHeight.setEditable(true);
         TextField heightField = spinnerHeight.getEditor();
         heightField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -520,8 +503,14 @@ public class FileController {
         //=========================================
         gp.add(new Label("Width: "), 0, 0, 1, 1);
         gp.add(new Label("Height: "), 0, 1, 1, 1);
-        
-        final Spinner spinnerWidth = new Spinner(10, 10000, 200, 10);
+
+        int minimumWidth = 1 * game.getColumns();
+        int minimumHeight = 1 * game.getRows();
+
+        int maximumWidth = minimumWidth * 4;
+        int maximumHeight = minimumHeight * 4;
+
+        final Spinner spinnerWidth = new Spinner(minimumWidth, maximumWidth, minimumWidth, minimumWidth);
         spinnerWidth.setEditable(true);
         TextField widthField = spinnerWidth.getEditor();
         widthField.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -531,7 +520,7 @@ public class FileController {
         });
         gp.add(spinnerWidth, 1, 0, 3, 1);
         
-        final Spinner spinnerHeight = new Spinner(10, 10000, 200, 10);
+        final Spinner spinnerHeight = new Spinner(minimumHeight, maximumHeight, minimumHeight, minimumHeight);
         spinnerHeight.setEditable(true);
         TextField heightField = spinnerHeight.getEditor();
         heightField.textProperty().addListener((observable, oldValue, newValue) -> {

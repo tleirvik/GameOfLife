@@ -254,7 +254,7 @@ public class DialogBoxes {
      * @param fileController The {@link FileController} to use in the editor
      * @param owner The {@link Stage} that owns the new dialog box
      */
-    public void openPatternEditor(GameOfLife game, FileController fileController, 
+    public void openPatternEditor(GameOfLife game, Color[] colors, FileController fileController,
             Stage owner) {
         Stage editor = new Stage();
         editor.initModality(Modality.WINDOW_MODAL);
@@ -266,13 +266,13 @@ public class DialogBoxes {
             
             BorderPane root = loader.load();
             editor.setResizable(false);
-            
-            EditorController edController = loader.getController();
-            edController.initializeEditor(game, fileController);
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
-                    "/view/patternEditorStyleSheet.css").toExternalForm());
+                    "/view/stylesheet.css").toExternalForm());
+
+            EditorController edController = loader.getController();
+            edController.initializeEditor(game, colors, fileController);
             
             editor.setScene(scene);
             editor.setTitle("Pattern Editor");
@@ -305,7 +305,7 @@ public class DialogBoxes {
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
-                "/view/statisticsGraphics.css").toExternalForm());
+                "/view/stylesheet.css").toExternalForm());
             
             stats.setScene(scene);
             stats.setTitle("Game Of Life Statistics");
@@ -317,7 +317,7 @@ public class DialogBoxes {
     }
     
     /**
-     * This method launches a new FXML window and starts a new {@link HelpController}.
+     * This method launches a new FXML window for the Help and starts a new {@link HelpController}.
      * @param owner The {@link Stage} that owns the new window.
      */
     public void openHelp(Stage owner) {
@@ -344,5 +344,36 @@ public class DialogBoxes {
             DialogBoxes.openAlertDialog(AlertType.ERROR, "Error", 
                     "Could not open Help dialog", e.toString());
         } 
+    }
+
+    /**
+     * This method launches a new FXML window for the JavaDoc.
+     * @param owner The {@link Stage} that owns the new window.
+     */
+    public void openJavaDoc(Stage owner) {
+        Stage javaDoc = new Stage();
+        javaDoc.initModality(Modality.WINDOW_MODAL);
+        javaDoc.initOwner(owner);
+
+        try {
+            FXMLLoader loader;
+            loader = new FXMLLoader(getClass().getResource("/view/JavaDocWindow.fxml"));
+
+            BorderPane root = loader.load();
+            javaDoc.setResizable(false);
+
+            Scene scene = new Scene(root);
+
+            javafx.scene.web.WebView webView = (javafx.scene.web.WebView) root.getCenter();
+            String url = getClass().getResource("/Model/util/javadoc/index.html").toExternalForm();
+            webView.getEngine().load(url);
+
+            javaDoc.setScene(scene);
+            javaDoc.setTitle("Game Of Life JavaDoc");
+            javaDoc.show();
+        } catch (IOException e) {
+            DialogBoxes.openAlertDialog(AlertType.ERROR, "Error",
+                    "Could not open JavaDoc dialog", e.toString());
+        }
     }
 }

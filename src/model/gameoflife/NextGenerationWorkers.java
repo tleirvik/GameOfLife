@@ -60,7 +60,6 @@ public final class NextGenerationWorkers {
             final int stop = segments[i][1];
             final int clearStart = segments[i][2];
             final int clearStop = segments[i][3];
-            System.out.println("start:" + start + " stop:" + stop);
             workers.set(i, new Thread(new NextGenerationRunnable(start, stop, clearStart, clearStop, barrier, algorithm)));
         }
     }

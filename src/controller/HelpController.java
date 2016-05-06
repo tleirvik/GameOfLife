@@ -37,15 +37,8 @@ public class HelpController {
      * Initializes the {@link ListView}
      */
     private void initializeListView() {
-        /*
-        About/Credits
-        How to Play
-        Pattern Editor
-        Statistics
-        ...
-        */
         ObservableList<String> subjects = FXCollections.observableArrayList(
-                "About / Credits","How To Play", "Pattern Editor", "Statistics", "Java Documentation"
+                "About / Credits","How To Play", "Pattern Editor", "Statistics"
         );
         listView.setItems(subjects);
         
@@ -79,10 +72,7 @@ public class HelpController {
             case "Statistics":
                 subjectFileName = "Statistics.html";
                 break;
-            case "Java Documentation":
-                subjectFileName = "JavaDoc/index.html";
-                break;
         }
-        return getClass().getResource("/Model/util/help/" + subjectFileName).toExternalForm();
+        return getClass().getResource("/model/util/help/" + subjectFileName).toExternalForm();
     }
 }

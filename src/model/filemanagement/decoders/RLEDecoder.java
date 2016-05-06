@@ -84,7 +84,6 @@ public class RLEDecoder extends Decoder {
                         String tempString = line.replaceAll("(#N )", "");
                         name.append(tempString);
                         metadata.setName(name.toString());
-                        System.out.println(name.toString());
                         break;
                     case 'C':
                         String tempString2 = line.replaceAll("(#C )", "");

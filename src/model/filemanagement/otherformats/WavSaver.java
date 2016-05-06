@@ -86,8 +86,8 @@ public class WavSaver {
 
                 // fill the buffer, one tone per channel
                 for (int bufferIndex = 0; bufferIndex < toWrite; bufferIndex++, frameCounter++) {
-                    buffer[0][bufferIndex] = Math.sin(2.0 * Math.PI * 400 + numberOfLivingCells * frameCounter / sampleRate);
-                    buffer[1][bufferIndex] = Math.sin(2.0 * Math.PI * 500 + geometrics * frameCounter / sampleRate);
+                    buffer[0][bufferIndex] = Math.sin(2.0 * Math.PI * 300 + (geometrics / numberOfLivingCells) * frameCounter / sampleRate);
+                    buffer[1][bufferIndex] = Math.sin(2.0 * Math.PI * 200 + (similarity - diffLivingCells) * frameCounter / sampleRate);
                 }
 
                 // write the buffer

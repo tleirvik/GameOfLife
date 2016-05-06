@@ -6,9 +6,9 @@ package model.gameoflife;
  *
  * This class is a container class for a boards metadata
  *
- * @see Model.GameOfLife.Boards.Board
- * @see Model.FileManagement.Decoders.Decoder
- * @see Model.FileManagement.Encoders.Encoder
+ * @see model.gameoflife.boards.Board
+ * @see model.filemanagement.decoders.Decoder
+ * @see model.filemanagement.encoders.Encoder
  *
  */
 public class MetaData {

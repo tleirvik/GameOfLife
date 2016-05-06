@@ -1,5 +1,6 @@
 package controller;
 
+import javafx.scene.input.*;
 import model.filemanagement.EncodeType;
 import model.gameoflife.boards.Board;
 import model.gameoflife.MetaData;
@@ -9,16 +10,12 @@ import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.control.Button;
 import javafx.scene.control.TextField;
-import javafx.scene.input.MouseEvent;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 
 import javafx.scene.control.Alert;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyCodeCombination;
-import javafx.scene.input.KeyCombination;
 import model.gameoflife.GameOfLife;
 
 /**
@@ -31,7 +28,7 @@ import model.gameoflife.GameOfLife;
  * @author Terje Leirvik.
  * @author Robin Sean Aron Lundh.
  */
-public class EditorController {
+public class EditorController implements Draw {
     @FXML private MenuBar menuBar;
     @FXML private Canvas patternCanvas;
     @FXML private Canvas strip;
@@ -46,7 +43,8 @@ public class EditorController {
     private GameOfLife originalGame;
     private MetaData metaData;
     private FileController fileController;
-    
+    private Color[] colors;
+
     /**
      * This method clones a game from the main view. It also initializes
      * some keyboard shortcuts and sets the pattern.
@@ -57,11 +55,16 @@ public class EditorController {
      * 
      * @see FileController
      */
-    public void initializeEditor(GameOfLife game, FileController fileController) {
+    public void initializeEditor(GameOfLife game, Color[] colors, FileController fileController) {
         originalGame = game;
+        this.colors = colors;
         patternGame = game.clone();
         this.fileController = fileController;
-        
+
+        final String os = System.getProperty ("os.name");
+        if (os != null && os.startsWith ("Mac"))
+            menuBar.useSystemMenuBarProperty ().set (true);
+
         initializeKeyboardShortcuts();
         setPattern();
     }
@@ -146,7 +149,6 @@ public class EditorController {
             drawStrip(gc, offset_X, stripCellSize);
             offset_X += generationWidth + padding;
         }
-        
         patternGame.resetGame();
     }
     
@@ -254,54 +256,7 @@ public class EditorController {
      * This method draws the pattern.
      */
     private void draw() {
-        final int rows = patternGame.getRows();
-        final int columns = patternGame.getColumns();
-        
-        final GraphicsContext gc = patternCanvas.getGraphicsContext2D();
-        gc.setFill(Color.WHITE);
-        gc.fillRect(0, 0, patternCanvas.getWidth(), 
-                patternCanvas.getHeight());
-
-        double x = 0;
-        double y = 0;
-        
-        gc.setFill(Color.BLACK);
-        for (int row = 0; row < rows; row++) {
-            for (int col = 0; col < columns; col++) {
-                if (patternGame.getCellAliveState(row, col) == 1) {
-                    gc.fillRect(x, y, cellSize, cellSize);
-                }
-                x += cellSize;
-            }
-            x = 0;
-            y += cellSize;
-        }
-        if (!(patternGame.getBoard().getRows() > 100)) {
-            drawGridLines(gc);
-        }
-    }
-    
-    /**
-     * This method will draw gridlines if the pattern is over a specific size.
-     * @param gc Is the {@link GraphicsContext} buffer used to draw on a canvas.
-     */
-    private void drawGridLines(GraphicsContext gc) {
-        final int rows = patternGame.getRows();
-        final int columns = patternGame.getColumns();
-        final double height = getPatternHeight();
-        final double width = getPatternWidth();
-        
-        gc.setLineWidth(0.6);
-        gc.setStroke(Color.GRAY);
-        
-        // For hver kolonne, tegn en vertikal strek
-        for(int col = 0; col <= columns; col++) {
-            gc.strokeLine(cellSize * col, 0, cellSize * col, height);   
-        }
-        
-        for(int row = 0; row <= rows; row++) {
-            gc.strokeLine(0, cellSize * row, width, cellSize * row);
-        }
+        draw(patternGame, patternCanvas.getGraphicsContext2D(),colors, 0, 0, cellSize, true);
     }
     
     /**

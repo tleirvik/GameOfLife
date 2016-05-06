@@ -13,7 +13,7 @@ public class Main extends Application {
         Scene scene = new Scene(root);
 
         scene.getStylesheets().add(getClass().getResource(
-                "/view/mainWindowStyleSheet.css").toExternalForm());
+                "/view/stylesheet.css").toExternalForm());
 
         stage.setTitle("Game Of Life");
         stage.setScene(scene);

@@ -158,7 +158,7 @@ public class ViewController implements Draw {
     /**
      * This method will save the board in the format .rle.
      * 
-     * @see Model.FileManagement.FileSaver
+     * @see model.filemanagement.FileSaver
      */
     @FXML
     public void saveBoardAsRLE() {
@@ -221,7 +221,7 @@ public class ViewController implements Draw {
     @FXML
     public void openPatternEditor() {
         pauseGame();
-        dialogBoxes.openPatternEditor(gol, fileController, 
+        dialogBoxes.openPatternEditor(gol, colors, fileController,
                 (Stage)gameCanvas.getScene().getWindow());
         draw();
     }
@@ -264,7 +264,7 @@ public class ViewController implements Draw {
         draw(gol, gameCanvas.getGraphicsContext2D(),colors, offset_X, offset_Y, cellSize, drawGrid);
     }
     //=================================
-    //            HELP MENU
+    //            ABOUT MENU
     //=================================
     
     /**
@@ -274,6 +274,15 @@ public class ViewController implements Draw {
     public void openHelp() {
         pauseGame();
         dialogBoxes.openHelp((Stage) gameCanvas.getScene().getWindow());
+    }
+
+    /**
+     * This method opens a new window with the JavaDoc.
+     */
+    @FXML
+    public void openJavaDoc() {
+        pauseGame();
+        dialogBoxes.openJavaDoc((Stage) gameCanvas.getScene().getWindow());
     }
 
     
@@ -452,7 +461,6 @@ public class ViewController implements Draw {
                 double bClick_Y = e.getY();
                 int row = (int) ((bClick_Y - (offset_Y - getBoardHeight())) / cellSize) - gol.getRows();
                 int column = (int) ((bClick_X - (offset_X - getBoardWidth())) / cellSize) - gol.getColumns();
-                System.out.println("Click_ row: " + row + " col: " + column);
                 drawCell = (gol.getCellAliveState(row, column) != 1);
 
                 double oldBoardHeight = getBoardHeight();
@@ -644,7 +652,7 @@ public class ViewController implements Draw {
         
         gameCanvas.getScene().getWindow().addEventFilter(
                 KeyEvent.KEY_PRESSED, e -> {
-                    if(e.isControlDown() && e.getCode().isArrowKey()) {
+                    if(e.isShortcutDown() && e.getCode().isArrowKey()) {
                         switch(e.getCode()) {
                             case UP:
                                 offset_Y-=cellSize;

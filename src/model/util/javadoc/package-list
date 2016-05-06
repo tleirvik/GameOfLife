@@ -1,0 +1,12 @@
+
+controller
+model.filemanagement
+model.filemanagement.decoders
+model.filemanagement.encoders
+model.filemanagement.otherformats
+model.filemanagement.otherformats.data
+model.filemanagement.otherformats.wav
+model.gameoflife
+model.gameoflife.algorithms
+model.gameoflife.boards
+model.util

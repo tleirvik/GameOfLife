@@ -45,7 +45,6 @@ public class Statistics {
                     }
                 }   
             }
-            System.out.println(geometrics[i] + " " + i);
             game.update();
         }
         game.resetGame();

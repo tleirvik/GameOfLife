@@ -1,5 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
+<?import javafx.geometry.*?>
+<?import javafx.scene.canvas.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.effect.*?>
+<?import javafx.scene.layout.*?>
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.control.Button?>
@@ -17,7 +23,7 @@
 <?import javafx.scene.layout.Pane?>
 <?import javafx.scene.layout.VBox?>
 
-<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" minWidth="810.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.65" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ViewController">
+<BorderPane fx:id="root" maxHeight="-Infinity" maxWidth="-Infinity" minHeight="650.0" minWidth="810.0" nodeOrientation="LEFT_TO_RIGHT" prefHeight="720.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="controller.ViewController">
 
     <top>
         <MenuBar id="topMenuBar" fx:id="menuBar" nodeOrientation="LEFT_TO_RIGHT" BorderPane.alignment="CENTER">
@@ -49,9 +55,10 @@
                     </items>
                 </Menu>
 
-                <Menu text="Help">
+                <Menu text="About">
                     <items>
-                        <MenuItem onAction="#openHelp" text="About" />
+                        <MenuItem onAction="#openHelp" text="Help" />
+                  <MenuItem onAction="#openJavaDoc" text="JavaDoc" />
                     </items>
                 </Menu>
             </menus>
@@ -60,7 +67,7 @@
     
     
     <bottom>
-        <VBox id="bottomVBox" BorderPane.alignment="CENTER">
+        <VBox id="bottomBox" BorderPane.alignment="CENTER">
          
             <children>
                 <HBox id="bottom" alignment="CENTER" prefHeight="76.0" prefWidth="1000.0" spacing="20.0">

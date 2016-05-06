@@ -3,7 +3,9 @@ package model.util;
 /**
  *  This class is a simple Java performance timer used for tracking time elapsed for a method to run
  *  @version 1.0 Initial
+ *  @deprecated Obsolete
  */
+@Deprecated
 public class Stopwatch {
     long startTime;
     long endTime;

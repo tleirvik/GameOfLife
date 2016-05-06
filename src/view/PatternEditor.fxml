@@ -38,7 +38,7 @@
    </top>
     
    <left>
-      <VBox id="leftBox" prefHeight="371.0" prefWidth="198.0" spacing="20.0" BorderPane.alignment="CENTER">
+      <VBox id="sideBar" prefHeight="371.0" prefWidth="198.0" spacing="20.0" BorderPane.alignment="CENTER">
           
          <children>
             <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
@@ -78,8 +78,7 @@
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>
             </Button>
-            <Button id="closeButton" fx:id="closeButton" mnemonicParsing="false" 
-                    onAction="#handleCloseButton" text="Save And Close">
+            <Button id="closeButton" fx:id="closeButton" mnemonicParsing="false" onAction="#handleCloseButton" text="Save And Close">
                <VBox.margin>
                   <Insets left="15.0" right="15.0" />
                </VBox.margin>
@@ -94,9 +93,9 @@
       </VBox>
    </left>
    <center>
-      <Pane BorderPane.alignment="CENTER">
+      <Pane id="canvasParent" BorderPane.alignment="CENTER">
          <children>
-            <Canvas id="canvas" fx:id="patternCanvas" height="395.0" onMouseClicked="#handleMouseClick" width="602.0" />
+            <Canvas fx:id="patternCanvas" height="354.0" onMouseClicked="#handleMouseClick" width="602.0" />
          </children>
       </Pane>
    </center>

@@ -1,4 +1,4 @@
-#bottomVBox, #topMenuBar {
+#background, #bottomBox, #topMenuBar, #sideBar {
     -fx-background-image: url("resources/bottom_topBG.png");
 }
 
@@ -27,5 +27,6 @@
 }
 
 .check-box, .label{
+    -fx-text-fill: #555;
     -fx-font-weight: bold;
 }

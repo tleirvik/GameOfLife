@@ -1,14 +1,13 @@
 package model.gameoflife;
 
 
-import model.util.Stopwatch;
+import javafx.scene.control.Alert;
+import model.util.DialogBoxes;
 import java.util.Random;
 import model.gameoflife.algorithms.Algorithm;
 import model.gameoflife.algorithms.Default;
 import model.gameoflife.boards.Board;
 import model.gameoflife.boards.Board.BoardType;
-import static model.gameoflife.boards.Board.BoardType.DYNAMIC;
-import static model.gameoflife.boards.Board.BoardType.FIXED;
 import model.gameoflife.boards.DynamicBoard;
 import model.gameoflife.boards.FixedBoard;
 
@@ -191,16 +190,15 @@ public class GameOfLife {
      * the game board
      */
     public void updateWithThreads() {
-        Stopwatch sw = new Stopwatch("Next generation threading");
-        sw.start();
         algorithm.beforeUpdate();
         nextGenerationWorkers.splitBoard();
         nextGenerationWorkers.createWorkers();
         try {
             nextGenerationWorkers.runWorkers();
         } catch (InterruptedException iE) {
+            DialogBoxes.openAlertDialog(Alert.AlertType.ERROR, "Error"
+                    , "InterruptedException Error", iE.getStackTrace().toString());
         }
-        sw.stop();
     }
 
     /**
