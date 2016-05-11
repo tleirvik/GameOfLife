@@ -2,8 +2,10 @@ package controller;
 
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.image.Image;
 import javafx.scene.paint.Color;
 import model.gameoflife.GameOfLife;
+
 
 /**
  * This is the draw interface used in our Game Of Life implementation
@@ -12,6 +14,7 @@ public interface Draw {
 
     default void draw(GameOfLife gol, GraphicsContext gc, Color[] colors, double offset_X
             , double offset_Y, double cellSize, boolean drawGrid) {
+        Image image = new Image("henlie.jpg");
         final Canvas canvas = gc.getCanvas();
         final double start_X = Math.round(offset_X);
         final double start_Y = Math.round(offset_Y);
@@ -21,7 +24,6 @@ public interface Draw {
         final double boardHeight = cellSize * gol.getRows();
         final double canvasWidth = canvas.getWidth();
         final double canvasHeight = canvas.getHeight();
-
         gc.clearRect(0, 0, canvasWidth, canvasHeight);
 
         gc.setFill(colors[0]); //stdBackgroundColor)
@@ -65,7 +67,9 @@ public interface Draw {
         for (int row = startRow; row < endRow; row++) {
             for (int col = startCol; col < endCol; col++ ) {
                 if (gol.getCellAliveState(row, col) == 1) {
-                    gc.fillRect(start_X + cellSize * col, start_Y + cellSize * row, cellSize, cellSize);
+                    gc.drawImage(image, start_X + cellSize * col, start_Y + cellSize * row, cellSize, cellSize);
+                    //gc.fillRect(start_X + cellSize * col, start_Y + cellSize * row, cellSize, cellSize);
+
                 }
             }
         }
