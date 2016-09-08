@@ -6,4 +6,4 @@ or read the the game's integrated JavaDoc.
 It originated as a student assignment in the course DATS1600 - Program Development @ Oslo College of Applied Sciences, but have now
 taken a life on it's own. Feel free to fork() and/or contribute :)
 
-@authors @tleirvik , @FullRobotRulle and @FranzLiszt . The project was graded with an A
+Authors @tleirvik , @FullRobotRulle and @FranzLiszt . The project was graded with an A
