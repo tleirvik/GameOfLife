@@ -1,7 +1,7 @@
 package model.filemanagement.otherformats;
 
 import model.filemanagement.otherformats.data.GIFData;
-import lieng.GIFWriter;
+
 
 import java.io.IOException;
 import model.gameoflife.GameOfLife;
@@ -9,7 +9,6 @@ import model.gameoflife.GameOfLife;
 /**
  * This class takes a pattern from a Model.GameOfLife object and save this pattern
  * as an animated sequence in a gif file.
- * @see lieng.GIFWriter
  */
 public class GIFSaver extends ImageSaver {
     private final int iterations;
@@ -37,7 +36,7 @@ public class GIFSaver extends ImageSaver {
     @Override
     public boolean saveImage() {
         try {
-            GIFWriter writer = new GIFWriter(width + 1, height + 1, 
+            lieng.GIFWriter writer = new lieng.GIFWriter(width + 1, height + 1,
                     file.getAbsolutePath(), animationTimer);
             writeGoLSequenceToGIF(writer, game, iterations);
             game.resetGame();
@@ -52,14 +51,14 @@ public class GIFSaver extends ImageSaver {
     /**
      * This method writes the current sequence to an gif image.
      * 
-     * @param writer The {@link GIFWriter} to use
+     * @param writer The {@link lieng.GIFWriter} to use
      * @param game The {@link GameOfLife}
      * @param counter The number of iterations
      * @throws IOException If an unspecified I/O error occures
      */
-    private void writeGoLSequenceToGIF(GIFWriter writer, GameOfLife game, 
-        int counter) throws IOException {
-        
+    private void writeGoLSequenceToGIF(lieng .GIFWriter writer, GameOfLife game,
+                                       int counter) throws IOException {
+
         writer.setBackgroundColor(deadCellColor);
         
         if (counter != 0) {
