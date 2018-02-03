@@ -73,6 +73,6 @@ public class HelpController {
                 subjectFileName = "Statistics.html";
                 break;
         }
-        return getClass().getResource("/model/util/help/" + subjectFileName).toExternalForm();
+        return getClass().getResource("/" + subjectFileName).toExternalForm();
     }
 }

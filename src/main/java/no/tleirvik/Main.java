@@ -6,16 +6,19 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.util.ResourceBundle;
+
 public class Main extends Application {
 
     @Override
     public void start(Stage stage) throws Exception {
-        FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/MainWindow.fxml"));
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getResource("/MainWindow.fxml"));
         Parent root = loader.load();
         Scene scene = new Scene(root);
 
         scene.getStylesheets().add(getClass().getResource(
-                "/view/stylesheet.css").toExternalForm());
+                "/stylesheet.css").toExternalForm());
 
         stage.setTitle("Game Of Life");
         stage.setScene(scene);

@@ -28,8 +28,9 @@
                     </excludes>
                     <archive>
                         <manifest>
-                            <!-- Jar file entry point -->
-                            <mainClass>Main</mainClass>
+                            <addClasspath>true</addClasspath>
+                            <classpathPrefix>lib/</classpathPrefix>
+                            <mainClass>no.tleirvik.Main</mainClass>
                         </manifest>
                     </archive>
                 </configuration>
@@ -87,10 +88,15 @@
         </plugins>
     </build>
 <dependencies>
-    <dependency>
-        <groupId>lienf</groupId>
+    <!--<dependency>
+        <groupId>lieng</groupId>
         <artifactId>GIFLib</artifactId>
         <version>${GIFLib.version}</version>
+    </dependency>-->
+    <dependency>
+        <groupId>no.hioa.anvendt</groupId>
+        <artifactId>GameOfLife</artifactId>
+        <version>1.0-SNAPSHOT</version>
     </dependency>
 </dependencies>
 

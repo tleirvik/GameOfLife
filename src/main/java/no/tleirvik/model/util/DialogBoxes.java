@@ -259,14 +259,14 @@ public class DialogBoxes {
         
         try {
             FXMLLoader loader;
-            loader = new FXMLLoader(getClass().getResource("/view/PatternEditor.fxml"));
+            loader = new FXMLLoader(getClass().getResource("/PatternEditor.fxml"));
             
             BorderPane root = loader.load();
             editor.setResizable(false);
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
-                    "/view/stylesheet.css").toExternalForm());
+                    "/stylesheet.css").toExternalForm());
 
             EditorController edController = loader.getController();
             edController.initializeEditor(game, colors, fileController);
@@ -292,7 +292,7 @@ public class DialogBoxes {
         
         try {
             FXMLLoader loader;
-            loader = new FXMLLoader(getClass().getResource("/view/statistics.fxml"));
+            loader = new FXMLLoader(getClass().getResource("/statistics.fxml"));
             
             BorderPane root = loader.load();
             stats.setResizable(false);
@@ -302,7 +302,7 @@ public class DialogBoxes {
 
             Scene scene = new Scene(root);
             scene.getStylesheets().add(getClass().getResource(
-                "/view/stylesheet.css").toExternalForm());
+                "/stylesheet.css").toExternalForm());
             
             stats.setScene(scene);
             stats.setTitle("Game Of Life Statistics");
@@ -324,7 +324,7 @@ public class DialogBoxes {
         
         try {
             FXMLLoader loader;
-            loader = new FXMLLoader(getClass().getResource("/view/HelpWindow.fxml"));
+            loader = new FXMLLoader(getClass().getResource("/HelpWindow.fxml"));
             
             BorderPane root = loader.load();
             help.setResizable(false);
@@ -354,7 +354,7 @@ public class DialogBoxes {
 
         try {
             FXMLLoader loader;
-            loader = new FXMLLoader(getClass().getResource("/view/JavaDocWindow.fxml"));
+            loader = new FXMLLoader(getClass().getResource("/JavaDocWindow.fxml"));
 
             BorderPane root = loader.load();
             javaDoc.setResizable(false);
@@ -362,7 +362,7 @@ public class DialogBoxes {
             Scene scene = new Scene(root);
 
             javafx.scene.web.WebView webView = (javafx.scene.web.WebView) root.getCenter();
-            String url = getClass().getResource("/Model/util/javadoc/index.html").toExternalForm();
+            String url = getClass().getResource("/javadoc/index.html").toExternalForm();
             webView.getEngine().load(url);
 
             javaDoc.setScene(scene);
