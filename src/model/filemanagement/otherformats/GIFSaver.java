@@ -1,10 +1,11 @@
 package model.filemanagement.otherformats;
 
-import model.filemanagement.otherformats.data.GIFData;
+
 import lieng.GIFWriter;
+import model.filemanagement.otherformats.data.GIFData;
+import model.gameoflife.GameOfLife;
 
 import java.io.IOException;
-import model.gameoflife.GameOfLife;
 
 /**
  * This class takes a pattern from a Model.GameOfLife object and save this pattern
@@ -37,7 +38,7 @@ public class GIFSaver extends ImageSaver {
     @Override
     public boolean saveImage() {
         try {
-            GIFWriter writer = new GIFWriter(width + 1, height + 1, 
+            GIFWriter writer = new GIFWriter(width + 1, height + 1,
                     file.getAbsolutePath(), animationTimer);
             writeGoLSequenceToGIF(writer, game, iterations);
             game.resetGame();

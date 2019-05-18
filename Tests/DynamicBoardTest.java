@@ -1,7 +1,7 @@
-import Model.GameOfLife.Boards.Board;
-import Model.GameOfLife.Boards.DynamicBoard;
-import Model.GameOfLife.GameOfLife;
-import Model.GameOfLife.MetaData;
+import model.gameoflife.GameOfLife;
+import model.gameoflife.MetaData;
+import model.gameoflife.boards.Board;
+import model.gameoflife.boards.DynamicBoard;
 import org.junit.Before;
 import org.junit.Test;
 

@@ -1,3 +1,16 @@
+import model.filemanagement.encoders.Encoder;
+import model.filemanagement.encoders.RLEEncoder;
+import model.gameoflife.GameOfLife;
+import model.gameoflife.MetaData;
+import model.gameoflife.boards.Board;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.io.*;
+import java.lang.reflect.Method;
+
+import static org.junit.Assert.*;
+
 /*
 import org.junit.Before;
 import org.junit.Test;
